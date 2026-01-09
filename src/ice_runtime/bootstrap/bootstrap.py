@@ -9,13 +9,13 @@ Bootstrap minimale del Runtime ICE.
 Responsabilità:
 - costruire EventKernel
 - costruire EventEmitter
-- istanziare Runtime
-- inizializzare logging runtime-side (osservabilità)
+- inizializzare logging runtime-side
+- istanziare Runtime in stato coerente
 
 NON:
 - orchestrazione
-- agenti
-- LLM
+- engine
+- AI
 - storage di dominio
 """
 
@@ -45,36 +45,52 @@ def bootstrap_runtime(
     """
     Costruisce e restituisce un Runtime ICE pronto all'uso.
 
-    Nessun side-effect applicativo.
+    Effetti consentiti:
+    - inizializzazione logging runtime-side
+    - costruzione kernel eventi
+
     Nessun engine.
     Nessuna orchestrazione.
     """
 
+    # ------------------------------------------------------------------
+    # Runtime identity
+    # ------------------------------------------------------------------
+
     base_dir = (base_dir or Path.cwd()).resolve()
 
-    # ------------------------------------------------------------------
-    # Logging (runtime-side, osservabilità)
-    # ------------------------------------------------------------------
-
-    ctx = RuntimeContext(
+    runtime_ctx = RuntimeContext(
         runtime_id=runtime_id,
         base_dir=base_dir,
     )
 
+    # ------------------------------------------------------------------
+    # Logging (runtime-owned)
+    # ------------------------------------------------------------------
+
     sinks = [StdoutSink()] if enable_stdout_logs else []
-    router = LogRouter(ctx, sinks=sinks)
-    init_logging(router)
+    log_router = LogRouter(runtime_ctx, sinks=sinks)
+    init_logging(log_router)
 
     # ------------------------------------------------------------------
-    # Event Kernel
+    # Event Kernel (realtà primaria)
     # ------------------------------------------------------------------
 
-    store = EventStore()
-    emitter = EventEmitter(store=store)
+    event_store = EventStore()
+    event_emitter = EventEmitter(store=event_store)
 
     # ------------------------------------------------------------------
-    # Runtime
+    # Runtime (stato iniziale controllato)
     # ------------------------------------------------------------------
 
-    runtime = Runtime(emitter=emitter)
+    runtime = Runtime(
+        runtime_id=runtime_id,
+        base_dir=base_dir,
+        emitter=event_emitter,
+        event_store=event_store,
+        log_router=log_router,
+    )
+
+    runtime.mark_bootstrapped()
+
     return runtime
