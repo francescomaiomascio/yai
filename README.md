@@ -1,101 +1,105 @@
-# ICE Foundation
+# ICE Foundation — Axiomatic System Design
 
-[![ICE Ecosystem](https://img.shields.io/badge/ICE-Ecosystem-8FB9FF?style=flat)](#)
-[![Docs](https://img.shields.io/badge/docs-ICE%20Docs-8FB9FF?style=flat)](https://github.com/francescomaiomascio/ice-docs)
-[![Status](https://img.shields.io/badge/status-foundational-6B7280?style=flat)](#)
-[![Governance](https://img.shields.io/badge/type-normative-111827?style=flat)](#)
-[![License](https://img.shields.io/badge/license-MIT-7A7CFF?style=flat)](#)
-
-ICE Foundation is the **normative layer** of the ICE ecosystem.
-
-It defines the **laws, invariants, and architectural boundaries** that govern
-all ICE components, including engines, runtimes, APIs, applications, and plugins.
-
-ICE Foundation does not execute code.
-It establishes **what is allowed, what is forbidden, and what is stable** across
-the entire system.
+[![Status](https://img.shields.io/badge/status-foundational%20research-6B7280?style=flat)](#)
+[![Scope](https://img.shields.io/badge/scope-axioms%20%26%20invariants-111827?style=flat)](#)
+[![Docs](https://img.shields.io/badge/docs-ICE%20Documentation-8FB9FF?style=flat)](https://francescomaiomascio.github.io/ice-docs/)
 
 ---
 
-## What ICE Foundation Is
+## What this repository is
 
-ICE Foundation is:
+This repository defines the **axiomatic foundations** of the ICE ecosystem.
 
-- The **authoritative source of truth** for ICE architecture
-- A **versioned and citable body of rules**
-- A shared contract between all ICE repositories
-- The place where architectural decisions become binding
+ICE Foundation does not describe *how* systems are implemented.
+It defines **what must be true** for an ICE-compliant system to exist at all.
 
-ICE Foundation is treated as **sovereign**.
-Any component that violates ICE Foundation rules is considered **out of scope**
-for the ICE ecosystem.
+The content here establishes:
+- non-negotiable invariants
+- execution assumptions
+- architectural constraints that all other ICE components must obey
+
+These foundations are **systemic**, not stylistic.
 
 ---
 
-## What ICE Foundation Is Not
+## Scope
+
+ICE Foundation is concerned with:
+
+- execution as a first-class concept  
+- authority and control as explicit system properties  
+- state as a derived, inspectable artifact  
+- separation between inference and governance  
+- observability as a structural requirement  
+
+It operates **above implementation**, but **below architecture**.
+
+---
+
+## What this repository is not
 
 ICE Foundation is **not**:
 
-- An engine
-- A runtime
-- A framework
-- A library
-- A product
-- A documentation site
+- a framework
+- a runtime
+- an engine
+- a set of APIs
+- a reference implementation
 
-It contains **no business logic**, **no execution code**, and **no implementation details**.
+No code lives here by design.
 
----
-
-## Core Responsibilities
-
-ICE Foundation is responsible for:
-
-- Defining the canonical terminology of ICE
-- Establishing domain boundaries and dependency rules
-- Governing plugin and application models
-- Declaring architectural invariants
-- Publishing RFCs and formal specifications
-- Recording irreversible architectural decisions (ADR)
-
-All other ICE repositories **must conform** to ICE Foundation.
+This repository exists to prevent architectural drift as systems evolve.
 
 ---
 
-## Repository Structure
+## Core assumptions
 
-This repository contains:
+ICE systems assume that:
 
-- `rfc/`  
-  Architectural RFCs that define ICE concepts, rules, and evolution
+- intelligence does not imply authority  
+- inference does not imply action  
+- state must be explainable after the fact  
+- long-running systems must survive failure  
+- execution must remain intelligible over time  
 
-- `specs/`  
-  Formal specifications for manifests, lifecycles, and capability models
-
-- `invariants/`  
-  Non-negotiable architectural laws and forbidden patterns
-
-- `decisions/`  
-  Architectural Decision Records (ADR) explaining irreversible choices
-
-- `glossary.md`  
-  Canonical definitions of ICE terminology
+These assumptions are treated as **axioms**, not preferences.
 
 ---
 
-## Governance Model
+## Relationship to the ICE ecosystem
 
-ICE Foundation follows a **deliberate and conservative governance model**.
+ICE Foundation constrains all other ICE components.
 
-- RFCs are additive and versioned
-- Breaking changes require explicit justification
-- Invariants are not modified lightly
-- Stability is prioritized over convenience
+- `ice-runtime` must enforce these invariants  
+- `ice-engine` must operate within them  
+- orchestration layers must not bypass them  
+- agents and models are subordinate to them  
 
-This repository evolves slower than the rest of the ecosystem by design.
+Dependencies flow **one way only**:
+from foundation to implementation.
 
 ---
 
-## Relationship to Other ICE Repositories
+## Documentation
 
-- **ICE Foundat**
+This repository is complemented by:
+
+📘 ICE Documentation & RFCs  
+https://francescomaiomascio.github.io/ice-docs/  
+https://github.com/francescomaiomascio/ice-docs
+
+---
+
+## Support
+
+ICE Foundation is part of an independent, long-term research effort.
+
+If you are interested in:
+- execution-level system design  
+- governance of intelligent systems  
+- runtime-centric AI architectures  
+
+you can support the work here:
+
+- GitHub Sponsors  
+  https://github.com/sponsors/francescomaiomascio
