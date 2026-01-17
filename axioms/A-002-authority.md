@@ -1,26 +1,26 @@
 # Authority and Inference / Control Separation
 
-This document defines authority as a foundational axiom of ICE and formalizes the separation between inference and control.
+This document defines authority as a foundational axiom of ICE and formalizes the strict separation between inference and control.
 
-ICE explicitly rejects the assumption that authority can emerge implicitly from inference, optimization, or orchestration.
-In ICE, authority must always be explicit, constrained, and governed at the system level.
+ICE rejects the assumption that authority can emerge implicitly from inference, optimization, or intent.
+Authority must be explicit, constrained, and conceptually prior to execution.
 
-Any system in which inference alone is able to trigger execution is not a valid instance of ICE.
+Any system in which inference alone is sufficient to cause execution is not a valid instance of ICE by definition.
 
 ---
 
 ## Authority as a Foundational Concept
 
-In ICE, **authority** is the explicit constraint that determines what actions are permitted to occur.
+In ICE, **authority** is the explicit conceptual constraint that determines which actions are permitted to occur.
 
-Authority is not an emergent property.
+Authority is not emergent.
 It is not inferred.
 It is not optimized.
-It is not delegated implicitly.
+It is not assumed.
 
-Authority exists as a first-class, system-level concept that precedes execution and constrains it.
+Authority exists as a first-class, system-level concept that constrains execution.
 
-No component, intelligent or otherwise, may assume authority by virtue of inference, confidence, optimization, or intent.
+No component may possess authority by virtue of inference, confidence, or intelligence alone.
 
 ---
 
@@ -30,31 +30,28 @@ ICE draws a strict conceptual boundary between **inference** and **control**.
 
 ### Inference
 
-Inference is the process by which the system:
+Inference:
 
-- Interprets inputs
-- Evaluates conditions
-- Produces intent, recommendations, or decisions
-- Estimates outcomes or preferences
+- interprets inputs
+- evaluates conditions
+- produces intent, recommendations, or propositions
 
-Inference is descriptive and propositional in nature.
-
-Inference does **not** cause execution.
+Inference is descriptive.
+Inference does not authorize action.
 
 ---
 
 ### Control
 
-Control is the process by which the system:
+Control:
 
-- Determines whether an action is allowed
-- Enforces constraints and permissions
-- Governs execution paths
-- Authorizes or rejects state transitions
+- determines whether an action is permitted
+- enforces constraints
+- authorizes or rejects execution
 
 Control is normative and authoritative.
 
-Control alone may permit execution.
+Only control may permit execution.
 
 ---
 
@@ -63,52 +60,33 @@ Control alone may permit execution.
 In ICE:
 
 > Inference and control are strictly separated.  
-> Authority must be explicit and enforced.  
-> No inference process may directly cause execution.
+> Authority must be explicit.  
+> No inference process may directly authorize execution.
 
-Any architecture that collapses inference and control, or allows inference to implicitly grant authority, violates this axiom.
-
----
-
-## Authority and Execution
-
-Execution in ICE is always subject to authority.
-
-Even if an inference process produces a correct, optimal, or beneficial decision, execution may only occur if explicitly authorized.
-
-This guarantees that:
-
-- Execution remains traceable
-- Responsibility is attributable
-- Unsafe or unintended actions are preventable
-- Intelligence does not equate to power
+Violating this separation invalidates the system conceptually.
 
 ---
 
-## Relationship to Other Axioms
+## Authority, Execution, and State
 
-This axiom derives from and constrains other foundational axioms:
+Execution is always subject to authority.
 
-- **Execution as a First Principle**  
-  Execution exists independently of intelligence and must be governed.
+State transitions may only occur as a result of authorized execution.
 
-- **State as a Derived and Inspectable Artifact**  
-  All state transitions must be attributable to authorized control, not inference alone.
+This ensures:
 
-Authority acts as the binding constraint between inference, execution, and state.
+- traceability
+- responsibility
+- governance
+- prevention of unintended action
 
 ---
 
-## Invalid Patterns
+## Canonical Status
 
-The following patterns are explicitly invalid in ICE:
+This document defines a canonical axiom of ICE.
 
-- Inference directly triggering execution
-- Optimization processes granting implicit authority
-- Agents acting without an explicit control boundary
-- Intelligence being treated as sufficient justification for action
-
-Any system exhibiting these patterns is conceptually invalid under ICE.
+Any conceptual model that allows inference to substitute authority is incompatible with ICE.
 
 ---
 
@@ -116,8 +94,8 @@ Any system exhibiting these patterns is conceptually invalid under ICE.
 
 This document does not define:
 
-- Enforcement mechanisms
-- Policy engines
-- Governance processes
-- Runtime implementations
-- Tooling or configurat
+- enforcement mechanisms
+- policy engines
+- governance processes
+- runtime implementations
+- tooling or configuration
