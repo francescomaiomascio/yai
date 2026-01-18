@@ -1,15 +1,31 @@
-# Boundary: Foundation → Providers
+# Boundary: Foundation ↔ Providers
 
 ## Purpose
 
-Define the boundary between the **ICE Foundation** and the **ICE Providers** domain.
+Define and formalize the **conceptual boundary** between the **ICE Foundation**
+and **External Providers**.
 
-This document establishes what the Foundation constrains with respect to
-external services, infrastructures, and dependencies, and what it explicitly
-does **not** select, integrate, or manage.
+This document establishes that external platforms, services, vendors,
+and dependencies are **non-foundational** and must never influence,
+extend, or redefine axioms, structural invariants, or conceptual validity.
 
-The goal is to prevent foundational authority from collapsing
-into vendor choice or service-specific assumptions.
+The goal is to prevent **vendor authority**, **service behavior**, or
+**dependency constraints** from collapsing into foundational truth.
+
+---
+
+## Foundational Position
+
+The ICE Foundation is **internally authoritative** and **provider-agnostic**.
+
+It defines:
+
+- Axioms that establish what is assumed to be true
+- Structural invariants that constrain authority, traceability, and determinism
+- Conditions under which delegation is conceptually valid
+- Limits on what may or may not depend on external systems
+
+The Foundation does **not** depend on providers.
 
 ---
 
@@ -17,13 +33,13 @@ into vendor choice or service-specific assumptions.
 
 The ICE Foundation:
 
-- Defines axioms and structural invariants
-- Constrains what forms of dependency are conceptually valid
-- Establishes requirements for authority, traceability, and determinism
-- Defines limits on delegation to external systems
+- Defines invariant constraints on delegation
+- Establishes what must remain true regardless of provider behavior
+- Constrains how authority may be delegated externally
+- Preserves conceptual validity independent of dependencies
 
-The Foundation defines **what must remain invariant**,  
-not **who provides capabilities**.
+The Foundation defines **what must not change**,  
+not **who supplies capabilities**.
 
 ---
 
@@ -32,62 +48,66 @@ not **who provides capabilities**.
 ICE Providers:
 
 - Supply external capabilities (compute, storage, models, services)
-- Implement concrete integrations with third-party systems
-- Handle vendor-specific APIs, SLAs, and operational constraints
-- May change independently of ICE semantics
+- Implement integrations with third-party platforms
+- Expose vendor-specific APIs and operational constraints
+- May change, degrade, or fail independently of ICE
 
 Providers answer **where capabilities come from**,  
-never **what is true** or **what is allowed**.
+never **what is valid** or **what is allowed**.
 
 ---
 
 ## Explicit Non-Responsibilities of the Foundation
 
-The Foundation does NOT define:
+The ICE Foundation does **NOT** define, select, or manage:
 
-- Vendor selection or preference
-- Cloud, on-prem, or hybrid strategies
-- Model providers or service marketplaces
-- Cost, billing, or quota management
-- Availability, redundancy, or failover policies
-- Integration credentials or secrets handling
+- Vendor or platform choice
+- Cloud, on-premise, or hybrid strategies
+- External model or service providers
+- Cost, billing, quotas, or pricing
+- Availability, redundancy, or SLA guarantees
+- Credential management or secrets handling
+- Integration-specific error handling
 
-All such concerns belong exclusively to the Providers domain.
+All such concerns belong **exclusively** to the Providers domain.
 
 ---
 
 ## Constraint Relationship
 
-- The Foundation constrains **what may be delegated**
+The relationship is strictly asymmetric:
+
+- The Foundation constrains **delegation semantics**
 - Providers implement delegated capabilities
-- Providers may fail or change
-- The Foundation must remain unaffected
+- Providers may fail, change, or disappear
+- The Foundation must remain conceptually unaffected
 
 If a provider violates an invariant,
-the provider integration is invalid — not the Foundation.
+the integration is invalid — not the Foundation.
 
 ---
 
-## Invalid Boundary Violations
+## Boundary Violations
 
-The following are invalid:
+The following constitute **boundary violations**:
 
-- Encoding provider assumptions as axioms
+- Encoding provider assumptions as axioms or invariants
 - Treating provider behavior as authoritative truth
-- Allowing vendor constraints to redefine invariants
-- Hard-coding provider semantics into the Foundation
+- Allowing vendor limitations to redefine constraints
+- Hard-coding provider semantics into foundational documents
+- Inferring validity from service availability
 
-Such actions constitute a boundary violation.
+Such actions invalidate ICE compliance.
 
 ---
 
 ## Canonical Status
 
-This boundary is authoritative.
+This boundary definition is **canonical and authoritative**.
 
 Any provider integration claiming ICE compliance
-must demonstrate that it operates strictly
-within the constraints defined here.
+must demonstrate that external dependencies operate
+strictly within the constraints defined here.
 
 The Foundation constrains Providers.  
 Providers never redefine the Foundation.
