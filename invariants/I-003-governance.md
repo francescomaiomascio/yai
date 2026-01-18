@@ -1,119 +1,129 @@
 # I-003 — Governance as a Structural Invariant
 
-This document defines governance as a structural invariant of ICE.
+## Purpose
+
+Define **governance** as a **structural invariant** of ICE.
+
+This issue establishes governance as a non-negotiable constraint that must
+be structurally present from the beginning of system design and preserved
+throughout system evolution.
 
 In ICE, governance is not a policy layer, an organizational concern,
-or a human oversight mechanism.
-Governance is a permanent structural constraint that determines
-what is allowed to happen, how authority is exercised,
-and how responsibility is enforced over time.
+or a human oversight mechanism added after complexity emerges.
 
-Without governance, authority becomes arbitrary,
-execution becomes unsafe,
-and intelligent behavior becomes unaccountable.
+Governance is a permanent structural property that constrains
+authority, execution, and responsibility over time.
 
-A system without governance is not a valid instance of ICE.
+A system that cannot enforce governance structurally
+is **not a valid instance of ICE**.
 
 ---
 
-## Definition
+## Scope
 
-In ICE, **governance** is the structural property that ensures:
+This issue defines:
 
-- authority is exercised only within defined bounds
-- actions are accountable and attributable
-- system behavior remains correct over time
-- violations are detectable and consequential
+- What governance means in the context of ICE
+- Why governance is a structural invariant
+- The relationship between governance, authority, and execution
+- Why governance cannot be retrofitted
+- How governance applies to long-running systems
 
-Governance applies continuously and system-wide.
-It is not invoked conditionally and cannot be bypassed.
+This issue defines **what must be true**, not **how it is implemented**.
 
-Governance is a **structural invariant**:
-it must always hold, regardless of execution mode, scale, or deployment.
+---
+
+## Out of Scope
+
+This issue does NOT define:
+
+- Governance tooling or dashboards
+- Policy engines or rule languages
+- Access-control systems
+- Human approval workflows
+- Organizational or legal governance models
+- Runtime enforcement mechanisms
+
+Those concerns belong to downstream projects and must comply with
+the invariant defined here.
+
+---
+
+## Definitions / Assertions
+
+- **Governance** in ICE is the structural property that ensures:
+  - authority is exercised only within defined bounds
+  - execution remains accountable over time
+  - violations are detectable and consequential
+- Governance is **system-wide**, **continuous**, and **non-bypassable**.
+- Governance is **not optional**, **not configurable**, and **not contextual**.
+- Governance constrains *what may happen*, not *how it is implemented*.
+- Violating governance invalidates ICE compliance.
 
 ---
 
 ## Governance in ICE Is Not
 
-Governance in ICE is **not**:
+Governance in ICE does **not** mean:
 
-- a set of human approval steps
-- a policy engine
-- a compliance checklist
-- an access-control configuration
-- an external audit process
+- Human-in-the-loop approval
+- Compliance checklists
+- External audits
+- Policy configuration
+- Trust-based supervision
+- Post-hoc review of behavior
 
-Those may exist downstream.
-They do not define governance in ICE.
-
-ICE governance constrains meaning and behavior,
-not procedures.
+ICE may integrate such mechanisms downstream.  
+They do not define governance.
 
 ---
 
-## Core Properties of the Governance Invariant
+## Structural Properties
 
-All ICE-compliant systems must satisfy the following:
+All ICE-compliant systems must satisfy:
 
-- **Authority-bound behavior**  
-  Every action must occur under explicit, traceable authority.
+- **Authority-bound execution**  
+  Every execution must occur under explicit, traceable authority.
 
 - **Non-bypassability**  
-  No component may act outside the governance constraints.
+  No component may act outside governance constraints.
 
 - **Continuity over time**  
   Governance must hold across long-running execution and system evolution.
 
 - **Invariant enforcement**  
-  Violations must be detectable and consequential at the system level.
+  Violations must be detectable and structurally meaningful.
 
 - **Implementation independence**  
-  Governance constraints apply regardless of how they are implemented.
-
----
-
-## Governance vs Other Concepts
-
-### Governance vs Policy
-
-- Policies define rules that may change.
-- Governance defines constraints that must not.
-
-Policies operate within governance.
-Governance is not defined by policy.
-
----
-
-### Governance vs Authority
-
-- Authority defines *who or what may act*.
-- Governance defines *how authority is constrained and enforced*.
-
-Authority without governance is unsafe.
-Governance without authority is meaningless.
-
----
-
-### Governance vs Control
-
-- Control is the mechanism that enforces decisions.
-- Governance constrains what control is allowed to enforce.
-
-Control implements governance.
-Governance limits control.
+  Governance constraints apply regardless of architecture or technology.
 
 ---
 
 ## Relationship to Other Invariants
 
-- **Traceability (I-001)**  
-  Governance requires traceability to attribute actions and decisions.
+### Governance and Traceability (I-001)
 
-- **Determinism (I-002)**  
-  Governance requires reproducibility to enforce responsibility over time.
+Governance requires traceability.
 
-Governance depends on both invariants to remain enforceable.
-Without them, governance collapses.
+Without traceability:
+- authority cannot be validated
+- responsibility cannot be assigned
+- violations cannot be proven
+
+Traceability makes governance enforceable.
+
+---
+
+### Governance and Determinism (I-002)
+
+Governance requires determinism and reproducibility.
+
+Without deterministic guarantees:
+- authority decisions cannot be reconstructed
+- enforcement cannot persist over time
+- responsibility becomes unverifiable
+
+Determinism enables governance to remain stable and defensible.
 
 ---
 
@@ -121,41 +131,50 @@ Without them, governance collapses.
 
 If governance is violated:
 
-- authority decisions cannot be trusted
+- authority becomes arbitrary
 - responsibility cannot be enforced
 - long-running behavior becomes unsafe
 - intelligent actions become unaccountable
 
-Such violations invalidate ICE compliance.
-They are structural failures, not runtime errors.
+Violations are **structural**, not operational errors.
+
+A system may continue running,
+but it is no longer ICE-compliant.
 
 ---
 
-## Scope Notes
+## Canonical Sub-Issues
 
-This document does not define:
+The following sub-issues represent the internal structure of this topic and
+will be opened only after this issue is stabilized:
 
-- governance tooling
-- policy languages
-- access-control systems
-- human review processes
-- organizational governance models
-
-Those concerns belong to downstream projects
-and must comply with the invariant defined here.
+- I-003.1 — Governance versus policy and configuration
+- I-003.2 — Governance and non-bypassable authority
+- I-003.3 — Governance over long-running systems
+- I-003.4 — Governance and violation consequences
+- I-003.5 — Governance as a system-wide constraint
 
 ---
 
-## Canonical Status
+## Expected Outcome
 
-This document is authoritative.
+When this issue is complete:
 
-All ICE components that execute actions,
-enforce authority,
-or evolve state over time
-must preserve this governance invariant.
+- Governance is unambiguously defined as a structural invariant
+- Authority, execution, and responsibility remain permanently constrained
+- Long-running systems remain enforceable over time
+- Downstream projects cannot reinterpret governance informally
 
-Any system claiming ICE compliance
-must be able to demonstrate
-how governance is structurally preserved,
-not merely configured or monitored.
+---
+
+## Notes
+
+Governance is not something ICE *does*.
+
+It is something ICE *cannot escape*.
+
+It is the invariant that prevents authority, execution,
+and intelligence from drifting into arbitrariness.
+
+Any ICE system that violates governance
+violates the foundation itself.
