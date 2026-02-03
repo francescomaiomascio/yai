@@ -7,10 +7,10 @@ or an emergent property of intelligence.
 Adaptability is a **foundational system capability**.
 
 Any ICE system must be able to explicitly suspend execution
-and reorganize its internal cognitive state
+and reorganize its cognitive configuration
 when observed reality invalidates its current assumptions.
 
-A system that continues execution under invalid cognitive models,
+A system that continues execution under invalid cognitive configurations (cognitive models),
 or adapts implicitly without traceable reconfiguration,
 is not a valid instance of ICE.
 
@@ -22,7 +22,7 @@ In ICE, **cognitive adaptability** is defined as:
 
 - The capability to detect misalignment between expected and observed conditions
 - The ability to suspend or constrain execution under invalid assumptions
-- The explicit reorganization of internal cognitive state
+- The explicit reorganization of cognitive configuration
 - The resumption of execution only under renewed authority
 
 Adaptability operates at the **cognitive level**, not at the execution level.
