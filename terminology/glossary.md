@@ -122,6 +122,50 @@ State is not a cause, configuration, or source of authority.
 
 ---
 
+### Cognitive Adaptability
+
+The foundational capability by which an ICE system explicitly suspends execution
+and reorganizes its cognitive configuration when observed reality invalidates current assumptions.
+
+Cognitive adaptability does not imply learning, optimization, or autonomy.
+
+---
+
+### Cognitive Configuration
+
+The explicit set of assumptions, constraints, priorities, goals, and contextual validity
+that constitutes the cognitive basis under which execution is allowed to proceed.
+
+Cognitive configuration is not “State” as defined in this glossary.
+
+---
+
+### Cognitive Validity / Invalidation
+
+Cognitive validity is the condition under which a cognitive configuration remains consistent
+with observed reality and therefore may support execution.
+
+Invalidation is the explicit detection that the cognitive configuration no longer supports valid execution.
+
+---
+
+### Cognitive Reconfiguration
+
+An explicit, authority-bound transition from one cognitive configuration to another
+performed in response to invalidation.
+
+Reconfiguration constrains whether execution may continue; it does not define how adaptation is implemented.
+
+---
+
+### Reconfiguration Record
+
+The canonical inspectable artifact representing a cognitive reconfiguration transition.
+
+A Reconfiguration Record must be traceable and authority-referenced, and must not be conflated with “State”.
+
+---
+
 ### Traceability
 
 The property by which actions, decisions, and state transitions can be
