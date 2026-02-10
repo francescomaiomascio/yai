@@ -1,97 +1,29 @@
-# ICE Foundation Boundaries
+# YAI Law Boundaries
 
-This directory defines the **canonical boundaries** between the ICE Foundation
-and all downstream ICE domains.
+This directory is normative.
 
-Boundaries formalize **where Foundation authority ends**
-and **where downstream responsibility begins**.
-
-They exist to prevent scope creep, semantic leakage,
-and implicit extension of foundational authority.
+It defines the canonical authority boundaries for YAI law.
+Only L0–L3 (+ Lx) are canonical. Any new boundary must be introduced as a new Lx-level page (or an explicit extension of an existing level), never as ad-hoc “relationship-to-*” files.
 
 ---
 
-## What a Boundary Is in ICE
+## Canonical Levels
 
-In the context of ICE, a boundary is:
+L0 Vault — physical vault layout and protocol IDs: `boundaries/L0-vault.md`
 
-- A formal separation of **conceptual authority**
-- A definition of **non-responsibility**
-- A guardrail against semantic overreach
-- A constraint on how downstream systems may interpret Foundation concepts
+L1 Kernel — state machine enforcement and trace: `boundaries/L1-kernel.md`
 
-A boundary is **not** an integration guide,
-an implementation contract, or a technical interface.
+L2 Engine — deterministic execution loop: `boundaries/L2-engine.md`
 
----
+L3 Mind — intent, routing, orchestration: `boundaries/L3-mind.md`
 
-## Role of Boundaries
-
-Boundaries serve to:
-
-- Protect the Foundation from operational concerns
-- Prevent downstream domains from redefining axioms or invariants
-- Make responsibility shifts explicit
-- Ensure long-term architectural stability
-
-Without explicit boundaries, foundational systems tend to
-absorb responsibilities they were never meant to carry.
+Lx Docs — doc authority and anti-drift rules: `boundaries/Lx-docs.md`
 
 ---
 
-## Canonical Foundation Boundaries
+## Legacy Cleanup
 
-The following boundary documents are authoritative:
+The legacy relationship-to-* and foundation-to-* boundaries were removed after L0–L3 became canonical authority.
 
-- **Foundation → Runtime**  
-  Execution, lifecycle, and enforcement
-
-- **Foundation → Engine / Infrastructure**  
-  System construction and operation
-
-- **Foundation → AI / Intelligence**  
-  Reasoning, inference, and adaptation
-
-- **Foundation → Consciousness**  
-  Long-term memory, causality, and decision continuity
-
-- **Foundation → Protocols**  
-  Communication and interaction semantics
-
-- **Foundation → Providers**  
-  External services, platforms, and dependencies
-
-- **Foundation → Observability**  
-  Measurement, inspection, and system visibility
-
-- **Foundation → Documentation**  
-  Epistemic authority versus explanatory content
-
-Each boundary is defined in its own document
-and must remain consistent with ICE axioms and structural invariants.
-
----
-
-## Canonical Status
-
-Boundary definitions are **authoritative**.
-
-Any ICE domain claiming compliance
-must demonstrate that it operates entirely
-within the limits defined by its boundary.
-
-Boundaries may evolve **only** when
-a new domain becomes formally recognized.
-
----
-
-## Scope Notes
-
-This directory does not define:
-
-- Domain internals
-- Implementation details
-- Tooling or workflows
-- Integration mechanisms
-
-Those belong exclusively to downstream repositories.
+Do not reintroduce legacy stubs or redirects.
+Use only the L0–L3 (+ Lx) pages above.

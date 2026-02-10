@@ -1,7 +1,7 @@
-# ICE Foundation — Notes
+# YAI Law — Notes
 
 This directory contains **non-authoritative, exploratory material**
-related to the ICE Foundation.
+related to the YAI Law.
 
 Notes are used to capture open questions, unresolved tensions,
 and conceptual areas that require further research or validation,
@@ -16,7 +16,7 @@ The Notes directory exists to:
 - preserve open lines of inquiry without polluting canonical documents
 - make uncertainty explicit rather than implicit
 - record conceptual risks, trade-offs, and future considerations
-- support long-term evolution of the Foundation without instability
+- support long-term evolution of the Law without instability
 
 Notes are **not binding**.
 They do not define truth, constraints, or requirements.
@@ -45,7 +45,7 @@ If something becomes authoritative, it must leave this directory.
 
 ---
 
-## Relationship to the Foundation
+## Relationship to the Law
 
 Notes may:
 

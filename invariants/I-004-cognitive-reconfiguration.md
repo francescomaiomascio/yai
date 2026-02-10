@@ -1,9 +1,9 @@
 # I-004 — Governable Cognitive Reconfiguration
 
 This document defines **governable cognitive reconfiguration**
-as a structural invariant of ICE.
+as a structural invariant of YAI.
 
-In ICE, cognitive reconfiguration is not an optimization technique,
+In YAI, cognitive reconfiguration is not an optimization technique,
 a learning behavior, or a recovery strategy.
 It is a permanent structural constraint that determines
 whether execution may continue
@@ -16,13 +16,13 @@ and intelligent behavior degrades into uncontrolled adaptation.
 
 A system that adapts implicitly
 or continues execution under invalid cognitive configurations (cognitive models)
-is not a valid instance of ICE.
+is not a valid instance of YAI.
 
 ---
 
 ## Definition
 
-In ICE, **governable cognitive reconfiguration** is the structural property that ensures:
+In YAI, **governable cognitive reconfiguration** is the structural property that ensures:
 
 - execution never proceeds under known invalid assumptions
 - cognitive invalidation results in suspension or constraint of execution
@@ -32,15 +32,16 @@ In ICE, **governable cognitive reconfiguration** is the structural property that
 
 Cognitive reconfiguration applies system-wide and continuously.
 It is not conditional and cannot be bypassed.
+Invalidation must be based on a verifiable internal signal or traceable evidence (per I-001), not model sentiment.
 
 Governable cognitive reconfiguration is a **structural invariant**:
 it must always hold, regardless of execution mode, scale, or deployment.
 
 ---
 
-## Cognitive Reconfiguration in ICE Is Not
+## Cognitive Reconfiguration in YAI Is Not
 
-Cognitive reconfiguration in ICE is **not**:
+Cognitive reconfiguration in YAI is **not**:
 
 - error handling or exception management
 - retry or fallback logic
@@ -50,9 +51,9 @@ Cognitive reconfiguration in ICE is **not**:
 - heuristic adaptation
 
 Those mechanisms may exist downstream.
-They do not define cognitive reconfiguration in ICE.
+They do not define cognitive reconfiguration in YAI.
 
-ICE cognitive reconfiguration constrains
+YAI cognitive reconfiguration constrains
 when execution is allowed,
 not how adaptation is implemented.
 
@@ -60,13 +61,14 @@ not how adaptation is implemented.
 
 ## Core Properties of the Cognitive Reconfiguration Invariant
 
-All ICE-compliant systems must satisfy the following:
+All YAI-compliant systems must satisfy the following:
 
 - **Execution subordination to cognitive validity**  
   Execution may occur only while its cognitive assumptions remain valid.
 
 - **Mandatory suspension on invalidation**  
   Detected cognitive invalidation requires suspension or constraint of execution.
+  Default action is suspension; constraint is permitted only when explicitly authorized.
 
 - **Explicit reconfiguration**  
   Cognitive changes must be represented as explicit, inspectable transitions.
@@ -86,7 +88,7 @@ All ICE-compliant systems must satisfy the following:
 
 A cognitive reconfiguration transition MUST be representable as an inspectable artifact.
 
-ICE defines the canonical concept of a **Reconfiguration Record**:
+YAI defines the canonical concept of a **Reconfiguration Record**:
 
 A Reconfiguration Record is the minimal, authoritative representation of:
 
@@ -100,6 +102,7 @@ A valid Reconfiguration Record MUST include, at minimum:
 - an explicit **invalidation statement** (what became invalid)
 - a reference to the **prior cognitive configuration**
 - a description of the **new cognitive configuration**
+- the **reconfiguration scope** (what cognitive surface is affected)
 - the **authority reference** under which reconfiguration and resumption are permitted
 - a traceability linkage to evidence (per I-001) sufficient to reconstruct the transition
 
@@ -129,7 +132,7 @@ Cognitive reconfiguration addresses failed assumptions.
 - Learning modifies knowledge over time.
 - Cognitive reconfiguration determines whether execution may continue now.
 
-Learning may occur within ICE.
+Learning may occur within YAI.
 Reconfiguration governs the validity of action.
 
 ---
@@ -173,7 +176,7 @@ If governable cognitive reconfiguration is violated:
 - long-running behavior becomes unsafe
 - adaptation becomes indistinguishable from failure
 
-Such violations invalidate ICE compliance.
+Such violations invalidate YAI compliance.
 They are structural failures, not runtime errors.
 
 ---
@@ -197,12 +200,12 @@ and must comply with the invariant defined here.
 
 This document is authoritative.
 
-All ICE components that execute actions,
+All YAI components that execute actions,
 adapt cognitive configuration,
 or evolve behavior over time
 must preserve this invariant.
 
-Any system claiming ICE compliance
+Any system claiming YAI compliance
 must be able to demonstrate
 that cognitive reconfiguration is explicit,
 authorized, and structurally enforced.

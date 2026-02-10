@@ -2,14 +2,14 @@
 
 ## Our Pledge
 
-In the context of **ICE Foundation**, participation refers to discussion,
+In the context of **YAI Law**, participation refers to discussion,
 review, critique, and clarification of foundational concepts.
 
 We, as maintainers and participants, pledge to keep all interactions
 professional, respectful, and focused on the **conceptual integrity**
 of the project.
 
-ICE Foundation is a **normative and axiomatic repository**.
+YAI Law is a **normative and axiomatic repository**.
 It exists to define constraints, not opinions.
 
 Participation is expected to reflect this purpose.
@@ -34,7 +34,7 @@ Examples of unacceptable behavior include:
 - Introducing ideological, political, or personal agendas
 - Harassment, intimidation, or hostile behavior in any form
 
-ICE Foundation is not a debate arena.
+YAI Law is not a debate arena.
 It is a **source of structural truth**.
 
 ---
@@ -55,7 +55,7 @@ not on consensus or popularity.
 
 ## Scope
 
-This Code of Conduct applies to all ICE Foundation spaces, including:
+This Code of Conduct applies to all YAI Law spaces, including:
 
 - Discussions
 - Issues
@@ -63,7 +63,7 @@ This Code of Conduct applies to all ICE Foundation spaces, including:
 - Wiki content
 - Any official communication channel associated with this repository
 
-It also applies when individuals represent ICE Foundation
+It also applies when individuals represent YAI Law
 in public technical discussions related to this repository.
 
 ---
@@ -122,4 +122,4 @@ This Code of Conduct is adapted from the
 version 2.0.
 
 It has been customized to reflect the **non-social, non-feature-driven,
-foundational nature** of the ICE Foundation repository.
+foundational nature** of the YAI Law repository.

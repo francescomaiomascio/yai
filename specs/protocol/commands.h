@@ -9,15 +9,36 @@
 typedef enum yai_command_id {
     YAI_CMD_NONE = 0,
     YAI_CMD_PING = 1,
-    YAI_CMD_NOOP = 2
+    YAI_CMD_NOOP = 2,
+    YAI_CMD_RECONFIGURE = 3
 } yai_command_id_t;
 
-#ifndef ICE_CMD_PING
-#define ICE_CMD_PING YAI_CMD_PING
+#ifndef YAI_CMD_PING
+#define YAI_CMD_PING YAI_CMD_PING
 #endif
-#ifndef ICE_CMD_NOOP
-#define ICE_CMD_NOOP YAI_CMD_NOOP
+#ifndef YAI_CMD_NOOP
+#define YAI_CMD_NOOP YAI_CMD_NOOP
 #endif
+#ifndef YAI_CMD_RECONFIGURE
+#define YAI_CMD_RECONFIGURE YAI_CMD_RECONFIGURE
+#endif
+
+typedef enum yai_command_class {
+    YAI_CMD_CLASS_INTERNAL     = 0,
+    YAI_CMD_CLASS_EXTERNAL     = 1u << 0,
+    YAI_CMD_CLASS_IRREVERSIBLE = 1u << 1
+} yai_command_class_t;
+
+static inline uint32_t yai_command_class_for(yai_command_id_t id) {
+    switch (id) {
+        case YAI_CMD_PING:
+        case YAI_CMD_NOOP:
+        case YAI_CMD_RECONFIGURE:
+            return YAI_CMD_CLASS_INTERNAL;
+        default:
+            return YAI_CMD_CLASS_EXTERNAL;
+    }
+}
 
 #pragma pack(push, 1)
 typedef struct yai_command_envelope {

@@ -1,186 +1,78 @@
-# I-001 — Traceability as a Structural Invariant
+# I-001 — Traceability
 
-## Purpose
+## Invariant Statement
 
-This document defines **traceability** as a **structural invariant** in ICE.
+In YAI, traceability is non-negotiable.
 
-Traceability is a non-negotiable property that must hold across the entire ICE
-system, independently of execution model, implementation details, tooling,
-or deployment environment.
+Every action, decision, and state transition that is considered valid must be:
 
-Traceability ensures that every action, decision, and state transition in ICE
-can be attributed, reconstructed, and reasoned about within the system’s
-conceptual framework.
+- attributable to an explicit authority source and a declared intent
+- reconstructable after execution
+- explainable within YAI’s conceptual model (authority → intent → conditions → effects)
 
-Without traceability, authority, governance, and responsibility in ICE
-become undefined.
+Traceability is not a tooling feature. It is a structural property of the system.
 
----
+A system that cannot preserve traceability cannot preserve authority, governance, or responsibility, and is therefore not a valid instance of YAI.
 
-## Definition
+## What This Invariant Constrains
 
-In ICE, **traceability** is the property by which system behavior can be:
+This invariant constrains any component or layer that can produce, authorize, trigger, or record behavior, including:
 
-- **Attributed** to an explicit source of authority **and a declared intent**
-- **Reconstructed** after execution
-- **Reasoned about** within the system’s conceptual model
+- actions (external effects, I/O, writes, emissions)
+- decisions (routing, planning, selection, scoring, resolution)
+- state transitions (kernel/engine/mind state, session state, memory state)
+- authority enforcement (permit/deny, gating outcomes, policy evaluation)
 
-Traceability applies to:
+To satisfy traceability, YAI must preserve minimum semantic evidence for every valid action or transition:
 
-- Actions
-- Decisions
-- State transitions
-- Authority enforcement
+### Attribution
 
-Traceability is not a tooling feature.
-It is a **system-level invariant**.
+- a canonical authority reference (subject/role/policy or equivalent authority source)
+- a declared intent or purpose (what was being attempted, not just what happened)
 
----
+### Authorization Conditions
 
-## Attribution Requirement
+- the gating conditions that permitted it (rules, constraints, preconditions)
+- the relevant context used to authorize (inputs to control, not just inference)
 
-In ICE, traceability includes a strict **attribution requirement**:
+### Causal Evidence
 
-- Every valid action or state transition must be referable to a **canonical authority**
-  (subject, role, policy, or equivalent authoritative source).
-- Every valid action or state transition must include a **declared purpose / intent**.
-
-Actions or transitions that lack an explicit authority reference or a declared intent
-are invalid by definition.
-
----
-
-## Semantic Evidence Requirement
-
-In ICE, traceability includes a strict **semantic evidence requirement**.
-
-For every valid action or state transition, ICE must preserve a minimum set of
-semantic evidence sufficient to reconstruct causality and justification, including:
-
-- authorization conditions (what permitted it)
 - inputs (what it acted upon)
 - outputs (what it produced)
-- effects (what changed)
-- causal linkage (why this occurred rather than an alternative)
+- effects (what changed, including external effects)
+- causal linkage (why this occurred rather than an alternative path)
 
-Semantic evidence is not a log format.
-It is the requirement that evidence remains **causally and semantically meaningful**
-within ICE’s conceptual model.
+Important: this is not a log format requirement. It is a requirement that evidence remains causally and semantically meaningful in the YAI model.
 
----
+## Violation Signal
 
-## Invariant Status
+Traceability is violated if any of the following are true:
 
-Traceability is a **structural invariant** in ICE.
+- an action or state transition exists without a traceable authority reference
+- an action or state transition exists without a declared intent
+- a transition exists but cannot be causally reconstructed (missing conditions, inputs, or effects)
+- the system can produce external effects that are not attributable and explainable
+- trace records exist but are semantically meaningless (timestamps without authority, intent, or conditions)
+- tracing is partial in a way that allows unaccountable execution
 
-As such:
+When violated:
 
-- It is **not optional**
-- It is **not configurable**
-- It is **not context-dependent**
-- It applies uniformly across all ICE components
+- authority cannot be validated
+- governance cannot be enforced
+- responsibility cannot be assigned
+- behavior cannot be reconstructed
 
-Any ICE system that violates traceability is **not a valid instance of ICE**.
+Therefore, the system is non-compliant with YAI regardless of correctness, performance, or intelligence.
 
----
+## Notes on Scope
 
-## Relationship to ICE Axioms
+This document defines what must be true, not how to implement it.
 
-Traceability derives its authority from ICE axioms.
+It does not prescribe:
 
-In particular:
+- logging pipelines, formats, or tooling
+- observability metrics
+- storage, index, or query mechanisms
+- instrumentation frameworks
 
-- Authority must be explicit and enforceable
-- State must be derived and inspectable
-- Execution must be accountable over time
-
-Traceability is the mechanism that makes these axioms
-**operationally meaningful** without reducing them to implementation details.
-
-Axioms define what is assumed to be true.  
-Traceability ensures those assumptions remain inspectable and defensible
-after execution.
-
----
-
-## Traceability vs Other Concepts
-
-### Traceability vs Logging
-
-- Logging records events.
-- Traceability preserves **causal and semantic relationships**.
-
-Logs may exist without traceability.
-Traceability cannot exist without meaning.
-
-Logging is insufficient to satisfy this invariant.
-
----
-
-### Traceability vs Observability
-
-- Observability focuses on visibility and system health.
-- Traceability focuses on **responsibility, causality, and explanation**.
-
-Observability may be partial or approximate.
-Traceability must be complete with respect to system authority and behavior.
-
----
-
-### Traceability and Authority
-
-In ICE:
-
-- Every authoritative decision must be traceable to its source.
-- Actions without traceable authority are invalid by definition.
-- Actions without declared intent are invalid by definition.
-
-Traceability is a **prerequisite** for enforceable authority and governance.
-
-A system that cannot explain *who decided what, why, and under which authority*
-cannot claim authority.
-
----
-
-## Scope Clarifications
-
-This invariant defines **what must be true**, not **how it is implemented**.
-
-This document does **not** define:
-
-- Logging systems or log formats
-- Observability tooling or metrics
-- Runtime instrumentation pipelines
-- Storage, indexing, or query mechanisms
-- Implementation-specific tracing technologies
-
-Those concerns belong to downstream projects and must comply
-with the invariant defined here.
-
----
-
-## Consequences of Violation
-
-If traceability is violated:
-
-- Authority cannot be validated
-- Governance cannot be enforced
-- Responsibility cannot be assigned
-- System behavior cannot be reconstructed
-
-Such a system cannot be considered compliant with ICE,
-regardless of correctness, performance, or intelligence.
-
----
-
-## Canonical Status
-
-This document is **canonical**.
-
-All ICE runtimes, engines, intelligence components, governance layers,
-and interfaces must be able to trace their behavior back to this invariant.
-
-Traceability is the mechanism through which ICE remains accountable,
-auditable, and trustworthy over time.
-
-No downstream project may reinterpret or bypass this invariant.
+Those belong to downstream layers, but they must not weaken or reinterpret this invariant.

@@ -1,11 +1,11 @@
-# ICE Foundation — Terminology
+# YAI Law — Terminology
 
-This directory defines the **controlled vocabulary** of the ICE Foundation.
+This directory defines the controlled vocabulary of the YAI Law.
 
 Its purpose is to prevent semantic drift, ambiguity, and reinterpretation
-of foundational concepts across repositories, projects, and time.
+of foundational concepts across repositories and over time.
 
-Terminology here is **authoritative**.
+Terminology here is authoritative.
 
 ---
 
@@ -16,10 +16,10 @@ The terminology layer establishes:
 - canonical meanings of foundational terms
 - strict boundaries between similar or overloaded concepts
 - stable definitions that downstream projects must respect
-- a shared language for reasoning about ICE
+- a shared language for reasoning about YAI
 
-This directory does **not** explain implementations or usage.
-It defines **meaning**, not behavior.
+This directory does not explain implementations or usage.
+It defines meaning and authority, not behavior.
 
 ---
 
@@ -27,12 +27,13 @@ It defines **meaning**, not behavior.
 
 All terms defined here:
 
-- override informal usage elsewhere
-- must be used consistently across ICE repositories
+- take precedence over informal usage elsewhere
+- must be used consistently across YAI repositories
 - may not be redefined by downstream projects
-- may only evolve through explicit Foundation changes
+- may only evolve through explicit Law changes
 
-If a term is ambiguous, it is considered **undefined** until clarified here.
+If a term is ambiguous, it is considered undefined until clarified here.
+Downstream projects MUST NOT invent local definitions for undefined terms.
 
 ---
 
@@ -40,7 +41,7 @@ If a term is ambiguous, it is considered **undefined** until clarified here.
 
 This directory contains:
 
-- the canonical glossary of ICE terms
+- the canonical glossary of YAI terms
 - distinctions between closely related concepts
 - disallowed or deprecated terminology
 - notes on semantic scope and constraints
@@ -53,10 +54,15 @@ Terms typically defined here include (non-exhaustive):
 - traceability
 - determinism
 - governance
-- runtime
+- intent
+- vault
+- kernel
 - engine
+- mind
 - consciousness
-- documentation authority
+- external effect boundary
+- abstract cost accountability
+- docs authority boundary (Lx)
 
 ---
 
@@ -74,12 +80,15 @@ Those belong to downstream documentation layers.
 
 ---
 
-## Relationship to Other Foundation Layers
+## Relationship to Other Law Layers
 
-- **Axioms** define what is assumed to be true.
-- **Invariants** define what must never be violated.
-- **Boundaries** define what the Foundation does not cover.
-- **Terminology** defines how these concepts are named and referenced.
+Axioms define what is assumed to be true.
+
+Invariants define what must never be violated.
+
+Boundaries define what the Law does not cover.
+
+Terminology defines how these concepts are named and referenced.
 
 Terminology does not introduce new truth.
 It stabilizes existing truth.
@@ -88,11 +97,21 @@ It stabilizes existing truth.
 
 ## Canonical Files
 
-- `glossary.md`  
-  The authoritative glossary of ICE terms.
+`glossary.md`
+The authoritative glossary of YAI terms.
 
-Additional files may be added only if they clarify meaning,
-not if they expand scope.
+Additional files MUST exist only to clarify meaning,
+not to expand scope.
+
+---
+
+## Disallowed Terminology
+
+The following terms are disallowed as Law claims unless explicitly defined here:
+
+- autonomy
+- self-authorizing behavior
+- implicit authority
 
 ---
 
@@ -105,7 +124,7 @@ Terminology is expected to be:
 - precise
 
 Changes are rare and high-impact.
-Renaming or redefining a term is considered a **breaking conceptual change**
+Renaming or redefining a term is considered a breaking conceptual change
 for the entire ecosystem.
 
 ---
@@ -116,4 +135,4 @@ If a concept cannot be named precisely,
 it cannot be reasoned about safely.
 
 Terminology is not auxiliary.
-It is a structural component of the ICE Foundation.
+It is a structural component of the YAI Law.

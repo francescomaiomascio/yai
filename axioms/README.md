@@ -1,112 +1,92 @@
-# ICE Axioms
+# YAI Axioms
 
-This document defines the axioms of ICE.
+This document defines the axioms of YAI.
 
-Axioms are the foundational assumptions upon which the entire ICE system is built.
-They are taken as true by definition and are not derived from execution, implementation, or empirical validation.
+Axioms are the highest layer of authority in YAI: they constrain meaning, not implementation.
+All downstream documents (invariants, boundaries, specs, formal models) must be compatible with these axioms.
 
-All other concepts in ICE — including structural invariants, runtime behavior, governance, intelligence, and tooling — must derive from or comply with these axioms.
+If an axiom is violated, the system is not a valid instance of YAI.
 
-If an axiom is violated, the system is no longer considered a valid instance of ICE.
+## What an Axiom Is in YAI
 
----
+In YAI, an axiom is:
 
-## What an Axiom Is in ICE
-
-In the context of ICE, an axiom is:
-
-- A foundational assumption that is not derived from lower-level mechanisms
-- A statement taken as true by the system
-- A constraint on meaning, not an implementation rule
+- A foundational assumption taken as true by definition
+- A constraint on meaning and admissible behavior
 - A source of authority for all downstream concepts
+- Independent from execution, implementation, and empirical observation
 
-An axiom is **not** a design preference, a best practice, or an optimization strategy.
+An axiom is not a design preference, a best practice, or an optimization strategy.
 
----
+## Properties
 
-## Properties of ICE Axioms
+All axioms are:
 
-All ICE axioms share the following properties:
+- Non-configurable: cannot be enabled, disabled, or tuned
+- Context-independent: hold across environments and deployments
+- Pre-execution: assumed before any runtime begins
+- Authoritative: cannot be overridden by any component or document
+- Non-derivable: not inferred from behavior or data
 
-- **Non-configurable**  
-  Axioms cannot be enabled, disabled, or tuned.
+## Relationship to the Rest of YAI
 
-- **Context-independent**  
-  Axioms hold regardless of deployment, environment, or use case.
+Axioms constrain all authority layers:
 
-- **Pre-execution**  
-  Axioms are assumed before any execution occurs.
+- L0 (Vault): data layout and state representation must not contradict axioms
+- L1 (Kernel): enforcement and state transitions must preserve axioms
+- L2 (Engine): execution must remain within the axiom-bounded space
+- L3 (Mind): routing and planning must not create meanings forbidden by axioms
 
-- **Authoritative**  
-  No downstream component may override or reinterpret an axiom.
+## Axioms vs Structural Invariants
 
-- **Non-derivable**  
-  Axioms are not inferred from behavior or data.
+Axioms define what is assumed to be true.
 
----
-
-## Axioms vs Other Concepts
-
-### Axioms vs Structural Invariants
-
-- Axioms define what is assumed to be true.
-- Structural invariants define what must never be violated during execution.
+Structural invariants define what must never be violated during execution.
 
 Invariants derive their meaning from axioms.
 Axioms do not depend on invariants.
 
----
+## Axioms vs Design Principles
 
-### Axioms vs Design Principles
+Design principles guide how systems are built.
 
-- Design principles guide how systems are built.
-- Axioms constrain what systems are allowed to mean.
+Axioms constrain what systems are allowed to mean.
 
 Principles may change.
 Axioms do not.
 
----
+## Axioms vs Implementation
 
-### Axioms vs Implementation
+Implementations realize behavior.
 
-- Implementations realize behavior.
-- Axioms constrain the space of valid implementations.
+Axioms constrain the space of valid implementations.
 
 An implementation that contradicts an axiom is invalid by definition.
 
----
-
 ## Canonical Status
 
-The axioms defined in this repository are canonical.
+The axioms in this repository are canonical.
+Any ambiguity here propagates inconsistency across the ecosystem.
 
-They represent the highest level of conceptual authority in ICE.
-All repositories, projects, and specifications must be able to trace their assumptions back to these axioms.
+Downstream documents MUST declare which axioms they derive from (e.g. Derives from: A-001, A-002).
 
-Any ambiguity at this level propagates inconsistency to the entire system.
-
----
-
-## Evolution and Stability
+## Evolution
 
 Axioms are expected to be:
 
 - Rarely changed
-- Explicitly versioned if ever modified
-- Treated as breaking changes to the entire ecosystem
+- Explicitly versioned if modified
+- Treated as ecosystem-breaking changes
 
-Changes to axioms require deliberate review and system-wide alignment.
+Changes require deliberate review and system-wide alignment.
 
----
-
-## Scope Notes
+## Scope
 
 This document does not define:
 
 - Structural invariants
 - Runtime semantics
-- Execution models
 - Governance mechanisms
 - Tooling or developer workflows
 
-Those concepts are defined in downstream documents and projects and must remain consistent with the axioms defined here.
+Those concepts are defined downstream and must remain consistent with these axioms.

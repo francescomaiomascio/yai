@@ -1,18 +1,18 @@
-# ICE Foundation — Status
+# YAI Law — Status
 
-This directory defines the **epistemic and research status** of the ICE Foundation.
+This directory defines the **epistemic and research status** of the YAI Law.
 
 It exists to make explicit **what kind of artifact this repository is**,  
 what guarantees it provides, and what it deliberately does **not** provide.
 
 The purpose is to prevent misinterpretation, misuse, or accidental
-treatment of the Foundation as a production system or executable framework.
+treatment of the Law as a production system or executable framework.
 
 ---
 
 ## Epistemic Status
 
-The ICE Foundation is a **conceptual authority layer**.
+The YAI Law is a **conceptual authority layer**.
 
 It defines:
 - axioms
@@ -33,7 +33,7 @@ Truth in this repository is **conceptual**, not empirical.
 
 ## Research Status
 
-ICE Foundation is **research-grade**.
+YAI Law is **research-grade**.
 
 This means:
 - concepts are intentionally minimal and stable
@@ -41,7 +41,7 @@ This means:
 - correctness is evaluated conceptually, not experimentally
 - implementation feedback may inform future revisions, but never override axioms
 
-The Foundation is not optimized for speed of delivery.
+The Law is not optimized for speed of delivery.
 It is optimized for **long-term coherence**.
 
 ---
@@ -59,13 +59,13 @@ The following guarantees apply:
 
 - **Breaking change awareness**  
   Any modification at this level is considered a breaking change
-  for the entire ICE ecosystem.
+  for the entire YAI ecosystem.
 
 ---
 
 ## Non-Guarantees
 
-The ICE Foundation does **not** guarantee:
+The YAI Law does **not** guarantee:
 
 - readiness for production use
 - completeness of downstream specifications
@@ -78,7 +78,7 @@ Stability here means **conceptual soundness**, not finality.
 
 ## Relationship to Downstream Projects
 
-Downstream ICE projects may:
+Downstream YAI projects may:
 - evolve rapidly
 - experiment freely
 - change architecture or implementation
@@ -88,15 +88,15 @@ They may **not**:
 - violate structural invariants
 - reinterpret foundational terminology
 
-If a downstream project conflicts with the Foundation,
+If a downstream project conflicts with the Law,
 the downstream project is incorrect by definition.
 
 ---
 
 ## Canonical Role
 
-This directory, together with the rest of the ICE Foundation repository,
-defines the **highest epistemic layer** of the ICE system.
+This directory, together with the rest of the YAI Law repository,
+defines the **highest epistemic layer** of the YAI system.
 
 Nothing above it exists.
 Everything below it depends on it.

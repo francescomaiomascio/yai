@@ -1,9 +1,9 @@
-# ICE Foundation — Research Status
+# YAI Law — Research Status
 
-This document defines the **research status model** of the ICE Foundation.
+This document defines the **research status model** of the YAI Law.
 
 Its purpose is to make explicit **what is stable**, **what is provisional**, and
-**what is still under exploration** within the Foundation, without weakening
+**what is still under exploration** within the Law, without weakening
 its conceptual authority.
 
 Research status is about **epistemic maturity**, not implementation readiness.
@@ -19,14 +19,14 @@ The research status layer exists to:
 - allow rigorous research without polluting canonical truth
 - preserve intellectual honesty about what is settled vs evolving
 
-The Foundation may contain research.
+The Law may contain research.
 It must never confuse research with truth.
 
 ---
 
 ## Status Categories
 
-All Foundation content implicitly or explicitly falls into one of the following
+All Law content implicitly or explicitly falls into one of the following
 epistemic states.
 
 ### Stable
@@ -35,7 +35,7 @@ Content that is:
 
 - conceptually closed
 - internally consistent
-- non-contradictory with other Foundation elements
+- non-contradictory with other Law elements
 - considered authoritative
 
 Examples:
@@ -80,7 +80,7 @@ Examples:
 - alternative models
 - future domain hypotheses
 
-Research content has **no authority** over ICE behavior.
+Research content has **no authority** over YAI behavior.
 
 ---
 
@@ -103,7 +103,7 @@ Those concerns belong to downstream planning and execution layers.
 - Project boards may use status as a coordination signal
 - No issue may be marked *Done* if it depends on unresolved research
 
-Research may inform the Foundation.
+Research may inform the Law.
 It may not redefine it.
 
 ---
@@ -123,7 +123,7 @@ Promoting content from *Research* to *Stabilizing* or *Stable* is a
 
 ## Final Note
 
-The ICE Foundation is designed to last.
+The YAI Law is designed to last.
 
 Making uncertainty explicit is not a weakness.
 It is a prerequisite for building systems that can be trusted over time.

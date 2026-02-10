@@ -1,11 +1,11 @@
-# ICE Foundation — Glossary
+# YAI Law — Glossary
 
-This glossary defines the **controlled terminology** of the ICE Foundation.
+This glossary defines the **controlled terminology** of the YAI Law.
 
 Its purpose is to prevent semantic drift, ambiguity, and reinterpretation
-of foundational concepts across the ICE ecosystem.
+of foundational concepts across the YAI ecosystem.
 
-All terms defined here are **authoritative** within the scope of the Foundation.
+All terms defined here are **authoritative** within the scope of the Law.
 Downstream projects may extend vocabulary, but must not redefine these terms.
 
 ---
@@ -19,7 +19,7 @@ The glossary exists to:
 - provide a shared semantic reference for reasoning and documentation
 - separate *terminology* from *implementation language*
 
-The Foundation governs meaning.
+The Law governs meaning.
 Implementations consume meaning.
 
 ---
@@ -30,7 +30,7 @@ This glossary includes:
 
 - core conceptual terms used in axioms, invariants, and boundaries
 - terms that define authority, execution, state, and governance
-- epistemic distinctions critical to ICE correctness
+- epistemic distinctions critical to YAI correctness
 
 It intentionally excludes:
 
@@ -48,7 +48,7 @@ It intentionally excludes:
 A foundational assumption taken as true by definition and not derived from
 lower-level mechanisms.
 
-Axioms constrain what ICE is allowed to mean.
+Axioms constrain what YAI is allowed to mean.
 They are non-configurable, non-derivable, and authoritative.
 
 ---
@@ -56,27 +56,27 @@ They are non-configurable, non-derivable, and authoritative.
 ### Structural Invariant
 
 A non-negotiable constraint that must always hold for a system to be considered
-a valid instance of ICE.
+a valid instance of YAI.
 
 Structural invariants derive authority from axioms and make them enforceable
 over time.
 
 ---
 
-### Foundation
+### Law
 
-The conceptual layer of ICE that defines axioms, structural invariants,
+The conceptual layer of YAI that defines axioms, structural invariants,
 epistemic boundaries, and authoritative meaning.
 
-The Foundation defines truth, not behavior.
+The Law defines meaning and authority, not behavior.
 
 ---
 
 ### Execution
 
-The act of carrying out actions, transitions, or effects within a system.
+The act of causing state transitions within the system.
 
-In ICE, execution is constrained by axioms and invariants but never defines them.
+Execution implies consequence and accountability.
 
 ---
 
@@ -85,14 +85,22 @@ In ICE, execution is constrained by axioms and invariants but never defines them
 The domain responsible for executing actions, managing lifecycle, and enforcing
 constraints during operation.
 
-The Runtime implements behavior within limits defined by the Foundation.
+The Runtime implements behavior within limits defined by the Law.
+
+---
+
+### Intent
+
+A proposed, declarative request for execution (command candidates).
+
+Intent is not authority and cannot cause execution without control.
 
 ---
 
 ### Authority
 
 The property by which actions, decisions, or state transitions are considered
-valid and enforceable within ICE.
+valid and enforceable within YAI.
 
 Authority must be explicit, traceable, and never inferred implicitly.
 
@@ -122,9 +130,41 @@ State is not a cause, configuration, or source of authority.
 
 ---
 
+### Vault
+
+A bounded, shared-memory execution surface used for inter-component coordination.
+
+The Vault is the canonical L0 contract surface.
+
+---
+
+### Internal Transition
+
+A valid transition whose effects remain confined to YAI-controlled state.
+
+---
+
+### External-Effect Transition
+
+A valid transition that produces effects outside YAI-controlled state that are irreversible or not reliably reversible.
+
+---
+
+### External Effect Boundary
+
+The predicate separating internal transitions from transitions that produce irreversible or non-YAI-controlled effects.
+
+---
+
+### Abstract Cost Accountability
+
+The requirement that every valid transition is attachable to abstract cost attributes within a declared metric space.
+
+---
+
 ### Cognitive Adaptability
 
-The foundational capability by which an ICE system explicitly suspends execution
+The foundational capability by which a YAI system explicitly suspends execution
 and reorganizes its cognitive configuration when observed reality invalidates current assumptions.
 
 Cognitive adaptability does not imply learning, optimization, or autonomy.
@@ -202,18 +242,26 @@ Governance is structural, not procedural.
 
 ---
 
+### Mind
+
+The domain responsible for intent formation, routing, and orchestration under L3 constraints.
+
+Mind proposes; it does not execute.
+
+---
+
 ### Consciousness
 
 The domain responsible for long-term memory, historical continuity,
 and retrospective reasoning.
 
-Consciousness preserves context over time but does not define truth or authority.
+Consciousness may inform inference but does not grant authority.
 
 ---
 
 ### Boundary
 
-An explicit conceptual separation defining what the Foundation does and does not
+An explicit conceptual separation defining what the Law does and does not
 govern with respect to other domains.
 
 Boundaries prevent semantic overreach.
@@ -235,4 +283,4 @@ Terminology changes are **conceptual changes**.
 Language shapes architecture.
 
 A stable system requires stable meaning.
-This glossary exists to ensure ICE remains coherent as it evolves.
+This glossary exists to ensure YAI remains coherent as it evolves.

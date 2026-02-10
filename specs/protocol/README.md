@@ -1,6 +1,6 @@
 # Protocol Spec (Source of Truth)
 
-This directory is the authoritative definition of ICE wire formats and IDs.
+This directory is the authoritative definition of YAI wire formats and IDs.
 
 Rules:
 - **No runtime code** lives here.

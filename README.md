@@ -1,111 +1,32 @@
-# ICE Foundation
-## Axiomatic Authority of the ICE Ecosystem
+# yai-law
 
-ICE Foundation defines the **axiomatic and invariant layer** of ICE.
+YAI law is the authority repo for the YAI system. It defines the axioms,
+invariants, boundaries, formal models, and protocol specs that all downstream
+repos must obey.
 
-It establishes the **non-negotiable conditions** under which any ICE-based system
-is allowed to exist, execute, adapt, or evolve.
+## What Lives Here
 
-ICE Foundation does not describe systems.  
-It defines **when systems are valid**.
+- `axioms/` — non-negotiable truths
+- `invariants/` — structural rules that must never break
+- `boundaries/` — L0–L3 authority levels
+- `specs/protocol/` — wire IDs and ABI specs (source of truth)
+- `formal/YAI_KERNEL.tla`, `formal/YAI_KERNEL.cfg` — formal kernel model
 
-Everything built in ICE — runtimes, engines, intelligence layers,
-interfaces, orchestration, products —
-**operates under the constraints defined here**.
+## Canonical Boundary Levels
 
-If something violates this layer, it is not “experimental”.  
-It is **wrong by definition**.
+- L0 Vault: `boundaries/L0-vault.md`
+- L1 Kernel: `boundaries/L1-kernel.md`
+- L2 Engine: `boundaries/L2-engine.md`
+- L3 Mind: `boundaries/L3-mind.md`
+- Lx Docs: `boundaries/Lx-docs.md`
 
----
+## No Tooling Here
 
-## What ICE Foundation Is
+This repo contains no build system, no site generator, and no runtime code.
+It is a law and spec authority repo only.
 
-ICE Foundation is:
+## Quick Links
 
-- an **axiomatic system**
-- a **source of structural truth**
-- a **hard constraint layer**
-- the **root of legitimacy** in ICE
-
-It answers one question only:
-
-> What must *always* be true  
-> for intelligent systems to remain governable, inspectable,  
-> and meaningful over time?
-
-If you are not asking this question,  
-you do not need ICE.
-
----
-
-## What ICE Foundation Is Not
-
-ICE Foundation is **not**:
-
-- a runtime
-- an engine
-- a framework
-- an API
-- a reference implementation
-- a specification of behavior
-- a set of best practices
-
-It contains **no executable code by design**.
-
-Execution without axioms scales chaos.
-ICE refuses that premise.
-
----
-
-## Scope of Authority
-
-ICE Foundation defines:
-
-- **Axioms**  
-  Truths that are assumed, not negotiated.
-
-- **Structural Invariants**  
-  Properties that must never be violated.
-
-- **Conceptual Boundaries**  
-  Explicit limits of responsibility between domains.
-
-ICE Foundation defines **what is allowed to be true**,  
-not how truth is enforced.
-
----
-
-## Position in the ICE Ecosystem
-
-Authority flows in one direction only:
-
-**Foundation → Runtime → Engine → Intelligence → Interfaces**
-
-- Runtime enforces invariants
-- Engines operate inside constraints
-- Intelligence proposes intent without authority
-- Interfaces expose behavior without redefining meaning
-
-No downstream layer may reinterpret this hierarchy.
-
----
-
-## Canonical Status
-
-This repository is **normative**.
-
-If documentation, implementation, or behavior
-contradicts ICE Foundation,
-**the contradiction is an error**.
-
-ICE compliance starts here.
-There is no shortcut.
-
----
-
-## Notes
-
-ICE Foundation evolves slowly.
-
-That is not conservatism.  
-It is how you prevent intelligent systems from rotting.
+- Protocol authority: `specs/protocol/README.md`
+- Kernel model: `formal/YAI_KERNEL.tla`, `formal/YAI_KERNEL.cfg`
+- Boundaries index: `boundaries/README.md`

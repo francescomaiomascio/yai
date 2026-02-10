@@ -1,8 +1,8 @@
-# Security Policy — ICE Foundation
+# Security Policy — YAI Law
 
 ## Purpose
 
-This document defines the **security posture** of the ICE Foundation repository.
+This document defines the **security posture** of the YAI Law repository.
 
 Its purpose is to explicitly establish:
 
@@ -18,7 +18,7 @@ and improper escalation of concerns that do not belong to this layer.
 
 ## Repository Scope
 
-ICE Foundation contains the **axiomatic and authoritative layer** of the ICE ecosystem.
+YAI Law contains the **axiomatic and authoritative layer** of the YAI ecosystem.
 
 It includes exclusively:
 
@@ -32,7 +32,7 @@ It explicitly does **not** include:
 
 - executable code
 - runtime components
-- services or daemons
+- svcs or daemons
 - APIs, protocols, or interfaces
 - infrastructure definitions
 - deployment or operational artifacts
@@ -43,7 +43,7 @@ As a result, this repository exposes **no operational, network, or execution-lev
 
 ## Supported Versions
 
-ICE Foundation does not define “supported versions” in an operational or
+YAI Law does not define “supported versions” in an operational or
 security-maintenance sense.
 
 Security relevance in this repository applies only to:
@@ -60,7 +60,7 @@ even when they claim compliance.
 
 ## Definition of a Security Issue
 
-Within the scope of ICE Foundation, a **security issue** is any change,
+Within the scope of YAI Law, a **security issue** is any change,
 omission, or inconsistency that compromises the integrity of the foundation.
 
 This includes, but is not limited to:
@@ -109,17 +109,17 @@ There is **no private disclosure channel** for this repository.
 
 All reports, discussions, and resolutions are handled **publicly and transparently**.
 
-ICE Foundation contains no sensitive operational information and therefore
+YAI Law contains no sensitive operational information and therefore
 does not require embargoed disclosure or coordinated vulnerability handling.
 
 ---
 
 ## Authority Definition
 
-For ICE Foundation, **security is defined as**:
+For YAI Law, **security is defined as**:
 
 > The preservation of conceptual integrity, semantic clarity,
-> and explicit authority boundaries across the ICE system.
+> and explicit authority boundaries across the YAI system.
 
 Any change that weakens these properties is considered a security risk,
 even in the absence of executable code.
@@ -128,7 +128,7 @@ even in the absence of executable code.
 
 ## Canonical Status
 
-This policy is authoritative for ICE Foundation.
+This policy is authoritative for YAI Law.
 
 Downstream repositories must define their own security policies,
 appropriate to their execution and operational scope,

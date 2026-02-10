@@ -1,180 +1,116 @@
 # I-003 — Governance as a Structural Invariant
 
-## Purpose
+## Invariant Statement
 
-Define **governance** as a **structural invariant** of ICE.
+In YAI, governance is a structural invariant: the system must remain permanently constrained such that:
 
-This issue establishes governance as a non-negotiable constraint that must
-be structurally present from the beginning of system design and preserved
-throughout system evolution.
+- authority is exercised only within explicit bounds
+- execution remains accountable over time
+- violations are detectable and consequential
 
-In ICE, governance is not a policy layer, an organizational concern,
-or a human oversight mechanism added after complexity emerges.
+Governance is not a process layered onto complexity.
+It is the condition that prevents authority, execution, and cognition from drifting into arbitrariness.
 
-Governance is a permanent structural property that constrains
-authority, execution, and responsibility over time.
+A system that cannot maintain governance structurally is not a valid instance of YAI.
 
-A system that cannot enforce governance structurally
-is **not a valid instance of ICE**.
+## Definitions
 
----
+### Governance
 
-## Scope
+The structural property that ensures authority, execution, and responsibility remain enforceable continuously and non-bypassably over time.
 
-This issue defines:
+Governance implies that the system has:
 
-- What governance means in the context of ICE
-- Why governance is a structural invariant
-- The relationship between governance, authority, and execution
-- Why governance cannot be retrofitted
-- How governance applies to long-running systems
+- an explicit authority model (who or what can authorize)
+- an enforcement boundary (where authorization is checked)
+- a consequence model (what happens on violation)
 
-This issue defines **what must be true**, not **how it is implemented**.
+Governance is not policy. Governance is the existence of enforceable constraints.
 
----
+## Governance in YAI Is Not
 
-## Out of Scope
+Governance in YAI does not mean:
 
-This issue does NOT define:
+- human approval workflows
+- compliance checklists
+- post-hoc audits
+- trust-based supervision
+- configurable rules as the source of truth
 
-- Governance tooling or dashboards
-- Policy engines or rule languages
-- Access-control systems
-- Human approval workflows
-- Organizational or legal governance models
-- Runtime enforcement mechanisms
-
-Those concerns belong to downstream projects and must comply with
-the invariant defined here.
-
----
-
-## Definitions / Assertions
-
-- **Governance** in ICE is the structural property that ensures:
-  - authority is exercised only within defined bounds
-  - execution remains accountable over time
-  - violations are detectable and consequential
-- Governance is **system-wide**, **continuous**, and **non-bypassable**.
-- Governance is **not optional**, **not configurable**, and **not contextual**.
-- Governance constrains *what may happen*, not *how it is implemented*.
-- Violating governance invalidates ICE compliance.
-
----
-
-## Governance in ICE Is Not
-
-Governance in ICE does **not** mean:
-
-- Human-in-the-loop approval
-- Compliance checklists
-- External audits
-- Policy configuration
-- Trust-based supervision
-- Post-hoc review of behavior
-
-ICE may integrate such mechanisms downstream.  
+YAI may integrate such mechanisms downstream.
 They do not define governance.
 
----
+## Required Structural Constraints
 
-## Structural Properties
+A YAI-compliant system must satisfy all of the following:
 
-All ICE-compliant systems must satisfy:
+### Authority-bound execution
 
-- **Authority-bound execution**  
-  Every execution must occur under explicit, traceable authority.
+No state transition or external effect may occur without explicit, traceable authority.
+(See A-002 and I-001.)
 
-- **Non-bypassability**  
-  No component may act outside governance constraints.
+### Non-bypassability
 
-- **Continuity over time**  
-  Governance must hold across long-running execution and system evolution.
+There must exist no execution path — intentional or accidental — by which a component can produce effects outside governance constraints.
+A governance model that can be bypassed is not governance.
 
-- **Invariant enforcement**  
-  Violations must be detectable and structurally meaningful.
+### Continuity over time
 
-- **Implementation independence**  
-  Governance constraints apply regardless of architecture or technology.
+Governance must hold across:
 
----
+- long-running execution
+- reconfiguration and upgrades
+- restarts and recovery
+- partial failures and degraded modes
+
+Governance is not present at boot; it must remain enforceable.
+
+### Detectability of violations
+
+If governance is violated (attempted or achieved), the system must be able to detect that the invariant has been broken in a way that is structurally meaningful (not best effort).
+
+### Consequentiality of violations
+
+Violations must have defined consequences that preserve system integrity (e.g., denial, suspension, escalation, containment).
+A system that can observe violations but cannot respond is not governed.
+
+### Implementation independence
+
+The invariant constrains all valid implementations.
+Tooling, UI, and workflow are not substitutes for governance.
 
 ## Relationship to Other Invariants
 
 ### Governance and Traceability (I-001)
 
-Governance requires traceability.
+Governance requires traceability to validate authority and assign responsibility. Without traceability, governance cannot be proven.
 
-Without traceability:
-- authority cannot be validated
-- responsibility cannot be assigned
-- violations cannot be proven
+### Governance and Determinism/Reproducibility (I-002)
 
-Traceability makes governance enforceable.
+Governance requires deterministic reconstruction to enforce responsibility over time and to defend authority decisions.
 
----
+## Violation Signal
 
-### Governance and Determinism (I-002)
+This invariant is violated if any of the following occur:
 
-Governance requires determinism and reproducibility.
+- execution occurs without explicit authority
+- a component can bypass enforcement boundaries
+- violations cannot be detected or cannot be made consequential
+- governance holds only in normal operation but collapses under restart, failure, or upgrade
+- governance depends on trust, convention, or external supervision as the primary control
 
-Without deterministic guarantees:
-- authority decisions cannot be reconstructed
-- enforcement cannot persist over time
-- responsibility becomes unverifiable
+Violations are structural: the system may continue running, but it is no longer YAI-compliant.
 
-Determinism enables governance to remain stable and defensible.
+## Scope Notes
 
----
+This document defines what must be true, not how it is implemented.
 
-## Consequences of Violation
+It does not prescribe:
 
-If governance is violated:
+- policy languages or rule engines
+- ACL tooling or dashboards
+- human workflows
+- access control products
+- runtime mechanisms
 
-- authority becomes arbitrary
-- responsibility cannot be enforced
-- long-running behavior becomes unsafe
-- intelligent actions become unaccountable
-
-Violations are **structural**, not operational errors.
-
-A system may continue running,
-but it is no longer ICE-compliant.
-
----
-
-## Canonical Sub-Issues
-
-The following sub-issues represent the internal structure of this topic and
-will be opened only after this issue is stabilized:
-
-- I-003.1 — Governance versus policy and configuration
-- I-003.2 — Governance and non-bypassable authority
-- I-003.3 — Governance over long-running systems
-- I-003.4 — Governance and violation consequences
-- I-003.5 — Governance as a system-wide constraint
-
----
-
-## Expected Outcome
-
-When this issue is complete:
-
-- Governance is unambiguously defined as a structural invariant
-- Authority, execution, and responsibility remain permanently constrained
-- Long-running systems remain enforceable over time
-- Downstream projects cannot reinterpret governance informally
-
----
-
-## Notes
-
-Governance is not something ICE *does*.
-
-It is something ICE *cannot escape*.
-
-It is the invariant that prevents authority, execution,
-and intelligence from drifting into arbitrariness.
-
-Any ICE system that violates governance
-violates the foundation itself.
+Downstream projects may implement these, but they must not weaken the invariant.

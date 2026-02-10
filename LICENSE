@@ -1,21 +1,11 @@
-ICE Foundation — Axiomatic System Design
+YAI Law — Terms
 
 Copyright (c) Francesco Maiomascio
 
-This work is licensed under the
-Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International License.
+This work is provided under Creative Commons Attribution–NonCommercial–NoDerivatives 4.0
+International terms (CC BY-NC-ND 4.0).
 
-You are free to:
-- Share — copy and redistribute the material in any medium or format
-- Cite — reference this work in academic or industrial contexts
+You may share and cite with attribution.
+No commercial use. No modified distribution.
 
-Under the following terms:
-- Attribution — You must give appropriate credit
-- NonCommercial — You may not use the material for commercial purposes
-- NoDerivatives — You may not distribute modified versions of this work
-
-This repository defines foundational architectural principles.
-It is not a software library and contains no executable code.
-
-Full license text:
-https://creativecommons.org/licenses/by-nc-nd/4.0/
+This repo defines architectural law and formal specs only.

@@ -1,95 +1,91 @@
-# Execution as a First Principle
+# A-001 — Execution
 
-This document defines **execution** as a foundational axiom of ICE.
+This document defines execution as a foundational axiom of YAI.
 
-Execution is the primary condition for the existence of an ICE system.
+Execution is the primary condition for the existence of a YAI system.
 All other concepts — intelligence, inference, planning, control, governance — derive their meaning from execution and are constrained by it.
 
-An ICE system that does not execute is not an ICE system.
-
----
+A YAI system that does not execute is not a YAI system.
 
 ## Definition of Execution
 
-In ICE, **execution** is defined as:
+In YAI, execution is defined as:
 
-> The act of causing state transitions within the system.
+A committed, observable state transition in the system’s authoritative state.
 
-Execution is an observable fact.
-It produces effects, alters state, and establishes responsibility.
+Execution is a fact.
+It produces effects, alters authoritative state, and establishes responsibility.
 
 Execution is not a theoretical construct, a simulation, or a potential action.
-It is something that *happens*.
+It is something that happens and can be audited.
 
----
+## Execution Requires an Authoritative State
+
+Execution is only defined relative to an authoritative state model.
+
+A transition that exists only in local memory, speculation, or transient computation
+is not execution in the YAI sense.
+
+If a transition cannot be observed and attributed through the system’s authoritative substrate
+(e.g. vault/state machine/trace), it is not a valid execution event.
 
 ## Execution Is Not Computation
 
-Computation refers to the transformation of inputs into outputs according to formal rules.
+Computation refers to transforming inputs into outputs according to formal rules.
 
-Execution, in ICE:
+Execution, in YAI:
 
 - may involve computation
 - but is not reducible to it
 
-A computation that does not cause state transitions is not execution.
+A computation that does not produce a committed state transition is not execution.
 Execution implies consequence.
-
----
 
 ## Execution Is Not Inference
 
-Inference produces propositions, predictions, or intent.
-It does not produce action.
+Inference produces propositions, predictions, plans, or intent.
+It does not produce committed action.
 
-In ICE:
+In YAI:
 
 - inference may suggest
-- execution decides
+- execution commits
 
 Inference does not authorize execution.
 Execution constrains inference.
 
-Any system in which inference alone is sufficient to cause execution is invalid by definition.
-
----
+Any system where inference alone can directly cause execution is invalid by definition.
 
 ## Execution Precedes Intelligence
 
-Intelligence in ICE is not a prerequisite for execution.
+Intelligence in YAI is not a prerequisite for execution.
 
 Instead:
 
 - execution defines the space in which intelligence may operate
 - intelligence is evaluated by how it behaves under execution constraints
 
-Execution exists without intelligence.
-Intelligence cannot exist meaningfully without execution.
+Execution can exist without intelligence.
+Intelligence cannot exist meaningfully without execution constraints.
 
----
+## Execution Must Be Observable and Accountable
 
-## Execution as an Observable Fact
-
-Execution in ICE must be:
+Execution in YAI MUST be:
 
 - observable
 - inspectable
-- accountable
+- attributable
 
-If an action cannot be traced to an execution context, it is considered invalid.
+If an effect cannot be traced to an execution context, it is invalid by default.
 
 Execution establishes responsibility.
 Without execution, responsibility cannot exist.
 
----
-
 ## Canonical Status
 
-This document defines a canonical axiom of ICE.
+This document defines a canonical axiom of YAI.
 
-Any conceptual model or system interpretation that contradicts the principles defined here is incompatible with ICE by definition.
-
----
+Any conceptual model or system interpretation that contradicts the principles defined here is incompatible with YAI by definition.
 
 ## Scope Notes
 
@@ -101,4 +97,4 @@ This document does not define:
 - orchestration strategies
 - enforcement logic
 
-Those are addressed in downstream projects and must remain semantically consistent with this axiom.
+Those are defined downstream and must remain semantically consistent with this axiom.

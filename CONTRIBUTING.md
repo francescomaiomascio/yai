@@ -1,8 +1,8 @@
-# Contributing to ICE Foundation
+# Contributing to YAI Law
 
 ## Purpose of This Repository
 
-ICE Foundation is a **normative repository**.
+YAI Law is a **normative repository**.
 
 It defines:
 - axioms
@@ -18,7 +18,7 @@ correctness, or coherence of the foundational material.
 
 ## What “Contributing” Means Here
 
-Contributing to ICE Foundation means:
+Contributing to YAI Law means:
 
 - Clarifying existing axioms, invariants, or boundaries
 - Correcting inconsistencies, ambiguities, or imprecision
@@ -43,7 +43,7 @@ The following are **out of scope** and will be closed without discussion:
 - “What if” explorations without formal justification
 
 If a topic requires execution semantics,
-it does not belong in ICE Foundation.
+it does not belong in YAI Law.
 
 ---
 
@@ -98,7 +98,7 @@ will be rejected.
 
 ## Authority and Review
 
-ICE Foundation is **not consensus-driven**.
+YAI Law is **not consensus-driven**.
 
 Final authority rests with the maintainers,
 who are responsible for preserving:
@@ -108,7 +108,7 @@ who are responsible for preserving:
 - non-negotiable constraints
 
 Rejection of a contribution is not a judgment of intent,
-but of **fit with the Foundation’s role**.
+but of **fit with the Law’s role**.
 
 ---
 
@@ -129,7 +129,7 @@ If terminology is ambiguous, the contribution is invalid.
 All participation is governed by the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
-ICE Foundation prioritizes:
+YAI Law prioritizes:
 - professional conduct
 - technical rigor
 - respect for scope and authority
@@ -138,10 +138,10 @@ ICE Foundation prioritizes:
 
 ## Final Note
 
-ICE Foundation evolves **slowly and deliberately**.
+YAI Law evolves **slowly and deliberately**.
 
 That is intentional.
 
 If your contribution requires speed, iteration,
 or experimentation, it likely belongs
-in a downstream ICE repository — not here.
+in a downstream YAI repository — not here.

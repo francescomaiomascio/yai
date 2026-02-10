@@ -1,8 +1,8 @@
 # I-002 — Determinism and Reproducibility
 
-This document defines determinism and reproducibility as structural invariants of ICE.
+This document defines determinism and reproducibility as structural invariants of YAI.
 
-Determinism in ICE is not about predictability or simplicity.
+Determinism in YAI is not about predictability or simplicity.
 It is about ensuring that system behavior can be reproduced, inspected,
 and reasoned about within defined boundaries.
 
@@ -10,13 +10,13 @@ Without determinism, traceability collapses.
 Without reproducibility, authority and governance cannot be enforced.
 
 A system that cannot be deterministically reasoned about
-is not a valid instance of ICE.
+is not a valid instance of YAI.
 
 ---
 
 ## Definition
 
-In ICE, **determinism** is the property by which system behavior,
+In YAI, **determinism** is the property by which system behavior,
 given the same initial conditions and constraints,
 produces equivalent outcomes within a defined execution scope.
 
@@ -28,9 +28,9 @@ they must always hold, regardless of implementation, scale, or context.
 
 ---
 
-## Determinism in ICE Is Not
+## Determinism in YAI Is Not
 
-Determinism in ICE does **not** mean:
+Determinism in YAI does **not** mean:
 
 - Global predictability
 - Absence of randomness
@@ -38,14 +38,14 @@ Determinism in ICE does **not** mean:
 - Identical low-level execution traces
 - Suppression of probabilistic components
 
-ICE explicitly allows complexity.
+YAI explicitly allows complexity.
 It does not allow ambiguity.
 
 ---
 
 ## Properties of the Determinism Invariant
 
-All ICE-compliant systems must satisfy the following:
+All YAI-compliant systems must satisfy the following:
 
 - **Scope-defined determinism**  
   Determinism is defined relative to an explicit execution scope.
@@ -72,7 +72,7 @@ All ICE-compliant systems must satisfy the following:
 - Determinism concerns reconstructing past behavior.
 
 A system may be deterministic without being predictable.
-ICE requires determinism, not predictability.
+YAI requires determinism, not predictability.
 
 ---
 
@@ -116,7 +116,7 @@ If determinism or reproducibility is violated:
 - System behavior cannot be reliably reconstructed
 - Authority decisions cannot be justified
 - Governance loses enforceability
-- The system ceases to be ICE-compliant
+- The system ceases to be YAI-compliant
 
 Violations are structural, not operational errors.
 
@@ -141,9 +141,9 @@ and must comply with this invariant.
 
 This document is authoritative.
 
-All ICE components that execute, decide, or evolve state
+All YAI components that execute, decide, or evolve state
 must be designed so that this invariant is preserved.
 
-Any system claiming ICE compliance
+Any system claiming YAI compliance
 must be able to justify its determinism guarantees
 within the boundaries defined here.

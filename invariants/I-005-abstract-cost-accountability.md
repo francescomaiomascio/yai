@@ -3,25 +3,25 @@
 ## Purpose
 
 This document defines **abstract cost accountability** as a **structural invariant**
-in ICE.
+in YAI.
 
-ICE does not treat cost as business logic or financial accounting.
-Instead, ICE requires that execution remains **governable**, which implies that
-every valid state transition can be associated with a **canonicalo** cost representation
+YAI does not treat cost as business logic or financial accounting.
+Instead, YAI requires that execution remains **governable**, which implies that
+every valid state transition can be associated with a **canonical** cost representation
 in an abstract metric space.
 
 Abstract cost accountability exists so that claims about efficiency, risk,
 and resource usage can be made **without speculation**, grounded in traceable
 execution semantics.
 
-Without abstract cost accountability, economic and operational reasoning about ICE
+Without abstract cost accountability, economic and operational reasoning about YAI
 becomes arbitrary and non-defensible.
 
 ---
 
 ## Definition
 
-In ICE, **abstract cost accountability** is the property by which every **valid**
+In YAI, **abstract cost accountability** is the property by which every **valid**
 state transition can be associated with one or more **abstract cost attributes**
 within a declared metric space.
 
@@ -40,32 +40,50 @@ A transition is **cost-accountable** if:
 
 - it is a valid execution transition under authority, and
 - it can be associated with one or more abstract cost attributes, and
-- that association is not ambiguous within the ICE conceptual model.
+- that association is not ambiguous within the YAI conceptual model.
 
 Cost accountability does **not** require monetary units.
 It requires attachability and interpretability.
 
 ---
 
+## Canonical Cost Metric Space
+
+YAI operates on a **declared cost metric space**.
+
+A cost metric space is **canonical** only if it is:
+
+- **declared** (explicitly named as the active cost taxonomy)
+- **versioned** (identifier + version, e.g. `yai.cost.v1`)
+- **dimensioned** (a defined set of cost dimensions, e.g. time/compute/memory/I/O/tokens/risk)
+- **interpretable** (each dimension has a declared unit/scale or ordering semantics)
+- **scoped** (the space specifies what kinds of transitions it applies to)
+
+The system must be able to say: *this transition is cost-attributed under this declared metric space*.
+If the metric space is not declared and versioned, cost attribution is ambiguous.
+
+---
+
 ## Invariant Status
 
-Abstract cost accountability is a **structural invariant** in ICE.
+Abstract cost accountability is a **structural invariant** in YAI.
 
 As such:
 
 - It is **not optional**
-- It is **not configurable**
+- The requirement is **non-bypassable**
+- The metric space is **explicitly declared and versioned**
 - It is **not context-dependent**
-- It applies uniformly across all ICE components
+- It applies uniformly across all YAI components
 
-Any ICE system that allows valid transitions that cannot be cost-accounted
-is **not a valid instance of ICE**.
+Any YAI system that allows valid transitions that cannot be cost-accounted
+is **not a valid instance of YAI**.
 
 ---
 
-## Relationship to ICE Axioms
+## Relationship to YAI Axioms
 
-Abstract cost accountability derives from ICE axioms:
+Abstract cost accountability derives from YAI axioms:
 
 - Execution causes state transitions and produces consequences.
 - Authority makes execution valid and accountable.
@@ -112,12 +130,21 @@ between resource usage, risk, and authorization constraints.
 
 ---
 
+### Cost Accountability and External Effect Boundary (I-006)
+
+Transitions that cross the **external effect boundary** MUST include a **risk**
+dimension (or equivalent) within the declared cost metric space.
+
+External effects without explicit cost/risk attribution are not valid transitions.
+
+---
+
 ## Cost Accountability vs Other Concepts
 
 ### Cost Accountability vs Billing
 
 Billing assigns prices and invoices.
-ICE cost accountability defines only the abstract semantic requirement
+YAI cost accountability defines only the abstract semantic requirement
 that cost can be attached to transitions.
 
 Billing belongs to downstream projects.
@@ -127,7 +154,7 @@ Billing belongs to downstream projects.
 ### Cost Accountability vs Performance Metrics
 
 Performance metrics imply optimization goals.
-ICE cost accountability implies no optimization objective.
+YAI cost accountability implies no optimization objective.
 It only asserts that cost is definable and attributable.
 
 ---
@@ -149,6 +176,19 @@ with the invariant defined here.
 
 ---
 
+## Invalid Patterns
+
+The following patterns are **invalid** in YAI:
+
+- valid transitions without cost attribution
+- cost attribution that cannot be linked to a specific transition
+- metric space not declared or not versioned
+- partial attribution (some components excluded from cost accountability)
+- cost aggregated only at run-level without per-transition linkage
+- external-effect transitions without a risk dimension in the declared space
+
+---
+
 ## Consequences of Violation
 
 If abstract cost accountability is violated:
@@ -158,7 +198,7 @@ If abstract cost accountability is violated:
 - governance cannot defend resource and risk decisions
 - economic reasoning becomes arbitrary
 
-Such a system cannot be considered compliant with ICE,
+Such a system cannot be considered compliant with YAI,
 regardless of correctness or performance.
 
 ---
@@ -167,7 +207,7 @@ regardless of correctness or performance.
 
 This document is **canonical**.
 
-All ICE runtimes, engines, governance layers, and interfaces must preserve
+All YAI runtimes, engines, governance layers, and interfaces must preserve
 this invariant.
 
 No downstream project may reinterpret, bypass, or remove the requirement

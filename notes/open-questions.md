@@ -1,7 +1,7 @@
-# ICE Foundation — Open Questions
+# YAI Law — Open Questions
 
 This document tracks **explicitly unresolved questions**
-within the ICE Foundation.
+within the YAI Law.
 
 These questions represent areas where:
 
@@ -15,7 +15,7 @@ Making these questions explicit prevents accidental assumptions.
 
 ## Q1 — Long-Term Evolution of Axioms
 
-Under what conditions, if any, can an ICE axiom be revised?
+Under what conditions, if any, can an YAI axiom be revised?
 
 - What constitutes sufficient justification?
 - How is backward compatibility evaluated?
@@ -56,7 +56,7 @@ avoid becoming a de facto source of authority?
 
 ## Q5 — Boundary Pressure from Downstream Domains
 
-How should the Foundation respond when downstream domains
+How should the Law respond when downstream domains
 require concepts that appear foundational but are driven by implementation needs?
 
 - When is a new boundary required?
@@ -64,7 +64,7 @@ require concepts that appear foundational but are driven by implementation needs
 
 ---
 
-## Q6 — Documentation Authority in Practice
+## Q6 — Documentation Authority in Practyai
 
 How strictly should documentation authority be enforced
 across heterogeneous projects and contributors?
