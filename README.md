@@ -9,11 +9,12 @@ Kernel is subordinate and lives under `kernel/`.
 
 ## Repository Layout
 
+```txt
 yai-core/
 ├── law/ # Axioms, invariants, boundaries, specs, formal models (authority)
 ├── kernel/ # C runtime implementation (L1 enforcement)
 └── scripts/ # Verification scripts (TLC + kernel build)
-
+```
 ---
 
 ## Canonical Authority (Law)
