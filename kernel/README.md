@@ -1,7 +1,7 @@
 # yai-kernel
 
 L1 Kernel implementation. This repo is runtime-critical and must remain compliant with YAI Law.
-Kernel is governed by YAI Law at repo root.
+Kernel is governed by YAI Law under `../law`.
 See: `../law/boundaries/L1-kernel.md` and `../law/formal/spec_map.md`.
 
 ## Authority Sources
