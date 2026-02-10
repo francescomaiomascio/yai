@@ -1,12 +1,14 @@
 CC = gcc
-ART_ROOT ?= ../.yai/artifacts/yai-kernel
-BUILD_DIR ?= $(ART_ROOT)/build
-BIN_DIR ?= $(ART_ROOT)/bin
+ART_ROOT ?= ../../.yai/artifacts/yai-core
+OUT_BUILD_DIR ?=
+OUT_BIN_DIR ?=
+BUILD_DIR ?= $(if $(OUT_BUILD_DIR),$(OUT_BUILD_DIR),$(ART_ROOT)/build/kernel)
+BIN_DIR ?= $(if $(OUT_BIN_DIR),$(OUT_BIN_DIR),$(ART_ROOT)/bin)
 LOG_DIR ?= $(ART_ROOT)/logs
 TMP_DIR ?= $(ART_ROOT)/tmp
 CACHE_DIR ?= $(ART_ROOT)/cache
 
-CFLAGS = -Wall -Wextra -I./include -O2 -MMD -MP
+CFLAGS = -Wall -Wextra -I./include -I../law/specs/vault -O2 -MMD -MP
 
 BOOT_SRC = src/boot/bootstrap.c src/boot/preboot.c src/bin/yai_boot_main.c
 KERNEL_SRC = src/kernel/enforcement.c src/kernel/fsm.c src/kernel/ids.c src/kernel/logger.c src/kernel/project_tree.c src/kernel/transport.c src/bin/yai_kernel_main.c

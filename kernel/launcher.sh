@@ -14,7 +14,7 @@ VAULTS=("core" "stream" "brain" "audit" "cache" "control")
 SHM_BASE="/yai_vault_$WS_ID"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="${SCRIPT_DIR}"
-YAI_WORKSPACE_ROOT="${ROOT_DIR}/.."
+YAI_WORKSPACE_ROOT="${ROOT_DIR}/../.."
 YAI_HOME="${YAI_WORKSPACE_ROOT}/.yai"
 mkdir -p "${YAI_HOME}/logs"
 
@@ -24,8 +24,8 @@ YAI_API_BIN="${YAI_HOME}/artifacts/yai-mind/target/release/yai-mind"
 YAI_REMOTE_ENDPOINT="http://192.168.0.98:8080/v1/chat/completions"
 YAI_REMOTE_MODEL="qwen2.5-coder-7b-instruct-q4_k_m"
 YAI_AI_AGENTS="system,code-fs,code-llm,git,historian,knowledge,validator"
-YAI_CONTEXT_FILES="${ROOT_DIR}/../yai-ai/FOUNDATION.md,${ROOT_DIR}/../yai-ai/GOVERNANCE.md"
-YAI_ENGINE_BIN="${YAI_HOME}/artifacts/yai-engine/bin/yai-engine"
+YAI_CONTEXT_FILES="${YAI_WORKSPACE_ROOT}/yai-ai/FOUNDATION.md,${YAI_WORKSPACE_ROOT}/yai-ai/GOVERNANCE.md"
+YAI_ENGINE_BIN="${YAI_HOME}/artifacts/yai-core/bin/yai-engine"
 YAI_KNOWLEDGE_DB="${YAI_HOME}/data/db/knowledge.db"
 YAI_LOG_FILE="${YAI_HOME}/logs/yai_runtime.log"
 
@@ -132,12 +132,12 @@ trap cleanup SIGINT SIGTERM
 
 # 2. AVVIO BOOTSTRAP (crea SHM)
 yai_log "SYS" "BOOTSTRAP" "$SIG_INF" "Launching BOOTSTRAP..."
-if [ ! -x "${YAI_HOME}/artifacts/yai-kernel/bin/yai-boot" ]; then
+if [ ! -x "${YAI_HOME}/artifacts/yai-core/bin/yai-boot" ]; then
     yai_log "SYS" "BUILD" "$SIG_INF" "Building BOOTSTRAP..."
     (cd "${ROOT_DIR}" && make boot) >> "$YAI_LOG_FILE" 2>&1
 fi
 
-(cd "${ROOT_DIR}" && "${YAI_HOME}/artifacts/yai-kernel/bin/yai-boot" --ws $WS_ID --raid) >> "$YAI_LOG_FILE" 2>&1 &
+(cd "${YAI_HOME}/artifacts/yai-core" && "${YAI_HOME}/artifacts/yai-core/bin/yai-boot" --ws $WS_ID --raid) >> "$YAI_LOG_FILE" 2>&1 &
 sleep 1
 
 if [ $? -ne 0 ]; then
@@ -195,9 +195,9 @@ run_api() {
         return
     fi
 
-    if [ -f "${ROOT_DIR}/../yai-mind/Cargo.toml" ]; then
+    if [ -f "${YAI_WORKSPACE_ROOT}/yai-mind/Cargo.toml" ]; then
         yai_log "API" "BUILD" "$SIG_INF" "Building YAI-MIND (Rust)..."
-        (cd "${ROOT_DIR}/../yai-mind" && cargo build --release) >> "$log_path" 2>&1
+        (cd "${YAI_WORKSPACE_ROOT}/yai-mind" && cargo build --release) >> "$log_path" 2>&1
         if [ -x "${YAI_API_BIN}" ]; then
             yai_log "API" "BIN" "$SIG_OK" "Rust: ${YAI_API_BIN}"
             YAI_API_HOST="$host" YAI_API_PORT="$port" \
@@ -221,7 +221,7 @@ run_api() {
 
 run_orchestrator() {
     yai_log "API" "SMOKE" "$SIG_INF" "Running orchestrator PING->PONG..."
-    (cd "${ROOT_DIR}/../yai-mind" && YAI_WORKSPACE_ID="$WS_ID" cargo run --bin yai-orchestrator -p yai-mind) 2>&1 | tee -a "$YAI_LOG_FILE"
+    (cd "${YAI_WORKSPACE_ROOT}/yai-mind" && YAI_WORKSPACE_ID="$WS_ID" cargo run --bin yai-orchestrator -p yai-mind) 2>&1 | tee -a "$YAI_LOG_FILE"
 }
 
 # AVVIO API
@@ -236,7 +236,7 @@ if [ "$WITH_ENGINE" -eq 1 ]; then
     yai_log "ENG" "INIT" "$SIG_INF" "Launching ENGINE..."
     if [ ! -x "${YAI_ENGINE_BIN}" ]; then
         yai_log "ENG" "BUILD" "$SIG_INF" "Building ENGINE..."
-        (cd "${ROOT_DIR}/../yai-engine" && make clean && make) >> "$YAI_LOG_FILE" 2>&1
+        (cd "${YAI_WORKSPACE_ROOT}/yai-core/engine" && make clean && make) >> "$YAI_LOG_FILE" 2>&1
     fi
     LOG_PATH="${YAI_HOME}/logs/engine_debug.log"
     run_engine

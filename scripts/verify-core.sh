@@ -4,26 +4,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LAW="$ROOT/law"
 FORMAL="$LAW/formal"
-KERNEL="$ROOT/kernel"
-
 TLA_JAR="${TLA_JAR:-/Users/francescomaiomascio/Developer/tools/tla/tla2tools.jar}"
 
-echo "=== LAW ROOT: $LAW"
-echo "=== KERNEL:   $KERNEL"
-echo "=== FORMAL:   $FORMAL"
-echo "=== TLA_JAR:  $TLA_JAR"
-
-echo "=== GENERATE VAULT ABI"
-cd "$ROOT"
-python3 law/scripts/gen-vault-abi.py
+echo "=== CORE ROOT: $ROOT"
+echo "=== LAW:       $LAW"
+echo "=== FORMAL:    $FORMAL"
+echo "=== TLA_JAR:   $TLA_JAR"
 
 echo "=== CHECK GENERATED"
-bash law/scripts/check-generated.sh
-
-echo "=== KERNEL BUILD"
-cd "$KERNEL"
-make clean
-make
+cd "$LAW"
+bash scripts/check-generated.sh
 
 echo "=== TLC QUICK"
 cd "$FORMAL"
@@ -32,4 +22,9 @@ java -XX:+UseParallelGC -jar "$TLA_JAR" -modelcheck YAI_KERNEL.tla -config YAI_K
 echo "=== TLC DEEP"
 java -XX:+UseParallelGC -jar "$TLA_JAR" -modelcheck YAI_KERNEL.tla -config YAI_KERNEL.deep.cfg
 
-echo "OK: Law<->Kernel verification passed."
+echo "=== BUILD CORE"
+cd "$ROOT"
+make clean
+make all
+
+echo "OK: Core verification passed."

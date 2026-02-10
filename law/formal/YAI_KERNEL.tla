@@ -1,5 +1,5 @@
 ----------------------- MODULE YAI_KERNEL -----------------------
-EXTENDS Naturals
+EXTENDS Naturals, LAW_IDS
 
 CONSTANTS 
     MaxEnergy,
@@ -39,6 +39,9 @@ ExternalEffectGuard ==
 
 TraceBound ==
     trace_id <= TraceBoundMax
+
+VaultAbiVersionOk ==
+    VaultAbiVersion = 1
 
 Init ==
     /\ state = "HALT"
@@ -144,4 +147,5 @@ THEOREM Spec =>
     /\ []CognitiveIntegrity
     /\ []AuthorityRequired
     /\ []ExternalEffectGuard
+    /\ []VaultAbiVersionOk
 =============================================================================
