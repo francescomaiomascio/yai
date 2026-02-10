@@ -1,4 +1,6 @@
 bin/
+!src/bin/
+!src/bin/*.c
 src/*.o
 *.o
 # TLA+ artifacts
@@ -38,4 +40,3 @@ out/
 .next/
 node_modules/
 /.yai/
-
