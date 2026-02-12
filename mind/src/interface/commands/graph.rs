@@ -1,8 +1,7 @@
 use crate::interface::config::RuntimeConfig;
 use crate::lifecycle::awareness::{awareness_log_path, run_awareness_with_config, AwarenessConfig};
 use crate::memory::graph::facade::{
-    ActivationPolicy, GraphEdge, GraphExportFormat, GraphFacade, GraphNode, GraphScope,
-    NeighborFilters,
+    GraphEdge, GraphExportFormat, GraphFacade, GraphNode, GraphScope, NeighborFilters,
 };
 use anyhow::{bail, Result};
 use serde_json::Value;
@@ -76,14 +75,22 @@ pub fn add_edge(
     Ok(())
 }
 
-pub fn query(cfg: &RuntimeConfig, ws: Option<&str>, global: bool, text: &str, k: usize) -> Result<()> {
+pub fn query(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    text: &str,
+    k: usize,
+) -> Result<()> {
     let scope = resolve_scope(cfg, ws, global)?;
     let mut seeds = Vec::new();
     let sub = GraphFacade::neighbors(scope.clone(), text, 0, NeighborFilters::default())?;
     if !sub.nodes.is_empty() {
         seeds.push((text.to_string(), 1.0));
     } else {
-        for node in GraphFacade::neighbors(scope.clone(), text, 1, NeighborFilters::default())?.nodes {
+        for node in
+            GraphFacade::neighbors(scope.clone(), text, 1, NeighborFilters::default())?.nodes
+        {
             seeds.push((node.id, 1.0));
             if seeds.len() >= k {
                 break;
@@ -99,22 +106,113 @@ pub fn query(cfg: &RuntimeConfig, ws: Option<&str>, global: bool, text: &str, k:
         );
         return Ok(());
     }
-    let result = GraphFacade::activate(
+    let top_k = k * 2;
+    let commit = GraphFacade::activate_and_commit(
         scope,
-        &seeds,
-        ActivationPolicy {
-            top_n: k * 2,
-            ..ActivationPolicy::default()
+        &seeds
+            .iter()
+            .map(|(id, weight)| (id.clone(), *weight as f64))
+            .collect::<Vec<_>>(),
+        {
+            let mut params = crate::memory::graph::activation::api::ActivationParams::default();
+            params.top_k = top_k.max(1);
+            params
         },
     )?;
-    println!("nodes: {}", result.nodes.len());
-    for n in result.nodes {
-        let score = result.scores.get(&n.id).copied().unwrap_or(0.0);
-        println!("node {} kind={} score={:.4}", n.id, n.kind, score);
+    println!("activation_id: {}", commit.activation_id);
+    println!("trace_hash: {}", commit.trace_hash);
+    println!("algo: {}", commit.algo_id);
+    println!("nodes: {}", commit.result.hits.len());
+    let kind_by_id = GraphFacade::list_nodes(resolve_scope(cfg, ws, global)?)?
+        .into_iter()
+        .map(|node| (node.id, node.kind))
+        .collect::<std::collections::HashMap<_, _>>();
+    for n in &commit.result.hits {
+        let kind = kind_by_id
+            .get(&n.node)
+            .cloned()
+            .unwrap_or_else(|| "unknown".to_string());
+        println!("node {} kind={} score={:.6}", n.node, kind, n.score);
     }
-    println!("edges: {}", result.edges.len());
-    for e in result.edges {
-        println!("edge {} -> {} rel={} w={}", e.src, e.dst, e.rel, e.weight);
+    println!(
+        "metrics: pushed={} visited={} residual_mass={:.6e} converged={}",
+        commit.metrics.pushed,
+        commit.metrics.visited,
+        commit.metrics.residual_mass,
+        commit.proof.converged
+    );
+    for hit in commit.trace.topk.iter().take(3) {
+        println!(
+            "trace_top {} score_q={} score={:.6}",
+            hit.node, hit.score_q, hit.score
+        );
+    }
+    Ok(())
+}
+
+pub fn activate(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    seeds: &[String],
+    topk: usize,
+    alpha: f64,
+    epsilon: f64,
+    no_trace: bool,
+) -> Result<()> {
+    let scope = resolve_scope(cfg, ws, global)?;
+    let seed_items = seeds
+        .iter()
+        .map(|s| (s.clone(), 1.0_f64))
+        .collect::<Vec<_>>();
+    let mut params = crate::memory::graph::activation::api::ActivationParams::default();
+    params.top_k = topk.max(1);
+    params.alpha = alpha;
+    params.epsilon = epsilon;
+
+    let commit = GraphFacade::activate_and_commit(scope, &seed_items, params)?;
+    println!("run_id: {}", commit.activation_id);
+    println!("commit_hash: {}", commit.result.commit_hash);
+    println!("trace_hash: {}", commit.trace_hash);
+    for hit in &commit.result.hits {
+        println!(
+            "node={} score={:.6} score_q={}",
+            hit.node, hit.score, hit.score_q
+        );
+    }
+    println!(
+        "stats pushed={} visited={} residual_mass={:.6e}",
+        commit.result.stats.pushed, commit.result.stats.visited, commit.result.stats.residual_mass
+    );
+    if no_trace {
+        println!("note: --no-trace requested, trace was still committed by facade policy");
+    }
+    Ok(())
+}
+
+pub fn trace_show(run_id: &str) -> Result<()> {
+    if run_id == "latest" {
+        let list = crate::memory::graph::activation::store::list_traces(1)?;
+        if list.is_empty() {
+            bail!("no traces found");
+        }
+        return trace_show(&list[0].0);
+    }
+    let trace = crate::memory::graph::activation::store::load_trace(run_id)?
+        .ok_or_else(|| anyhow::anyhow!("trace not found: {run_id}"))?;
+    println!("run_id: {}", trace.run_id);
+    println!("created_at_unix: {}", trace.created_at_unix);
+    println!("graph_fingerprint: {}", trace.graph_fingerprint);
+    println!("commit_hash: {}", trace.commit_hash);
+    println!(
+        "stats pushed={} visited={} residual_mass={:.6e}",
+        trace.stats.pushed, trace.stats.visited, trace.stats.residual_mass
+    );
+    for hit in trace.topk {
+        println!(
+            "top {} score={:.6} score_q={}",
+            hit.node, hit.score, hit.score_q
+        );
     }
     Ok(())
 }
@@ -132,7 +230,13 @@ pub fn stats(cfg: &RuntimeConfig, ws: Option<&str>, global: bool) -> Result<()> 
     Ok(())
 }
 
-pub fn node(cfg: &RuntimeConfig, ws: Option<&str>, global: bool, id: &str, limit: usize) -> Result<()> {
+pub fn node(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    id: &str,
+    limit: usize,
+) -> Result<()> {
     let scope = resolve_scope(cfg, ws, global)?;
     let node = GraphFacade::get_node(scope.clone(), id)?;
     let Some(node) = node else {
@@ -219,14 +323,13 @@ pub fn export(
     Ok(())
 }
 
-pub fn awareness(_cfg: &RuntimeConfig, ws: &str, tick_ms: u64, max_steps: Option<u64>) -> Result<()> {
-    run_awareness_with_config(
-        ws,
-        AwarenessConfig {
-            tick_ms,
-            max_steps,
-        },
-    )?;
+pub fn awareness(
+    _cfg: &RuntimeConfig,
+    ws: &str,
+    tick_ms: u64,
+    max_steps: Option<u64>,
+) -> Result<()> {
+    run_awareness_with_config(ws, AwarenessConfig { tick_ms, max_steps })?;
     let p = awareness_log_path(ws);
     println!("awareness_log={}", p.display());
     Ok(())

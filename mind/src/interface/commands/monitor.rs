@@ -12,7 +12,7 @@ pub fn run(cfg: &RuntimeConfig, ws: &str) -> Result<()> {
         spawn_external_terminal(cfg, ws)?;
         return Ok(());
     }
-    crate::interface::tui::run(ws, cfg)
+    crate::interface::commands::events::run(cfg, ws)
 }
 
 pub fn spawn_external_terminal(_cfg: &RuntimeConfig, ws: &str) -> Result<()> {

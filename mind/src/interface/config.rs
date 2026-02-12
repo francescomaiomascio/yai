@@ -55,14 +55,16 @@ fn env_opt(key: &str) -> Option<String> {
 
 fn load_or_init_config(path: &Path) -> Result<ConfigFile> {
     if path.exists() {
-        let content = fs::read_to_string(path).with_context(|| format!("read config: {}", path.display()))?;
+        let content =
+            fs::read_to_string(path).with_context(|| format!("read config: {}", path.display()))?;
         let cfg: ConfigFile = toml::from_str(&content).context("parse yai.toml")?;
         return Ok(cfg);
     }
 
     let default = default_config_file();
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).with_context(|| format!("create config dir: {}", parent.display()))?;
+        fs::create_dir_all(parent)
+            .with_context(|| format!("create config dir: {}", parent.display()))?;
     }
     let rendered = toml::to_string_pretty(&default).context("serialize default config")?;
     fs::write(path, rendered).with_context(|| format!("write config: {}", path.display()))?;
@@ -73,10 +75,30 @@ fn default_config_file() -> ConfigFile {
     let workspace_root = paths::default_workspace_root();
     let artifacts_root = paths::default_artifacts_root();
     let binaries = BinariesFile {
-        yai_boot: Some(artifacts_root.join("yai-core/bin/yai-boot").display().to_string()),
-        yai_kernel: Some(artifacts_root.join("yai-core/bin/yai-kernel").display().to_string()),
-        yai_engine: Some(artifacts_root.join("yai-core/bin/yai-engine").display().to_string()),
-        yai_mind: Some(artifacts_root.join("mind/target/release/yai-mind").display().to_string()),
+        yai_boot: Some(
+            artifacts_root
+                .join("yai-core/bin/yai-boot")
+                .display()
+                .to_string(),
+        ),
+        yai_kernel: Some(
+            artifacts_root
+                .join("yai-core/bin/yai-kernel")
+                .display()
+                .to_string(),
+        ),
+        yai_engine: Some(
+            artifacts_root
+                .join("yai-core/bin/yai-engine")
+                .display()
+                .to_string(),
+        ),
+        yai_mind: Some(
+            artifacts_root
+                .join("mind/target/release/yai-mind")
+                .display()
+                .to_string(),
+        ),
     };
 
     ConfigFile {

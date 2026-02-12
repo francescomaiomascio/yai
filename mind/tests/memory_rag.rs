@@ -5,8 +5,10 @@ use yai_mind::rag::pipeline::build_prompt;
 fn memory_store_and_rag_context() {
     let core = MemoryCore::new();
 
-    core.put_event("ws", "trace", EventKind::User, "hello").unwrap();
-    core.put_event("ws", "trace", EventKind::Agent, "ok").unwrap();
+    core.put_event("ws", "trace", EventKind::User, "hello")
+        .unwrap();
+    core.put_event("ws", "trace", EventKind::Agent, "ok")
+        .unwrap();
     core.put_fact("ws", "key", "value", &[]).unwrap();
 
     let events = core.recent_events("ws", 10).unwrap();

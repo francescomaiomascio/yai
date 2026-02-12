@@ -1,5 +1,7 @@
 # YAI TUI Cockpit v1
 
+> DEPRECATED: replaced by YX (YAI Experience). This spec is retained for historical reference only.
+
 This document defines the canonical behavior of `yai tui`.
 It is normative for the interactive cockpit and its snapshot mode.
 

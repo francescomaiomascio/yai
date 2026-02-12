@@ -28,7 +28,12 @@ fn save_all(run_dir: &Path, ws: &str, records: &[DsarRecord]) -> Result<()> {
     Ok(())
 }
 
-pub fn create_request(run_dir: &Path, ws: &str, request_type: &str, subject_ref: &str) -> Result<DsarRecord> {
+pub fn create_request(
+    run_dir: &Path,
+    ws: &str,
+    request_type: &str,
+    subject_ref: &str,
+) -> Result<DsarRecord> {
     if request_type != "export" && request_type != "erase" {
         anyhow::bail!("invalid dsar request_type: {}", request_type);
     }
@@ -54,7 +59,12 @@ pub fn get_request(run_dir: &Path, ws: &str, request_id: &str) -> Result<Option<
     Ok(records.into_iter().find(|r| r.request_id == request_id))
 }
 
-pub fn set_status(run_dir: &Path, ws: &str, request_id: &str, status: DsarStatus) -> Result<Option<DsarRecord>> {
+pub fn set_status(
+    run_dir: &Path,
+    ws: &str,
+    request_id: &str,
+    status: DsarStatus,
+) -> Result<Option<DsarRecord>> {
     let mut records = load_all(run_dir, ws)?;
     let mut found: Option<DsarRecord> = None;
     for r in &mut records {

@@ -112,7 +112,8 @@ mod tests {
 
     #[test]
     fn data_event_with_compliance_context_is_ok() {
-        let run_dir = std::env::temp_dir().join(format!("yai_events_test_{}_2", std::process::id()));
+        let run_dir =
+            std::env::temp_dir().join(format!("yai_events_test_{}_2", std::process::id()));
         let bus = EventBus::new(run_dir, "tws".to_string());
         let ctx = ComplianceContext {
             pack_ref: "gdpr-eu/2026Q1".to_string(),

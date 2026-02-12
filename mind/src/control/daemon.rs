@@ -1,21 +1,23 @@
 use crate::control::{dsar, events::EventBus, providers, workspace};
-use crate::memory::graph::bridge;
-use crate::interface::paths;
-use crate::rpc::protocol::{AliveStatus, ComplianceContext, DsarStatus, ProviderInfo, Request, Response, SanityStatus};
-use crate::rpc::uds_server;
 use crate::interface::config::RuntimeConfig;
+use crate::interface::paths;
 use crate::interface::proc::{is_pid_alive, send_signal};
+use crate::memory::graph::bridge;
+use crate::rpc::protocol::{
+    AliveStatus, ComplianceContext, DsarStatus, ProviderInfo, Request, Response, SanityStatus,
+};
+use crate::rpc::uds_server;
 use anyhow::{Context, Result};
-use std::path::PathBuf;
-use std::sync::Arc;
+use serde_json::json;
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
+use std::path::PathBuf;
+use std::sync::Arc;
 use tokio::io::BufReader;
 use tokio::net::{UnixListener, UnixStream};
 use tokio::sync::watch;
 use tokio::time::{self, Duration};
-use serde_json::json;
 
 fn emit_provider_transition(
     bus: &EventBus,
@@ -219,34 +221,41 @@ async fn handle_client(
             loop {
                 match rx.recv().await {
                     Ok(event) => {
-                        let _ = uds_server::write_response(&mut writer, &Response::Event { event }).await;
+                        let _ = uds_server::write_response(&mut writer, &Response::Event { event })
+                            .await;
                     }
                     Err(_) => break,
                 }
             }
             return Ok(());
         }
-        Request::ProvidersDiscover { endpoint, model } => match providers::discover(endpoint, model) {
-            Ok(transitions) => {
-                let mut items = Vec::new();
-                for t in &transitions {
-                    emit_provider_transition(&bus, ws.as_ref(), "provider_discovered", t);
-                    let _ = providers::sync_graph(&ws, &t.provider);
-                    items.push(t.provider.clone());
+        Request::ProvidersDiscover { endpoint, model } => {
+            match providers::discover(endpoint, model) {
+                Ok(transitions) => {
+                    let mut items = Vec::new();
+                    for t in &transitions {
+                        emit_provider_transition(&bus, ws.as_ref(), "provider_discovered", t);
+                        let _ = providers::sync_graph(&ws, &t.provider);
+                        items.push(t.provider.clone());
+                    }
+                    Response::Providers { items }
                 }
-                Response::Providers { items }
+                Err(err) => Response::Error {
+                    message: err.to_string(),
+                },
             }
-            Err(err) => Response::Error {
-                message: err.to_string(),
-            },
-        },
+        }
         Request::ProvidersList => match providers::list_all() {
             Ok(items) => Response::Providers { items },
             Err(err) => Response::Error {
                 message: err.to_string(),
             },
         },
-        Request::ProvidersPair { id, endpoint, model } => {
+        Request::ProvidersPair {
+            id,
+            endpoint,
+            model,
+        } => {
             let info = ProviderInfo {
                 id,
                 endpoint,
@@ -268,30 +277,28 @@ async fn handle_client(
                 },
             }
         }
-        Request::ProvidersAttach { id, model } => {
-            match providers::get(&id) {
-                Ok(Some(mut info)) => {
-                    if let Some(m) = model {
-                        info.model = m;
-                    }
-                    match providers::attach(&cfg.run_dir, &ws, info) {
-                        Ok(t) => {
-                            emit_provider_transition(&bus, ws.as_ref(), "provider_attached", &t);
-                            Response::ProvidersOk
-                        }
-                        Err(err) => Response::Error {
-                            message: err.to_string(),
-                        },
-                    }
+        Request::ProvidersAttach { id, model } => match providers::get(&id) {
+            Ok(Some(mut info)) => {
+                if let Some(m) = model {
+                    info.model = m;
                 }
-                Ok(None) => Response::Error {
-                    message: "provider not found (pair first)".to_string(),
-                },
-                Err(err) => Response::Error {
-                    message: err.to_string(),
-                },
+                match providers::attach(&cfg.run_dir, &ws, info) {
+                    Ok(t) => {
+                        emit_provider_transition(&bus, ws.as_ref(), "provider_attached", &t);
+                        Response::ProvidersOk
+                    }
+                    Err(err) => Response::Error {
+                        message: err.to_string(),
+                    },
+                }
             }
-        }
+            Ok(None) => Response::Error {
+                message: "provider not found (pair first)".to_string(),
+            },
+            Err(err) => Response::Error {
+                message: err.to_string(),
+            },
+        },
         Request::ProvidersDetach => match providers::detach(&cfg.run_dir, &ws) {
             Ok(Some(t)) => {
                 emit_provider_transition(&bus, ws.as_ref(), "provider_detached", &t);
@@ -321,47 +328,64 @@ async fn handle_client(
                 message: err.to_string(),
             },
         },
-        Request::DsarRequest { request_type, subject_ref } => {
-            match dsar::create_request(&cfg.run_dir, &ws, &request_type, &subject_ref) {
-                Ok(request) => {
-                    let event_type = if request_type == "export" { "DATA_EXPORT" } else { "DATA_ERASE" };
-                    if let Err(err) = bus.emit_with_compliance(
-                        event_type,
+        Request::DsarRequest {
+            request_type,
+            subject_ref,
+        } => match dsar::create_request(&cfg.run_dir, &ws, &request_type, &subject_ref) {
+            Ok(request) => {
+                let event_type = if request_type == "export" {
+                    "DATA_EXPORT"
+                } else {
+                    "DATA_ERASE"
+                };
+                if let Err(err) = bus.emit_with_compliance(
+                    event_type,
+                    json!({
+                        "ws": ws.as_ref(),
+                        "request_id": request.request_id,
+                        "subject_ref": request.subject_ref,
+                        "request_type": request.request_type,
+                        "status": format!("{:?}", request.status).to_lowercase()
+                    }),
+                    Some(dsar_compliance()),
+                ) {
+                    Response::Error {
+                        message: err.to_string(),
+                    }
+                } else {
+                    let _ = bus.emit_with_compliance(
+                        "PROCESSING_DECLARED",
                         json!({
                             "ws": ws.as_ref(),
                             "request_id": request.request_id,
                             "subject_ref": request.subject_ref,
                             "request_type": request.request_type,
-                            "status": format!("{:?}", request.status).to_lowercase()
                         }),
                         Some(dsar_compliance()),
-                    ) {
-                        Response::Error { message: err.to_string() }
-                    } else {
-                        let _ = bus.emit_with_compliance(
-                            "PROCESSING_DECLARED",
-                            json!({
-                                "ws": ws.as_ref(),
-                                "request_id": request.request_id,
-                                "subject_ref": request.subject_ref,
-                                "request_type": request.request_type,
-                            }),
-                            Some(dsar_compliance()),
-                        );
-                        Response::DsarCreated { request }
-                    }
+                    );
+                    Response::DsarCreated { request }
                 }
-                Err(err) => Response::Error { message: err.to_string() },
+            }
+            Err(err) => Response::Error {
+                message: err.to_string(),
+            },
+        },
+        Request::DsarStatus { request_id } => {
+            match dsar::get_request(&cfg.run_dir, &ws, &request_id) {
+                Ok(request) => Response::DsarState { request },
+                Err(err) => Response::Error {
+                    message: err.to_string(),
+                },
             }
         }
-        Request::DsarStatus { request_id } => match dsar::get_request(&cfg.run_dir, &ws, &request_id) {
-            Ok(request) => Response::DsarState { request },
-            Err(err) => Response::Error { message: err.to_string() },
-        },
         Request::DsarExecute { request_id } => {
             match dsar::set_status(&cfg.run_dir, &ws, &request_id, DsarStatus::Executed) {
                 Ok(Some(request)) => {
-                    let event_type = if request.request_type == "export" { "DATA_EXPORT" } else { "DATA_ERASE" };
+                    let event_type = if request.request_type == "export" {
+                        "DATA_EXPORT"
+                    } else {
+                        "DATA_ERASE"
+                    };
                     if let Err(err) = bus.emit_with_compliance(
                         event_type,
                         json!({
@@ -373,13 +397,19 @@ async fn handle_client(
                         }),
                         Some(dsar_compliance()),
                     ) {
-                        Response::Error { message: err.to_string() }
+                        Response::Error {
+                            message: err.to_string(),
+                        }
                     } else {
                         Response::DsarExecuted { request }
                     }
                 }
-                Ok(None) => Response::Error { message: "dsar request not found".to_string() },
-                Err(err) => Response::Error { message: err.to_string() },
+                Ok(None) => Response::Error {
+                    message: "dsar request not found".to_string(),
+                },
+                Err(err) => Response::Error {
+                    message: err.to_string(),
+                },
             }
         }
         Request::Up {
@@ -405,8 +435,8 @@ async fn handle_client(
                 let _ = bus_clone.emit("ws_up_started", json!({ "ws": ws_for_task }));
                 workspace::start_stack(&cfg, &ws_for_start, &opts, &bus_clone)
             })
-                .await
-                .context("spawn start")??;
+            .await
+            .context("spawn start")??;
             let _ = bus.emit("ws_up_complete", json!({ "ws": ws_name }));
             Response::UpOk
         }
@@ -420,8 +450,8 @@ async fn handle_client(
             tokio::task::spawn_blocking(move || {
                 workspace::stop_stack(&cfg, &ws, force, &bus_clone)
             })
-                .await
-                .context("spawn down")??;
+            .await
+            .context("spawn down")??;
             if shutdown {
                 let _ = shutdown_tx.send(true);
             }
@@ -445,10 +475,18 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
         let st = state.unwrap();
         let socket_path = paths::ws_socket_path(&cfg.socket_path, &ws);
         let mut alive = AliveStatus::default();
-        if let Some(pid) = st.boot_pid { alive.boot = is_pid_alive(pid); }
-        if let Some(pid) = st.kernel_pid { alive.kernel = is_pid_alive(pid); }
-        if let Some(pid) = st.engine_pid { alive.engine = is_pid_alive(pid); }
-        if let Some(pid) = st.mind_pid { alive.mind = is_pid_alive(pid); }
+        if let Some(pid) = st.boot_pid {
+            alive.boot = is_pid_alive(pid);
+        }
+        if let Some(pid) = st.kernel_pid {
+            alive.kernel = is_pid_alive(pid);
+        }
+        if let Some(pid) = st.engine_pid {
+            alive.engine = is_pid_alive(pid);
+        }
+        if let Some(pid) = st.mind_pid {
+            alive.mind = is_pid_alive(pid);
+        }
         let runtime_sock_exists = std::path::Path::new(&st.socket_path).exists();
 
         if last.boot && !alive.boot {
@@ -461,7 +499,10 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             let bus_clone = bus.clone();
             let sock = socket_path.clone();
             tokio::task::spawn_blocking(move || {
-                let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
+                let _ = bus_clone.emit(
+                    "kernel_dead",
+                    json!({ "ws": ws_clone, "reason": "kernel_dead" }),
+                );
                 workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "kernel_dead");
                 if sock.exists() {
                     let _ = std::fs::remove_file(&sock);
@@ -483,7 +524,10 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
                 let bus_clone = bus.clone();
                 let sock = socket_path.clone();
                 tokio::task::spawn_blocking(move || {
-                    let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
+                    let _ = bus_clone.emit(
+                        "kernel_dead",
+                        json!({ "ws": ws_clone, "reason": "kernel_dead" }),
+                    );
                     workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "kernel_dead");
                     if sock.exists() {
                         let _ = std::fs::remove_file(&sock);
@@ -503,7 +547,10 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             let bus_clone = bus.clone();
             let sock = socket_path.clone();
             tokio::task::spawn_blocking(move || {
-                let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "runtime_sock_missing" }));
+                let _ = bus_clone.emit(
+                    "kernel_dead",
+                    json!({ "ws": ws_clone, "reason": "runtime_sock_missing" }),
+                );
                 workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "runtime_sock_missing");
                 if sock.exists() {
                     let _ = std::fs::remove_file(&sock);
@@ -523,13 +570,20 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             let _ = bus.emit("proc_exit", json!({ "proc": "mind" }));
         }
 
-        if alive.boot != last.boot || alive.kernel != last.kernel || alive.engine != last.engine || alive.mind != last.mind {
-            let _ = bus.emit("status_changed", json!({
-                "kernel": alive.kernel,
-                "engine": alive.engine,
-                "mind": alive.mind,
-                "boot": alive.boot
-            }));
+        if alive.boot != last.boot
+            || alive.kernel != last.kernel
+            || alive.engine != last.engine
+            || alive.mind != last.mind
+        {
+            let _ = bus.emit(
+                "status_changed",
+                json!({
+                    "kernel": alive.kernel,
+                    "engine": alive.engine,
+                    "mind": alive.mind,
+                    "boot": alive.boot
+                }),
+            );
         }
         last = alive;
     }
@@ -585,7 +639,11 @@ async fn monitor_retention(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
     }
 }
 
-async fn monitor_engine_cortex_events(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<EventBus>) {
+async fn monitor_engine_cortex_events(
+    cfg: Arc<RuntimeConfig>,
+    ws: Arc<String>,
+    bus: Arc<EventBus>,
+) {
     let mut interval = time::interval(Duration::from_millis(250));
     let mut offset: usize = 0;
     loop {

@@ -1,8 +1,8 @@
 // src/bridge/shm.rs
 #![allow(dead_code)]
-use std::ptr;
-use libc::{shm_open, mmap, O_RDONLY, PROT_READ, MAP_SHARED, close};
+use libc::{close, mmap, shm_open, MAP_SHARED, O_RDONLY, PROT_READ};
 use std::ffi::CString;
+use std::ptr;
 
 #[derive(Debug, Clone)]
 pub struct VaultState {
@@ -21,18 +21,21 @@ pub struct VaultBridge {
 impl VaultBridge {
     pub fn new(vault_name: &str) -> Result<Self, String> {
         let c_name = CString::new(vault_name).map_err(|_| "Invalid name")?;
-        
+
         unsafe {
             // 1. Apri la memoria condivisa (shm_open)
             let fd = shm_open(c_name.as_ptr(), O_RDONLY, 0);
             if fd < 0 {
-                return Err(format!("[BRIDGE-ERROR] Impossibile aprire SHM: {}", vault_name));
+                return Err(format!(
+                    "[BRIDGE-ERROR] Impossibile aprire SHM: {}",
+                    vault_name
+                ));
             }
 
             // 2. Mappa la memoria nell'indirizzo dello spazio del processo
             let size = 12; // 3 * uint32 (4 bytes ciascuno)
             let ptr = mmap(ptr::null_mut(), size, PROT_READ, MAP_SHARED, fd, 0);
-            
+
             // Chiudiamo il descrittore del file, la mappatura resta attiva
             close(fd);
 

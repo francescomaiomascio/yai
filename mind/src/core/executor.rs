@@ -6,10 +6,14 @@ pub struct ExecutionResult {
     pub response: String,
 }
 
-pub fn execute(plan: &Plan, ctx: &mut crate::core::runtime::RuntimeContext) -> Result<ExecutionResult, Error> {
-    let step = plan.steps.first().ok_or_else(|| {
-        Error::Execution("plan has no steps".to_string())
-    })?;
+pub fn execute(
+    plan: &Plan,
+    ctx: &mut crate::core::runtime::RuntimeContext,
+) -> Result<ExecutionResult, Error> {
+    let step = plan
+        .steps
+        .first()
+        .ok_or_else(|| Error::Execution("plan has no steps".to_string()))?;
 
     let response = ctx
         .scheduler

@@ -1,5 +1,5 @@
-use crate::core::runtime::Error;
 use crate::control::providers;
+use crate::core::runtime::Error;
 use crate::interface::config::RuntimeConfig;
 use serde_json::{json, Value};
 use std::env;
@@ -127,10 +127,7 @@ impl LlmClient for HttpLlmClient {
             .map_err(|e| Error::Llm(format!("http json error: {}", e)))?;
 
         if !status.is_success() {
-            return Err(Error::Llm(format!(
-                "llm http status {}",
-                status.as_u16()
-            )));
+            return Err(Error::Llm(format!("llm http status {}", status.as_u16())));
         }
 
         Self::parse_response(value)

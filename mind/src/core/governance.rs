@@ -1,7 +1,7 @@
 // src/core/governance.rs
 #![allow(dead_code)]
-use crate::models::{Message, MessageType};
 use crate::core::protocol::{AgentId, CommandId, RoutingDecision};
+use crate::models::{Message, MessageType};
 
 /// Rappresenta il verdetto di conformità I-003
 pub struct GovernanceVerdict {
@@ -24,20 +24,20 @@ impl GovernanceEngine {
     /// Valida un messaggio secondo i vincoli strutturali di GOVERNANCE.md
     pub fn validate_compliance(&self, message: &Message) -> GovernanceVerdict {
         // Vincolo: Authority must be EXPLICIT (deve esserci un ID nel payload)
-        let authority = message.payload.get("authority_id")
-            .and_then(|v| v.as_str());
+        let authority = message.payload.get("authority_id").and_then(|v| v.as_str());
 
         if message.r#type == MessageType::Intent && authority.is_none() {
             return GovernanceVerdict {
                 is_valid: false,
-                reason: "Violation I-003: Authority is not explicit. Execution invalid.".to_string(),
+                reason: "Violation I-003: Authority is not explicit. Execution invalid."
+                    .to_string(),
                 authority_id: None,
             };
         }
 
         // Vincolo: Traceability (deve esserci un riferimento al task originario)
         if !message.payload.contains_key("trace_id") {
-             return GovernanceVerdict {
+            return GovernanceVerdict {
                 is_valid: false,
                 reason: "Violation I-003: Authority is not traceable.".to_string(),
                 authority_id: authority.map(|s| s.to_string()),
@@ -58,20 +58,38 @@ impl RoutingEngine {
     pub fn route_intent(text: &str) -> RoutingDecision {
         let q = text.to_lowercase();
         if q.contains("ping") || q == "ping" {
-            return RoutingDecision { agent: AgentId::System, command: CommandId::Ping };
+            return RoutingDecision {
+                agent: AgentId::System,
+                command: CommandId::Ping,
+            };
         }
         if q == "ciao" || q == "hello" || q == "hi" || q == "hey" {
-            return RoutingDecision { agent: AgentId::Knowledge, command: CommandId::Noop };
+            return RoutingDecision {
+                agent: AgentId::Knowledge,
+                command: CommandId::Noop,
+            };
         }
         if q.contains("audit") || q.contains("log") {
-            return RoutingDecision { agent: AgentId::Historian, command: CommandId::Noop };
+            return RoutingDecision {
+                agent: AgentId::Historian,
+                command: CommandId::Noop,
+            };
         }
         if q.contains("validate") || q.contains("compliance") {
-            return RoutingDecision { agent: AgentId::Validator, command: CommandId::Noop };
+            return RoutingDecision {
+                agent: AgentId::Validator,
+                command: CommandId::Noop,
+            };
         }
         if q.contains("code") || q.contains("fix") || q.contains("patch") {
-            return RoutingDecision { agent: AgentId::Code, command: CommandId::Noop };
+            return RoutingDecision {
+                agent: AgentId::Code,
+                command: CommandId::Noop,
+            };
         }
-        RoutingDecision { agent: AgentId::Knowledge, command: CommandId::Noop }
+        RoutingDecision {
+            agent: AgentId::Knowledge,
+            command: CommandId::Noop,
+        }
     }
 }

@@ -17,7 +17,13 @@ impl MemoryCore {
         Self
     }
 
-    pub fn put_event(&self, ws: &str, trace: &str, kind: EventKind, payload: &str) -> MemoryResult<()> {
+    pub fn put_event(
+        &self,
+        ws: &str,
+        trace: &str,
+        kind: EventKind,
+        payload: &str,
+    ) -> MemoryResult<()> {
         if payload.len() > 64 * 1024 {
             return Err("payload exceeds 64KB".to_string());
         }
@@ -37,8 +43,14 @@ impl MemoryCore {
             ttl_seconds: None,
             compliance: None,
         };
-        semantic::api::add_node_with_retention(ws, &node_id, "conversation_event", &meta, &retention)
-            .map_err(|e| e.to_string())
+        semantic::api::add_node_with_retention(
+            ws,
+            &node_id,
+            "conversation_event",
+            &meta,
+            &retention,
+        )
+        .map_err(|e| e.to_string())
     }
 
     pub fn recent_events(&self, ws: &str, limit: usize) -> MemoryResult<Vec<Event>> {
@@ -100,7 +112,8 @@ impl MemoryCore {
             ttl_seconds: None,
             compliance: None,
         };
-        semantic::api::add_node_with_retention(ws, &node_id, "fact", &meta, &retention).map_err(|e| e.to_string())
+        semantic::api::add_node_with_retention(ws, &node_id, "fact", &meta, &retention)
+            .map_err(|e| e.to_string())
     }
 
     pub fn search_facts(&self, ws: &str, query: &str, limit: usize) -> MemoryResult<Vec<Fact>> {

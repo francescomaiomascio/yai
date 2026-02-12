@@ -1,28 +1,28 @@
 // src/server.rs
 #![allow(dead_code)]
-use crate::models::{Message as ApiMessage, MessageType};
-use crate::core::governance::GovernanceEngine;
 use crate::bridge::shm::VaultBridge;
-use crate::core::runtime::{run_turn, RuntimeContext};
+use crate::bridge::vault::VaultBridge as EngineVault;
+use crate::core::governance::GovernanceEngine;
 use crate::core::protocol::CommandId;
+use crate::core::runtime::{run_turn, RuntimeContext};
+use crate::core::state::GlobalState;
 use crate::interface::config::{load_config, CliOverrides};
 use crate::llm::adapter::build_llm_for_ws;
-use crate::bridge::vault::VaultBridge as EngineVault;
-use crate::core::state::GlobalState;
 use crate::memory::MemoryCore;
+use crate::models::{Message as ApiMessage, MessageType};
 use crate::shared::constants::DEFAULT_KNOWLEDGE_DB_PATH;
 
 use futures_util::{SinkExt, StreamExt};
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use std::sync::Arc;
 use std::env;
 use std::path::PathBuf;
+use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::accept_async;
-use tokio_tungstenite::tungstenite::Message as WsMessage;
 use tokio::sync::mpsc;
 use tokio::time::{self, Duration};
+use tokio_tungstenite::accept_async;
+use tokio_tungstenite::tungstenite::Message as WsMessage;
 
 pub struct StudioServer {
     host: String,
@@ -46,11 +46,20 @@ fn yai_api_build() -> String {
     let artifacts_root = env::var("YAI_ARTIFACTS_ROOT")
         .map(PathBuf::from)
         .unwrap_or_else(|_| default_artifacts_root());
-    let manifest = artifacts_root.join("yai-core").join("dist").join("MANIFEST.json");
+    let manifest = artifacts_root
+        .join("yai-core")
+        .join("dist")
+        .join("MANIFEST.json");
     if let Ok(data) = std::fs::read_to_string(manifest) {
         if let Ok(v) = serde_json::from_str::<Value>(&data) {
-            let git_sha = v.get("git_sha").and_then(|v| v.as_str()).unwrap_or("unknown");
-            let build_time = v.get("build_time").and_then(|v| v.as_str()).unwrap_or("unknown");
+            let git_sha = v
+                .get("git_sha")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown");
+            let build_time = v
+                .get("build_time")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown");
             return format!("{} {}", git_sha, build_time);
         }
     }
@@ -73,14 +82,22 @@ impl StudioServer {
         let listener = TcpListener::bind(&addr).await?;
         println!("🚀 YAI-MIND Rust attiva su ws://{}", addr);
 
-        let workspace_id = env::var("YAI_WORKSPACE_ID").unwrap_or_else(|_| "arch_dev_session".to_string());
+        let workspace_id =
+            env::var("YAI_WORKSPACE_ID").unwrap_or_else(|_| "arch_dev_session".to_string());
         let shm_name = format!("/yai_vault_{}", workspace_id);
 
         while let Ok((stream, _)) = listener.accept().await {
-            let peer = stream.peer_addr().expect("connected streams should have a peer address");
+            let peer = stream
+                .peer_addr()
+                .expect("connected streams should have a peer address");
             let governance = self.governance.clone();
             let shm_name_clone = shm_name.clone();
-            tokio::spawn(Self::handle_connection(stream, peer, governance, shm_name_clone));
+            tokio::spawn(Self::handle_connection(
+                stream,
+                peer,
+                governance,
+                shm_name_clone,
+            ));
         }
 
         Ok(())
@@ -92,7 +109,9 @@ impl StudioServer {
         governance: Arc<GovernanceEngine>,
         shm_name: String,
     ) {
-        let ws_stream = accept_async(stream).await.expect("Error during the websocket handshake");
+        let ws_stream = accept_async(stream)
+            .await
+            .expect("Error during the websocket handshake");
         let (mut ws_sender, mut ws_receiver) = ws_stream.split();
 
         let (out_tx, mut out_rx) = mpsc::unbounded_channel::<WsMessage>();
@@ -151,16 +170,18 @@ impl StudioServer {
                     match incoming.r#type {
                         MessageType::Handshake => {
                             let payload = build_manifest();
-                            let reply = ApiMessage::new(MessageType::HandshakeAck, "2.0.0-lite", payload);
+                            let reply =
+                                ApiMessage::new(MessageType::HandshakeAck, "2.0.0-lite", payload);
                             let _ = out_tx.send(WsMessage::Text(reply.to_json()));
-                        },
+                        }
                         MessageType::Intent => {
                             // 1. Check Governance (I-003)
                             let verdict = governance.validate_compliance(&incoming);
                             if !verdict.is_valid {
                                 let mut payload = HashMap::new();
                                 payload.insert("message".to_string(), json!(verdict.reason));
-                                let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                let reply =
+                                    ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
                                 let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 continue;
                             }
@@ -201,7 +222,11 @@ impl StudioServer {
                                         llm.to_string()
                                     } else if !turn.agent_output.response_text.is_empty() {
                                         if turn.decision.command == CommandId::Ping {
-                                            format!("{}\nEngine: {}", turn.agent_output.response_text, turn.execution.response)
+                                            format!(
+                                                "{}\nEngine: {}",
+                                                turn.agent_output.response_text,
+                                                turn.execution.response
+                                            )
                                         } else {
                                             turn.agent_output.response_text.clone()
                                         }
@@ -211,17 +236,28 @@ impl StudioServer {
                                         "OK".to_string()
                                     };
                                     payload.insert("message".to_string(), json!(response_text));
-                                    let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                    let reply = ApiMessage::new(
+                                        MessageType::Response,
+                                        "2.0.0-lite",
+                                        payload,
+                                    );
                                     let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 }
                                 Err(err) => {
                                     let mut payload = HashMap::new();
-                                    payload.insert("message".to_string(), json!(format!("YAI-MIND error: {}", err)));
-                                    let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                    payload.insert(
+                                        "message".to_string(),
+                                        json!(format!("YAI-MIND error: {}", err)),
+                                    );
+                                    let reply = ApiMessage::new(
+                                        MessageType::Response,
+                                        "2.0.0-lite",
+                                        payload,
+                                    );
                                     let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 }
                             }
-                        },
+                        }
                         _ => {}
                     }
                 }
@@ -233,7 +269,10 @@ impl StudioServer {
 fn build_manifest() -> HashMap<String, Value> {
     let mut payload = HashMap::new();
     payload.insert("system".to_string(), json!("ONLINE"));
-    payload.insert("vault".to_string(), json!(env::var("YAI_WORKSPACE_ID").unwrap_or_else(|_| "arch_dev_session".to_string())));
+    payload.insert(
+        "vault".to_string(),
+        json!(env::var("YAI_WORKSPACE_ID").unwrap_or_else(|_| "arch_dev_session".to_string())),
+    );
     payload.insert("kernel_version".to_string(), json!("unknown"));
     payload.insert("vault_address".to_string(), json!("unknown"));
 

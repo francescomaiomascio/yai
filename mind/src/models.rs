@@ -18,10 +18,10 @@ pub enum MessageType {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Message {
-    pub r#type: MessageType,           // r# per usare la keyword riservata 'type'
-    pub version: String,               // es. 2.0.0-lite
-    pub payload: HashMap<String, Value>, 
-    pub timestamp: f64,                // Unix timestamp
+    pub r#type: MessageType, // r# per usare la keyword riservata 'type'
+    pub version: String,     // es. 2.0.0-lite
+    pub payload: HashMap<String, Value>,
+    pub timestamp: f64, // Unix timestamp
 }
 
 impl Message {

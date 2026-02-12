@@ -56,4 +56,4 @@ pub fn validate_axiom_compliance(intent: &str) -> bool {
     }
 
     true
-} 
+}

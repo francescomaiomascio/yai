@@ -1,11 +1,10 @@
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
+pub mod commands;
 pub mod config;
 pub mod paths;
 pub mod proc;
-pub mod commands;
-pub mod tui;
 
 #[derive(Parser, Debug)]
 #[command(name = "yai", version, about = "YAI unified control suite")]
@@ -29,7 +28,6 @@ pub enum Command {
     Dsar(DsarArgs),
     Sessions(SessionsArgs),
     Graph(GraphArgs),
-    Tui(TuiArgs),
     Embed(EmbedArgs),
     #[command(hide = true)]
     Daemon(DaemonArgs),
@@ -337,29 +335,37 @@ pub enum GraphCommand {
         #[arg(long)]
         max_steps: Option<u64>,
     },
+    Activate {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        #[arg(long = "seed")]
+        seeds: Vec<String>,
+        #[arg(long, default_value_t = 20)]
+        topk: usize,
+        #[arg(long, default_value_t = 0.15)]
+        alpha: f64,
+        #[arg(long, default_value_t = 1e-6)]
+        epsilon: f64,
+        #[arg(long, default_value_t = false)]
+        no_trace: bool,
+    },
+    Trace {
+        #[command(subcommand)]
+        command: GraphTraceCommand,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum GraphTraceCommand {
+    Show { run_id: String },
 }
 
 #[derive(Args, Debug)]
 pub struct GraphArgs {
     #[command(subcommand)]
     pub command: GraphCommand,
-}
-
-#[derive(Subcommand, Debug)]
-pub enum TuiCommand {
-    Run,
-    Snapshot {
-        #[arg(long)]
-        view: String,
-    },
-}
-
-#[derive(Args, Debug)]
-pub struct TuiArgs {
-    #[command(flatten)]
-    pub common: CommonArgs,
-    #[command(subcommand)]
-    pub command: TuiCommand,
 }
 
 #[derive(Args, Debug)]
@@ -398,7 +404,11 @@ pub fn run() -> Result<()> {
     match cli.command {
         Command::Up(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             let runtime = commands::up::UpRuntime {
                 ws,
                 monitor: args.monitor,
@@ -413,7 +423,11 @@ pub fn run() -> Result<()> {
         }
         Command::Restart(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             let runtime = commands::restart::RestartRuntime {
                 ws,
                 monitor: args.monitor,
@@ -429,17 +443,29 @@ pub fn run() -> Result<()> {
         }
         Command::Down(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             commands::down::run(&cfg, &ws, args.force)
         }
         Command::Status(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             commands::status::run(&cfg, &ws, args.json)
         }
         Command::Logs(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             let component = match args.component {
                 LogComponent::Kernel => "kernel",
                 LogComponent::Engine => "engine",
@@ -450,12 +476,20 @@ pub fn run() -> Result<()> {
         }
         Command::Monitor(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             commands::monitor::run(&cfg, &ws)
         }
         Command::Events(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             commands::events::run(&cfg, &ws)
         }
         Command::Verify(args) => {
@@ -467,7 +501,11 @@ pub fn run() -> Result<()> {
         }
         Command::Test(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             let timeout_ms = args.timeout_ms.unwrap_or(5000);
             match args.target {
                 TestTarget::Smoke => commands::verify::test_smoke(&cfg, &ws, timeout_ms),
@@ -475,16 +513,24 @@ pub fn run() -> Result<()> {
         }
         Command::Providers(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             match args.command {
                 ProvidersCommand::Discover => commands::providers::discover(&cfg, &ws),
                 ProvidersCommand::List => commands::providers::list(&cfg, &ws),
-                ProvidersCommand::Trust { id, endpoint, state } => {
-                    commands::providers::trust(&cfg, &ws, id, endpoint, state)
-                }
-                ProvidersCommand::Pair { id, endpoint, model } => {
-                    commands::providers::pair(&cfg, &ws, id, endpoint, model)
-                }
+                ProvidersCommand::Trust {
+                    id,
+                    endpoint,
+                    state,
+                } => commands::providers::trust(&cfg, &ws, id, endpoint, state),
+                ProvidersCommand::Pair {
+                    id,
+                    endpoint,
+                    model,
+                } => commands::providers::pair(&cfg, &ws, id, endpoint, model),
                 ProvidersCommand::Attach { id, model } => {
                     commands::providers::attach(&cfg, &ws, id, model)
                 }
@@ -495,14 +541,17 @@ pub fn run() -> Result<()> {
         }
         Command::Dsar(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             match args.command {
-                DsarCommand::Request { request_type, subject } => {
-                    commands::dsar::request(&cfg, &ws, request_type, subject)
-                }
-                DsarCommand::Status { request_id } => {
-                    commands::dsar::status(&cfg, &ws, request_id)
-                }
+                DsarCommand::Request {
+                    request_type,
+                    subject,
+                } => commands::dsar::request(&cfg, &ws, request_type, subject),
+                DsarCommand::Status { request_id } => commands::dsar::status(&cfg, &ws, request_id),
                 DsarCommand::Execute { request_id } => {
                     commands::dsar::execute(&cfg, &ws, request_id)
                 }
@@ -517,49 +566,109 @@ pub fn run() -> Result<()> {
         }
         Command::Embed(args) => {
             let cfg = config::load_config(&config::CliOverrides::default())?;
-            commands::embed::run(&cfg, &args.provider, &args.model, &args.endpoint, &args.text)
+            commands::embed::run(
+                &cfg,
+                &args.provider,
+                &args.model,
+                &args.endpoint,
+                &args.text,
+            )
         }
         Command::Graph(args) => {
             let cfg = config::load_config(&config::CliOverrides::default())?;
             match args.command {
-                GraphCommand::AddNode { ws, global, id, kind, meta } => {
-                    commands::graph::add_node(&cfg, ws.as_deref(), global, &id, &kind, &meta)
-                }
-                GraphCommand::AddEdge { ws, global, src, dst, rel, weight } => {
+                GraphCommand::AddNode {
+                    ws,
+                    global,
+                    id,
+                    kind,
+                    meta,
+                } => commands::graph::add_node(&cfg, ws.as_deref(), global, &id, &kind, &meta),
+                GraphCommand::AddEdge {
+                    ws,
+                    global,
+                    src,
+                    dst,
+                    rel,
+                    weight,
+                } => {
                     commands::graph::add_edge(&cfg, ws.as_deref(), global, &src, &dst, &rel, weight)
                 }
-                GraphCommand::Query { ws, global, text, k } => {
-                    commands::graph::query(&cfg, ws.as_deref(), global, &text, k)
-                }
+                GraphCommand::Query {
+                    ws,
+                    global,
+                    text,
+                    k,
+                } => commands::graph::query(&cfg, ws.as_deref(), global, &text, k),
                 GraphCommand::Stats { ws, global } => {
                     commands::graph::stats(&cfg, ws.as_deref(), global)
                 }
-                GraphCommand::Node { ws, global, id, limit } => {
-                    commands::graph::node(&cfg, ws.as_deref(), global, &id, limit)
-                }
-                GraphCommand::Neighbors { ws, global, id, depth, rels, kinds } => {
-                    commands::graph::neighbors(&cfg, ws.as_deref(), global, &id, depth, &rels, &kinds)
-                }
-                GraphCommand::Export { ws, global, format, out } => {
-                    commands::graph::export(&cfg, ws.as_deref(), global, &format, &out)
-                }
-                GraphCommand::Awareness { ws, tick_ms, max_steps } => {
+                GraphCommand::Node {
+                    ws,
+                    global,
+                    id,
+                    limit,
+                } => commands::graph::node(&cfg, ws.as_deref(), global, &id, limit),
+                GraphCommand::Neighbors {
+                    ws,
+                    global,
+                    id,
+                    depth,
+                    rels,
+                    kinds,
+                } => commands::graph::neighbors(
+                    &cfg,
+                    ws.as_deref(),
+                    global,
+                    &id,
+                    depth,
+                    &rels,
+                    &kinds,
+                ),
+                GraphCommand::Export {
+                    ws,
+                    global,
+                    format,
+                    out,
+                } => commands::graph::export(&cfg, ws.as_deref(), global, &format, &out),
+                GraphCommand::Awareness {
+                    ws,
+                    tick_ms,
+                    max_steps,
+                } => {
                     let ws = ws.unwrap_or_else(|| cfg.ws_default.clone());
                     commands::graph::awareness(&cfg, &ws, tick_ms, max_steps)
                 }
-            }
-        }
-        Command::Tui(args) => {
-            let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
-            match args.command {
-                TuiCommand::Run => commands::tui::run(&cfg, &ws),
-                TuiCommand::Snapshot { view } => commands::tui::snapshot(&cfg, &ws, &view),
+                GraphCommand::Activate {
+                    ws,
+                    global,
+                    seeds,
+                    topk,
+                    alpha,
+                    epsilon,
+                    no_trace,
+                } => commands::graph::activate(
+                    &cfg,
+                    ws.as_deref(),
+                    global,
+                    &seeds,
+                    topk,
+                    alpha,
+                    epsilon,
+                    no_trace,
+                ),
+                GraphCommand::Trace { command } => match command {
+                    GraphTraceCommand::Show { run_id } => commands::graph::trace_show(&run_id),
+                },
             }
         }
         Command::Daemon(args) => {
             let cfg = config::load_config(&overrides_from(&args.common))?;
-            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
             crate::control::daemon::run_daemon(&cfg, &ws)
         }
     }

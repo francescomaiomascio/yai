@@ -1,9 +1,11 @@
-use crate::rpc::protocol::{Request, Response};
-use crate::rpc::uds_client;
+use crate::control::workspace;
 use crate::interface::config::RuntimeConfig;
 use crate::interface::paths;
-use crate::control::workspace;
-use crate::interface::proc::{is_pid_alive, pidfile_path, read_run_state, remove_pidfile, send_signal};
+use crate::interface::proc::{
+    is_pid_alive, pidfile_path, read_run_state, remove_pidfile, send_signal,
+};
+use crate::rpc::protocol::{Request, Response};
+use crate::rpc::uds_client;
 use anyhow::{Context, Result};
 use std::fs;
 use std::thread;

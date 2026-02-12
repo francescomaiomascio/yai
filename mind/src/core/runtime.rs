@@ -53,9 +53,8 @@ pub fn run_turn(user_text: &str, ctx: &mut RuntimeContext) -> Result<TurnResult,
     let governance = GovernanceEngine::new();
     let decision = RoutingEngine::route_intent(user_text);
 
-    let agent = get_agent(decision.agent).ok_or_else(|| {
-        Error::Routing(format!("No agent found for {:?}", decision.agent))
-    })?;
+    let agent = get_agent(decision.agent)
+        .ok_or_else(|| Error::Routing(format!("No agent found for {:?}", decision.agent)))?;
     let agent_output = agent.handle(user_text, ctx)?;
     let _ = ctx
         .memory
@@ -76,7 +75,12 @@ pub fn run_turn(user_text: &str, ctx: &mut RuntimeContext) -> Result<TurnResult,
         .unwrap_or(&agent_output.response_text);
     let _ = ctx
         .memory
-        .put_event(&ctx.workspace_id, &ctx.trace_id, EventKind::Agent, agent_payload)
+        .put_event(
+            &ctx.workspace_id,
+            &ctx.trace_id,
+            EventKind::Agent,
+            agent_payload,
+        )
         .map_err(Error::Memory);
 
     // Planner produces a plan from routing decision + input

@@ -1,9 +1,9 @@
-use crate::rpc::protocol::{Request, Response};
-use crate::rpc::uds_client;
+use crate::control::providers as trust_store;
 use crate::interface::config::RuntimeConfig;
 use crate::interface::ProvidersTrustState;
-use crate::control::providers as trust_store;
 use crate::rpc::protocol::TrustState;
+use crate::rpc::protocol::{Request, Response};
+use crate::rpc::uds_client;
 use anyhow::Result;
 
 pub fn discover(cfg: &RuntimeConfig, ws: &str) -> Result<()> {
@@ -13,7 +13,13 @@ pub fn discover(cfg: &RuntimeConfig, ws: &str) -> Result<()> {
     match uds_client::send_request(&cfg.run_dir, ws, &req)? {
         Response::Providers { items } => {
             for p in items {
-                println!("candidate: {} {} {} {}", p.id, p.endpoint, p.model, format!("{:?}", p.trust_state).to_lowercase());
+                println!(
+                    "candidate: {} {} {} {}",
+                    p.id,
+                    p.endpoint,
+                    p.model,
+                    format!("{:?}", p.trust_state).to_lowercase()
+                );
             }
         }
         Response::Error { message } => println!("error: {}", message),
@@ -66,8 +72,18 @@ pub fn trust(
     Ok(())
 }
 
-pub fn pair(cfg: &RuntimeConfig, ws: &str, id: String, endpoint: String, model: String) -> Result<()> {
-    let req = Request::ProvidersPair { id, endpoint, model };
+pub fn pair(
+    cfg: &RuntimeConfig,
+    ws: &str,
+    id: String,
+    endpoint: String,
+    model: String,
+) -> Result<()> {
+    let req = Request::ProvidersPair {
+        id,
+        endpoint,
+        model,
+    };
     match uds_client::send_request(&cfg.run_dir, ws, &req)? {
         Response::ProvidersOk => println!("paired"),
         Response::Error { message } => println!("error: {}", message),

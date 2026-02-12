@@ -28,7 +28,11 @@ where
 
 pub fn search(ws: &str, query: &[f32], k: usize) -> Result<Vec<(String, f32)>> {
     let store = VectorStore::open(ws)?;
-    let dim = store.entries().first().map(|e| e.embedding.len()).unwrap_or(16);
+    let dim = store
+        .entries()
+        .first()
+        .map(|e| e.embedding.len())
+        .unwrap_or(16);
     let mut index = VectorIndex::new(dim);
     let items: Vec<(String, Vec<f32>)> = store
         .entries()

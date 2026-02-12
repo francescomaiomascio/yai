@@ -1,7 +1,9 @@
 use crate::shared::constants::{
     MAX_ERR_MSG, MAX_TRACE_ID, MAX_WS_ID, RESPONSE_BUFFER_LEN, SHM_VAULT_PREFIX,
 };
-use libc::{c_void, close, fstat, mmap, shm_open, MAP_FAILED, MAP_SHARED, O_RDWR, PROT_READ, PROT_WRITE};
+use libc::{
+    c_void, close, fstat, mmap, shm_open, MAP_FAILED, MAP_SHARED, O_RDWR, PROT_READ, PROT_WRITE,
+};
 use std::ffi::CString;
 use std::mem::{align_of, size_of};
 use std::ptr;
@@ -37,7 +39,10 @@ impl VaultBridge {
         unsafe {
             let fd = shm_open(c_name.as_ptr(), O_RDWR, 0);
             if fd < 0 {
-                return Err(format!("shm_open failed for {} (vault not found?)", shm_name));
+                return Err(format!(
+                    "shm_open failed for {} (vault not found?)",
+                    shm_name
+                ));
             }
             let size = size_of::<Vault>();
             let mut st: libc::stat = std::mem::zeroed();
@@ -53,7 +58,14 @@ impl VaultBridge {
                 ));
             }
 
-            let ptr = mmap(ptr::null_mut(), size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+            let ptr = mmap(
+                ptr::null_mut(),
+                size,
+                PROT_READ | PROT_WRITE,
+                MAP_SHARED,
+                fd,
+                0,
+            );
             close(fd);
             if ptr == MAP_FAILED {
                 return Err("mmap failed".to_string());
@@ -73,7 +85,11 @@ impl VaultBridge {
 
     pub fn read_response(&self) -> String {
         let vault = self.as_mut();
-        let nul = vault.response_buffer.iter().position(|b| *b == 0).unwrap_or(RESPONSE_BUFFER_LEN);
+        let nul = vault
+            .response_buffer
+            .iter()
+            .position(|b| *b == 0)
+            .unwrap_or(RESPONSE_BUFFER_LEN);
         String::from_utf8_lossy(&vault.response_buffer[..nul]).to_string()
     }
 

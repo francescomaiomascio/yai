@@ -15,6 +15,9 @@ echo "=== CHECK GENERATED"
 cd "$ROOT"
 bash scripts/check-generated.sh
 
+echo "=== UI NOTE"
+echo "TUI removed from mind; UI verification moved to YX repo pipeline."
+
 echo "=== CLI SPEC VALIDATION"
 python3 - <<'PY'
 import json, sys

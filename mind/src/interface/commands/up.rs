@@ -1,8 +1,8 @@
 use crate::control::daemon;
-use crate::rpc::protocol::{Request, Response};
-use crate::rpc::uds_client;
 use crate::interface::commands::logs;
 use crate::interface::config::RuntimeConfig;
+use crate::rpc::protocol::{Request, Response};
+use crate::rpc::uds_client;
 use anyhow::Result;
 
 #[derive(Debug, Clone)]

@@ -6,7 +6,13 @@ use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::thread;
 use std::time::Duration;
 
-pub fn run(cfg: &RuntimeConfig, ws: &str, component: &str, follow: bool, tail_lines: usize) -> Result<()> {
+pub fn run(
+    cfg: &RuntimeConfig,
+    ws: &str,
+    component: &str,
+    follow: bool,
+    tail_lines: usize,
+) -> Result<()> {
     let path = log_path(&cfg.run_dir, ws, component);
     if !path.exists() {
         anyhow::bail!("log not found: {}", path.display());

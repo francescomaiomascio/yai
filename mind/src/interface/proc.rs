@@ -37,8 +37,15 @@ pub fn write_run_state(path: &Path, state: &RunState) -> Result<()> {
 pub fn read_run_state(path: &Path) -> Result<RunState> {
     let mut target = path.to_path_buf();
     if !target.exists() {
-        if let Some(ws) = path.parent().and_then(|p| p.file_name()).and_then(|s| s.to_str()) {
-            let legacy = path.parent().and_then(|p| p.parent()).map(|p| p.join(format!("{}.json", ws)));
+        if let Some(ws) = path
+            .parent()
+            .and_then(|p| p.file_name())
+            .and_then(|s| s.to_str())
+        {
+            let legacy = path
+                .parent()
+                .and_then(|p| p.parent())
+                .map(|p| p.join(format!("{}.json", ws)));
             if let Some(legacy_path) = legacy {
                 if legacy_path.exists() {
                     target = legacy_path;

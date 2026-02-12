@@ -99,12 +99,16 @@ pub fn build_from_env() -> Result<(Box<dyn EmbeddingProvider>, String)> {
         let endpoint = std::env::var("YAI_EMBED_ENDPOINT")
             .map_err(|_| anyhow::anyhow!("YAI_EMBED_ENDPOINT missing"))?;
         let model = std::env::var("YAI_EMBED_MODEL").unwrap_or_else(|_| "mini".to_string());
-        return Ok((Box::new(RemoteEmbedder::new(endpoint, model)), "remote".to_string()));
+        return Ok((
+            Box::new(RemoteEmbedder::new(endpoint, model)),
+            "remote".to_string(),
+        ));
     }
 
     #[cfg(feature = "embeddings-onnx")]
     {
-        let model = std::env::var("YAI_EMBED_MODEL").unwrap_or_else(|_| "all-MiniLM-L6-v2".to_string());
+        let model =
+            std::env::var("YAI_EMBED_MODEL").unwrap_or_else(|_| "all-MiniLM-L6-v2".to_string());
         let model_dir = crate::providers::embeddings::onnx::default_model_dir(&model);
         if provider == "onnx" || (provider == "hash" && model_dir.exists()) {
             let emb = crate::providers::embeddings::onnx::OnnxEmbedder::load(&model_dir)?;

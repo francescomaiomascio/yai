@@ -1,6 +1,6 @@
+use crate::interface::config::RuntimeConfig;
 use crate::rpc::protocol::Response;
 use crate::rpc::uds_client;
-use crate::interface::config::RuntimeConfig;
 use anyhow::Result;
 
 pub fn run(cfg: &RuntimeConfig, ws: &str, json: bool) -> Result<()> {

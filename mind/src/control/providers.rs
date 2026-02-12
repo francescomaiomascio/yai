@@ -117,7 +117,8 @@ fn signature_for(hash: &str) -> String {
 }
 
 fn provider_payload(info: &ProviderInfo) -> String {
-    serde_json::to_string(info).unwrap_or_else(|_| format!("{}:{}:{}", info.id, info.endpoint, info.model))
+    serde_json::to_string(info)
+        .unwrap_or_else(|_| format!("{}:{}:{}", info.id, info.endpoint, info.model))
 }
 
 fn parse_legacy_providers(data: &str) -> Result<Vec<ProviderInfo>> {
@@ -133,7 +134,11 @@ fn parse_legacy_providers(data: &str) -> Result<Vec<ProviderInfo>> {
             id: p.id,
             endpoint: p.endpoint,
             model: p.model,
-            trust_state: if p.trusted { TrustState::Paired } else { TrustState::Discovered },
+            trust_state: if p.trusted {
+                TrustState::Paired
+            } else {
+                TrustState::Discovered
+            },
             fingerprint: None,
             capabilities: Vec::new(),
             last_seen: now,
@@ -159,7 +164,8 @@ fn collect_legacy() -> Result<Vec<ProviderInfo>> {
 
     let global = legacy_global_file();
     if global.exists() {
-        let data = fs::read_to_string(&global).with_context(|| format!("read legacy providers: {}", global.display()))?;
+        let data = fs::read_to_string(&global)
+            .with_context(|| format!("read legacy providers: {}", global.display()))?;
         if !data.trim().is_empty() {
             merge_providers(&mut out, parse_legacy_providers(&data)?);
         }
@@ -167,14 +173,17 @@ fn collect_legacy() -> Result<Vec<ProviderInfo>> {
 
     let run = paths::run_dir();
     if run.is_dir() {
-        for entry in fs::read_dir(&run).with_context(|| format!("read run dir: {}", run.display()))? {
+        for entry in
+            fs::read_dir(&run).with_context(|| format!("read run dir: {}", run.display()))?
+        {
             let entry = entry?;
             if !entry.file_type()?.is_dir() {
                 continue;
             }
             let p = entry.path().join("providers.json");
             if p.exists() {
-                let data = fs::read_to_string(&p).with_context(|| format!("read legacy ws providers: {}", p.display()))?;
+                let data = fs::read_to_string(&p)
+                    .with_context(|| format!("read legacy ws providers: {}", p.display()))?;
                 if !data.trim().is_empty() {
                     merge_providers(&mut out, parse_legacy_providers(&data)?);
                 }
@@ -216,7 +225,8 @@ fn save_store(mut store: TrustStore) -> Result<TrustStore> {
 fn load_store() -> Result<TrustStore> {
     let path = trust_file();
     if path.exists() {
-        let data = fs::read_to_string(&path).with_context(|| format!("read trust store: {}", path.display()))?;
+        let data = fs::read_to_string(&path)
+            .with_context(|| format!("read trust store: {}", path.display()))?;
         if !data.trim().is_empty() {
             if let Ok(store) = serde_json::from_str::<TrustStore>(&data) {
                 return Ok(store);
@@ -265,7 +275,11 @@ fn load_store() -> Result<TrustStore> {
     })
 }
 
-fn to_transition(store: &TrustStore, old: Option<TrustState>, rec: &ProviderRecord) -> TrustTransition {
+fn to_transition(
+    store: &TrustStore,
+    old: Option<TrustState>,
+    rec: &ProviderRecord,
+) -> TrustTransition {
     TrustTransition {
         provider: rec.info.clone(),
         from_state: old,
@@ -276,7 +290,11 @@ fn to_transition(store: &TrustStore, old: Option<TrustState>, rec: &ProviderReco
 
 pub fn record_audit_event(provider_id: &str, event_id: &str) -> Result<()> {
     let mut store = load_store()?;
-    if let Some(rec) = store.providers.iter_mut().find(|p| p.info.id == provider_id) {
+    if let Some(rec) = store
+        .providers
+        .iter_mut()
+        .find(|p| p.info.id == provider_id)
+    {
         rec.audit.last_event_id = Some(event_id.to_string());
         let base = format!("{}:{}", rec.audit.history_hash, event_id);
         rec.audit.history_hash = hash_str(&base);
@@ -350,7 +368,12 @@ pub fn list_trusted() -> Result<Vec<ProviderInfo>> {
         .providers
         .into_iter()
         .map(|p| p.info)
-        .filter(|p| matches!(p.trust_state, TrustState::Paired | TrustState::Attached | TrustState::Detached))
+        .filter(|p| {
+            matches!(
+                p.trust_state,
+                TrustState::Paired | TrustState::Attached | TrustState::Detached
+            )
+        })
         .collect())
 }
 
@@ -393,7 +416,10 @@ pub fn attach(run_dir: &Path, ws: &str, info: ProviderInfo) -> Result<TrustTrans
         .ok_or_else(|| anyhow!("provider not found (pair first)"))?;
 
     let old_state = Some(rec.info.trust_state.clone());
-    if matches!(rec.info.trust_state, TrustState::Revoked | TrustState::Discovered) {
+    if matches!(
+        rec.info.trust_state,
+        TrustState::Revoked | TrustState::Discovered
+    ) {
         bail!("provider not paired");
     }
 
@@ -474,7 +500,8 @@ pub fn status(run_dir: &Path, ws: &str) -> Result<Option<ProviderInfo>> {
     if path.exists() {
         let data = fs::read_to_string(&path)
             .with_context(|| format!("read active providers: {}", path.display()))?;
-        let file: ActiveProviders = serde_json::from_str(&data).context("parse active providers")?;
+        let file: ActiveProviders =
+            serde_json::from_str(&data).context("parse active providers")?;
         return Ok(file.active);
     }
 
@@ -482,7 +509,8 @@ pub fn status(run_dir: &Path, ws: &str) -> Result<Option<ProviderInfo>> {
     if legacy.exists() {
         let data = fs::read_to_string(&legacy)
             .with_context(|| format!("read legacy active provider: {}", legacy.display()))?;
-        let file: ActiveProviders = serde_json::from_str(&data).context("parse legacy active provider")?;
+        let file: ActiveProviders =
+            serde_json::from_str(&data).context("parse legacy active provider")?;
         return Ok(file.active);
     }
 
@@ -508,7 +536,11 @@ pub fn revoke(id: &str) -> Result<Option<TrustTransition>> {
     Ok(None)
 }
 
-pub fn set_trust_state(id: Option<&str>, endpoint: Option<&str>, state: TrustState) -> Result<TrustTransition> {
+pub fn set_trust_state(
+    id: Option<&str>,
+    endpoint: Option<&str>,
+    state: TrustState,
+) -> Result<TrustTransition> {
     let mut store = load_store()?;
     let rec = store
         .providers

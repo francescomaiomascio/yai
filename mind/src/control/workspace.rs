@@ -8,10 +8,10 @@ use anyhow::{Context, Result};
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Write};
-use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
@@ -27,8 +27,7 @@ pub struct StartOpts {
 
 pub fn ensure_ws_dir(run_dir: &Path, ws: &str) -> Result<PathBuf> {
     let dir = run_dir.join(ws);
-    fs::create_dir_all(&dir)
-        .with_context(|| format!("create ws dir: {}", dir.display()))?;
+    fs::create_dir_all(&dir).with_context(|| format!("create ws dir: {}", dir.display()))?;
     Ok(dir)
 }
 
@@ -65,7 +64,11 @@ pub fn read_halt(run_dir: &Path, ws: &str) -> Option<String> {
     let data = fs::read_to_string(path).ok()?;
     serde_json::from_str::<serde_json::Value>(&data)
         .ok()
-        .and_then(|v| v.get("reason").and_then(|r| r.as_str()).map(|s| s.to_string()))
+        .and_then(|v| {
+            v.get("reason")
+                .and_then(|r| r.as_str())
+                .map(|s| s.to_string())
+        })
 }
 
 pub fn clear_halt(run_dir: &Path, ws: &str) {
@@ -86,8 +89,7 @@ pub fn acquire_lock(run_dir: &Path, ws: &str) -> Result<PathBuf> {
         fs::remove_file(&lock).ok();
     }
     let pid = std::process::id();
-    fs::write(&lock, pid.to_string())
-        .with_context(|| format!("write lock: {}", lock.display()))?;
+    fs::write(&lock, pid.to_string()).with_context(|| format!("write lock: {}", lock.display()))?;
     Ok(lock)
 }
 
@@ -103,7 +105,12 @@ pub fn read_state(cfg: &RuntimeConfig, ws: &str) -> Option<crate::interface::pro
     read_run_state(&pidfile).ok()
 }
 
-pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate::control::events::EventBus) -> Result<RunState> {
+pub fn start_stack(
+    cfg: &RuntimeConfig,
+    ws: &str,
+    opts: &StartOpts,
+    bus: &crate::control::events::EventBus,
+) -> Result<RunState> {
     let socket_path = paths::ws_socket_path(&cfg.socket_path, ws);
     clear_halt(&cfg.run_dir, ws);
 
@@ -234,8 +241,14 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
         .stderr(Stdio::from(kernel_log));
     let mut kernel_child = kernel_cmd.spawn().context("spawn yai-kernel")?;
     kernel_pid = Some(kernel_child.id());
-    let _ = bus.emit("proc_started", serde_json::json!({ "proc": "boot", "pid": boot_pid, "pgid": boot_pid }));
-    let _ = bus.emit("proc_started", serde_json::json!({ "proc": "kernel", "pid": kernel_child.id(), "pgid": boot_pid }));
+    let _ = bus.emit(
+        "proc_started",
+        serde_json::json!({ "proc": "boot", "pid": boot_pid, "pgid": boot_pid }),
+    );
+    let _ = bus.emit(
+        "proc_started",
+        serde_json::json!({ "proc": "kernel", "pid": kernel_child.id(), "pgid": boot_pid }),
+    );
 
     // wait for runtime socket
     let timeout = Duration::from_millis(opts.timeout_ms);
@@ -251,7 +264,10 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
     }
     if !socket_path.exists() {
         let _ = kernel_child.kill();
-        anyhow::bail!("timeout waiting for runtime socket {}", socket_path.display());
+        anyhow::bail!(
+            "timeout waiting for runtime socket {}",
+            socket_path.display()
+        );
     }
 
     if !opts.no_engine {
@@ -272,7 +288,10 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
             .stderr(Stdio::from(engine_log));
         let child = cmd.spawn().context("spawn yai-engine")?;
         engine_pid = Some(child.id());
-        let _ = bus.emit("proc_started", serde_json::json!({ "proc": "engine", "pid": child.id(), "pgid": boot_pid }));
+        let _ = bus.emit(
+            "proc_started",
+            serde_json::json!({ "proc": "engine", "pid": child.id(), "pgid": boot_pid }),
+        );
     }
 
     if !opts.no_mind {
@@ -283,7 +302,10 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
             .write(true)
             .open(&mind_log_path)
             .with_context(|| format!("open log: {}", mind_log_path.display()))?;
-        let built_mind = paths::mind_dir(&cfg.workspace_root).join("target").join("release").join("yai-mind");
+        let built_mind = paths::mind_dir(&cfg.workspace_root)
+            .join("target")
+            .join("release")
+            .join("yai-mind");
         let mind_exec = if opts.build && built_mind.exists() {
             built_mind
         } else {
@@ -300,7 +322,10 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
             .stderr(Stdio::from(mind_log));
         let child = cmd.spawn().context("spawn yai-mind")?;
         mind_pid = Some(child.id());
-        let _ = bus.emit("proc_started", serde_json::json!({ "proc": "mind", "pid": child.id(), "pgid": boot_pid }));
+        let _ = bus.emit(
+            "proc_started",
+            serde_json::json!({ "proc": "mind", "pid": child.id(), "pgid": boot_pid }),
+        );
     }
 
     let pgid = Some(boot_pid);
@@ -360,7 +385,12 @@ fn setpgid_parent(pid: u32, pgid: u32) {
     }
 }
 
-pub fn stop_stack(cfg: &RuntimeConfig, ws: &str, force: bool, bus: &crate::control::events::EventBus) -> Result<()> {
+pub fn stop_stack(
+    cfg: &RuntimeConfig,
+    ws: &str,
+    force: bool,
+    bus: &crate::control::events::EventBus,
+) -> Result<()> {
     let stopping = stopping_path(&cfg.run_dir, ws);
     if !stopping.exists() {
         let _ = bus.emit("ws_down_started", serde_json::json!({ "ws": ws }));
@@ -372,37 +402,47 @@ pub fn stop_stack(cfg: &RuntimeConfig, ws: &str, force: bool, bus: &crate::contr
     if pidfile.exists() {
         let state = read_run_state(&pidfile).ok();
         if let Some(state) = state {
-        #[cfg(unix)]
-        if let Some(pgid) = state.pgid {
-            unsafe {
-                libc::kill(-(pgid as i32), libc::SIGTERM);
-            }
-        }
-        for pid in [state.mind_pid, state.engine_pid, state.kernel_pid, state.boot_pid] {
-            if let Some(pid) = pid {
-                if is_pid_alive(pid) {
-                    let _ = send_signal(pid, "-TERM");
-                }
-            }
-        }
-
-        thread::sleep(Duration::from_secs(2));
-
-        if force {
             #[cfg(unix)]
             if let Some(pgid) = state.pgid {
                 unsafe {
-                    libc::kill(-(pgid as i32), libc::SIGKILL);
+                    libc::kill(-(pgid as i32), libc::SIGTERM);
                 }
             }
-            for pid in [state.mind_pid, state.engine_pid, state.kernel_pid, state.boot_pid] {
+            for pid in [
+                state.mind_pid,
+                state.engine_pid,
+                state.kernel_pid,
+                state.boot_pid,
+            ] {
                 if let Some(pid) = pid {
                     if is_pid_alive(pid) {
-                        let _ = send_signal(pid, "-KILL");
+                        let _ = send_signal(pid, "-TERM");
                     }
                 }
             }
-        }
+
+            thread::sleep(Duration::from_secs(2));
+
+            if force {
+                #[cfg(unix)]
+                if let Some(pgid) = state.pgid {
+                    unsafe {
+                        libc::kill(-(pgid as i32), libc::SIGKILL);
+                    }
+                }
+                for pid in [
+                    state.mind_pid,
+                    state.engine_pid,
+                    state.kernel_pid,
+                    state.boot_pid,
+                ] {
+                    if let Some(pid) = pid {
+                        if is_pid_alive(pid) {
+                            let _ = send_signal(pid, "-KILL");
+                        }
+                    }
+                }
+            }
         }
 
         remove_pidfile(&pidfile)?;

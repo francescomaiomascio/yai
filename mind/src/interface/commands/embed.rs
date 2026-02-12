@@ -3,7 +3,13 @@ use crate::providers::embeddings::{EmbeddingProvider, HashEmbedder, RemoteEmbedd
 use anyhow::Result;
 use std::env;
 
-pub fn run(_cfg: &RuntimeConfig, provider: &str, model: &str, endpoint: &Option<String>, text: &str) -> Result<()> {
+pub fn run(
+    _cfg: &RuntimeConfig,
+    provider: &str,
+    model: &str,
+    endpoint: &Option<String>,
+    text: &str,
+) -> Result<()> {
     let mut embedder: Box<dyn EmbeddingProvider> = Box::new(HashEmbedder::new(16));
     let mut provider = provider.to_lowercase();
     let env_provider = env::var("YAI_EMBED_PROVIDER").ok();
@@ -18,7 +24,8 @@ pub fn run(_cfg: &RuntimeConfig, provider: &str, model: &str, endpoint: &Option<
     let resolved_endpoint = endpoint.clone().or(env_endpoint);
 
     if provider == "remote" {
-        let ep = resolved_endpoint.ok_or_else(|| anyhow::anyhow!("missing --endpoint or YAI_EMBED_ENDPOINT"))?;
+        let ep = resolved_endpoint
+            .ok_or_else(|| anyhow::anyhow!("missing --endpoint or YAI_EMBED_ENDPOINT"))?;
         embedder = Box::new(RemoteEmbedder::new(ep.clone(), resolved_model.clone()));
         println!("provider: remote");
         println!("model: {}", resolved_model);
@@ -40,7 +47,8 @@ pub fn run(_cfg: &RuntimeConfig, provider: &str, model: &str, endpoint: &Option<
 
         #[cfg(feature = "embeddings-candle")]
         if !selected {
-            let model_dir = crate::providers::embeddings::candle::default_model_dir(&resolved_model);
+            let model_dir =
+                crate::providers::embeddings::candle::default_model_dir(&resolved_model);
             if provider == "candle" || (provider == "hash" && model_dir.exists()) {
                 let emb = crate::providers::embeddings::candle::CandleEmbedder::load(&model_dir)?;
                 embedder = Box::new(emb);

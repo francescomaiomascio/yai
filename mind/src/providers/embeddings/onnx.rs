@@ -1,7 +1,7 @@
-use anyhow::{Context, Result};
 use super::EmbeddingProvider;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use tokenizers::Tokenizer;
 use tract_onnx::prelude::*;
 
@@ -13,7 +13,9 @@ pub struct OnnxEmbedder {
 }
 
 pub fn default_model_dir(model: &str) -> PathBuf {
-    crate::interface::paths::model_root().join("embeddings").join(model)
+    crate::interface::paths::model_root()
+        .join("embeddings")
+        .join(model)
 }
 
 impl OnnxEmbedder {
@@ -51,17 +53,15 @@ impl OnnxEmbedder {
             .iter()
             .map(|v| *v as i64)
             .collect();
-        let token_type: Vec<i64> = encoding
-            .get_type_ids()
-            .iter()
-            .map(|v| *v as i64)
-            .collect();
+        let token_type: Vec<i64> = encoding.get_type_ids().iter().map(|v| *v as i64).collect();
 
         let seq_len = ids.len();
         let ids = Tensor::from(tract_ndarray::Array2::from_shape_vec((1, seq_len), ids)?);
         let attn = Tensor::from(tract_ndarray::Array2::from_shape_vec((1, seq_len), attn)?);
-        let token_type =
-            Tensor::from(tract_ndarray::Array2::from_shape_vec((1, seq_len), token_type)?);
+        let token_type = Tensor::from(tract_ndarray::Array2::from_shape_vec(
+            (1, seq_len),
+            token_type,
+        )?);
 
         let inputs = match self.input_count {
             1 => tvec![ids],
@@ -69,7 +69,9 @@ impl OnnxEmbedder {
             _ => tvec![ids, attn, token_type],
         };
 
-        let outputs = self.model.run(inputs.into_iter().map(|t| t.into_tvalue()).collect())?;
+        let outputs = self
+            .model
+            .run(inputs.into_iter().map(|t| t.into_tvalue()).collect())?;
         let out = outputs
             .first()
             .ok_or_else(|| anyhow::anyhow!("onnx embed: empty output"))?;

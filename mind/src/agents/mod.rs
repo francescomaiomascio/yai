@@ -1,11 +1,11 @@
 use crate::core::protocol::{AgentId, RoutingDecision};
 use crate::core::runtime::{Error, RuntimeContext};
 
-pub mod system;
 pub mod code;
-pub mod knowledge;
-pub mod validator;
 pub mod historian;
+pub mod knowledge;
+pub mod system;
+pub mod validator;
 
 #[derive(Debug, Clone)]
 pub struct AgentOutput {

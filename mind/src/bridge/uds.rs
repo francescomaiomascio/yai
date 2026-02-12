@@ -1,7 +1,7 @@
 // src/bridge/uds.rs
 #![allow(dead_code)]
-use tokio::net::UnixStream;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::UnixStream;
 
 pub struct UdsConnector {
     path: String,
@@ -23,7 +23,7 @@ impl UdsConnector {
 
     pub async fn call_engine(&self, payload: &[u8]) -> tokio::io::Result<Vec<u8>> {
         let mut stream = UnixStream::connect(&self.path).await?;
-        
+
         // Scrittura comando
         stream.write_all(payload).await?;
         stream.shutdown().await?;
@@ -31,7 +31,7 @@ impl UdsConnector {
         // Lettura risposta
         let mut response = Vec::new();
         stream.read_to_end(&mut response).await?;
-        
+
         Ok(response)
     }
 }

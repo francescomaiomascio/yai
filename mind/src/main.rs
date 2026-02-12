@@ -1,7 +1,6 @@
 use std::env;
 use std::sync::{Arc, Mutex};
 
-
 use std::path::PathBuf;
 
 fn default_artifacts_root() -> PathBuf {
@@ -13,7 +12,10 @@ fn read_core_manifest() -> Option<(String, String)> {
     let artifacts_root = env::var("YAI_ARTIFACTS_ROOT")
         .map(PathBuf::from)
         .unwrap_or_else(|_| default_artifacts_root());
-    let manifest = artifacts_root.join("yai-core").join("dist").join("MANIFEST.json");
+    let manifest = artifacts_root
+        .join("yai-core")
+        .join("dist")
+        .join("MANIFEST.json");
     let data = std::fs::read_to_string(manifest).ok()?;
     let v: serde_json::Value = serde_json::from_str(&data).ok()?;
     let git_sha = v.get("git_sha")?.as_str()?.to_string();
@@ -41,7 +43,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let endpoint = env::var("YAI_REMOTE_ENDPOINT").unwrap_or_default();
     let model = env::var("YAI_REMOTE_MODEL").unwrap_or_else(|_| "unknown".to_string());
     if !endpoint.is_empty() {
-        println!("[LLM] provider=remote endpoint={} model={}", endpoint, model);
+        println!(
+            "[LLM] provider=remote endpoint={} model={}",
+            endpoint, model
+        );
     } else {
         println!("[LLM] provider=mock");
     }

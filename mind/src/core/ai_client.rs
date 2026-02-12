@@ -1,6 +1,6 @@
+use crate::core::runtime::Error;
 use crate::llm::adapter::LlmClient;
 use crate::providers::embeddings::{EmbeddingProvider, ProviderError};
-use crate::core::runtime::Error;
 
 #[allow(dead_code)]
 pub struct AiClient {

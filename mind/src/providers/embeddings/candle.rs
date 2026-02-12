@@ -25,8 +25,8 @@ impl CandleEmbedder {
             .with_context(|| format!("read config: {}", cfg_path.display()))?;
         let cfg: Config = serde_json::from_str(&cfg_raw).context("parse config")?;
 
-        let tokenizer = Tokenizer::from_file(&tokenizer_path)
-            .map_err(|e| anyhow::anyhow!("tokenizer: {e}"))?;
+        let tokenizer =
+            Tokenizer::from_file(&tokenizer_path).map_err(|e| anyhow::anyhow!("tokenizer: {e}"))?;
 
         let device = Device::Cpu;
         let vb = VarBuilder::from_safetensors(&weights_path, DType::F32, &device)

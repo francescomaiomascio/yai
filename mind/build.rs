@@ -12,8 +12,11 @@ fn main() {
         .join("include");
 
     // 2. Istruisci Cargo a cercare gli header del Kernel
-    println!("cargo:rustc-link-search=native={}", kernel_include_path.display());
-    
+    println!(
+        "cargo:rustc-link-search=native={}",
+        kernel_include_path.display()
+    );
+
     // 3. Linka le librerie di sistema necessarie per SHM e POSIX (rt = real time)
     if cfg!(target_os = "linux") {
         println!("cargo:rustc-link-lib=rt");

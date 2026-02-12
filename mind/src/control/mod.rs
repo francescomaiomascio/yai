@@ -1,6 +1,8 @@
-pub mod daemon;
-pub mod events;
+pub mod chat;
 pub mod cortex;
-pub mod providers;
-pub mod workspace;
+pub mod daemon;
 pub mod dsar;
+pub mod events;
+pub mod providers;
+pub mod shell;
+pub mod workspace;

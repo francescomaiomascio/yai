@@ -1,5 +1,7 @@
 use crate::interface::paths;
-use crate::memory::graph::semantic::types::{ExpiredSemanticNode, NodeRetention, SemanticEdge, SemanticNode};
+use crate::memory::graph::semantic::types::{
+    ExpiredSemanticNode, NodeRetention, SemanticEdge, SemanticNode,
+};
 use anyhow::{Context, Result};
 use rusqlite::{params, Connection};
 use serde_json::Value;
@@ -86,7 +88,9 @@ impl SemanticStore {
     ) -> Result<()> {
         let conn = self.conn()?;
         let created_ts = retention.created_ts;
-        let expires_at = retention.ttl_seconds.map(|ttl| created_ts.saturating_add(ttl));
+        let expires_at = retention
+            .ttl_seconds
+            .map(|ttl| created_ts.saturating_add(ttl));
         let meta_raw = serde_json::to_string(meta).unwrap_or_else(|_| "{}".to_string());
         let compliance_raw = retention
             .compliance
@@ -119,7 +123,14 @@ impl SemanticStore {
         Ok(())
     }
 
-    pub fn upsert_edge(&self, id: &str, src: &str, dst: &str, rel: &str, weight: f32) -> Result<()> {
+    pub fn upsert_edge(
+        &self,
+        id: &str,
+        src: &str,
+        dst: &str,
+        rel: &str,
+        weight: f32,
+    ) -> Result<()> {
         let conn = self.conn()?;
         conn.execute(
             "INSERT INTO edges (id, src, dst, rel, weight) VALUES (?1, ?2, ?3, ?4, ?5)
@@ -234,7 +245,8 @@ impl SemanticStore {
 
     pub fn list_edges(&self) -> Result<Vec<SemanticEdge>> {
         let conn = self.conn()?;
-        let mut stmt = conn.prepare("SELECT id, src, dst, rel, weight FROM edges ORDER BY id ASC")?;
+        let mut stmt =
+            conn.prepare("SELECT id, src, dst, rel, weight FROM edges ORDER BY id ASC")?;
         let mut rows = stmt.query([])?;
         let mut out = Vec::new();
         while let Some(row) = rows.next()? {
@@ -281,7 +293,10 @@ fn add_column_if_missing(conn: &Connection, table: &str, column: &str, ddl: &str
             return Ok(());
         }
     }
-    conn.execute(&format!("ALTER TABLE {} ADD COLUMN {} {}", table, column, ddl), [])
-        .with_context(|| format!("add {}.{}", table, column))?;
+    conn.execute(
+        &format!("ALTER TABLE {} ADD COLUMN {} {}", table, column, ddl),
+        [],
+    )
+    .with_context(|| format!("add {}.{}", table, column))?;
     Ok(())
 }

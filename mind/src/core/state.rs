@@ -1,7 +1,7 @@
 // src/core/state.rs
 #![allow(dead_code)]
-use std::sync::{Arc, Mutex};
 use crate::bridge::shm::VaultState;
+use std::sync::{Arc, Mutex};
 
 pub struct SharedState {
     pub connected_clients: usize,

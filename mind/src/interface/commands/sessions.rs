@@ -1,6 +1,6 @@
+use crate::control::workspace::control_socket_path;
 use crate::interface::commands::down;
 use crate::interface::config::RuntimeConfig;
-use crate::control::workspace::control_socket_path;
 use crate::rpc::protocol::{Request, Response};
 use crate::rpc::uds_client;
 use anyhow::Result;
