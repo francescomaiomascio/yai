@@ -1,6 +1,9 @@
 use crate::rpc::protocol::{Request, Response};
 use crate::rpc::uds_client;
 use crate::interface::config::RuntimeConfig;
+use crate::interface::ProvidersTrustState;
+use crate::control::providers as trust_store;
+use crate::rpc::protocol::TrustState;
 use anyhow::Result;
 
 pub fn discover(cfg: &RuntimeConfig, ws: &str) -> Result<()> {
@@ -35,6 +38,31 @@ pub fn list(cfg: &RuntimeConfig, ws: &str) -> Result<()> {
         Response::Error { message } => println!("error: {}", message),
         other => println!("unexpected response: {:?}", other),
     }
+    Ok(())
+}
+
+pub fn trust(
+    _cfg: &RuntimeConfig,
+    _ws: &str,
+    id: Option<String>,
+    endpoint: Option<String>,
+    state: ProvidersTrustState,
+) -> Result<()> {
+    if id.is_none() && endpoint.is_none() {
+        anyhow::bail!("provide at least one selector: --id <provider_id> or --endpoint <url>");
+    }
+    let target = match state {
+        ProvidersTrustState::Discovered => TrustState::Discovered,
+        ProvidersTrustState::Trusted => TrustState::Paired,
+        ProvidersTrustState::Revoked => TrustState::Revoked,
+    };
+    let transition = trust_store::set_trust_state(id.as_deref(), endpoint.as_deref(), target)?;
+    println!(
+        "trust_updated: id={} endpoint={} state={}",
+        transition.provider.id,
+        transition.provider.endpoint,
+        format!("{:?}", transition.provider.trust_state).to_lowercase()
+    );
     Ok(())
 }
 

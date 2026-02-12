@@ -56,7 +56,7 @@ pub async fn run(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<EventBus>) {
         if class != last_class && last_emit.elapsed() > Duration::from_secs(3) {
             match class {
                 LoadClass::High => {
-                    bus.emit(
+                    let _ = bus.emit(
                         "engine_scale_up",
                         json!({
                             "ws": ws.as_ref(),
@@ -70,7 +70,7 @@ pub async fn run(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<EventBus>) {
                     );
                 }
                 LoadClass::Low => {
-                    bus.emit(
+                    let _ = bus.emit(
                         "engine_scale_down",
                         json!({
                             "ws": ws.as_ref(),

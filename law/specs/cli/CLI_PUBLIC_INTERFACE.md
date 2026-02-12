@@ -73,9 +73,10 @@ These paths are authoritative and mirror `law/specs/control/CONTROL_PLANE.md`:
 - `yai verify law-kernel`
 - `yai verify full`
 
-### Monitor (TUI)
-- `yai monitor` (full-screen)
-- `yai monitor --headless` (no TUI, refresh loop)
+### TUI / Monitor
+- `yai tui run` (canonical full-screen cockpit)
+- `yai tui snapshot --view <overview|graph|events|logs|db|providers|contracts|chat>` (canonical JSON snapshot)
+- `yai monitor` (legacy alias, deprecated; maps to `yai tui run`)
 - `yai events` (stream events)
 
 ## Command Contracts (summary)
@@ -90,20 +91,24 @@ Required invariants:
 
 Usage:
 - `yai up --ws <id> [--build] [--ai] [--no-engine] [--no-mind] [--detach] [--monitor] [--timeout-ms <n>]`
+- `--monitor` is deprecated and maps to `yai tui run`.
 
 Side effects:
 - may spawn processes
 - may create pidfiles/logfiles
 - may create socket(s)
 
-### `yai monitor`
-Purpose: live cockpit. Must not mutate state unless explicitly asked.
+### `yai tui`
+Purpose: live cockpit and deterministic snapshots. Must not mutate state unless explicitly asked.
 
 Usage:
-- `yai monitor --ws <id>`
+- `yai tui --ws <id> run`
+- `yai tui --ws <id> snapshot --view overview|graph|events|logs|db|providers|contracts|chat`
 
 Notes:
+- `yai monitor --ws <id>` is a deprecated alias for `yai tui --ws <id> run`.
 - TUI is a rendering of the same interface. It does not invent actions.
+- Navigation and keymap contract is defined in `law/specs/cli/TUI_COCKPIT_V1.md`.
 
 ### `yai providers`
 Purpose: discovery, trust, and attach/detach of LLM providers.

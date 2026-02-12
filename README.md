@@ -64,8 +64,8 @@ It consumes Law-generated contracts and headers via:
 Single command to validate Law ↔ Kernel ↔ Engine coherence:
 
 ```bash
-cd yai-core
-./scripts/verify-core.sh
+cd yai
+./scripts/verify/core.sh
 ```
 
 This runs:
@@ -103,11 +103,11 @@ Single-purpose commands for reproducible cleanup, build, and smoke checks.
 ./scripts/yai-purge
 
 # build: rebuild core binaries
-(cd yai-core && make package)
-(cd yai-mind && cargo build --release)
+(cd . && make package)
+(cd mind && cargo build --release)
 
 # smoke: up + status + monitor (explicit BIN path, no PATH required)
-BIN="20 20 101 12 61 79 80 81 98 702 701 33 100 204 250 395 398 399 400command -v yai)"
+BIN="$(command -v yai)"
 $BIN up --ws dev --build --monitor --ai --detach
 $BIN status --ws dev
 $BIN monitor --ws dev

@@ -64,7 +64,9 @@
           "flag": "--monitor",
           "type": "bool",
           "required": false,
-          "default": false
+          "default": false,
+          "deprecated": true,
+          "replacement": "yai tui --ws <id> run"
         },
         {
           "name": "timeout_ms",
@@ -144,7 +146,9 @@
           "flag": "--monitor",
           "type": "bool",
           "required": false,
-          "default": false
+          "default": false,
+          "deprecated": true,
+          "replacement": "yai tui --ws <id> run"
         },
         {
           "name": "timeout_ms",
@@ -291,27 +295,15 @@
     {
       "name": "monitor",
       "group": "monitor",
-      "summary": "Full-screen TUI cockpit",
+      "summary": "Legacy alias for `yai tui run` (deprecated)",
+      "deprecated": true,
+      "replacement": "yai tui run",
       "args": [
         {
           "name": "ws",
           "flag": "--ws",
           "type": "string",
           "required": false
-        },
-        {
-          "name": "headless",
-          "flag": "--headless",
-          "type": "bool",
-          "required": false,
-          "default": false
-        },
-        {
-          "name": "monitor",
-          "flag": "--monitor",
-          "type": "bool",
-          "required": false,
-          "default": false
         }
       ],
       "outputs": [
@@ -319,6 +311,61 @@
         "text"
       ],
       "side_effects": [],
+      "law_hooks": [
+        "I-001",
+        "L1",
+        "L2",
+        "L3"
+      ]
+    },
+    {
+      "name": "tui",
+      "group": "monitor",
+      "summary": "Canonical TUI command (`run` full-screen, `snapshot` JSON)",
+      "args": [
+        {
+          "name": "subcommand",
+          "pos": 1,
+          "type": "enum",
+          "values": [
+            "run",
+            "snapshot"
+          ],
+          "required": true
+        },
+        {
+          "name": "ws",
+          "flag": "--ws",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "view",
+          "flag": "--view",
+          "type": "enum",
+          "values": [
+            "overview",
+            "graph",
+            "events",
+            "logs",
+            "db",
+            "providers",
+            "contracts",
+            "chat"
+          ],
+          "required": false
+        }
+      ],
+      "outputs": [
+        "tui",
+        "json",
+        "text"
+      ],
+      "side_effects": [
+        "rpc_call",
+        "read_logs",
+        "read_db"
+      ],
       "law_hooks": [
         "I-001",
         "L1",

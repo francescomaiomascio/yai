@@ -1,5 +1,5 @@
 use crate::core::protocol::{AgentId, RoutingDecision};
-use crate::core::runtime::{IceError, RuntimeContext};
+use crate::core::runtime::{Error, RuntimeContext};
 
 pub mod system;
 pub mod code;
@@ -17,7 +17,7 @@ pub struct AgentOutput {
 #[allow(dead_code)]
 pub trait Agent {
     fn id(&self) -> AgentId;
-    fn handle(&self, input: &str, ctx: &mut RuntimeContext) -> Result<AgentOutput, IceError>;
+    fn handle(&self, input: &str, ctx: &mut RuntimeContext) -> Result<AgentOutput, Error>;
 }
 
 pub fn get_agent(agent_id: AgentId) -> Option<Box<dyn Agent>> {

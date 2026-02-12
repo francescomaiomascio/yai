@@ -3,3 +3,4 @@ pub mod events;
 pub mod cortex;
 pub mod providers;
 pub mod workspace;
+pub mod dsar;

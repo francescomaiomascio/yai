@@ -9,7 +9,7 @@ pub fn verify_core(cfg: &RuntimeConfig) -> Result<()> {
     let core_dir = paths::core_dir(&cfg.workspace_root);
     let status = Command::new("bash")
         .arg("-lc")
-        .arg("./scripts/verify-core.sh")
+        .arg("./scripts/verify/core.sh")
         .current_dir(&core_dir)
         .status()
         .with_context(|| format!("run verify-core in {}", core_dir.display()))?;
@@ -47,13 +47,26 @@ pub fn test_smoke(cfg: &RuntimeConfig, ws: &str, timeout_ms: u64) -> Result<()> 
     up::run(cfg, &runtime)?;
 
     let mind_dir = paths::mind_dir(&cfg.workspace_root);
-    let status = Command::new("cargo")
+    // Prefer canonical binary name; fallback to legacy underscore target on non-zero exit.
+    let mut status = Command::new("cargo")
         .arg("run")
         .arg("--bin")
-        .arg("yai_orchestrator")
+        .arg("yai-orchestrator")
+        .env("YAI_WORKSPACE_ID", ws)
         .current_dir(&mind_dir)
         .status()
         .with_context(|| format!("run orchestrator in {}", mind_dir.display()))?;
+
+    if !status.success() {
+        status = Command::new("cargo")
+            .arg("run")
+            .arg("--bin")
+            .arg("yai_orchestrator")
+            .env("YAI_WORKSPACE_ID", ws)
+            .current_dir(&mind_dir)
+            .status()
+            .with_context(|| format!("run legacy orchestrator in {}", mind_dir.display()))?;
+    }
     let _ = down::run(cfg, ws, true);
 
     if !status.success() {

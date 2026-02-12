@@ -3,8 +3,30 @@
 ## Quick Gate
 ```bash
 cd ~/Developer/YAI/yai
-./scripts/gate-providers.sh dev
+./scripts/gates/providers.sh dev
 ```
+
+## Trust Override (unblock L7)
+```bash
+export WS=dev
+export PROVIDER_ID='remote:http://127.0.0.1:18080/v1/chat/completions?ws=dev'
+
+yai providers trust --id "$PROVIDER_ID" --state trusted
+```
+
+## Gate Modes
+Non-strict (default):
+```bash
+./scripts/gates/providers.sh "$WS"
+```
+If no trusted provider is available, it exits `0` with:
+`SKIP: no trusted provider (non-strict)`
+
+Strict:
+```bash
+REQUIRE_ACTIVE_PROVIDER=1 ./scripts/gates/providers.sh "$WS"
+```
+Fails if no trusted provider exists.
 
 ## Manual Flow
 ```bash
@@ -29,3 +51,8 @@ yai providers --ws "$WS" revoke "$PROVIDER_ID"
   - `provider_detached`
   - `provider_revoked`
 - attach after revoke is rejected
+
+## Mode Test
+```bash
+./scripts/gates/providers-modes-test.sh
+```

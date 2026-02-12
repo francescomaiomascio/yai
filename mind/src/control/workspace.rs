@@ -234,8 +234,8 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
         .stderr(Stdio::from(kernel_log));
     let mut kernel_child = kernel_cmd.spawn().context("spawn yai-kernel")?;
     kernel_pid = Some(kernel_child.id());
-    bus.emit("proc_started", serde_json::json!({ "proc": "boot", "pid": boot_pid, "pgid": boot_pid }));
-    bus.emit("proc_started", serde_json::json!({ "proc": "kernel", "pid": kernel_child.id(), "pgid": boot_pid }));
+    let _ = bus.emit("proc_started", serde_json::json!({ "proc": "boot", "pid": boot_pid, "pgid": boot_pid }));
+    let _ = bus.emit("proc_started", serde_json::json!({ "proc": "kernel", "pid": kernel_child.id(), "pgid": boot_pid }));
 
     // wait for runtime socket
     let timeout = Duration::from_millis(opts.timeout_ms);
@@ -272,7 +272,7 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
             .stderr(Stdio::from(engine_log));
         let child = cmd.spawn().context("spawn yai-engine")?;
         engine_pid = Some(child.id());
-        bus.emit("proc_started", serde_json::json!({ "proc": "engine", "pid": child.id(), "pgid": boot_pid }));
+        let _ = bus.emit("proc_started", serde_json::json!({ "proc": "engine", "pid": child.id(), "pgid": boot_pid }));
     }
 
     if !opts.no_mind {
@@ -300,7 +300,7 @@ pub fn start_stack(cfg: &RuntimeConfig, ws: &str, opts: &StartOpts, bus: &crate:
             .stderr(Stdio::from(mind_log));
         let child = cmd.spawn().context("spawn yai-mind")?;
         mind_pid = Some(child.id());
-        bus.emit("proc_started", serde_json::json!({ "proc": "mind", "pid": child.id(), "pgid": boot_pid }));
+        let _ = bus.emit("proc_started", serde_json::json!({ "proc": "mind", "pid": child.id(), "pgid": boot_pid }));
     }
 
     let pgid = Some(boot_pid);
@@ -363,7 +363,7 @@ fn setpgid_parent(pid: u32, pgid: u32) {
 pub fn stop_stack(cfg: &RuntimeConfig, ws: &str, force: bool, bus: &crate::control::events::EventBus) -> Result<()> {
     let stopping = stopping_path(&cfg.run_dir, ws);
     if !stopping.exists() {
-        bus.emit("ws_down_started", serde_json::json!({ "ws": ws }));
+        let _ = bus.emit("ws_down_started", serde_json::json!({ "ws": ws }));
         let _ = std::fs::write(&stopping, "1");
     }
 
@@ -412,6 +412,6 @@ pub fn stop_stack(cfg: &RuntimeConfig, ws: &str, force: bool, bus: &crate::contr
         let _ = fs::remove_file(&socket_path);
     }
     let _ = std::fs::remove_file(&stopping);
-    bus.emit("ws_down_complete", serde_json::json!({ "ws": ws }));
+    let _ = bus.emit("ws_down_complete", serde_json::json!({ "ws": ws }));
     Ok(())
 }

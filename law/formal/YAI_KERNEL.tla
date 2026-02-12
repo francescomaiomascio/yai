@@ -15,7 +15,8 @@ VARIABLES
     cognitive_map,
     energy,
     trace_id,
-    external_effect
+    external_effect,
+    compliance_context_valid
 
 TypeInvariant ==
     /\ state \in States
@@ -24,6 +25,7 @@ TypeInvariant ==
     /\ energy \in Nat
     /\ trace_id \in Nat
     /\ external_effect \in BOOLEAN
+    /\ compliance_context_valid \in BOOLEAN
 
 EnergySafe ==
     energy >= 0
@@ -35,7 +37,9 @@ AuthorityRequired ==
     (state = "RUNNING") => (authority # "NONE")
 
 ExternalEffectGuard ==
-    external_effect => authority # "ENGINE"
+    external_effect =>
+        /\ authority # "NONE"
+        /\ compliance_context_valid = TRUE
 
 TraceBound ==
     trace_id <= TraceBoundMax
@@ -50,28 +54,33 @@ Init ==
     /\ energy = MaxEnergy
     /\ trace_id = 0
     /\ external_effect = FALSE
+    /\ compliance_context_valid = TRUE
 
 Strap_Preboot ==
     /\ state = "HALT"
     /\ state' = "PREBOOT"
     /\ authority' = "STRAP"
     /\ energy' = MaxEnergy
-    /\ UNCHANGED <<cognitive_map, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<cognitive_map, trace_id, compliance_context_valid>>
 
 Preboot_Ready ==
     /\ state = "PREBOOT"
     /\ state' = "READY"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Handoff_Complete ==
     /\ state = "READY"
     /\ state' = "HANDOFF_COMPLETE"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Handoff_Run ==
     /\ state = "HANDOFF_COMPLETE"
     /\ state' = "RUNNING"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Engine_Execute ==
     /\ state \in {"READY", "RUNNING"}
@@ -82,47 +91,63 @@ Engine_Execute ==
     /\ energy' = energy - ActionCost
     /\ trace_id' = trace_id + 1
     /\ external_effect' = FALSE
-    /\ UNCHANGED <<authority, cognitive_map>>
+    /\ UNCHANGED <<authority, cognitive_map, compliance_context_valid>>
+
+Engine_ExternalEffect ==
+    /\ state = "RUNNING"
+    /\ authority # "NONE"
+    /\ compliance_context_valid = TRUE
+    /\ external_effect' = TRUE
+    /\ trace_id' = trace_id + 1
+    /\ compliance_context_valid' = compliance_context_valid
+    /\ UNCHANGED <<state, authority, cognitive_map, energy>>
 
 Critical_Invalidation ==
     /\ state = "RUNNING"
     /\ cognitive_map' = FALSE
     /\ state' = "SUSPEND"
-    /\ UNCHANGED <<authority, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, energy, trace_id, compliance_context_valid>>
 
 Suspend_Resume ==
     /\ state = "SUSPEND"
     /\ cognitive_map = TRUE
     /\ state' = "RUNNING"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 System_Reset ==
     /\ state = "SUSPEND"
     /\ state' = "HALT"
     /\ authority' = "NONE"
     /\ cognitive_map' = TRUE
-    /\ UNCHANGED <<energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<energy, trace_id, compliance_context_valid>>
 
 Engine_Error ==
     /\ state = "RUNNING"
     /\ state' = "ERROR"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Engine_Halt ==
     /\ state = "RUNNING"
     /\ state' = "HALT"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Error_Reset ==
     /\ state = "ERROR"
     /\ state' = "HALT"
-    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, cognitive_map, energy, trace_id, compliance_context_valid>>
 
 Reconfigure ==
     /\ state = "SUSPEND"
     /\ cognitive_map = FALSE
     /\ cognitive_map' = TRUE
-    /\ UNCHANGED <<authority, state, energy, trace_id, external_effect>>
+    /\ external_effect' = FALSE
+    /\ UNCHANGED <<authority, state, energy, trace_id, compliance_context_valid>>
 
 Next ==
     Strap_Preboot
@@ -130,6 +155,7 @@ Next ==
     \/ Handoff_Complete
     \/ Handoff_Run
     \/ Engine_Execute
+    \/ Engine_ExternalEffect
     \/ Critical_Invalidation
     \/ Reconfigure
     \/ Suspend_Resume
@@ -139,7 +165,7 @@ Next ==
     \/ Error_Reset
 
 Spec ==
-    Init /\ [][Next]_<<state, authority, cognitive_map, energy, trace_id, external_effect>>
+    Init /\ [][Next]_<<state, authority, cognitive_map, energy, trace_id, external_effect, compliance_context_valid>>
 
 THEOREM Spec =>
     []TypeInvariant
@@ -148,4 +174,5 @@ THEOREM Spec =>
     /\ []AuthorityRequired
     /\ []ExternalEffectGuard
     /\ []VaultAbiVersionOk
+    /\ [](external_effect => compliance_context_valid)
 =============================================================================

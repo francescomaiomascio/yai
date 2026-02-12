@@ -26,8 +26,10 @@ pub enum Command {
     Verify(VerifyArgs),
     Test(TestArgs),
     Providers(ProvidersArgs),
+    Dsar(DsarArgs),
     Sessions(SessionsArgs),
     Graph(GraphArgs),
+    Tui(TuiArgs),
     Embed(EmbedArgs),
     #[command(hide = true)]
     Daemon(DaemonArgs),
@@ -169,6 +171,29 @@ pub struct TestArgs {
 }
 
 #[derive(Subcommand, Debug)]
+pub enum DsarCommand {
+    Request {
+        request_type: String,
+        #[arg(long)]
+        subject: String,
+    },
+    Status {
+        request_id: String,
+    },
+    Execute {
+        request_id: String,
+    },
+}
+
+#[derive(Args, Debug)]
+pub struct DsarArgs {
+    #[command(flatten)]
+    pub common: CommonArgs,
+    #[command(subcommand)]
+    pub command: DsarCommand,
+}
+
+#[derive(Subcommand, Debug)]
 pub enum SessionsCommand {
     List,
     Kill {
@@ -188,6 +213,14 @@ pub struct SessionsArgs {
 pub enum ProvidersCommand {
     Discover,
     List,
+    Trust {
+        #[arg(long)]
+        id: Option<String>,
+        #[arg(long)]
+        endpoint: Option<String>,
+        #[arg(long, value_enum)]
+        state: ProvidersTrustState,
+    },
     Pair {
         id: String,
         endpoint: String,
@@ -205,6 +238,13 @@ pub enum ProvidersCommand {
     Status,
 }
 
+#[derive(ValueEnum, Debug, Clone)]
+pub enum ProvidersTrustState {
+    Discovered,
+    Trusted,
+    Revoked,
+}
+
 #[derive(Args, Debug)]
 pub struct ProvidersArgs {
     #[command(flatten)]
@@ -218,6 +258,8 @@ pub enum GraphCommand {
     AddNode {
         #[arg(long)]
         ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
         #[arg(long)]
         id: String,
         #[arg(long)]
@@ -228,6 +270,8 @@ pub enum GraphCommand {
     AddEdge {
         #[arg(long)]
         ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
         #[arg(long)]
         src: String,
         #[arg(long)]
@@ -240,10 +284,58 @@ pub enum GraphCommand {
     Query {
         #[arg(long)]
         ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
         #[arg(long)]
         text: String,
         #[arg(long, default_value_t = 8)]
         k: usize,
+    },
+    Stats {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+    },
+    Node {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        id: String,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+    },
+    Neighbors {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        id: String,
+        #[arg(long, default_value_t = 1)]
+        depth: usize,
+        #[arg(long = "rel")]
+        rels: Vec<String>,
+        #[arg(long = "kind")]
+        kinds: Vec<String>,
+    },
+    Export {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        #[arg(long)]
+        format: String,
+        #[arg(long)]
+        out: String,
+    },
+    Awareness {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = 250)]
+        tick_ms: u64,
+        #[arg(long)]
+        max_steps: Option<u64>,
     },
 }
 
@@ -251,6 +343,23 @@ pub enum GraphCommand {
 pub struct GraphArgs {
     #[command(subcommand)]
     pub command: GraphCommand,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum TuiCommand {
+    Run,
+    Snapshot {
+        #[arg(long)]
+        view: String,
+    },
+}
+
+#[derive(Args, Debug)]
+pub struct TuiArgs {
+    #[command(flatten)]
+    pub common: CommonArgs,
+    #[command(subcommand)]
+    pub command: TuiCommand,
 }
 
 #[derive(Args, Debug)]
@@ -370,6 +479,9 @@ pub fn run() -> Result<()> {
             match args.command {
                 ProvidersCommand::Discover => commands::providers::discover(&cfg, &ws),
                 ProvidersCommand::List => commands::providers::list(&cfg, &ws),
+                ProvidersCommand::Trust { id, endpoint, state } => {
+                    commands::providers::trust(&cfg, &ws, id, endpoint, state)
+                }
                 ProvidersCommand::Pair { id, endpoint, model } => {
                     commands::providers::pair(&cfg, &ws, id, endpoint, model)
                 }
@@ -379,6 +491,21 @@ pub fn run() -> Result<()> {
                 ProvidersCommand::Detach => commands::providers::detach(&cfg, &ws),
                 ProvidersCommand::Revoke { id } => commands::providers::revoke(&cfg, &ws, id),
                 ProvidersCommand::Status => commands::providers::status(&cfg, &ws),
+            }
+        }
+        Command::Dsar(args) => {
+            let cfg = config::load_config(&overrides_from(&args.common))?;
+            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            match args.command {
+                DsarCommand::Request { request_type, subject } => {
+                    commands::dsar::request(&cfg, &ws, request_type, subject)
+                }
+                DsarCommand::Status { request_id } => {
+                    commands::dsar::status(&cfg, &ws, request_id)
+                }
+                DsarCommand::Execute { request_id } => {
+                    commands::dsar::execute(&cfg, &ws, request_id)
+                }
             }
         }
         Command::Sessions(args) => {
@@ -395,18 +522,39 @@ pub fn run() -> Result<()> {
         Command::Graph(args) => {
             let cfg = config::load_config(&config::CliOverrides::default())?;
             match args.command {
-                GraphCommand::AddNode { ws, id, kind, meta } => {
-                    let ws = ws.unwrap_or_else(|| cfg.ws_default.clone());
-                    commands::graph::add_node(&cfg, &ws, &id, &kind, &meta)
+                GraphCommand::AddNode { ws, global, id, kind, meta } => {
+                    commands::graph::add_node(&cfg, ws.as_deref(), global, &id, &kind, &meta)
                 }
-                GraphCommand::AddEdge { ws, src, dst, rel, weight } => {
-                    let ws = ws.unwrap_or_else(|| cfg.ws_default.clone());
-                    commands::graph::add_edge(&cfg, &ws, &src, &dst, &rel, weight)
+                GraphCommand::AddEdge { ws, global, src, dst, rel, weight } => {
+                    commands::graph::add_edge(&cfg, ws.as_deref(), global, &src, &dst, &rel, weight)
                 }
-                GraphCommand::Query { ws, text, k } => {
-                    let ws = ws.unwrap_or_else(|| cfg.ws_default.clone());
-                    commands::graph::query(&cfg, &ws, &text, k)
+                GraphCommand::Query { ws, global, text, k } => {
+                    commands::graph::query(&cfg, ws.as_deref(), global, &text, k)
                 }
+                GraphCommand::Stats { ws, global } => {
+                    commands::graph::stats(&cfg, ws.as_deref(), global)
+                }
+                GraphCommand::Node { ws, global, id, limit } => {
+                    commands::graph::node(&cfg, ws.as_deref(), global, &id, limit)
+                }
+                GraphCommand::Neighbors { ws, global, id, depth, rels, kinds } => {
+                    commands::graph::neighbors(&cfg, ws.as_deref(), global, &id, depth, &rels, &kinds)
+                }
+                GraphCommand::Export { ws, global, format, out } => {
+                    commands::graph::export(&cfg, ws.as_deref(), global, &format, &out)
+                }
+                GraphCommand::Awareness { ws, tick_ms, max_steps } => {
+                    let ws = ws.unwrap_or_else(|| cfg.ws_default.clone());
+                    commands::graph::awareness(&cfg, &ws, tick_ms, max_steps)
+                }
+            }
+        }
+        Command::Tui(args) => {
+            let cfg = config::load_config(&overrides_from(&args.common))?;
+            let ws = args.common.ws.clone().unwrap_or_else(|| cfg.ws_default.clone());
+            match args.command {
+                TuiCommand::Run => commands::tui::run(&cfg, &ws),
+                TuiCommand::Snapshot { view } => commands::tui::snapshot(&cfg, &ws, &view),
             }
         }
         Command::Daemon(args) => {
