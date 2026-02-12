@@ -57,6 +57,37 @@ pub struct ProviderInfo {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceContext {
+    pub pack_ref: String,
+    pub purpose_id: String,
+    pub data_class: String,
+    pub retention_policy_id: String,
+    pub legal_basis: String,
+    pub subject_scope: String,
+    pub processor_role: String,
+    pub audit_required: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DsarStatus {
+    Requested,
+    Verified,
+    Approved,
+    Executed,
+    Rejected,
+    Archived,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DsarRecord {
+    pub request_id: String,
+    pub subject_ref: String,
+    pub request_type: String,
+    pub status: DsarStatus,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SanityStatus {
     pub runtime_sock_exists: bool,
     pub control_sock_exists: bool,
@@ -97,6 +128,16 @@ pub enum Request {
         id: String,
     },
     ProvidersStatus,
+    DsarRequest {
+        request_type: String,
+        subject_ref: String,
+    },
+    DsarStatus {
+        request_id: String,
+    },
+    DsarExecute {
+        request_id: String,
+    },
     EventsSubscribe,
 }
 
@@ -122,6 +163,15 @@ pub enum Response {
         active: Option<ProviderInfo>,
     },
     ProvidersOk,
+    DsarCreated {
+        request: DsarRecord,
+    },
+    DsarState {
+        request: Option<DsarRecord>,
+    },
+    DsarExecuted {
+        request: DsarRecord,
+    },
     EventsStarted,
     Event {
         event: Event,
@@ -143,4 +193,6 @@ pub struct Event {
     pub msg: String,
     pub seq: u64,
     pub data: Value,
+    #[serde(default)]
+    pub compliance: Option<ComplianceContext>,
 }

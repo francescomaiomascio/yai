@@ -1,4 +1,5 @@
-use crate::rpc::protocol::Event;
+use crate::rpc::protocol::{ComplianceContext, Event};
+use anyhow::{anyhow, Result};
 use serde_json::Value;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -31,7 +32,18 @@ impl EventBus {
         self.sender.subscribe()
     }
 
-    pub fn emit(&self, kind: &str, data: Value) -> Event {
+    pub fn emit(&self, kind: &str, data: Value) -> Result<Event> {
+        self.emit_with_compliance(kind, data, None)
+    }
+
+    pub fn emit_with_compliance(
+        &self,
+        kind: &str,
+        data: Value,
+        compliance: Option<ComplianceContext>,
+    ) -> Result<Event> {
+        Self::validate_compliance(kind, compliance.as_ref())?;
+
         let ts = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map(|d| d.as_secs())
@@ -52,10 +64,23 @@ impl EventBus {
             msg: kind.to_string(),
             seq,
             data,
+            compliance,
         };
         self.append_log(&event);
         let _ = self.sender.send(event.clone());
-        event
+        Ok(event)
+    }
+
+    fn validate_compliance(kind: &str, compliance: Option<&ComplianceContext>) -> Result<()> {
+        match kind {
+            "DATA_WRITE" | "DATA_READ" | "DATA_EXPORT" | "DATA_ERASE" | "PROCESSING_DECLARED" => {
+                if compliance.is_none() {
+                    return Err(anyhow!("Missing compliance_context"));
+                }
+            }
+            _ => {}
+        }
+        Ok(())
     }
 
     fn append_log(&self, event: &Event) {
@@ -68,5 +93,38 @@ impl EventBus {
                 let _ = writeln!(f, "{}", line);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::rpc::protocol::ComplianceContext;
+    use serde_json::json;
+
+    #[test]
+    fn data_event_requires_compliance_context() {
+        let run_dir = std::env::temp_dir().join(format!("yai_events_test_{}", std::process::id()));
+        let bus = EventBus::new(run_dir, "tws".to_string());
+        let err = bus.emit("DATA_WRITE", json!({"ws": "tws"}));
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn data_event_with_compliance_context_is_ok() {
+        let run_dir = std::env::temp_dir().join(format!("yai_events_test_{}_2", std::process::id()));
+        let bus = EventBus::new(run_dir, "tws".to_string());
+        let ctx = ComplianceContext {
+            pack_ref: "gdpr-eu/2026Q1".to_string(),
+            purpose_id: "LEGAL_OBLIGATION".to_string(),
+            data_class: "PERSONAL".to_string(),
+            retention_policy_id: "default".to_string(),
+            legal_basis: "LEGAL_OBLIGATION".to_string(),
+            subject_scope: "identified".to_string(),
+            processor_role: "controller".to_string(),
+            audit_required: true,
+        };
+        let ok = bus.emit_with_compliance("DATA_WRITE", json!({"ws": "tws"}), Some(ctx));
+        assert!(ok.is_ok());
     }
 }

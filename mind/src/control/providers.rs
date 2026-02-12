@@ -508,6 +508,34 @@ pub fn revoke(id: &str) -> Result<Option<TrustTransition>> {
     Ok(None)
 }
 
+pub fn set_trust_state(id: Option<&str>, endpoint: Option<&str>, state: TrustState) -> Result<TrustTransition> {
+    let mut store = load_store()?;
+    let rec = store
+        .providers
+        .iter_mut()
+        .find(|p| {
+            id.map(|v| p.info.id == v).unwrap_or(false)
+                || endpoint.map(|v| p.info.endpoint == v).unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow!("provider not found for selector"))?;
+
+    let old_state = Some(rec.info.trust_state.clone());
+    rec.info.trust_state = state;
+    rec.info.last_seen = now_epoch();
+
+    // Trust state mutations are policy-level operations and always detach ws binding.
+    rec.info.attached_ws = None;
+
+    let target_id = rec.info.id.clone();
+    let store = save_store(store)?;
+    let rec = store
+        .providers
+        .iter()
+        .find(|p| p.info.id == target_id)
+        .ok_or_else(|| anyhow!("provider missing after trust update"))?;
+    Ok(to_transition(&store, old_state, rec))
+}
+
 pub fn get(id: &str) -> Result<Option<ProviderInfo>> {
     let store = load_store()?;
     Ok(store

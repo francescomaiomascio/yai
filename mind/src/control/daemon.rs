@@ -1,7 +1,7 @@
-use crate::control::{events::EventBus, providers, workspace};
+use crate::control::{dsar, events::EventBus, providers, workspace};
 use crate::memory::graph::bridge;
 use crate::interface::paths;
-use crate::rpc::protocol::{AliveStatus, ProviderInfo, Request, Response, SanityStatus};
+use crate::rpc::protocol::{AliveStatus, ComplianceContext, DsarStatus, ProviderInfo, Request, Response, SanityStatus};
 use crate::rpc::uds_server;
 use crate::interface::config::RuntimeConfig;
 use crate::interface::proc::{is_pid_alive, send_signal};
@@ -35,7 +35,22 @@ fn emit_provider_transition(
             "trust_snapshot_hash": transition.trust_snapshot_hash,
         }),
     );
-    let _ = providers::record_audit_event(&transition.provider.id, &evt.event_id);
+    if let Ok(evt) = evt {
+        let _ = providers::record_audit_event(&transition.provider.id, &evt.event_id);
+    }
+}
+
+fn dsar_compliance() -> ComplianceContext {
+    ComplianceContext {
+        pack_ref: "gdpr-eu/2026Q1".to_string(),
+        purpose_id: "LEGAL_OBLIGATION".to_string(),
+        data_class: "PERSONAL".to_string(),
+        retention_policy_id: "default".to_string(),
+        legal_basis: "LEGAL_OBLIGATION".to_string(),
+        subject_scope: "identified".to_string(),
+        processor_role: "controller".to_string(),
+        audit_required: true,
+    }
 }
 
 pub fn ensure_daemon(cfg: &RuntimeConfig, ws: &str) -> Result<PathBuf> {
@@ -131,7 +146,7 @@ async fn run_daemon_async(cfg: RuntimeConfig, ws: String) -> Result<()> {
     let cfg = Arc::new(cfg);
     let ws = Arc::new(ws);
     let bus = Arc::new(EventBus::new(cfg.run_dir.clone(), ws.as_ref().to_string()));
-    bus.emit("daemon_started", json!({ "ws": ws.as_ref() }));
+    let _ = bus.emit("daemon_started", json!({ "ws": ws.as_ref() }));
 
     let bus_clone = bus.clone();
     let cfg_clone = cfg.clone();
@@ -144,6 +159,12 @@ async fn run_daemon_async(cfg: RuntimeConfig, ws: String) -> Result<()> {
     let ws_clone = ws.clone();
     tokio::spawn(async move {
         monitor_engine_cortex_events(cfg_clone, ws_clone, bus_clone).await;
+    });
+    let bus_clone = bus.clone();
+    let cfg_clone = cfg.clone();
+    let ws_clone = ws.clone();
+    tokio::spawn(async move {
+        monitor_retention(cfg_clone, ws_clone, bus_clone).await;
     });
     let (shutdown_tx, mut shutdown_rx) = watch::channel(false);
 
@@ -300,6 +321,67 @@ async fn handle_client(
                 message: err.to_string(),
             },
         },
+        Request::DsarRequest { request_type, subject_ref } => {
+            match dsar::create_request(&cfg.run_dir, &ws, &request_type, &subject_ref) {
+                Ok(request) => {
+                    let event_type = if request_type == "export" { "DATA_EXPORT" } else { "DATA_ERASE" };
+                    if let Err(err) = bus.emit_with_compliance(
+                        event_type,
+                        json!({
+                            "ws": ws.as_ref(),
+                            "request_id": request.request_id,
+                            "subject_ref": request.subject_ref,
+                            "request_type": request.request_type,
+                            "status": format!("{:?}", request.status).to_lowercase()
+                        }),
+                        Some(dsar_compliance()),
+                    ) {
+                        Response::Error { message: err.to_string() }
+                    } else {
+                        let _ = bus.emit_with_compliance(
+                            "PROCESSING_DECLARED",
+                            json!({
+                                "ws": ws.as_ref(),
+                                "request_id": request.request_id,
+                                "subject_ref": request.subject_ref,
+                                "request_type": request.request_type,
+                            }),
+                            Some(dsar_compliance()),
+                        );
+                        Response::DsarCreated { request }
+                    }
+                }
+                Err(err) => Response::Error { message: err.to_string() },
+            }
+        }
+        Request::DsarStatus { request_id } => match dsar::get_request(&cfg.run_dir, &ws, &request_id) {
+            Ok(request) => Response::DsarState { request },
+            Err(err) => Response::Error { message: err.to_string() },
+        },
+        Request::DsarExecute { request_id } => {
+            match dsar::set_status(&cfg.run_dir, &ws, &request_id, DsarStatus::Executed) {
+                Ok(Some(request)) => {
+                    let event_type = if request.request_type == "export" { "DATA_EXPORT" } else { "DATA_ERASE" };
+                    if let Err(err) = bus.emit_with_compliance(
+                        event_type,
+                        json!({
+                            "ws": ws.as_ref(),
+                            "request_id": request.request_id,
+                            "subject_ref": request.subject_ref,
+                            "request_type": request.request_type,
+                            "status": format!("{:?}", request.status).to_lowercase()
+                        }),
+                        Some(dsar_compliance()),
+                    ) {
+                        Response::Error { message: err.to_string() }
+                    } else {
+                        Response::DsarExecuted { request }
+                    }
+                }
+                Ok(None) => Response::Error { message: "dsar request not found".to_string() },
+                Err(err) => Response::Error { message: err.to_string() },
+            }
+        }
         Request::Up {
             build,
             no_engine,
@@ -320,12 +402,12 @@ async fn handle_client(
             };
             let bus_clone = bus.clone();
             tokio::task::spawn_blocking(move || {
-                bus_clone.emit("ws_up_started", json!({ "ws": ws_for_task }));
+                let _ = bus_clone.emit("ws_up_started", json!({ "ws": ws_for_task }));
                 workspace::start_stack(&cfg, &ws_for_start, &opts, &bus_clone)
             })
                 .await
                 .context("spawn start")??;
-            bus.emit("ws_up_complete", json!({ "ws": ws_name }));
+            let _ = bus.emit("ws_up_complete", json!({ "ws": ws_name }));
             Response::UpOk
         }
         Request::Down { force, shutdown } => {
@@ -370,16 +452,16 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
         let runtime_sock_exists = std::path::Path::new(&st.socket_path).exists();
 
         if last.boot && !alive.boot {
-            bus.emit("proc_exit", json!({ "proc": "boot" }));
+            let _ = bus.emit("proc_exit", json!({ "proc": "boot" }));
         }
         if last.kernel && !alive.kernel {
-            bus.emit("proc_exit", json!({ "proc": "kernel" }));
+            let _ = bus.emit("proc_exit", json!({ "proc": "kernel" }));
             let cfg_clone = cfg.clone();
             let ws_clone = ws.to_string();
             let bus_clone = bus.clone();
             let sock = socket_path.clone();
             tokio::task::spawn_blocking(move || {
-                bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
+                let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
                 workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "kernel_dead");
                 if sock.exists() {
                     let _ = std::fs::remove_file(&sock);
@@ -401,7 +483,7 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
                 let bus_clone = bus.clone();
                 let sock = socket_path.clone();
                 tokio::task::spawn_blocking(move || {
-                    bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
+                    let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "kernel_dead" }));
                     workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "kernel_dead");
                     if sock.exists() {
                         let _ = std::fs::remove_file(&sock);
@@ -421,7 +503,7 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             let bus_clone = bus.clone();
             let sock = socket_path.clone();
             tokio::task::spawn_blocking(move || {
-                bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "runtime_sock_missing" }));
+                let _ = bus_clone.emit("kernel_dead", json!({ "ws": ws_clone, "reason": "runtime_sock_missing" }));
                 workspace::write_halt(&cfg_clone.run_dir, &ws_clone, "runtime_sock_missing");
                 if sock.exists() {
                     let _ = std::fs::remove_file(&sock);
@@ -435,14 +517,14 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             });
         }
         if last.engine && !alive.engine {
-            bus.emit("proc_exit", json!({ "proc": "engine" }));
+            let _ = bus.emit("proc_exit", json!({ "proc": "engine" }));
         }
         if last.mind && !alive.mind {
-            bus.emit("proc_exit", json!({ "proc": "mind" }));
+            let _ = bus.emit("proc_exit", json!({ "proc": "mind" }));
         }
 
         if alive.boot != last.boot || alive.kernel != last.kernel || alive.engine != last.engine || alive.mind != last.mind {
-            bus.emit("status_changed", json!({
+            let _ = bus.emit("status_changed", json!({
                 "kernel": alive.kernel,
                 "engine": alive.engine,
                 "mind": alive.mind,
@@ -450,6 +532,56 @@ async fn monitor_processes(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<Ev
             }));
         }
         last = alive;
+    }
+}
+
+fn latest_event_ts(path: &std::path::Path) -> Option<u64> {
+    let raw = std::fs::read_to_string(path).ok()?;
+    for line in raw.lines().rev() {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+        let Ok(v) = serde_json::from_str::<serde_json::Value>(line) else {
+            continue;
+        };
+        if let Some(ts) = v.get("ts").and_then(|v| v.as_u64()) {
+            return Some(ts);
+        }
+    }
+    None
+}
+
+fn parse_compliance(v: &serde_json::Value) -> Option<ComplianceContext> {
+    serde_json::from_value::<ComplianceContext>(v.clone()).ok()
+}
+
+async fn monitor_retention(cfg: Arc<RuntimeConfig>, ws: Arc<String>, bus: Arc<EventBus>) {
+    let mut interval = time::interval(Duration::from_millis(1000));
+    loop {
+        interval.tick().await;
+        let events_path = cfg.run_dir.join(ws.as_ref()).join("events.log");
+        let Some(now_ts) = latest_event_ts(&events_path) else {
+            continue;
+        };
+
+        let Ok(expired) = bridge::expire_retained(ws.as_ref(), now_ts) else {
+            continue;
+        };
+        for record in expired {
+            let compliance = record.compliance.as_ref().and_then(parse_compliance);
+            let _ = bus.emit_with_compliance(
+                "RETENTION_EXPIRE",
+                json!({
+                    "ws": ws.as_ref(),
+                    "resource_id": record.id,
+                    "retention_policy_id": record.retention_policy_id,
+                    "expired_at": record.expired_at,
+                    "expiry_anchor": "event_ts"
+                }),
+                compliance,
+            );
+        }
     }
 }
 
@@ -488,7 +620,7 @@ async fn monitor_engine_cortex_events(cfg: Arc<RuntimeConfig>, ws: Arc<String>, 
             if let Some(obj) = value.as_object_mut() {
                 obj.remove("type");
             }
-            bus.emit(&kind, value);
+            let _ = bus.emit(&kind, value);
         }
         offset = content.len();
     }
