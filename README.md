@@ -1,133 +1,156 @@
-# YAI Core
+# YAI
 
-`yai-core` is the canonical repository that binds **YAI Law (L0/Lx)** to the **Kernel (L1)** and the **Engine (L2)**.
-It is a single repo with a single build + verification pipeline and a single binary distribution, while keeping L1/L2 boundaries intact.
+YAI is a layered runtime system with a deterministic control plane and an operator-first CLI/TUI.
 
-Law is authoritative and lives under `law/`.
-Kernel is subordinate and lives under `kernel/`.
-Engine is subordinate and lives under `engine/`.
+Core goals:
+- deterministic runtime lifecycle (`up/down/status/events`)
+- law-driven boundaries and verifiable contracts
+- graph-centric memory and awareness hooks
+- provider pairing/trust workflow for LLM integration
 
----
+## Architecture
 
-## Repository Layout
+YAI is organized in layers:
+- `law/` (L0): axioms, invariants, specs, formal models
+- `kernel/` (L1): low-level authority/enforcement runtime in C
+- `engine/` (L2): execution bridge and runtime services in C
+- `mind/` (L3): control plane, graph memory, providers, CLI/TUI in Rust
+- `scripts/` (L5): canonical verify/gate/suite runners
 
-yai-core/
-├── law/        # Axioms, invariants, boundaries, specs, formal models (authority)
-├── kernel/     # C runtime implementation (L1 enforcement)
-├── engine/     # C runtime execution (L2)
-└── scripts/    # Verification scripts (TLC + builds)
+Key docs:
+- `docs/STRATIFICATION.md`
+- `docs/RUNBOOKS.md`
+- `docs/DATASETS.md`
+- `law/specs/cli/CLI_PUBLIC_INTERFACE.md`
+- `law/specs/cli/TUI_COCKPIT_V1.md`
 
----
+## Quick Start
 
-## Canonical Authority (Law)
-
-The following are normative and authoritative:
-
-- `law/axioms/`
-- `law/invariants/`
-- `law/boundaries/`
-- `law/specs/`
-- `law/formal/`
-
-If runtime behavior conflicts with these, the runtime is wrong.
-
----
-
-## Kernel Runtime (L1)
-
-The kernel enforces:
-
-- the canonical state machine (L1)
-- authority gating
-- transition trace evidence
-- vault layout constraints (L0)
-
-Kernel code lives in `kernel/` and is bound to Law via:
-
-- `law/formal/KERNEL_LAW_BINDING.md`
-- `law/formal/spec_map.md`
-
----
-
-## Engine Runtime (L2)
-
-The engine executes external effects and I/O under kernel authority.
-It consumes Law-generated contracts and headers via:
-
-- `law/specs/vault/yai_vault_abi.h`
-- `law/specs/protocol/yai_protocol_ids.h`
-
----
-
-## Build & Verify (Single Gate)
-
-Single command to validate Law ↔ Kernel ↔ Engine coherence:
+### 1) Install `yai`
 
 ```bash
-cd yai
-./scripts/verify/core.sh
+cd /Users/francescomaiomascio/Developer/YAI/yai/mind
+cargo install --path . --locked --force --bin yai
 ```
 
-This runs:
-
-- generated file checks (Law)
-- TLC model checking (quick + deep)
-- kernel + engine builds
-
----
-
-## Build Targets
+If `yai` is not found:
 
 ```bash
-cd yai-core
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+hash -r
+```
+
+### 2) Start a workspace
+
+```bash
+cd /Users/francescomaiomascio/Developer/YAI/yai
+yai up --ws dev --build --detach
+yai status --ws dev --json
+```
+
+### 3) Open cockpit TUI
+
+```bash
+yai tui --ws dev run
+```
+
+Useful keys:
+- `Ctrl+P` or `:` command palette
+- `g e l d p c h` switch views
+- `Tab` focus cycle
+- `q` quit
+
+Chat keys:
+- `Enter` send
+- `Shift+Enter` newline
+- `Ctrl+U` clear
+- `C` commit draft
+- `x` discard draft
+
+## Provider Pairing (LAN)
+
+Check your provider endpoint first:
+
+```bash
+curl -sS http://<LAN_IP>:8080/v1/models
+```
+
+Pair + trust + attach:
+
+```bash
+yai providers --ws dev pair \
+  "remote:http://<LAN_IP>:8080/v1/chat/completions" \
+  "http://<LAN_IP>:8080/v1/chat/completions" \
+  "<MODEL_NAME>"
+
+yai providers trust --id "remote:http://<LAN_IP>:8080/v1/chat/completions" --state trusted
+yai providers --ws dev attach "remote:http://<LAN_IP>:8080/v1/chat/completions"
+yai providers --ws dev status
+```
+
+## Verification and Gates
+
+Canonical runners:
+- `scripts/yai-verify <name>`
+- `scripts/yai-gate <name> [args...]`
+- `scripts/yai-suite <path> [args...]`
+
+Examples:
+
+```bash
+scripts/yai-verify core
+scripts/yai-gate ws dev
+scripts/yai-gate graph dev
+scripts/yai-suite levels/l0-l7
+scripts/yai-suite ops/no-llm-360
+```
+
+Direct suite:
+
+```bash
+DATASET_GATE=1 WS_PREFIX=ops360 ./scripts/suites/levels/l0-l7.sh
+```
+
+## Build
+
+Core C runtime:
+
+```bash
 make all
-make clean
-make package
 ```
 
-`make package` produces:
-
-- `~/.yai/artifacts/yai-core/bin/yai-boot`
-- `~/.yai/artifacts/yai-core/bin/yai-kernel`
-- `~/.yai/artifacts/yai-core/bin/yai-engine`
-- `~/.yai/artifacts/yai-core/dist/yai-core-<timestamp>.tar.gz`
-
----
-
-## Core Hygiene (Canonical)
-
-Single-purpose commands for reproducible cleanup, build, and smoke checks.
+Mind (Rust):
 
 ```bash
-# purge: stop session + clean build artifacts
-./scripts/yai-purge
-
-# build: rebuild core binaries
-(cd . && make package)
-(cd mind && cargo build --release)
-
-# smoke: up + status + monitor (explicit BIN path, no PATH required)
-BIN="$(command -v yai)"
-$BIN up --ws dev --build --monitor --ai --detach
-$BIN status --ws dev
-$BIN monitor --ws dev
+cd mind
+cargo build --release
 ```
 
----
+## Repository Map
 
-## Governance
+- `datasets/`: canonical datasets (data-first, not runtime orchestration)
+- `docs/specs/`: editorial index and pointers
+- `law/specs/`: canonical machine/contract specs
+- `mind/src/interface/tui/`: cockpit implementation
+- `mind/src/memory/graph/`: graph facade, stores, activation
+- `scripts/gates/`, `scripts/verify/`, `scripts/suites/`: deterministic pipeline
 
-This repository is governed by YAI Law under `law/`.
-Any change to runtime behavior that affects axioms, invariants, or boundaries must update Law first.
+## Troubleshooting
 
----
+Provider appears attached but chat fails:
+- verify endpoint reachability with `curl`
+- ensure attached provider is not revoked
+- check `yai providers --ws <ws> status`
 
-## Non-Goals
+TUI not found:
+- check `which yai`
+- ensure `~/.cargo/bin` in PATH
 
-yai-core is not:
+Runtime issues:
 
-- a product repo
-- an application runtime
-- a UI or studio repo
-
-It is the authority + enforcement core only.
+```bash
+yai down --ws dev --force
+yai up --ws dev --build --detach
+yai status --ws dev --json
+```
