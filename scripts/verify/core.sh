@@ -4,12 +4,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LAW="$ROOT/law"
 FORMAL="$LAW/formal"
-TLA_JAR="${TLA_JAR:-/Users/francescomaiomascio/Developer/tools/tla/tla2tools.jar}"
+TLA_JAR="${TLA_JAR:-$HOME/Developer/tools/tla/tla2tools.jar}"
 
 echo "=== CORE ROOT: $ROOT"
 echo "=== LAW:       $LAW"
 echo "=== FORMAL:    $FORMAL"
 echo "=== TLA_JAR:   $TLA_JAR"
+
+if [[ ! -f "$TLA_JAR" ]]; then
+  echo "Missing TLA_JAR at $TLA_JAR. Set TLA_JAR or install tla2tools.jar."
+  exit 1
+fi
 
 echo "=== CHECK GENERATED"
 cd "$ROOT"

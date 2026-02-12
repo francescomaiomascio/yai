@@ -6,12 +6,17 @@ LAW="$ROOT/law"
 FORMAL="$LAW/formal"
 KERNEL="$ROOT/kernel"
 
-TLA_JAR="${TLA_JAR:-/Users/francescomaiomascio/Developer/tools/tla/tla2tools.jar}"
+TLA_JAR="${TLA_JAR:-$HOME/Developer/tools/tla/tla2tools.jar}"
 
 echo "=== LAW ROOT: $LAW"
 echo "=== KERNEL:   $KERNEL"
 echo "=== FORMAL:   $FORMAL"
 echo "=== TLA_JAR:  $TLA_JAR"
+
+if [[ ! -f "$TLA_JAR" ]]; then
+  echo "Missing TLA_JAR at $TLA_JAR. Set TLA_JAR or install tla2tools.jar."
+  exit 1
+fi
 
 echo "=== GENERATE VAULT ABI"
 cd "$ROOT"
