@@ -278,6 +278,45 @@ Terminology changes are **conceptual changes**.
 
 ---
 
+## Verification Vocabulary (Operational)
+
+These terms define the canonical verification hierarchy used by YAI runtime
+validation. They are operational terms, not axiomatic terms.
+
+### Verification Suite
+
+A reproducible, scripted composition of checks and gates with explicit pass/fail
+criteria.
+
+### Level Suite (L0..L7)
+
+The ordered verification suite that validates Law integrity (L0), formal/kernel
+coherence (L1), core verification (L2), and runtime gates up to provider and
+smoke coverage (L7).
+
+### Ops No-LLM Suite
+
+A deterministic operations suite that excludes prompt/LLM behavior and focuses
+on performance budgets, fault handling, security sanity, recovery/compatibility,
+and stress stability.
+
+### Gate
+
+A targeted executable check for one bounded concern (for example workspace
+lifecycle, events, graph, providers, dataset seed integrity).
+
+### Stratum
+
+A bounded architectural layer with explicit responsibilities, allowed couplings,
+and certifying gates.
+
+### Stratification Contract
+
+The authoritative mapping of layers (L0..L5), responsibilities, interfaces,
+storage surfaces, emitted evidence, and test suites required for release.
+
+---
+
 ## Final Note
 
 Language shapes architecture.

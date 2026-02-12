@@ -40,7 +40,7 @@ crosses this boundary.
 
 In YAI, the boundary is defined by a canonical predicate:
 
-**ExternalEffect(t)** → {true, false}
+**ExternalEffect(t)** -> {true, false}
 
 Where `t` is a candidate transition.
 
@@ -87,6 +87,22 @@ If a transition crosses the external effect boundary, YAI requires:
   - mitigation or rollback note (may be “none”)
 - **Abstract cost accountability** including risk attribution (I-005)
 - **Non-bypassability**: no component may execute external effects outside the boundary
+
+### Compliance Extension (R6)
+
+For every external-effect transition, YAI also requires a valid
+`compliance_context`.
+
+Canonical obligation:
+
+`ExternalEffect => HasAuthority AND HasComplianceContext`
+
+Runtime model binding:
+
+`external_effect => (authority # "NONE" /\ compliance_context_valid = TRUE)`
+
+This is enforced at the authority layer and model-checked in
+`law/formal/YAI_KERNEL.tla`.
 
 Internal transitions remain subject to all other YAI invariants, but do not require
 the strengthened conditions above.
@@ -170,6 +186,7 @@ The following patterns are **invalid** in YAI:
 - classification made post-hoc (after execution)
 - effect surfaces not declared or not auditable
 - external-effect transitions without risk attribution (I-005)
+- external-effect transitions without a valid compliance context
 - bypass via side-channels (plugins, shell access, filesystem writes, or provider calls outside the boundary predicate)
 
 ---
