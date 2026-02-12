@@ -1,4 +1,4 @@
-use crate::memory::legacy::store::MemoryCore;
+use crate::memory::MemoryCore;
 
 pub fn build_context(user_text: &str, memory: &MemoryCore, ws: &str) -> String {
     let mut out = String::new();
@@ -12,7 +12,7 @@ pub fn build_context(user_text: &str, memory: &MemoryCore, ws: &str) -> String {
         }
     }
 
-    if let Ok(facts) = memory.search_facts(user_text, 5) {
+    if let Ok(facts) = memory.search_facts(ws, user_text, 5) {
         out.push_str("Facts:\n");
         for f in facts {
             out.push_str(&format!("- {} = {}\n", f.key, f.value));

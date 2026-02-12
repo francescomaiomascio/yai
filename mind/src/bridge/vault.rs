@@ -7,7 +7,7 @@ use std::mem::{align_of, size_of};
 use std::ptr;
 
 #[repr(C)]
-pub struct IceVault {
+pub struct Vault {
     pub status: u32,
     pub energy_quota: u32,
     pub energy_consumed: u32,
@@ -26,7 +26,7 @@ pub struct IceVault {
 
 pub struct VaultBridge {
     name: String,
-    ptr: *mut IceVault,
+    ptr: *mut Vault,
     size: usize,
 }
 
@@ -39,7 +39,7 @@ impl VaultBridge {
             if fd < 0 {
                 return Err(format!("shm_open failed for {} (vault not found?)", shm_name));
             }
-            let size = size_of::<IceVault>();
+            let size = size_of::<Vault>();
             let mut st: libc::stat = std::mem::zeroed();
             if fstat(fd, &mut st) != 0 {
                 close(fd);
@@ -61,13 +61,13 @@ impl VaultBridge {
 
             Ok(Self {
                 name: shm_name,
-                ptr: ptr as *mut IceVault,
+                ptr: ptr as *mut Vault,
                 size,
             })
         }
     }
 
-    pub fn as_mut(&self) -> &mut IceVault {
+    pub fn as_mut(&self) -> &mut Vault {
         unsafe { &mut *self.ptr }
     }
 
@@ -105,14 +105,14 @@ mod tests {
     #[test]
     fn vault_layout_matches_expected() {
         let expected_size = 1448;
-        assert_eq!(size_of::<IceVault>(), expected_size);
-        assert_eq!(align_of::<IceVault>(), 8);
+        assert_eq!(size_of::<Vault>(), expected_size);
+        assert_eq!(align_of::<Vault>(), 8);
 
-        assert_eq!(offset_of!(IceVault, status), 0);
-        assert_eq!(offset_of!(IceVault, last_command_id), 144);
-        assert_eq!(offset_of!(IceVault, command_seq), 148);
-        assert_eq!(offset_of!(IceVault, last_processed_seq), 152);
-        assert_eq!(offset_of!(IceVault, response_buffer), 160);
-        assert_eq!(offset_of!(IceVault, logical_clock), 1440);
+        assert_eq!(offset_of!(Vault, status), 0);
+        assert_eq!(offset_of!(Vault, last_command_id), 144);
+        assert_eq!(offset_of!(Vault, command_seq), 148);
+        assert_eq!(offset_of!(Vault, last_processed_seq), 152);
+        assert_eq!(offset_of!(Vault, response_buffer), 160);
+        assert_eq!(offset_of!(Vault, logical_clock), 1440);
     }
 }

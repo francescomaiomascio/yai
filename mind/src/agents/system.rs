@@ -1,6 +1,6 @@
 use crate::agents::{Agent, AgentOutput};
 use crate::core::protocol::{AgentId, CommandId, RoutingDecision};
-use crate::core::runtime::{IceError, RuntimeContext};
+use crate::core::runtime::{Error, RuntimeContext};
 
 pub struct SystemAgent;
 
@@ -9,7 +9,7 @@ impl Agent for SystemAgent {
         AgentId::System
     }
 
-    fn handle(&self, _input: &str, _ctx: &mut RuntimeContext) -> Result<AgentOutput, IceError> {
+    fn handle(&self, _input: &str, _ctx: &mut RuntimeContext) -> Result<AgentOutput, Error> {
         Ok(AgentOutput {
             decision: RoutingDecision {
                 agent: AgentId::System,

@@ -1,6 +1,6 @@
 use crate::llm::adapter::LlmClient;
 use crate::providers::embeddings::{EmbeddingProvider, ProviderError};
-use crate::core::runtime::IceError;
+use crate::core::runtime::Error;
 
 #[allow(dead_code)]
 pub struct AiClient {
@@ -18,7 +18,7 @@ impl AiClient {
         self.embeddings.embed(input)
     }
 
-    pub fn complete(&self, prompt: &str) -> Result<String, IceError> {
+    pub fn complete(&self, prompt: &str) -> Result<String, Error> {
         self.llm.complete(prompt)
     }
 }

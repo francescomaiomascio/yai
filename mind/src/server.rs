@@ -1,6 +1,6 @@
 // src/server.rs
 #![allow(dead_code)]
-use crate::models::{IceMessage, MessageType};
+use crate::models::{Message as ApiMessage, MessageType};
 use crate::core::governance::GovernanceEngine;
 use crate::bridge::shm::VaultBridge;
 use crate::core::runtime::{run_turn, RuntimeContext};
@@ -9,7 +9,7 @@ use crate::interface::config::{load_config, CliOverrides};
 use crate::llm::adapter::build_llm_for_ws;
 use crate::bridge::vault::VaultBridge as EngineVault;
 use crate::core::state::GlobalState;
-use crate::memory::{MemoryCore, SqliteMemoryStore};
+use crate::memory::MemoryCore;
 use crate::shared::constants::DEFAULT_KNOWLEDGE_DB_PATH;
 
 use futures_util::{SinkExt, StreamExt};
@@ -20,11 +20,11 @@ use std::env;
 use std::path::PathBuf;
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::accept_async;
-use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::Message as WsMessage;
 use tokio::sync::mpsc;
 use tokio::time::{self, Duration};
 
-pub struct IceStudioServer {
+pub struct StudioServer {
     host: String,
     port: u16,
     state: GlobalState,
@@ -58,7 +58,7 @@ fn yai_api_build() -> String {
     "unknown".to_string()
 }
 
-impl IceStudioServer {
+impl StudioServer {
     pub fn new(host: &str, port: u16, state: GlobalState) -> Self {
         Self {
             host: host.to_string(),
@@ -95,7 +95,7 @@ impl IceStudioServer {
         let ws_stream = accept_async(stream).await.expect("Error during the websocket handshake");
         let (mut ws_sender, mut ws_receiver) = ws_stream.split();
 
-        let (out_tx, mut out_rx) = mpsc::unbounded_channel::<Message>();
+        let (out_tx, mut out_rx) = mpsc::unbounded_channel::<WsMessage>();
         tokio::spawn(async move {
             while let Some(msg) = out_rx.recv().await {
                 if ws_sender.send(msg).await.is_err() {
@@ -133,8 +133,8 @@ impl IceStudioServer {
                     );
                     payload.insert("vault".to_string(), json!(vault.vault_name));
 
-                    let msg = IceMessage::new(MessageType::Heartbeat, "2.0.0-lite", payload);
-                    let _ = hb_tx.send(Message::Text(msg.to_json()));
+                    let msg = ApiMessage::new(MessageType::Heartbeat, "2.0.0-lite", payload);
+                    let _ = hb_tx.send(WsMessage::Text(msg.to_json()));
                 }
             }
         });
@@ -143,7 +143,7 @@ impl IceStudioServer {
             if let Ok(msg) = msg {
                 if msg.is_text() {
                     let raw_text = msg.to_text().unwrap();
-                    let incoming: IceMessage = match serde_json::from_str(raw_text) {
+                    let incoming: ApiMessage = match serde_json::from_str(raw_text) {
                         Ok(m) => m,
                         Err(_) => continue,
                     };
@@ -151,8 +151,8 @@ impl IceStudioServer {
                     match incoming.r#type {
                         MessageType::Handshake => {
                             let payload = build_manifest();
-                            let reply = IceMessage::new(MessageType::HandshakeAck, "2.0.0-lite", payload);
-                            let _ = out_tx.send(Message::Text(reply.to_json()));
+                            let reply = ApiMessage::new(MessageType::HandshakeAck, "2.0.0-lite", payload);
+                            let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                         },
                         MessageType::Intent => {
                             // 1. Check Governance (I-003)
@@ -160,8 +160,8 @@ impl IceStudioServer {
                             if !verdict.is_valid {
                                 let mut payload = HashMap::new();
                                 payload.insert("message".to_string(), json!(verdict.reason));
-                                let reply = IceMessage::new(MessageType::Response, "2.0.0-lite", payload);
-                                let _ = out_tx.send(Message::Text(reply.to_json()));
+                                let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 continue;
                             }
                             // 2. Brain Loop (Rust-native)
@@ -173,13 +173,13 @@ impl IceStudioServer {
 
                             let workspace_id = env::var("YAI_WORKSPACE_ID")
                                 .unwrap_or_else(|_| "arch_dev_session".to_string());
-                            let db_path = env::var("YAI_KNOWLEDGE_DB")
+                            let _db_path = env::var("YAI_KNOWLEDGE_DB")
                                 .unwrap_or_else(|_| DEFAULT_KNOWLEDGE_DB_PATH.to_string());
                             let vault = EngineVault::attach(&workspace_id);
                             let result = match vault {
                                 Ok(v) => {
                                     let scheduler = crate::core::scheduler::Scheduler::new(v);
-                                    let memory = MemoryCore::new(Box::new(SqliteMemoryStore::new(db_path)));
+                                    let memory = MemoryCore::new();
                                     let cfg = load_config(&CliOverrides::default())
                                         .unwrap_or_else(|_| panic!("failed to load config"));
                                     let mut ctx = RuntimeContext {
@@ -211,14 +211,14 @@ impl IceStudioServer {
                                         "OK".to_string()
                                     };
                                     payload.insert("message".to_string(), json!(response_text));
-                                    let reply = IceMessage::new(MessageType::Response, "2.0.0-lite", payload);
-                                    let _ = out_tx.send(Message::Text(reply.to_json()));
+                                    let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                    let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 }
                                 Err(err) => {
                                     let mut payload = HashMap::new();
                                     payload.insert("message".to_string(), json!(format!("YAI-MIND error: {}", err)));
-                                    let reply = IceMessage::new(MessageType::Response, "2.0.0-lite", payload);
-                                    let _ = out_tx.send(Message::Text(reply.to_json()));
+                                    let reply = ApiMessage::new(MessageType::Response, "2.0.0-lite", payload);
+                                    let _ = out_tx.send(WsMessage::Text(reply.to_json()));
                                 }
                             }
                         },
