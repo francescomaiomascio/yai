@@ -173,7 +173,7 @@ pub fn activate(
     params.alpha = alpha;
     params.epsilon = epsilon;
 
-    let commit = GraphFacade::activate_and_commit(scope, &seed_items, params)?;
+    let commit = GraphFacade::activate_and_commit_with_trace(scope, &seed_items, params, !no_trace)?;
     println!("run_id: {}", commit.activation_id);
     println!("commit_hash: {}", commit.result.commit_hash);
     println!("trace_hash: {}", commit.trace_hash);
@@ -188,21 +188,63 @@ pub fn activate(
         commit.result.stats.pushed, commit.result.stats.visited, commit.result.stats.residual_mass
     );
     if no_trace {
-        println!("note: --no-trace requested, trace was still committed by facade policy");
+        println!("note: --no-trace requested, trace was not persisted");
     }
     Ok(())
 }
 
-pub fn trace_show(run_id: &str) -> Result<()> {
-    if run_id == "latest" {
-        let list = crate::cognition::memory::graph::activation::store::list_traces(1)?;
-        if list.is_empty() {
-            bail!("no traces found");
-        }
-        return trace_show(&list[0].0);
+pub fn activation_list(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    limit: usize,
+    offset: usize,
+) -> Result<()> {
+    let scope = resolve_scope(cfg, ws, global)?;
+    if matches!(scope, GraphScope::Global) {
+        bail!("ws_id required for activation traces");
     }
-    let trace = crate::cognition::memory::graph::activation::store::load_trace(run_id)?
-        .ok_or_else(|| anyhow::anyhow!("trace not found: {run_id}"))?;
+    let ws_id = match scope {
+        GraphScope::Workspace(ws) => ws,
+        GraphScope::Global => "global".to_string(),
+    };
+    let store = crate::cognition::memory::graph::activation::store::ActivationTraceStore::open(
+        &ws_id,
+    )?;
+    let items = store.list_runs(limit, offset)?;
+    if items.is_empty() {
+        println!("no activation runs found");
+        return Ok(());
+    }
+    for (run_id, created_at_unix, commit_hash) in items {
+        println!(
+            "run_id={} created_at_unix={} commit_hash={}",
+            run_id, created_at_unix, commit_hash
+        );
+    }
+    Ok(())
+}
+
+pub fn activation_show(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    run_id: &str,
+) -> Result<()> {
+    let scope = resolve_scope(cfg, ws, global)?;
+    if matches!(scope, GraphScope::Global) {
+        bail!("ws_id required for activation traces");
+    }
+    let ws_id = match scope {
+        GraphScope::Workspace(ws) => ws,
+        GraphScope::Global => "global".to_string(),
+    };
+    let store = crate::cognition::memory::graph::activation::store::ActivationTraceStore::open(
+        &ws_id,
+    )?;
+    let trace = store
+        .get_run(run_id)?
+        .ok_or_else(|| anyhow::anyhow!("activation run not found: {run_id}"))?;
     println!("run_id: {}", trace.run_id);
     println!("created_at_unix: {}", trace.created_at_unix);
     println!("graph_fingerprint: {}", trace.graph_fingerprint);
@@ -211,12 +253,36 @@ pub fn trace_show(run_id: &str) -> Result<()> {
         "stats pushed={} visited={} residual_mass={:.6e}",
         trace.stats.pushed, trace.stats.visited, trace.stats.residual_mass
     );
-    for hit in trace.topk {
+    for (idx, hit) in trace.topk.iter().enumerate() {
         println!(
-            "top {} score={:.6} score_q={}",
-            hit.node, hit.score, hit.score_q
+            "top {} rank={} score_q={}",
+            hit.node,
+            idx + 1,
+            hit.score_q
         );
     }
+    Ok(())
+}
+
+pub fn activation_purge(
+    cfg: &RuntimeConfig,
+    ws: Option<&str>,
+    global: bool,
+    keep_last: usize,
+) -> Result<()> {
+    let scope = resolve_scope(cfg, ws, global)?;
+    if matches!(scope, GraphScope::Global) {
+        bail!("ws_id required for activation traces");
+    }
+    let ws_id = match scope {
+        GraphScope::Workspace(ws) => ws,
+        GraphScope::Global => "global".to_string(),
+    };
+    let store = crate::cognition::memory::graph::activation::store::ActivationTraceStore::open(
+        &ws_id,
+    )?;
+    let removed = store.purge_keep_last(keep_last)?;
+    println!("purged: {}", removed);
     Ok(())
 }
 

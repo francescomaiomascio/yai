@@ -93,12 +93,7 @@ fn default_config_file() -> ConfigFile {
                 .display()
                 .to_string(),
         ),
-        yai_mind: Some(
-            artifacts_root
-                .join("mind/target/release/yai")
-                .display()
-                .to_string(),
-        ),
+        yai_mind: Some("yai".to_string()),
     };
 
     ConfigFile {
@@ -215,11 +210,15 @@ pub fn load_config(overrides: &CliOverrides) -> Result<RuntimeConfig> {
 }
 
 fn normalize_mind_binary(path: PathBuf) -> PathBuf {
-    if path.file_name().and_then(|f| f.to_str()) == Some("yai-mind") && !path.exists() {
+    if path.exists() {
+        return path;
+    }
+    let file = path.file_name().and_then(|f| f.to_str());
+    if file == Some("yai-mind") {
         let candidate = path.with_file_name("yai");
         if candidate.exists() {
             return candidate;
         }
     }
-    path
+    PathBuf::from("yai")
 }
