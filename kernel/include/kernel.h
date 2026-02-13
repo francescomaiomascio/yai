@@ -74,6 +74,13 @@ int yai_kernel_transition(yai_vault_t *vault, yai_state_t new_state);
 // Scansione del workspace per integrità (Ex project_tree.py)
 void yai_scan_workspace(const char *path, int depth);
 
+int yai_validate_envelope_v1(
+    const char *line,
+    const char *expected_ws,
+    char *out_request_type,
+    size_t req_cap
+);
 
 
 #endif
+
