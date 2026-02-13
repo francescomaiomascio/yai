@@ -1,20 +1,101 @@
 {
-  "version": "1.0",
+  "spec_id": "yai.control_plane.v1",
+  "version": "1.1",
   "paths": {
-    "run_dir": "~/.yai/run/<ws>/",
-    "control_socket": "~/.yai/run/<ws>/control.sock",
-    "lock_file": "~/.yai/run/<ws>/lock",
-    "daemon_pid": "~/.yai/run/<ws>/daemon.pid",
-    "session_file": "~/.yai/run/<ws>/session.json",
-    "runtime_socket": "/tmp/yai_runtime_<ws>.sock"
+    "workspace_root": "~/.yai",
+    "run_dir": "~/.yai/run/<ws_id>/",
+    "control_socket": "~/.yai/run/<ws_id>/control.sock",
+    "lock_file": "~/.yai/run/<ws_id>/lock",
+    "daemon_pid": "~/.yai/run/<ws_id>/daemon.pid",
+    "session_file": "~/.yai/run/<ws_id>/session.json",
+    "runtime_socket": "/tmp/yai_runtime_<ws_id>.sock"
+  },
+  "transport": {
+    "type": "uds",
+    "framing": "json_lines",
+    "encoding": "utf8",
+    "max_frame_bytes": 1048576,
+    "timeouts_ms": {
+      "handshake": 2000,
+      "request": 30000
+    }
   },
   "rpc": {
-    "transport": "uds",
-    "framing": "json_lines",
-    "envelope": "rpc.v1",
+    "protocol_name": "yai-rpc",
+    "protocol_version": 1,
+    "envelope": {
+      "schema_id": "rpc.envelope.v1",
+      "required": ["v", "trace_id", "type", "payload"],
+      "fields": {
+        "v": "u8",
+        "trace_id": "string",
+        "ws_id": "string|null",
+        "arming": "bool",
+        "role": "string|null",
+        "type": "string",
+        "payload": "object"
+      },
+      "constraints": {
+        "trace_id_max_len": 64,
+        "ws_id_max_len": 64
+      }
+    },
+    "handshake": {
+      "required_first": true,
+      "request_type": "protocol_handshake",
+      "request_payload": {
+        "client_version": "string",
+        "ws_id": "string|null",
+        "capabilities": "string[]"
+      },
+      "response_type": "protocol_handshake_ok",
+      "response_payload": {
+        "protocol_version": "u8",
+        "server_version": "string",
+        "capabilities": "string[]"
+      }
+    },
+    "routing": {
+      "ws_id_required_for": [
+        "status",
+        "up",
+        "down",
+        "providers_discover",
+        "providers_list",
+        "providers_pair",
+        "providers_attach",
+        "providers_detach",
+        "providers_status",
+        "providers_revoke",
+        "dsar_request",
+        "dsar_status",
+        "dsar_execute",
+        "chat_sessions_list",
+        "chat_session_new",
+        "chat_session_select",
+        "chat_history",
+        "chat_send",
+        "shell_exec",
+        "events_subscribe"
+      ],
+      "ws_id_optional_for": ["ping", "protocol_handshake"]
+    },
+    "privileged_gate": {
+      "arming_required_for": ["up", "down", "providers_pair", "providers_attach", "providers_detach", "providers_revoke", "dsar_execute", "shell_exec"],
+      "role_required_for": {
+        "up": "operator",
+        "down": "operator",
+        "providers_pair": "operator",
+        "providers_attach": "operator",
+        "providers_detach": "operator",
+        "providers_revoke": "operator",
+        "dsar_execute": "operator",
+        "shell_exec": "operator"
+      }
+    },
     "requests": [
-      "ping",
       "protocol_handshake",
+      "ping",
       "status",
       "up",
       "down",
@@ -37,8 +118,8 @@
       "events_subscribe"
     ],
     "responses": [
-      "pong",
       "protocol_handshake_ok",
+      "pong",
       "status",
       "up_ok",
       "down_ok",
@@ -56,25 +137,63 @@
       "events_started",
       "event",
       "error"
-    ]
+    ],
+    "errors": {
+      "schema_id": "rpc.error.v1",
+      "shape": {
+        "code": "string",
+        "message": "string",
+        "detail": "object|null",
+        "trace_id": "string",
+        "ws_id": "string|null"
+      },
+      "codes": [
+        "bad_request",
+        "handshake_required",
+        "unsupported_protocol",
+        "ws_id_required",
+        "not_armed",
+        "role_required",
+        "unauthorized",
+        "not_found",
+        "internal_error"
+      ]
+    }
+  },
+  "events": {
+    "streaming": "subscribe",
+    "event_schema": {
+      "schema_id": "event.envelope.v1",
+      "required": ["v", "schema_id", "event_id", "ts", "ws_id", "type", "level", "msg", "seq", "data"],
+      "fields": {
+        "v": "u8",
+        "schema_id": "string",
+        "event_id": "string",
+        "ts": "u64",
+        "ws_id": "string",
+        "type": "string",
+        "level": "string",
+        "msg": "string",
+        "seq": "u64",
+        "data": "object",
+        "compliance": "object|null"
+      }
+    },
+    "validation_policy": "warn"
   },
   "process_group": {
     "mode": "single_pgid",
-    "kill_order": [
-      "killpg(SIGTERM)",
-      "wait",
-      "killpg(SIGKILL)",
-      "individual_pids"
-    ]
+    "kill_order": ["killpg(SIGTERM)", "wait", "killpg(SIGKILL)", "individual_pids"]
   },
   "authority": {
     "workspace_scoped": true,
     "lock_required": true,
+    "audit_required": true,
+    "authority_ref": "law/specs/control/authority.json",
     "privileged_gate": {
       "arming_required": true,
       "role_required": "operator",
       "authority_ref": "staged"
-    },
-    "audit_required": true
+    }
   }
 }

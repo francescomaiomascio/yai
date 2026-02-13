@@ -12,8 +12,9 @@
 #define MAX_PATH_LEN 256
 #endif
 
+// Allineato a MAX_WS_ID (protocol constants): 64
 #ifndef MAX_WS_ID_LEN
-#define MAX_WS_ID_LEN 32   // es: "dev", "prod", "ws-42"
+#define MAX_WS_ID_LEN 64
 #endif
 
 typedef enum {
@@ -31,14 +32,15 @@ enum {
     YAI_CAP_RPC_PING        = 1u << 0,
     YAI_CAP_RPC_HANDSHAKE   = 1u << 1,
     YAI_CAP_RPC_STATUS      = 1u << 2,
-    // riservati per blocchi futuri:
+
+    // riservati per fasi future:
     YAI_CAP_RPC_UP          = 1u << 8,
     YAI_CAP_RPC_DOWN        = 1u << 9,
     YAI_CAP_RPC_SHELL       = 1u << 10,
 };
 
 typedef struct {
-    char ws_id[MAX_WS_ID_LEN];         // canonico: stringa
+    char ws_id[MAX_WS_ID_LEN];
     char run_dir[MAX_PATH_LEN];        // ~/.yai/run/<ws>/
     char control_sock[MAX_PATH_LEN];   // ~/.yai/run/<ws>/control.sock
     char lock_file[MAX_PATH_LEN];      // ~/.yai/run/<ws>/lock
@@ -47,17 +49,16 @@ typedef struct {
 } yai_workspace_t;
 
 typedef struct {
-    uint32_t session_id;   // indice/handle interno
-    uint32_t run_id;       // monotonic run counter (per ws)
+    uint32_t session_id;
+    uint32_t run_id;
     yai_workspace_t ws;
     yai_cap_mask_t caps;
-    uint32_t owner_pid;
+    uint32_t owner_pid; // 0 = slot libero
 } yai_session_t;
 
-// Registry globale (definito in un .c, NON qui)
 extern yai_session_t g_session_registry[MAX_SESSIONS];
 
-// --- API (blocco 1) ---
+// --- API ---
 bool yai_ws_validate_id(const char* ws_id);
 bool yai_ws_build_paths(yai_workspace_t* ws, const char* ws_id);
 
