@@ -21,6 +21,7 @@ Key docs:
 - `docs/STRATIFICATION.md`
 - `docs/RUNBOOKS.md`
 - `docs/DATASETS.md`
+- `docs/ARCH_DECISIONS.md`
 - `law/specs/cli/CLI_PUBLIC_INTERFACE.md`
 - `law/specs/cli/TUI_COCKPIT_V1.md` (deprecated, historical only)
 
@@ -48,6 +49,7 @@ hash -r
 ```bash
 cd /Users/francescomaiomascio/Developer/YAI/yai
 yai up --ws dev --build --detach
+yai mind --ws dev
 yai status --ws dev --json
 ```
 
@@ -57,11 +59,10 @@ yai status --ws dev --json
 yai monitor --ws dev
 ```
 
-For graphical UX, use YX (`yai-yx`) as the canonical GUI client of the same control socket.
+For graphical UX, use YX (`yai yx`) as the canonical GUI client of the same control socket.
 
 ```bash
-# in /Users/francescomaiomascio/Developer/YAI/yai-yx
-YX_MODE=auto YX_SOCK="$HOME/.yai/run/dev/control.sock" make dev
+yai yx --ws dev
 ```
 
 ## Provider Pairing (LAN)
