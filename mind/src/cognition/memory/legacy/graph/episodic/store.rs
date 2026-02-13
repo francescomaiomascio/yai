@@ -1,4 +1,5 @@
-use crate::cli::paths;
+use crate::paths::Paths;
+use crate::cognition::memory::legacy::paths as legacy_paths;
 use crate::cognition::memory::graph::episodic::types::Episode;
 use anyhow::{Context, Result};
 use serde_json::Value;

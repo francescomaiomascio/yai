@@ -1,1 +1,14 @@
-// workspace binding: ws_id, layout, session handles
+use crate::{paths::Paths, types::WsId};
+
+#[derive(Debug, Clone)]
+pub struct WorkspaceContext {
+    pub ws: WsId,
+    pub paths: Paths,
+}
+
+impl WorkspaceContext {
+    pub fn new(ws: WsId) -> Self {
+        let paths = Paths::new_default(ws.clone());
+        Self { ws, paths }
+    }
+}

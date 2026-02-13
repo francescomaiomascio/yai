@@ -1,4 +1,5 @@
-use crate::cli::paths;
+use crate::paths::Paths;
+use crate::cognition::memory::legacy::paths as legacy_paths;
 use crate::cognition::memory::graph::semantic::types::{
     ExpiredSemanticNode, NodeRetention, SemanticEdge, SemanticNode,
 };
@@ -15,7 +16,8 @@ pub struct SemanticStore {
 
 impl SemanticStore {
     pub fn open(ws: &str) -> Result<Self> {
-        let db_path = paths::run_dir().join(ws).join("semantic.sqlite");
+        let p = Paths::new_default(ws.to_string());
+        let db_path = legacy_paths::semantic_sqlite(&p);
         Self::open_at_path(db_path)
     }
 

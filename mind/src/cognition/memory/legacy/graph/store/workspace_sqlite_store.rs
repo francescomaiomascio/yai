@@ -1,4 +1,5 @@
-use crate::cli::paths;
+use crate::paths::Paths;
+use crate::cognition::memory::legacy::paths as legacy_paths;
 use crate::cognition::memory::graph::facade::{GraphEdge, GraphNode, GraphStore};
 use crate::cognition::memory::graph::semantic::store::SemanticStore;
 use crate::cognition::memory::graph::semantic::types::{SemanticEdge, SemanticNode};
@@ -56,7 +57,10 @@ impl GraphStore for WorkspaceSqliteStore {
     fn descriptor(&self) -> String {
         paths::run_dir()
             .join(&self.ws)
-            .join("semantic.sqlite")
+            ;// moved
+            
+        let p = Paths::new_default(ws.to_string());
+        let db_path = legacy_paths::semantic_sqlite(&p)
             .display()
             .to_string()
     }

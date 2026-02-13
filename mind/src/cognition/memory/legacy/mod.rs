@@ -1,3 +1,4 @@
+pub mod paths;
 pub mod core;
 pub mod graph;
 pub mod types;

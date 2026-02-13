@@ -1,7 +1,8 @@
 use crate::cognition::memory::graph::facade::{GraphEdge, GraphNode, GraphStore};
 use crate::cognition::memory::graph::semantic::store::SemanticStore;
 use crate::cognition::memory::graph::semantic::types::{SemanticEdge, SemanticNode};
-use crate::shared::constants::DEFAULT_KNOWLEDGE_DB_PATH;
+use crate::paths::Paths;
+use crate::cognition::memory::legacy::paths as legacy_paths;
 use anyhow::Result;
 use serde_json::Value;
 use std::env;
@@ -15,7 +16,7 @@ impl GlobalKnowledgeStore {
     pub fn new() -> Self {
         let db_path = env::var("YAI_KNOWLEDGE_DB")
             .map(PathBuf::from)
-            .unwrap_or_else(|_| PathBuf::from(DEFAULT_KNOWLEDGE_DB_PATH));
+            .unwrap_or_else(|_| PathBuf::from(legacy_paths::knowledge_db_default(&Paths::new_default("global".to_string()))));
         Self { db_path }
     }
 
