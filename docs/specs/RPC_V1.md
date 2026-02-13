@@ -10,9 +10,27 @@ Transport:
 - UDS (`~/.yai/run/<ws>/control.sock`)
 - NDJSON / JSON-lines framing
 
+Envelope:
+```json
+{
+  "v": 1,
+  "request": { "type": "status" },
+  "ws_id": "dev",
+  "arming": false
+}
+```
+
+Notes:
+- `v` is the RPC protocol version and must match the daemon (`1` for v1).
+- Legacy unwrapped requests are accepted, but only v1 is guaranteed.
+- `arming=true` is required for privileged requests (`up`, `down`, `shell_exec`, `providers_*`).
+- `role=operator` is required when `arming=true`.
+- Multi-tenant safety requires `ws_id` on all runtime-bound requests. Missing `ws_id` MUST be rejected with `ERR_WS_REQUIRED`.
+
 ## Requests
 
 - `ping`
+- `protocol_handshake`
 - `status`
 - `up`
 - `down`
@@ -37,6 +55,7 @@ Transport:
 ## Responses
 
 - `pong`
+- `protocol_handshake`
 - `status`
 - `up_ok`
 - `down_ok`
@@ -54,6 +73,15 @@ Transport:
 - `events_started`
 - `event`
 - `error`
+
+### protocol_handshake response
+```json
+{
+  "type": "protocol_handshake",
+  "protocol_version": 1,
+  "server_version": "2.5.0"
+}
+```
 
 ## Error envelope
 

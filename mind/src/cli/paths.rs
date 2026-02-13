@@ -90,8 +90,7 @@ pub fn ws_socket_path(base: &PathBuf, ws: &str) -> PathBuf {
         return PathBuf::from(base_str.replace("{ws}", ws));
     }
     if base_str.ends_with(".sock") {
-        let trimmed = base_str.trim_end_matches(".sock");
-        return PathBuf::from(format!("{}_{}.sock", trimmed, ws));
+        return PathBuf::from(base_str);
     }
     PathBuf::from(format!("{}/yai_runtime_{}.sock", base_str, ws))
 }

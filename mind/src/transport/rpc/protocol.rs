@@ -2,6 +2,20 @@ use crate::cli::proc::RunState;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+pub const RPC_PROTOCOL_VERSION: u8 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RpcRequestEnvelope {
+    pub v: u8,
+    pub request: Request,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ws_id: Option<String>,
+    #[serde(default)]
+    pub arming: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub role: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AliveStatus {
     pub boot: bool,
@@ -96,6 +110,9 @@ pub struct SanityStatus {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Request {
+    ProtocolHandshake {
+        client: Option<String>,
+    },
     Ping,
     Status,
     Up {
@@ -164,6 +181,10 @@ pub enum Request {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Response {
+    ProtocolHandshake {
+        protocol_version: u8,
+        server_version: String,
+    },
     Pong,
     Status {
         state: Option<RunState>,
@@ -223,6 +244,8 @@ pub enum Response {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Event {
     pub v: u8,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub schema_id: Option<String>,
     pub event_id: String,
     pub ts: u64,
     pub ws: String,

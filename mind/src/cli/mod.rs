@@ -1,5 +1,7 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Args, Parser, Subcommand, ValueEnum};
+use std::path::{Path, PathBuf};
+use std::process::Command as ProcessCommand;
 
 pub mod commands;
 pub mod config;
@@ -33,8 +35,8 @@ pub enum Command {
     Embed(EmbedArgs),
     #[command(hide = true)]
     Daemon(DaemonArgs),
-    #[command(hide = true)]
     Mind(MindArgs),
+    Yx(YxArgs),
 }
 
 #[derive(Args, Debug, Clone, Default)]
@@ -404,15 +406,40 @@ pub enum GraphCommand {
         #[arg(long, default_value_t = false)]
         no_trace: bool,
     },
-    Trace {
+    Activation {
         #[command(subcommand)]
-        command: GraphTraceCommand,
+        command: GraphActivationCommand,
     },
 }
 
 #[derive(Subcommand, Debug)]
-pub enum GraphTraceCommand {
-    Show { run_id: String },
+pub enum GraphActivationCommand {
+    List {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+        #[arg(long, default_value_t = 0)]
+        offset: usize,
+    },
+    Show {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        #[arg(long = "run")]
+        run_id: String,
+    },
+    Purge {
+        #[arg(long)]
+        ws: Option<String>,
+        #[arg(long, default_value_t = false)]
+        global: bool,
+        #[arg(long = "keep-last", default_value_t = 20)]
+        keep_last: usize,
+    },
 }
 
 #[derive(Args, Debug)]
@@ -440,7 +467,26 @@ pub struct DaemonArgs {
 }
 
 #[derive(Args, Debug)]
-pub struct MindArgs {}
+pub struct MindArgs {
+    #[command(flatten)]
+    pub common: CommonArgs,
+    #[arg(long, default_value_t = false)]
+    pub yx: bool,
+    #[arg(long)]
+    pub yx_root: Option<String>,
+    #[arg(long, default_value_t = true)]
+    pub yx_dev: bool,
+}
+
+#[derive(Args, Debug)]
+pub struct YxArgs {
+    #[command(flatten)]
+    pub common: CommonArgs,
+    #[arg(long)]
+    pub yx_root: Option<String>,
+    #[arg(long, default_value_t = true)]
+    pub yx_dev: bool,
+}
 
 fn overrides_from(common: &CommonArgs) -> config::CliOverrides {
     config::CliOverrides {
@@ -747,8 +793,34 @@ pub fn run() -> Result<()> {
                     epsilon,
                     no_trace,
                 ),
-                GraphCommand::Trace { command } => match command {
-                    GraphTraceCommand::Show { run_id } => commands::graph::trace_show(&run_id),
+                GraphCommand::Activation { command } => match command {
+                    GraphActivationCommand::List {
+                        ws,
+                        global,
+                        limit,
+                        offset,
+                    } => commands::graph::activation_list(
+                        &cfg,
+                        ws.as_deref(),
+                        global,
+                        limit,
+                        offset,
+                    ),
+                    GraphActivationCommand::Show {
+                        ws,
+                        global,
+                        run_id,
+                    } => commands::graph::activation_show(&cfg, ws.as_deref(), global, &run_id),
+                    GraphActivationCommand::Purge {
+                        ws,
+                        global,
+                        keep_last,
+                    } => commands::graph::activation_purge(
+                        &cfg,
+                        ws.as_deref(),
+                        global,
+                        keep_last,
+                    ),
                 },
             }
         }
@@ -761,6 +833,96 @@ pub fn run() -> Result<()> {
                 .unwrap_or_else(|| cfg.ws_default.clone());
             crate::control::daemon::run_daemon(&cfg, &ws)
         }
-        Command::Mind(_args) => crate::app::mind_server::run(),
+        Command::Mind(args) => {
+            let cfg = config::load_config(&overrides_from(&args.common))?;
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
+            if args.yx {
+                let runtime_sock = paths::ws_socket_path(&cfg.socket_path, &ws);
+                if !runtime_sock.exists()
+                    || std::os::unix::net::UnixStream::connect(&runtime_sock).is_err()
+                {
+                    anyhow::bail!(
+                        "runtime not running for ws {} (start runtime first: yai up --ws {})",
+                        ws,
+                        ws
+                    );
+                }
+                let exe = std::env::current_exe().context("resolve current exe")?;
+                let mut cmd = ProcessCommand::new(exe);
+                cmd.arg("daemon");
+                apply_common_args(&mut cmd, &args.common);
+                if args.common.ws.is_none() {
+                    cmd.arg("--ws").arg(&ws);
+                }
+                cmd.spawn().context("spawn yai daemon")?;
+                return launch_yx(&cfg.workspace_root, &ws, args.yx_root.as_deref(), args.yx_dev);
+            }
+            crate::control::daemon::run_daemon(&cfg, &ws)
+        }
+        Command::Yx(args) => {
+            let cfg = config::load_config(&overrides_from(&args.common))?;
+            let ws = args
+                .common
+                .ws
+                .clone()
+                .unwrap_or_else(|| cfg.ws_default.clone());
+            launch_yx(&cfg.workspace_root, &ws, args.yx_root.as_deref(), args.yx_dev)
+        }
     }
+}
+
+fn apply_common_args(cmd: &mut ProcessCommand, common: &CommonArgs) {
+    if let Some(ws) = &common.ws {
+        cmd.arg("--ws").arg(ws);
+    }
+    if let Some(root) = &common.workspace_root {
+        cmd.arg("--workspace-root").arg(root);
+    }
+    if let Some(root) = &common.artifacts_root {
+        cmd.arg("--artifacts-root").arg(root);
+    }
+    if let Some(sock) = &common.socket_path {
+        cmd.arg("--socket-path").arg(sock);
+    }
+    if let Some(v) = &common.yai_boot {
+        cmd.arg("--yai-boot").arg(v);
+    }
+    if let Some(v) = &common.yai_kernel {
+        cmd.arg("--yai-kernel").arg(v);
+    }
+    if let Some(v) = &common.yai_engine {
+        cmd.arg("--yai-engine").arg(v);
+    }
+    if let Some(v) = &common.yai_mind {
+        cmd.arg("--yai-mind").arg(v);
+    }
+}
+
+fn default_yx_root(workspace_root: &Path) -> PathBuf {
+    let root = workspace_root.parent().unwrap_or(workspace_root);
+    root.join("yai-yx")
+}
+
+fn launch_yx(workspace_root: &Path, ws: &str, yx_root: Option<&str>, dev: bool) -> Result<()> {
+    let root = yx_root
+        .map(PathBuf::from)
+        .unwrap_or_else(|| default_yx_root(workspace_root));
+    let mut cmd = if dev {
+        let mut c = ProcessCommand::new("make");
+        c.arg("dev");
+        c
+    } else {
+        let mut c = ProcessCommand::new("cargo");
+        c.arg("run").arg("--manifest-path").arg("src-tauri/Cargo.toml");
+        c
+    };
+    cmd.current_dir(&root)
+        .env("YAI_WS", ws)
+        .env("YX_MODE", "auto");
+    cmd.spawn().with_context(|| format!("launch yx in {}", root.display()))?;
+    Ok(())
 }
