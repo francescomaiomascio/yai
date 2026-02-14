@@ -1,13 +1,16 @@
 use crate::memory::graph::domains::semantic::types::SemanticNode;
 use crate::memory::graph::domains::vector::index::VectorIndex;
-use crate::memory::graph::domains::vector::store::VectorStore;
 use crate::memory::graph::domains::vector::types::VectorEntry;
+use crate::memory::graph::facade::GraphFacade; // Usiamo il Facade
+use crate::types::graph::GraphScope;
 use anyhow::Result;
 
 pub fn build_index(ws: &str, entries: Vec<VectorEntry>) -> Result<()> {
-    let mut store = VectorStore::open(ws)?;
-    store.set(entries)?;
-    Ok(())
+    let scope = GraphScope::Workspace(ws.to_string());
+    
+    // Deleghiamo all'Engine il salvataggio dei vettori
+    // Nota: Il Facade deve implementare put_vector_entries
+    GraphFacade::put_vector_entries(scope, entries)
 }
 
 pub fn rebuild_from_semantic<F>(ws: &str, nodes: &[SemanticNode], mut embed: F) -> Result<usize>
@@ -27,18 +30,23 @@ where
 }
 
 pub fn search(ws: &str, query: &[f32], k: usize) -> Result<Vec<(String, f32)>> {
-    let store = VectorStore::open(ws)?;
-    let dim = store
-        .entries()
-        .first()
-        .map(|e| e.embedding.len())
-        .unwrap_or(16);
+    let scope = GraphScope::Workspace(ws.to_string());
+    
+    // Recuperiamo le entries tramite il Facade invece dello store locale
+    let entries = GraphFacade::get_vector_entries(scope)?;
+    
+    if entries.is_empty() {
+        return Ok(vec![]);
+    }
+
+    let dim = entries[0].embedding.len();
     let mut index = VectorIndex::new(dim);
-    let items: Vec<(String, Vec<f32>)> = store
-        .entries()
-        .iter()
-        .map(|e| (e.id.clone(), e.embedding.clone()))
+    
+    let items: Vec<(String, Vec<f32>)> = entries
+        .into_iter()
+        .map(|e| (e.id, e.embedding))
         .collect();
+        
     index.build(&items);
     Ok(index.search(query, k))
 }

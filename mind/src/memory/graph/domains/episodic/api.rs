@@ -1,12 +1,16 @@
-use crate::memory::graph::domains::episodic::store::EpisodicStore;
+use crate::memory::graph::facade::GraphFacade;
 use crate::memory::graph::domains::episodic::types::Episode;
-use crate::workspace::layout::WorkspaceLayout;
+use crate::types::graph::GraphScope;
+// WorkspaceLayout non serve se deleghiamo il caricamento all'Engine tramite Scope
 use anyhow::Result;
 
 pub fn ingest(ws: &str) -> Result<Vec<Episode>> {
-    let layout = WorkspaceLayout::default_for(ws);
+    let scope = GraphScope::Workspace(ws.to_string());
 
-    let store = EpisodicStore::open(&layout)?;
+    // Qui la logica cambia: non "apriamo" più un file locale.
+    // Chiediamo al Facade di orchestrare l'ingestione degli eventi episodici.
+    // Nota: Il metodo 'ingest_episodes' deve essere presente nel Facade.
+    let episodes = GraphFacade::ingest_episodes(scope)?;
 
-    store.ingest_events()
+    Ok(episodes)
 }

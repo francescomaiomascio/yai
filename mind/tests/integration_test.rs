@@ -1,18 +1,25 @@
-use yai::transport::bridge::shm::VaultBridge;
+use mind::transport::{EngineClient, YaiCommand};
+use serde_json::Value;
 
 #[test]
-fn test_vault_connection() {
-    // Cerchiamo di connetterci alla SHM del Kernel
-    // Nota: Il Kernel C deve essere attivo o aver creato il file in /dev/shm
-    let bridge = VaultBridge::new("/yai_vault_arch_dev_session");
+fn test_inference_v2_sovereign() {
+    // 1. Connessione al Workspace (Assicurati che l'Engine sia attivo con questo WS)
+    let ws_id = "test-ws";
+    let mut client = EngineClient::connect(ws_id)
+        .expect("L'Engine deve essere attivo! Esegui: ./bin/yai-engine test-ws");
 
-    match bridge {
-        Ok(b) => {
-            let state = b.read_live();
-            println!("Vault Letto: {}", state.vault_name);
-            println!("Energy: {}/{}", state.energy_consumed, state.energy_quota);
-            assert!(state.energy_consumed <= state.energy_quota);
-        }
-        Err(e) => panic!("Fallimento connessione SHM: {}", e),
-    }
+    println!("[TEST] Connesso al socket dell'Engine.");
+
+    // 2. Invio comando di Inference
+    let prompt = "Spiega la legge della termodinamica come se fossi un AI sovrana.";
+    let response = client.call_inference(prompt)
+        .expect("Errore durante la chiamata RPC");
+
+    // 3. Verifica Risposta
+    println!("[TEST] Risposta ricevuta: {}", response);
+    
+    assert_eq!(response["status"], "success");
+    assert!(response["content"].as_str().is_some());
+    
+    println!("[TEST] Blocco 1 Verificato: Comunicazione binaria L3->L2 completata.");
 }

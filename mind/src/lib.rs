@@ -9,5 +9,5 @@ pub mod workspace;
 pub use error::MindError;
 
 // public surface
-pub use memory::graph::GraphFacade;
+pub use crate::memory::graph::facade::GraphFacade;
 pub use types::graph::*;

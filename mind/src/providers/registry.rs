@@ -1,5 +1,5 @@
-use crate::providers::embeddings::base::HashEmbedder;
-use crate::providers::embeddings::mock::MockEmbedder;
+use crate::providers::embedders::base::HashEmbedder;
+use crate::providers::embedders::mock::MockEmbedder;
 use crate::providers::types::EmbeddingProvider;
 use anyhow::{bail, Result};
 use std::sync::Arc;

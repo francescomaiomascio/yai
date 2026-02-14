@@ -2,7 +2,7 @@ pub mod client;
 pub mod registry;
 pub mod types;
 
-pub mod embeddings;
+pub mod embedders;
 
 pub use client::*;
 pub use registry::*;

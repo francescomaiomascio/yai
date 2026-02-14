@@ -1,22 +1,20 @@
 use crate::types::graph::{GraphStore, GraphScope};
+use crate::transport::uds_server::EngineClient as RpcClient;
 use crate::memory::graph::backend_rpc::BackendRpc;
-use crate::transport::rpc_client::RpcClient; // Il tuo client RPC globale o di istanza
-use anyhow::Result;
 
-/// Questa è la funzione che la Facade chiama. 
-/// In una architettura pulita, l'RpcClient verrebbe passato qui 
-/// o recuperato da un contesto globale.
 pub fn store_for_scope(scope: &GraphScope) -> Box<dyn GraphStore> {
-    // 1. Ottieni il client RPC (qui dipende da come hai gestito lo stato globale)
-    let client = RpcClient::new_default(); 
+    // Determiniamo il workspace_id per la connessione UDS
+    let ws_id = match scope {
+        GraphScope::Global => "global",
+        GraphScope::Workspace(id) => id,
+    };
 
-    // 2. Restituisci il backend RPC configurato con lo scope corretto
-    // Usiamo Box<dyn GraphStore> perché la Facade non deve sapere 
-    // che tipo di struct sta usando, le basta che rispetti il Trait.
+    // Creiamo il client connettendoci al socket specifico
+    let client = RpcClient::connect(ws_id).expect("Failed to connect to Engine UDS");
+
     Box::new(BackendRpc::new(client, scope.clone()))
 }
 
-/// Helper per le etichette (usato in stats o logging)
 pub fn scope_label(scope: &GraphScope) -> String {
     match scope {
         GraphScope::Global => "global".to_string(),

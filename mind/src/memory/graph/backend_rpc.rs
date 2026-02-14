@@ -1,7 +1,12 @@
-use crate::types::graph::{GraphEdge, GraphNode, GraphStore, GraphScope};
-use crate::transport::rpc_client::RpcClient; // Il bridge verso l'Engine
+use crate::transport::uds_server::EngineClient as RpcClient;
+use crate::types::graph::{GraphNode, GraphEdge, GraphScope, GraphStore};
+use crate::providers::client::{ProviderClient, ProviderRequest};
+// Import necessari per i nuovi metodi
+use crate::memory::graph::domains::vector::types::VectorEntry;
+use crate::memory::graph::domains::episodic::types::Episode;
+use crate::memory::graph::domains::authority::types::AuthorityPolicy;
 use anyhow::{Result, Context};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 pub struct BackendRpc {
     client: RpcClient,
@@ -13,20 +18,27 @@ impl BackendRpc {
         Self { client, scope }
     }
 
-    /// Helper per uniformare le chiamate RPC verso lo Storage Gate dell'Engine
     fn call_storage(&self, method: &str, params: Value) -> Result<Value> {
-        let payload = json!({
-            "scope": self.scope,
-            "method": method,
-            "params": params
-        });
+        let req = ProviderRequest {
+            provider: "E_RPC_STORAGE_GATE".to_string(),
+            model: "internal".to_string(), 
+            payload: json!({
+                "scope": self.scope,
+                "method": method,
+                "params": params
+            }),
+        };
         
-        self.client.call("E_RPC_STORAGE_GATE", payload)
-            .context(format!("Failed RPC call to storage: {}", method))
+        let response = ProviderClient::call(&self.client, req)
+            .context(format!("Failed RPC call to storage: {}", method))?;
+
+        Ok(response.payload)
     }
 }
 
 impl GraphStore for BackendRpc {
+    // ... (metodi put_node, put_edge, list_nodes, list_edges, get_node, get_edges_for_node, record_activation_trace rimangono uguali)
+
     fn put_node(&self, node: &GraphNode) -> Result<()> {
         self.call_storage("put_node", json!(node))?;
         Ok(())
@@ -61,8 +73,7 @@ impl GraphStore for BackendRpc {
         Ok(serde_json::from_value(res)?)
     }
 
-    fn record_activation_trace(&self, ws_id: &str, trace: Value) -> Result<()> {
-        // Ignoriamo ws_id qui perché è già incluso nel GraphScope del Backend
+    fn record_activation_trace(&self, _ws_id: &str, trace: Value) -> Result<()> {
         self.call_storage("record_activation_trace", trace)?;
         Ok(())
     }
@@ -72,5 +83,27 @@ impl GraphStore for BackendRpc {
             GraphScope::Global => "rpc://engine/global".to_string(),
             GraphScope::Workspace(id) => format!("rpc://engine/workspace/{}", id),
         }
+    }
+
+    // --- NUOVE IMPLEMENTAZIONI RICHIESTE ---
+
+    fn put_vector_entries(&self, entries: Vec<VectorEntry>) -> Result<()> {
+        self.call_storage("put_vector_entries", json!(entries))?;
+        Ok(())
+    }
+
+    fn get_vector_entries(&self) -> Result<Vec<VectorEntry>> {
+        let res = self.call_storage("get_vector_entries", json!({}))?;
+        Ok(serde_json::from_value(res)?)
+    }
+
+    fn ingest_episodes(&self) -> Result<Vec<Episode>> {
+        let res = self.call_storage("ingest_episodes", json!({}))?;
+        Ok(serde_json::from_value(res)?)
+    }
+
+    fn list_authority_policies(&self) -> Result<Vec<AuthorityPolicy>> {
+        let res = self.call_storage("list_authority_policies", json!({}))?;
+        Ok(serde_json::from_value(res)?)
     }
 }

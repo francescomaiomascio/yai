@@ -2,6 +2,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
+// Import per i domini specifici
+use crate::memory::graph::domains::vector::types::VectorEntry;
+use crate::memory::graph::domains::episodic::types::Episode;
+use crate::memory::graph::domains::authority::types::AuthorityPolicy;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GraphNode {
     pub id: String,
@@ -61,7 +66,7 @@ pub struct ActivationResult {
     pub nodes: Vec<GraphNode>,
     pub edges: Vec<GraphEdge>,
     pub scores: BTreeMap<String, f32>,
-    pub metrics: Option<Value>, // Mantiene ActivationStats
+    pub metrics: Option<Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -75,6 +80,7 @@ pub struct ActivationCommit {
     pub proof_passed: bool,
 }
 
+/// L'interfaccia unica per tutti i backend (In-Memory, RPC, etc.)
 pub trait GraphStore: Send + Sync {
     fn put_node(&self, node: &GraphNode) -> anyhow::Result<()>;
     fn put_edge(&self, edge: &GraphEdge) -> anyhow::Result<()>;
@@ -84,4 +90,10 @@ pub trait GraphStore: Send + Sync {
     fn get_edges_for_node(&self, id: &str) -> anyhow::Result<Vec<GraphEdge>>;
     fn record_activation_trace(&self, ws_id: &str, trace: Value) -> anyhow::Result<()>;
     fn descriptor(&self) -> String;
+
+    // Metodi di dominio richiesti dal Facade
+    fn put_vector_entries(&self, entries: Vec<VectorEntry>) -> anyhow::Result<()>;
+    fn get_vector_entries(&self) -> anyhow::Result<Vec<VectorEntry>>;
+    fn ingest_episodes(&self) -> anyhow::Result<Vec<Episode>>;
+    fn list_authority_policies(&self) -> anyhow::Result<Vec<AuthorityPolicy>>;
 }
