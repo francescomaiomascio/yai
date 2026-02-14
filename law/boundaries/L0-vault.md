@@ -6,7 +6,7 @@ Define the physical boundary of the YAI Vault as the single canonical contract f
 
 - shared memory layout (header + regions + alignment rules)
 - field offsets and packing constraints
-- command and state ID registries used across system components
+- command and state ID registries used across system components (Centralized in `yai_protocol_ids.h`)
 
 If this boundary drifts, the system does not share a common execution surface and is no longer a coherent instance of YAI.
 
@@ -17,7 +17,7 @@ If this boundary drifts, the system does not share a common execution surface an
 L0 is the single authority for:
 
 - the Vault memory layout and its invariants
-- the canonical ID registry for commands and states
+- the canonical ID registry for commands and states (Sovereign ID mapping)
 - naming rules for Vault channels and regions
 
 No downstream component may redefine offsets, IDs, or header semantics.
@@ -33,7 +33,7 @@ A bounded, shared-memory execution surface used for inter-component coordination
 A named memory region with fixed layout rules and a stable semantic role.
 
 **ID Registry**
-A canonical mapping for command IDs and state IDs used in cross-language interfaces.
+A canonical mapping for command IDs and state IDs used in cross-language interfaces, defined exclusively in `yai_protocol_ids.h`.
 
 ---
 
@@ -62,17 +62,17 @@ A canonical mapping for command IDs and state IDs used in cross-language interfa
 
 The Vault header MUST include, at minimum:
 
-- magic (constant signature)
+- magic (constant signature `0x59414956`)
 - version_major, version_minor
 - layout_id (identifier for layout family)
 - total_size
-- region_table_offset (or equivalent fixed mapping)
+- region_table_offset
 - flags (reserved, forward-compatible)
-- checksum or integrity field (optional but recommended)
+- checksum or integrity field
 
 The header MUST be:
 
-- explicitly packed/aligned
+- explicitly packed/aligned (`#pragma pack(1)`)
 - stable across languages (C/Rust)
 - validated at kernel startup
 
@@ -89,17 +89,21 @@ The header MUST be:
 
 ### Command and State ID Registry
 
-- All command IDs and state IDs MUST be defined in a single registry surface (header/constants).
+- All command IDs and state IDs MUST be defined in `law/specs/protocol/yai_protocol_ids.h`.
 - IDs MUST be stable, unique, and non-reused.
-- ID ranges MAY be reserved (e.g., core vs experimental), but the reservation itself is L0-authoritative.
+- ID ranges ARE reserved:
+  - `0x01xx`: Control/Kernel
+  - `0x02xx`: Storage/L2
+  - `0x03xx`: Provider/Inference (Sovereign)
+  - `0xFxxx`: Privileged/Armed
 
 ---
 
 ### Naming Rules for Channels / Regions
 
 - Names MUST be canonical and stable.
-- Names MUST be treated as part of the protocol surface (drift is a break).
-- Naming convention MUST be declared here (example: `yai.<layer>.<purpose>`).
+- Names MUST be treated as part of the protocol surface.
+- Naming convention: `/yai_vault_<workspace_id>_<region_name>`.
 
 ---
 
@@ -108,14 +112,11 @@ The header MUST be:
 L0 must be enforceable via non-negotiable checks:
 
 - Compile-time offset checks in vault headers (static asserts on offsets/sizes)
-- Protocol header constants defined in `specs/protocol/*`
+- Protocol header constants defined in `specs/protocol/yai_protocol_ids.h`
 - Kernel startup validation:
   - header signature check
   - version + layout compatibility check
   - region map check (bounds + alignment)
-  - optional integrity check
-
-A component that bypasses L0 checks is non-compliant by definition.
 
 ---
 
@@ -124,12 +125,10 @@ A component that bypasses L0 checks is non-compliant by definition.
 This boundary binds the following files (non-exhaustive):
 
 - `specs/protocol/README.md`
-- `specs/protocol/protocol.h`, `commands.h`, `transport.h`
+- `specs/protocol/protocol.h`, `transport.h`, `yai_protocol_ids.h`
 - `../kernel/include/yai_vault.h`
 - `engine/include/shared_constants.h`
 - `mind/src/shared/constants.rs`
-
-All interface files MUST trace their layout/IDs back to this L0 document.
 
 ---
 
@@ -138,28 +137,23 @@ All interface files MUST trace their layout/IDs back to this L0 document.
 Changes are classified as:
 
 **Compatible**
-
 - adding new fields in reserved/extended regions gated by version
-- adding new IDs without reuse
-- adding new regions with explicit offsets and version gating
+- adding new IDs in `yai_protocol_ids.h` without reuse
+- adding new regions with explicit offsets
 
 **Breaking**
-
 - modifying existing offsets/sizes/packing behavior
 - reordering fields in shared structs
 - reusing an ID
 - changing naming rules or canonical names
 
-Breaking changes MUST bump version_major and update all interface surfaces.
-
 ---
 
 ## Failure Modes
 
-- Offset drift breaks shared memory interpretation (cross-language mismatch)
-- ID mismatch causes invalid command/state mapping and undefined behavior
+- Offset drift breaks shared memory interpretation
+- ID mismatch causes invalid command/state mapping
 - Naming drift fragments the system into incompatible “sub-vaults”
-- Version ambiguity makes reproducibility and governance non-defensible
 
 ---
 
