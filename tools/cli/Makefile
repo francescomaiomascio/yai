@@ -1,29 +1,55 @@
-# tools/cli/Makefile
-CC ?= cc
-CFLAGS ?= -O2 -Wall -Wextra -Werror -std=c11
-LDFLAGS ?=
-BIN = yai
+# YAI CLI - Sovereign Makefile (ADR-004)
+CC = gcc
+CFLAGS = -Wall -Wextra -O2 -I./include -I../../engine/src/external
+LDFLAGS = 
 
-# tools/cli/Makefile (aggiungi cmd_law.c e include dir)
-SRC = \
-  src/main.c \
-  src/env.c \
-  src/paths.c \
-  src/envelope.c \
-  src/rpc.c \
-  src/fmt.c \
-  src/cmd_root.c \
-  src/cmd_law.c
+# Directory di output
+BIN_DIR = .
+OBJ_DIR = obj
 
+# Sorgenti della CLI
+SRC = src/main.c \
+      src/paths.c \
+      src/rpc.c \
+      src/envelope.c \
+      src/fmt.c \
+      src/env.c \
+      src/cmd_root.c \
+      src/cmd_kernel.c \
+      src/cmd_ws.c \
+      src/cmd_engine.c \
+      src/cmd_mind.c \
+      src/cmd_law.c
 
-INCLUDE = -Iinclude
+# Dipendenza esterna (cJSON dall'engine)
+EXTERNAL_SRC = ../../engine/src/external/cJSON.c
 
-all: $(BIN)
+# Generazione lista oggetti
+OBJS = $(SRC:src/%.c=$(OBJ_DIR)/%.o) $(OBJ_DIR)/cJSON.o
 
-$(BIN): $(SRC)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $(SRC) $(LDFLAGS)
+# Target principale
+TARGET = $(BIN_DIR)/yai
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	@echo "Linking Sovereign CLI: $@"
+	@$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	@echo "Build Complete: ./yai"
+
+# Compilazione moduli interni
+$(OBJ_DIR)/%.o: src/%.c
+	@mkdir -p $(OBJ_DIR)
+	@echo "CC $<"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+# Compilazione cJSON (Speciale)
+$(OBJ_DIR)/cJSON.o: $(EXTERNAL_SRC)
+	@mkdir -p $(OBJ_DIR)
+	@echo "CC (ext) $<"
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(BIN)
+	rm -rf $(OBJ_DIR) $(TARGET)
 
 .PHONY: all clean

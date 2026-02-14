@@ -1,54 +1,76 @@
-// tools/cli/src/main.c
 #include "../include/yai_cli.h"
 #include "../include/yai_cmd.h"
-
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-static int is_flag(const char *a, const char *b) { return a && b && strcmp(a,b)==0; }
+static void print_usage() {
+    printf("YAI Sovereign CLI\n");
+    printf("Usage: yai <bin> [options] <command> [args...]\n\n");
+    printf("Binaries (Levels):\n");
+    printf("  kernel   L1: Root control, session management, power\n");
+    printf("  engine   L2: Storage gates, providers, resources\n");
+    printf("  mind     L3: Cognition, RAG, Agents (Requires --ws)\n");
+    printf("\nOptions:\n");
+    printf("  -w, --ws <id>   Target workspace (Required for 'mind')\n");
+    printf("  -j, --json      Raw JSON output\n");
+    printf("  -a, --arming    Enable destructive/system commands\n");
+}
 
-int yai_cli_main(int argc, char **argv) {
-    yai_cli_opts_t opt;
-    memset(&opt, 0, sizeof(opt));
-    opt.role = "user";
-    opt.arming = 0;
-    opt.json = 0;
-    opt.client_version = "cli-c/0.1";
-
-    int i = 1;
-    for (; i < argc; i++) {
-        const char *a = argv[i];
-        if (!a) continue;
-
-        if (is_flag(a, "--ws")) {
-            if (i + 1 >= argc) { fprintf(stderr, "ERR: --ws requires value\n"); return 2; }
-            opt.ws_id = argv[++i];
-            continue;
-        }
-        if (is_flag(a, "--arming")) { opt.arming = 1; continue; }
-        if (is_flag(a, "--json")) { opt.json = 1; continue; }
-        if (is_flag(a, "--role")) {
-            if (i + 1 >= argc) { fprintf(stderr, "ERR: --role requires value\n"); return 2; }
-            opt.role = argv[++i];
-            continue;
-        }
-        if (is_flag(a, "--client")) {
-            if (i + 1 >= argc) { fprintf(stderr, "ERR: --client requires value\n"); return 2; }
-            opt.client_version = argv[++i];
-            continue;
-        }
-        // first non-flag starts command tail
-        break;
-    }
-
-    if (i >= argc) {
-        fprintf(stderr, "ERR: missing command. Try: yai --ws dev ping\n");
-        return 2;
-    }
-
-    return yai_cmd_dispatch(argc - i, argv + i, &opt);
+static int is_flag(const char *a, const char *s, const char *l) {
+    return (a && ((s && strcmp(a, s) == 0) || (l && strcmp(a, l) == 0)));
 }
 
 int main(int argc, char **argv) {
-    return yai_cli_main(argc, argv);
+    if (argc < 2) {
+        print_usage();
+        return 1;
+    }
+
+    yai_cli_opts_t opt;
+    memset(&opt, 0, sizeof(opt));
+    opt.role = "user";
+    opt.client_version = "yai-cli/v1-adr-compliant";
+
+    // Identifica il binario logico (kernel, engine, mind)
+    const char *target_bin = argv[1];
+    
+    // Default workspace dall'ambiente
+    const char* env_ws = getenv("YAI_WORKSPACE");
+    opt.ws_id = env_ws;
+
+    int i = 2; // Inizia il parsing dopo <bin>
+    for (; i < argc; i++) {
+        const char *a = argv[i];
+        if (a[0] != '-') break; // Fine flag, inizio comando
+
+        if (is_flag(a, "-w", "--ws")) {
+            if (++i >= argc) { fprintf(stderr, "ERR: --ws needs value\n"); return 2; }
+            opt.ws_id = argv[i];
+        } else if (is_flag(a, "-j", "--json")) {
+            opt.json = 1;
+        } else if (is_flag(a, "-a", "--arming")) {
+            opt.arming = 1;
+        } else if (is_flag(a, "-r", "--role")) {
+            if (++i >= argc) { fprintf(stderr, "ERR: --role needs value\n"); return 2; }
+            opt.role = argv[i];
+        }
+    }
+
+    // --- Validazione Rigida ADR-001 ---
+    if (strcmp(target_bin, "mind") == 0) {
+        if (!opt.ws_id || strlen(opt.ws_id) == 0) {
+            fprintf(stderr, "FATAL: 'mind' requires a workspace. Use --ws or YAI_WORKSPACE env.\n");
+            return 3;
+        }
+    }
+
+    if (i >= argc) {
+        fprintf(stderr, "ERR: Missing command for binary '%s'.\n", target_bin);
+        return 2;
+    }
+
+    // Il dispatcher riceve il binario target e il resto degli argomenti
+    // Esempio: yai mind --ws dev chat -> dispatch("mind", ["chat"], &opt)
+    return yai_cmd_dispatch(target_bin, argc - i, argv + i, &opt);
 }
