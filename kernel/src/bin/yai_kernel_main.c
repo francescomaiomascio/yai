@@ -1,7 +1,9 @@
 #include "yai_vault.h"
 #include "yai_kernel.h"
 #include "kernel.h"
-#include "transport.h"
+#include <protocol/transport.h>
+#include <protocol/yai_protocol_ids.h>
+#include "transport.h"         
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

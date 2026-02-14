@@ -1,8 +1,9 @@
-#include "transport.h"
+#include <protocol/transport.h>
+#include <protocol/yai_protocol_ids.h>
+
 #include "kernel.h"
 #include "yai_kernel.h"
 #include "yai_session.h"
-#include <protocol/transport.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/stat.h>

@@ -110,7 +110,8 @@ int yai_rpc_handshake(yai_rpc_client_t *c, uint32_t capabilities) {
     // Parametri critici per il superamento del filtro del Kernel
     env.magic = YAI_FRAME_MAGIC; 
     env.version = 1;
-    env.command_id = 0x0102u; // YAI_CMD_HANDSHAKE da yai_protocol_ids.h
+    env.command_id = YAI_CMD_HANDSHAKE;
+
     
     strncpy(env.ws_id, c->ws_id, 35);
     yai_make_trace_id(env.trace_id);
