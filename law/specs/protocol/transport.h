@@ -2,29 +2,34 @@
 #define YAI_PROTOCOL_TRANSPORT_H
 
 #include <stdint.h>
-#include <stddef.h>
 
-typedef enum yai_msg_type {
-    YAI_MSG_NONE = 0,
-    YAI_MSG_HANDSHAKE = 1,
-    YAI_MSG_HEARTBEAT = 2,
-    YAI_MSG_COMMAND = 3,
-    YAI_MSG_RESPONSE = 4,
-    YAI_MSG_LOG = 5
-} yai_msg_type_t;
+#define YAI_FRAME_MAGIC    0x59414950  // "YAIP" (YAI Protocol)
+#define YAI_MAX_PAYLOAD    65536       // 64KB Hard Limit per sicurezza (Blocco 4)
 
 #pragma pack(push, 1)
-typedef struct yai_frame_header {
-    uint32_t magic;
-    uint32_t version;
-    uint16_t msg_type;
-    uint16_t flags;
-    uint32_t length;
-    uint32_t seq;
-    uint32_t checksum;
-} yai_frame_header_t;
+
+/**
+ * L'Envelope Sovrano (L2 <-> L3)
+ * Totale: 96 byte (Multiplo di 8, allineamento perfetto per SHM)
+ */
+typedef struct yai_rpc_envelope {
+    uint32_t magic;         // Deve essere YAI_FRAME_MAGIC
+    uint32_t version;       // Protocol version (es. 1)
+    char     ws_id[36];     // UUID del Workspace
+    char     trace_id[36];  // Per il tracing tra L3 e L2
+    
+    uint32_t command_id;    // Da yai_protocol_ids.h
+    uint16_t role;          // 0: Guest, 1: Operator, 2: Sovereign
+    uint8_t  arming;        // 1 = true, 0 = false
+    uint8_t  _pad;          // Padding per allineamento a 8 byte
+    
+    uint32_t payload_len;   // Lunghezza del JSON che segue (Max YAI_MAX_PAYLOAD)
+    uint32_t checksum;      // Integrità dell'envelope + payload (CRC32 o simile)
+} yai_rpc_envelope_t;
+
 #pragma pack(pop)
 
-_Static_assert(sizeof(yai_frame_header_t) == 24, "yai_frame_header_t size mismatch");
+// Verifica formale della dimensione richiesta
+_Static_assert(sizeof(yai_rpc_envelope_t) == 96, "yai_rpc_envelope_t size must be 96 bytes");
 
-#endif /* YAI_PROTOCOL_TRANSPORT_H */
+#endif

@@ -464,3 +464,4 @@ bin/
 # local data
 Data/db/
 *.db
+tools/cli/yai
