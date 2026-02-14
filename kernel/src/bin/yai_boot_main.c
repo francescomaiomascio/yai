@@ -13,73 +13,50 @@
 #include <errno.h>
 #include <limits.h>
 #include <libgen.h>
-#ifdef __APPLE__
-#include <sys/utsname.h>
-#endif
 
-// Percorso canonico del binario del Kernel (repo unico)
 #define KERNEL_BINARY "yai-kernel"
+#define SYSTEM_WS "system" // Il Bootstrap opera solo sul piano di sistema
 
 static const char *resolve_kernel_path(char **argv) {
     const char *env = getenv("YAI_KERNEL_BIN");
-    if (env && env[0] != '\0') {
-        return env;
-    }
+    if (env && env[0] != '\0') return env;
 
     static char buf[PATH_MAX];
     if (argv && argv[0] && strchr(argv[0], '/')) {
         char tmp[PATH_MAX];
         strncpy(tmp, argv[0], sizeof(tmp) - 1);
-        tmp[sizeof(tmp) - 1] = '\0';
         char *dir = dirname(tmp);
         snprintf(buf, sizeof(buf), "%s/%s", dir, KERNEL_BINARY);
         return buf;
     }
-
     return KERNEL_BINARY;
 }
 
-static int yai_create_shm_vault(const char *ws_id, uint32_t quota, const char *channel) {
+static int yai_init_system_shm() {
     char shm_path[128];
-    if (channel && channel[0] != '\0') {
-        snprintf(shm_path, sizeof(shm_path), "%s%s_%s", SHM_VAULT_PREFIX, ws_id, channel);
-    } else {
-        snprintf(shm_path, sizeof(shm_path), "%s%s", SHM_VAULT_PREFIX, ws_id);
-    }
+    // Il Vault di sistema è unico e globale per l'istanza del Kernel
+    snprintf(shm_path, sizeof(shm_path), "%s%s", SHM_VAULT_PREFIX, SYSTEM_WS);
 
-    // Best-effort: remove stale SHM
     shm_unlink(shm_path);
-
     int fd = shm_open(shm_path, O_CREAT | O_RDWR, 0666);
-    if (fd == -1) {
-        fprintf(stderr, "[BOOTSTRAP] shm_open failed for %s: %s\n", shm_path, strerror(errno));
-        return -1;
-    }
+    if (fd == -1) return -1;
 
-    // Nota: Usiamo la struct yai_vault_t definita in yai_vault.h
     if (ftruncate(fd, sizeof(yai_vault_t)) != 0) {
-        fprintf(stderr, "[BOOTSTRAP] ftruncate failed: %s\n", strerror(errno));
         close(fd);
         return -2;
     }
 
     yai_vault_t *v = mmap(NULL, sizeof(yai_vault_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (v == MAP_FAILED) {
-        fprintf(stderr, "[BOOTSTRAP] mmap failed: %s\n", strerror(errno));
         close(fd);
         return -3;
     }
 
-    // Inizializzazione pulita della memoria condivisa
     memset(v, 0, sizeof(yai_vault_t));
-    v->status = YAI_STATE_HALT;
-    v->energy_quota = quota;
-    v->energy_consumed = 0;
-    v->authority_lock = false;
-    strncpy(v->workspace_id, ws_id, MAX_WS_ID - 1);
+    v->status = YAI_STATE_PREBOOT;
+    strncpy(v->workspace_id, SYSTEM_WS, MAX_WS_ID - 1);
     
-    // Log di sistema
-    printf("[BOOTSTRAP] Vault created at %s (Size: %lu bytes)\n", shm_path, sizeof(yai_vault_t));
+    printf("[BOOT] Global System Vault allocated at %s\n", shm_path);
 
     munmap(v, sizeof(yai_vault_t));
     close(fd);
@@ -87,82 +64,44 @@ static int yai_create_shm_vault(const char *ws_id, uint32_t quota, const char *c
 }
 
 int main(int argc, char **argv) {
-    printf("--- YAI BOOTSTRAP V1 (LAYER 0) ---\n");
-    const char *ws_id = "default";
-    bool raid = false;
+    (void)argc;
+    printf("\033[1;33m--- YAI AGNOSTIC BOOTSTRAP (ADR-002) ---\033[0m\n");
 
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--ws") == 0 && i + 1 < argc) {
-            ws_id = argv[i + 1];
-            i++;
-        } else if (strcmp(argv[i], "--raid") == 0) {
-            raid = true;
-        }
-    }
-
-    // 1. Preboot: Inizializzazione stato locale
-    yai_vault_t local_context = {
-        .status = YAI_STATE_PREBOOT,
-        .energy_quota = 1000,
-        .authority_lock = false
-    };
+    // 1. Preboot Invariants (Agnostici)
+    yai_vault_t boot_ctx = {0};
+    strncpy(boot_ctx.workspace_id, SYSTEM_WS, MAX_WS_ID - 1);
 
     if (yai_run_preboot_checks() != 0) {
-        printf("[FATAL] Preboot invariants violated. System halt.\n");
+        fprintf(stderr, "[FATAL] Environment security violation.\n");
         return EXIT_FAILURE;
     }
 
-    // 2. Discovery & Environment setup
-    yai_discover_environment(&local_context);
+    // 2. Discovery: Qui creiamo le directory BASE (~/.yai/run/dev, etc.)
+    // ma il socket principale sarà quello di controllo globale.
+    yai_discover_environment(&boot_ctx);
 
-    // 3. Creazione del Vault fisico (SHM)
-    if (yai_create_shm_vault(ws_id, local_context.energy_quota, NULL) != 0) {
-        printf("[FATAL] Failed to allocate SHM Vault for WS: %s\n", ws_id);
+    // 3. System SHM: Inizializziamo solo il piano di controllo
+    if (yai_init_system_shm() != 0) {
+        fprintf(stderr, "[FATAL] Failed to initialize System Plane SHM.\n");
         return EXIT_FAILURE;
     }
-    if (raid) {
-#ifdef __APPLE__
-        printf("[BOOTSTRAP] RAID channels disabled on macOS (shm name length constraints). Using core vault only.\n");
-#else
-        const char *channels[] = {"stream", "brain", "audit", "cache", "control"};
-        for (size_t i = 0; i < sizeof(channels) / sizeof(channels[0]); i++) {
-            if (yai_create_shm_vault(ws_id, local_context.energy_quota, channels[i]) != 0) {
-                printf("[FATAL] Failed to allocate SHM Vault %s for WS: %s\n", channels[i], ws_id);
-                return EXIT_FAILURE;
-            }
-        }
-#endif
-    }
 
-    printf("YAI_BOOT_OK ws=%s\n", ws_id);
+    printf("[BOOT] Environment discovery complete. Ready for Kernel takeover.\n");
     fflush(stdout);
 
-    const char *no_exec = getenv("YAI_BOOT_NO_EXEC");
-    if (no_exec && strcmp(no_exec, "1") == 0) {
-        printf("[BOOTSTRAP] Kernel exec disabled by env. Exiting bootstrap.\n");
-        return EXIT_SUCCESS;
-    }
-
-    // 4. Authority Handoff: Esecuzione del Kernel
-    // Invece di chiamare bridge engine, usiamo execvp per trasformare 
-    // il processo Bootstrap nel processo Kernel.
-    printf("[BOOTSTRAP] Handing off authority to KERNEL...\n");
-
+    // 4. Exec Kernel: Passiamo al Kernel il controllo totale.
+    // Il Kernel non riceverà più un --ws fisso, ma gestirà i socket dinamicamente.
     const char *kernel_bin = resolve_kernel_path(argv);
-    char *kernel_args[] = { (char *)kernel_bin, "--ws", (char *)ws_id, NULL };
+    
+    // Il Kernel ora parte in modalità "Master"
+    char *kernel_args[] = { (char *)kernel_bin, "--master", NULL };
 
-    if (strchr(kernel_bin, '/')) {
-        if (execv(kernel_bin, kernel_args) == -1) {
-            perror("[FATAL] Failed to execute YAI-Kernel");
-            return EXIT_FAILURE;
-        }
-    } else {
-        if (execvp(kernel_bin, kernel_args) == -1) {
-            perror("[FATAL] Failed to execute YAI-Kernel");
-            return EXIT_FAILURE;
-        }
+    printf("[BOOT] Executing: %s --master\n", kernel_bin);
+
+    if (execvp(kernel_bin, kernel_args) == -1) {
+        perror("[FATAL] Kernel handoff failed");
+        return EXIT_FAILURE;
     }
 
-    // Se arriviamo qui, execvp è fallita
     return EXIT_FAILURE;
 }
