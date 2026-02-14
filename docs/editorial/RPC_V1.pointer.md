@@ -8,13 +8,12 @@ Editorial pointer aligned with the target control-plane switch: the RPC contract
 - `law/specs/control/control_plane.v1.json`
 - `law/specs/protocol/protocol.h`
 - `law/specs/protocol/transport.h`
-- `law/specs/protocol/commands.h`
-- `law/specs/protocol/yai_protocol_ids.h` (if used)
+- `law/specs/protocol/yai_protocol_ids.h` (L0-authoritative Registry)
 
 **Derived / enforced (must match law):**
 - `kernel/*` (control-plane server)
 - `tools/*` (CLI client)
-- `engine/*` (optional client or observer)
+- `engine/*` (Sovereign L2 provider bridge)
 - `mind/*` (workspace client, not entry point)
 
 **Non-authoritative:**
@@ -33,7 +32,7 @@ Editorial pointer aligned with the target control-plane switch: the RPC contract
 - **Framing:** NDJSON / JSON-Lines (1 JSON object per line)
 - **Encoding:** UTF-8
 - **Connection model:**
-  - session: handshake → request/response loop → optional event stream
+  - session: handshake (YAI_CMD_HANDSHAKE) → request/response loop → optional event stream
   - legacy one-request-per-conn is transitional only
 
 ---
@@ -69,34 +68,19 @@ Editorial pointer aligned with the target control-plane switch: the RPC contract
 }
 ```
 
-### ErrorEnvelopeV1
-```json
-{
-  "v": 1,
-  "ws_id": "dev",
-  "trace_id": "cli-1700000000000-0009",
-  "ok": false,
-  "error": {
-    "code": "ws_id_required",
-    "message": "ws_id is required for runtime-bound requests",
-    "detail": { "required_fields": ["v","trace_id","ws_id","arming","role","request"] }
-  }
-}
-```
-
 **Mandatory invariants:**
-- `v` MUST be 1
-- `trace_id` MUST be present (<= 64 chars)
-- `ws_id` MUST be present and non-empty for runtime-bound requests
-- `request.type` MUST be non-empty
-- `request.payload` MUST be a JSON object or null
-- Requests not wrapped in the v1 envelope are rejected
+
+* `v` MUST be 1
+* `trace_id` MUST be present (<= 64 chars)
+* `ws_id` MUST be present and non-empty for runtime-bound requests
+* `request.type` MUST be non-empty
+* Requests not wrapped in the v1 envelope are rejected
 
 ---
 
 ## Handshake (required-first)
 
-The first message on a session MUST be `protocol_handshake`.
+The first message on a session MUST be a handshake, mapping to `YAI_CMD_HANDSHAKE` (0x0102).
 
 ### Request: protocol_handshake
 ```json
@@ -110,37 +94,16 @@ The first message on a session MUST be `protocol_handshake`.
     "type": "protocol_handshake",
     "payload": {
       "client_version": "0.1.0",
-      "capabilities": ["rpc.v1", "events.stream"]
-    }
-  }
-}
-```
-
-### Response: protocol_handshake_ok
-```json
-{
-  "v": 1,
-  "ws_id": "dev",
-  "trace_id": "cli-...-0001",
-  "ok": true,
-  "response": {
-    "type": "protocol_handshake_ok",
-    "payload": {
-      "protocol_version": 1,
-      "server_version": "0.1.0",
-      "capabilities": ["rpc.v1", "events.stream"],
-      "policy": { 
-        "ws_required": true, 
-        "arming_required_for_privileged": true 
-      }
+      "capabilities": ["rpc.v1", "events.stream", "sovereign.inference"]
     }
   }
 }
 ```
 
 **Enforcement:**
-- any non-handshake request before handshake → `handshake_required`
-- incompatible protocol/capabilities → `unsupported_protocol`
+
+* any non-handshake request before handshake → `handshake_required`
+* incompatible protocol/capabilities → `unsupported_protocol`
 
 ---
 
@@ -149,42 +112,33 @@ The first message on a session MUST be `protocol_handshake`.
 Privilege classification is owned by: `law/specs/control/control_plane.v1.json`
 
 **Runtime enforcement rules:**
-- **safe requests:** allowed after handshake + ws binding
-- **privileged requests:** require `arming=true` AND `role=operator`
-- **destructive requests:** privileged + extra confirmation fields (command-specific)
-- `authority_ref` is staged; do not create parallel ad-hoc auth fields in v1
+
+* **safe requests:** allowed after handshake + ws binding (e.g. `YAI_CMD_PING`)
+* **privileged requests:** require `arming=true` AND `role=operator`
+* **destructive requests:** privileged + extra confirmation fields
+* **sovereign requests:** (0x03xx) require L2 engine attachment
 
 **Law invariant:**
-- no external effects without arming + operator
 
----
-
-## Requests & responses
-
-The canonical list of request types + their privilege class lives in: `law/specs/control/control_plane.v1.json`
-
-This document is an index only.
+* no external effects without arming + operator
 
 ---
 
 ## Event streaming
 
 `events_subscribe` switches the session to streaming:
-- only valid after handshake
-- server emits `events_started` then repeated `event`
-- events MUST use the event envelope defined by law specs
+
+* only valid after handshake
+* server emits `events_started` then repeated `event`
 
 ---
 
 ## Error codes (minimum)
 
-- `bad_request`
-- `handshake_required`
-- `unsupported_protocol`
-- `ws_id_required`
-- `ws_id_mismatch`
-- `not_armed`
-- `role_required`
-- `unauthorized`
-- `not_found`
-- `internal_error`
+* `bad_request`
+* `handshake_required`
+* `unsupported_protocol`
+* `ws_id_required`
+* `not_armed`
+* `unauthorized`
+* `internal_error`
