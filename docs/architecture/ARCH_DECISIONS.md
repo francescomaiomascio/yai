@@ -1,112 +1,367 @@
-# Architecture Decisions (Law-Aligned)
+# YAI Architecture Decisions (Law-Aligned, 2026 Revision)
 
-This document captures architectural commitments.
-It is intentionally stable and grounded in `law/` invariants.
+This document captures the **machine-level architecture commitments**
+of YAI as of the current runtime refactor phase.
 
----
+It is grounded in `law/` invariants and reflects the
+post-envelope, post-authority enforcement state.
 
-## ADR-001 — Single Runtime Per Machine, Multiple Workspaces (Target)
+The architecture is stratified across:
 
-**Decision**
-Adopt a **single runtime per machine** (kernel + engine), supporting **multiple workspaces**.
-
-**Constraints**
-- Every runtime-bound request MUST carry `ws_id`.
-- Kernel/engine MUST enforce per-workspace isolation (no cross-ws effects).
-- Storage/logs/trace MUST remain per-workspace by default.
-
-**Law Alignment**
-L1/L2 enforce authority and effect boundaries; L3 remains proposal-only.
-
-**Status**
-Target architecture (design locked; implementation staged).
+- L0 — Vault (immutable identity & ABI boundary)
+- L1 — Kernel (authority, sessions, isolation)
+- L2 — Engine (execution gates)
+- L3 — Mind (proposal-only cognition per workspace)
+- Root — Machine Control Plane (runtime governor)
 
 ---
 
-## ADR-002 — Root Control Plane Per Machine (Entry Point)
+## ADR-001 — Single Runtime Per Machine (Canonical)
 
-**Decision**
-Introduce a **Root Control Plane** as the **entry point** for cockpit/CLI.
-Root exists **per machine**, is **runtime-aware**, and is the only component a cockpit connects to initially.
+### Decision
 
-**Responsibilities (Root)**
-- Runtime status and health.
-- Workspace discovery/listing.
-- Workspace attach/detach (routing to a specific workspace plane).
-- Enforcing the machine-level boundary: *one cockpit, many workspaces*.
+YAI runs as **one machine-level runtime**, composed of:
 
-**Non-Goals**
-- Root does not own L3 cognition or workspace memory/graph.
-- Root does not execute external effects; it routes and enforces boundaries.
+- Root Control Plane
+- Kernel (L1)
+- Engine (L2)
 
-**Status**
-Target architecture; implemented initially as a minimal stub (A2).
+This runtime manages multiple workspaces concurrently.
 
----
+### Implications
 
-## ADR-003 — Mind Per Workspace (Workspace Plane)
+- No per-workspace daemon model long-term.
+- No direct CLI-to-workspace socket access.
+- The runtime is machine-scoped, not workspace-scoped.
 
-**Decision**
-Maintain **one Mind per workspace** as the **workspace plane** (userland):
-graph, providers state, chat sessions, and proposal-only cognition.
+### Constraints
 
-**Constraints**
-- Mind is workspace-scoped and cannot be an entry point for the whole machine runtime.
-- No cross-workspace inference/state sharing inside Mind.
+- All runtime-bound requests MUST carry `ws_id`.
+- Kernel MUST enforce isolation between workspaces.
+- Engine MUST execute effects only under Kernel authority.
+- Cross-workspace state sharing is forbidden by default.
 
-**Law Alignment**
-Mind remains L3 proposal-only; any effectful execution must be routed via lower layers with explicit authority.
+### Law Alignment
 
-**Status**
-Current architecture and long-term commitment (role clarified).
+- A-002 Authority
+- I-006 External Effect Boundary
+- L1/L2 boundary enforcement
 
----
+### Status
 
-## ADR-004 — Protocol Contract (Strict, Single Contract)
-
-**Decision**
-RPC must enforce:
-- `protocol_handshake` (version + capability check)
-- `ws_id` mandatory on all runtime-bound requests
-- `arming=true` + `role=operator` for privileged commands
-- Deterministic, auditable errors (code + trace_id + ws_id)
-
-**Notes**
-- Cockpit/CLI first speak to Root Control Plane; then they attach to a workspace plane.
-- The contract is unified across UI and CLI (no parallel protocols).
-
-**Status**
-Handshake + gating enforced now; ws_id enforced immediately (match/routing semantics evolve with multi-tenant runtime).
+Architecture locked.
+Implementation staged (Root stub active, full multi-tenant pending).
 
 ---
 
-## ADR-005 — Event Schema Versioning + Validation Policy
+## ADR-002 — Root Control Plane as Canonical Entry Point
 
-**Decision**
-All events MUST include:
-- `schema_id`
-- `event_version` (or `v`)
+### Decision
 
-Validation policy is explicit: `off | warn | strict`.
+Introduce a **Root Control Plane** as the only public entrypoint
+for CLI and cockpit.
 
-**Status**
-Schema/version required; validation can tighten over time.
+All external clients MUST connect to:
+
+    ~/.yai/run/root.sock
+
+Workspace sockets are internal-only.
+
+### Responsibilities (Root)
+
+- Runtime health & status
+- Workspace registry
+- Workspace spawn/attach/detach
+- Machine-level boundary enforcement
+- Routing to workspace plane
+
+### Non-Goals
+
+- Root does NOT execute engine gates
+- Root does NOT host Mind logic
+- Root does NOT mutate workspace memory
+
+Root is a governor, not an executor.
+
+### Rationale
+
+Prevents:
+
+- Direct CLI → workspace bypass
+- Unauthorized multi-tenant conflicts
+- Daemon explosion per workspace
+
+### Status
+
+Stub implementation active.
+Routing layer under integration.
 
 ---
 
-## Implementation Phases (Summary)
+## ADR-003 — Kernel as Authority Plane (L1)
 
-1. **Protocol & Gate (A)**:
-   enforce handshake, arming/role; introduce strict envelope and error model; ws_id mandatory.
-2. **Root Control Plane Stub (A2)**:
-   add machine-level root socket (status, workspaces.list, workspace.attach); cockpit connects to root first.
-3. **Event Discipline (B)**:
-   event envelope + schema registry + validation policy.
-4. **Workspace Guard (C)**:
-   strict workspace selection end-to-end (UI + CLI + tauri + daemon).
-5. **Connection Lifecycle (D)**:
-   session semantics + subscribe robustness + reconnect correctness.
-6. **Authority & Proof (E/F/G/H/I)**:
-   authority leases, anti-replay, delegation, scoped capabilities.
-7. **Runtime Cutover**:
-   migrate from per-ws daemons to true multi-tenant runtime while keeping contracts stable.
+### Decision
+
+Kernel is the **authority enforcement layer**.
+
+It validates:
+
+- protocol version
+- handshake
+- role
+- arming flag
+- ws_id
+- session ownership
+
+It is the only layer that may authorize effectful execution.
+
+### Enforcement Rules
+
+- `arming=true` requires role ≥ operator
+- No execution without handshake
+- No execution before workspace attach
+- No cross-workspace session mixing
+
+### Non-Goals
+
+- Kernel does not perform business logic
+- Kernel does not execute provider/storage logic
+- Kernel does not own cognition
+
+### Status
+
+Authority enforcement active.
+Session locking stabilized (robust PID validation).
+
+---
+
+## ADR-004 — Engine as Execution Plane (L2)
+
+### Decision
+
+Engine is the **execution gate layer**.
+
+It provides:
+
+- storage_gate
+- provider_gate
+- network_gate
+- resource_gate
+- cortex execution
+
+Engine executes only after Kernel authorization.
+
+### Rules
+
+- Engine never validates authority
+- Engine never selects workspace
+- Engine never bypasses Kernel
+
+### Relationship
+
+Kernel → Engine (downward call)
+Engine → Kernel (never)
+
+### Status
+
+Engine routing stub integrated.
+Full integration with Root pending.
+
+---
+
+## ADR-005 — Mind Per Workspace (L3 Cognitive Plane)
+
+### Decision
+
+Each workspace owns one Mind instance.
+
+Mind is:
+
+- workspace-scoped
+- proposal-only
+- non-authoritative
+
+Mind may:
+
+- build graph state
+- generate plans
+- propose actions
+
+Mind may NOT:
+
+- execute external effects
+- bypass Engine
+- access other workspaces
+
+### Rationale
+
+Preserves:
+
+- Cognitive isolation
+- Determinism
+- Law invariants
+
+### Status
+
+Mind remains per-workspace Rust process.
+Future consolidation possible under runtime governance.
+
+---
+
+## ADR-006 — Strict Unified RPC Contract
+
+### Decision
+
+All communication follows a single binary envelope contract:
+
+Envelope fields:
+
+- magic
+- version
+- ws_id
+- trace_id
+- command_id
+- role
+- arming
+- payload_len
+
+### Mandatory Rules
+
+- Handshake required
+- `ws_id` required for runtime-bound commands
+- `arming + role` required for privileged commands
+- Deterministic error responses (with ws_id + trace_id)
+
+### Prohibited
+
+- Parallel protocols
+- JSON-only side channels
+- CLI-specific shortcuts
+
+### Status
+
+Envelope enforcement active.
+CLI authority injection active.
+
+---
+
+## ADR-007 — Workspace Isolation Model
+
+### Decision
+
+Workspace isolation is enforced at three levels:
+
+1. Session lock (PID-based lockfile)
+2. Memory isolation (per-ws storage paths)
+3. RPC routing (Root-bound dispatch)
+
+### Lockfile Policy
+
+- Lockfile contains PID
+- Stale lock detection via kill(pid, 0)
+- Stale locks auto-recovered
+
+### Status
+
+Robust lock logic active.
+Future: move from file-lock to runtime registry model.
+
+---
+
+## ADR-008 — Connection Lifecycle Semantics
+
+### Decision
+
+Connections are one of:
+
+- root session
+- workspace-attached session
+
+Handshake establishes protocol validity.
+Attach establishes workspace context.
+
+### Rules
+
+- No execution before attach
+- Attach must be explicit
+- Reconnect must re-handshake
+
+### Status
+
+One-shot CLI stable.
+Persistent cockpit session model pending.
+
+---
+
+## ADR-009 — Engine Attachment Model (Next Phase)
+
+### Decision
+
+Engine will be attached to Root runtime,
+not directly spawned per workspace.
+
+Workspace context will be passed through dispatch layer.
+
+### Future Model
+
+Root
+ ├── Kernel (authority)
+ ├── Engine (shared execution plane)
+ └── Workspace contexts (logical isolation)
+
+### Status
+
+Planned.
+Not yet fully integrated.
+
+---
+
+## ADR-010 — Boot as Canonical Machine Entry
+
+### Decision
+
+`yai` (boot) is the only official runtime entrypoint.
+
+It performs:
+
+- preboot validation
+- directory integrity
+- root socket creation
+- runtime initialization
+
+Direct launching of workspace kernel binaries is deprecated.
+
+### Status
+
+Migration in progress.
+Boot canonicalization required before engine integration.
+
+---
+
+# Implementation Phases (Updated)
+
+A — Envelope + Authority (Completed)
+B — Root Control Plane Canonicalization (In Progress)
+C — CLI Migration to Root Socket (Required)
+D — Workspace Attach Protocol (Next)
+E — Engine Shared Integration
+F — True Multi-Tenant Runtime Cutover
+G — Authority Lease & Anti-Replay
+H — Delegated Scoped Capabilities
+I — Deterministic Audit Layer
+
+---
+
+# Architectural North Star
+
+One Machine Runtime  
+Many Workspaces  
+One Authority Plane  
+One Execution Plane  
+Many Cognitive Planes  
+
+Law enforced at L1.  
+Effects executed at L2.  
+Proposals generated at L3.  
+Governed by Root.
+
