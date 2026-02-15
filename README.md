@@ -1,157 +1,106 @@
-# YAI
+# YAI  
+### YAI Ain’t Intelligence
 
-YAI is a layered runtime system with a deterministic control plane and an operator-first CLI.
+YAI is not “just another AI project”.
 
-Core goals:
-- deterministic runtime lifecycle (`up/down/status/events`)
-- law-driven boundaries and verifiable contracts
-- graph-centric memory and awareness hooks
-- provider pairing/trust workflow for LLM integration
+It is a **layered sovereign runtime system** designed to make cognition,
+execution and authority explicit, enforceable, and auditable.
 
-## Architecture
+YAI separates probabilistic intelligence from deterministic control.
+It treats governance as a first-class architectural primitive.
 
-YAI is organized in layers:
-- `law/` (L0): axioms, invariants, specs, formal models
-- `kernel/` (L1): low-level authority/enforcement runtime in C
-- `engine/` (L2): execution bridge and runtime services in C
-- `mind/` (L3): control plane, graph memory, providers, CLI in Rust
-- `scripts/` (L5): canonical verify/gate/suite runners
+---
 
-Key docs:
-- `docs/STRATIFICATION.md`
-- `docs/RUNBOOKS.md`
-- `docs/DATASETS.md`
-- `docs/ARCH_DECISIONS.md`
-- `law/specs/cli/CLI_PUBLIC_INTERFACE.md`
-- `law/specs/cli/TUI_COCKPIT_V1.md` (deprecated, historical only)
+## Vision
 
-## Quick Start
+Most AI systems blur boundaries between inference, execution, and authority.
 
-Single binary: `yai` is the only CLI entrypoint.
+YAI does the opposite.
 
-### 1) Install `yai`
+It builds a **machine-level runtime** where:
 
-```bash
-cd /Users/francescomaiomascio/Developer/YAI/yai/mind
-cargo install --path . --locked --force --bin yai
-```
+- authority is explicit
+- effects are gated
+- workspaces are isolated
+- memory is structured
+- execution is deterministic where it must be
 
-If `yai` is not found:
+YAI is not an app.  
+It is an operating surface for governed cognition.
 
-```bash
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-hash -r
-```
+---
 
-### 2) Start a workspace
+## Architecture Overview
 
-```bash
-cd /Users/francescomaiomascio/Developer/YAI/yai
-yai up --ws dev --build --detach
-yai mind --ws dev
-yai status --ws dev --json
-```
+YAI is stratified into clearly defined layers:
 
-### 3) Open live monitor
+### `law/` — L0  
+Axioms, invariants, protocol definitions, formal models (TLA+).  
+The canonical source of truth.
 
-```bash
-yai monitor --ws dev
-```
+### `kernel/` — L1  
+Low-level authority and enforcement runtime (C).  
+Session guards, transport, boundary enforcement.
 
-For graphical UX, use YX (`yai yx`) as the canonical GUI client of the same control socket.
+### `engine/` — L2  
+Deterministic execution bridge and gated runtime services (C).  
+Storage, network, provider gates, execution cortex.
 
-```bash
-yai yx --ws dev
-```
+### `mind/` — L3  
+Control plane and cognition layer (Rust).  
+Graph memory, providers, reasoning orchestration, CLI surfaces.
 
-## Provider Pairing (LAN)
+### `boot/`  
+Canonical entrypoint and root control plane.  
+One machine, multiple workspaces.
 
-Check your provider endpoint first:
+### `scripts/` — Certification & Gates  
+Deterministic verification suites and operational gates.
 
-```bash
-curl -sS http://<LAN_IP>:8080/v1/models
-```
+---
 
-Pair + trust + attach:
+## Core Principles
 
-```bash
-yai providers --ws dev pair \
-  "remote:http://<LAN_IP>:8080/v1/chat/completions" \
-  "http://<LAN_IP>:8080/v1/chat/completions" \
-  "<MODEL_NAME>"
+- **Single Runtime per Machine**
+- **Multiple Isolated Workspaces**
+- **Strict Protocol Contracts**
+- **Authority Before Execution**
+- **Deterministic Commit Surfaces**
+- **Probabilistic Compute Contained**
 
-yai providers trust --id "remote:http://<LAN_IP>:8080/v1/chat/completions" --state trusted
-yai providers --ws dev attach "remote:http://<LAN_IP>:8080/v1/chat/completions"
-yai providers --ws dev status
-```
+YAI enforces boundaries instead of assuming discipline.
 
-## Verification and Gates
+---
 
-Canonical runners:
-- `scripts/yai-verify <name>`
-- `scripts/yai-gate <name> [args...]`
-- `scripts/yai-suite <path> [args...]`
+## Current Status
 
-Examples:
+- Root Control Plane introduced
+- Workspace kernel isolated
+- Strict RPC envelope enforced
+- Handshake and authority gating active
+- Multi-workspace runtime in progress
 
-```bash
-scripts/yai-verify core
-scripts/yai-gate ws dev
-scripts/yai-gate graph dev
-scripts/yai-suite levels/l0-l7
-scripts/yai-suite ops/no-llm-360
-```
+This repository is under active architectural consolidation.
 
-Direct suite:
+---
 
-```bash
-DATASET_GATE=1 WS_PREFIX=ops360 ./scripts/suites/levels/l0-l7.sh
-```
+## Who This Is For
 
-## Build
+YAI is for engineers who:
 
-Core C runtime:
+- care about formal guarantees
+- want deterministic boundaries around AI systems
+- believe governance should be implemented, not described
 
-```bash
-make all
-```
+If you are here, you are entering a system that takes architecture seriously.
 
-Mind (Rust):
+---
 
-```bash
-cd mind
-cargo build --release
-```
+## License
 
-## Repository Map
+See `LICENSE`.
 
-- `datasets/`: canonical datasets (data-first, not runtime orchestration)
-- `Data/`: local runtime DB/artifacts (production setups usually exclude it from VCS)
-- `docs/specs/`: editorial index and pointers
-- `law/specs/`: canonical machine/contract specs
-- `mind/src/cli/`: CLI thin client commands and runtime config paths
-- `mind/src/control/`: daemon/control-plane services
-- `mind/src/runtime/`: planning/scheduling/runtime core
-- `mind/src/transport/`: rpc + bridge boundaries
-- `mind/src/cognition/`: agents/llm/memory/rag stack
-- `scripts/gates/`, `scripts/verify/`, `scripts/suites/`: deterministic pipeline
+---
 
-## Troubleshooting
-
-Provider appears attached but chat fails:
-- verify endpoint reachability with `curl`
-- ensure attached provider is not revoked
-- check `yai providers --ws <ws> status`
-
-CLI command not found:
-- check `which yai`
-- ensure `~/.cargo/bin` in PATH
-
-Runtime issues:
-
-```bash
-yai down --ws dev --force
-yai up --ws dev --build --detach
-yai status --ws dev --json
-```
+YAI is not intelligence.  
+It is the structure that makes intelligence accountable.
