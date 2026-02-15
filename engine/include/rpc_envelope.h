@@ -1,14 +1,45 @@
-#ifndef YAI_ENGINE_RPC_ENVELOPE_H
-#define YAI_ENGINE_RPC_ENVELOPE_H
+#pragma once
 
-#include "../../law/specs/protocol/transport.h" // La Bibbia dei 96 byte
+#include "../../law/specs/protocol/transport.h"       // yai_rpc_envelope_t
+#include "../../law/specs/protocol/yai_protocol_ids.h" // YAI_PROTOCOL_IDS_VERSION
 #include <stdbool.h>
+#include <string.h>
 
-// Validatore universale per l'Engine
-// Controlla: Magic, Checksum, e che il ws_id dell'envelope sia quello dell'Engine
-bool yai_envelope_validate(const yai_rpc_envelope_t* env, const char* expected_ws_id);
+/* ============================================================
+   VALIDAZIONE UNIVERSALE ENVELOPE ENGINE
+============================================================ */
+static inline bool yai_envelope_validate(const yai_rpc_envelope_t* env, const char* expected_ws_id)
+{
+    if (!env) return false;
+    if (env->magic != YAI_FRAME_MAGIC) return false;
+    if (env->version != YAI_PROTOCOL_IDS_VERSION) return false;
 
-// Helper per costruire una risposta veloce
-void yai_envelope_prepare_ack(yai_rpc_envelope_t* out, const yai_rpc_envelope_t* request);
+    if (!expected_ws_id || expected_ws_id[0] == '\0')
+        return true; // skip check se non richiesto
 
-#endif
+    if (strncmp(env->ws_id, expected_ws_id, sizeof(env->ws_id)) != 0)
+        return false;
+
+    return true;
+}
+
+/* ============================================================
+   PREPARA ACK PER RISPOSTA ENGINE
+============================================================ */
+static inline void yai_envelope_prepare_ack(yai_rpc_envelope_t* out, const yai_rpc_envelope_t* request)
+{
+    if (!out || !request) return;
+
+    memset(out, 0, sizeof(*out));
+    out->magic       = YAI_FRAME_MAGIC;
+    out->version     = YAI_PROTOCOL_IDS_VERSION;
+    out->command_id  = request->command_id;
+    out->payload_len = 0;
+
+    snprintf(out->ws_id, sizeof(out->ws_id), "%s", request->ws_id);
+    snprintf(out->trace_id, sizeof(out->trace_id), "%s", request->trace_id);
+
+    out->role      = 0;
+    out->arming    = 0;
+    out->checksum  = 0;
+}

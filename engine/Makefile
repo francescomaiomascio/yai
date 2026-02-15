@@ -7,11 +7,8 @@ CC := gcc
 # ---- Artifact root ----
 ART_ROOT ?= $(HOME)/.yai/artifacts/yai-core
 
-OUT_BUILD_DIR ?=
-OUT_BIN_DIR ?=
-
-BUILD_DIR := $(if $(OUT_BUILD_DIR),$(OUT_BUILD_DIR),$(ART_ROOT)/build/engine)
-BIN_DIR   := $(if $(OUT_BIN_DIR),$(OUT_BIN_DIR),$(ART_ROOT)/bin)
+BUILD_DIR ?= $(ART_ROOT)/build/engine
+BIN_DIR   ?= $(ART_ROOT)/bin
 
 LOG_DIR   := $(ART_ROOT)/logs
 TMP_DIR   := $(ART_ROOT)/tmp
@@ -26,13 +23,10 @@ SRC_DIR := src
 THIRD_PARTY_DIR := third_party
 
 # ---- Sources ----
-# Tutti i .c sotto src/ + il cJSON vero sotto third_party/
 SRCS := $(shell find $(SRC_DIR) -name "*.c")
 SRCS += $(THIRD_PARTY_DIR)/cjson/cJSON.c
 
 # ---- Objects ----
-# Manteniamo la struttura delle cartelle dentro BUILD_DIR
-# (es: src/bridge/x.c -> $(BUILD_DIR)/src/bridge/x.o)
 OBJS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRCS))
 
 # ---- Compiler flags ----
@@ -54,7 +48,6 @@ TEST_CORTEX := $(BUILD_DIR)/cortex_harness
 # ===============================
 # Main targets
 # ===============================
-
 all: abi dirs $(TARGET)
 
 # ---- ABI guard ----
@@ -66,26 +59,25 @@ abi:
 dirs:
 	@mkdir -p $(BUILD_DIR) $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
 
-# ---- Link ----
+# ---- Link Engine ----
 $(TARGET): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 	@echo "--- [YAI-ENGINE] Build Complete ---"
 
-# ---- Compile (generic, works for src/ and third_party/) ----
-# $< è il .c originale, $@ è l'oggetto dentro BUILD_DIR
+# ---- Compile (generic rule) ----
 $(BUILD_DIR)/%.o: %.c | dirs
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# ---- Cortex test ----
+# ---- Cortex test harness ----
 test-cortex: abi dirs $(TEST_CORTEX)
 	@$(TEST_CORTEX)
 
 $(TEST_CORTEX): tests/cortex_harness.c src/cortex/engine_cortex.c | dirs
 	$(CC) $(CFLAGS) tests/cortex_harness.c src/cortex/engine_cortex.c -o $(TEST_CORTEX)
 
-# ---- Debug ----
+# ---- Debug build ----
 debug: CFLAGS += -g -DDEBUG
 debug: all
 
