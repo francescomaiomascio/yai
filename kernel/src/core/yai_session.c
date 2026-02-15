@@ -228,6 +228,15 @@ void yai_session_dispatch(
     if (!env)
         return;
 
+    if (!env->ws_id || strlen(env->ws_id) == 0) {
+        send_binary_response(
+            client_fd,
+            env,
+            env->command_id,
+            "{\"status\":\"error\",\"reason\":\"ws_required\"}");
+        return;
+    }
+
     yai_session_t *s = NULL;
 
     if (!yai_session_acquire(&s, env->ws_id))
@@ -250,20 +259,12 @@ void yai_session_dispatch(
             "{\"status\":\"pong\"}");
         break;
 
-    case YAI_CMD_CONTROL:
-        send_binary_response(
-            client_fd,
-            env,
-            YAI_CMD_CONTROL,
-            "{\"status\":\"ok\"}");
-        break;
-
     default:
         send_binary_response(
             client_fd,
             env,
             env->command_id,
-            "{\"status\":\"error\",\"reason\":\"unknown_cmd\"}");
+            "{\"status\":\"ok\"}");
         break;
     }
 }

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/socket.h>
 
 #include "yai_kernel.h"
 #include "control_transport.h"
@@ -12,10 +14,9 @@
 
 #define YAI_BINARY_PAYLOAD_MAX 65536
 
-/* ------------------------------------------------------------
-   Internal: send binary frame
-   ------------------------------------------------------------ */
-
+/* ============================================================
+   Internal: send a binary frame (envelope + payload)
+============================================================ */
 static void send_frame(
     int fd,
     const yai_rpc_envelope_t *req,
@@ -26,26 +27,24 @@ static void send_frame(
     yai_rpc_envelope_t resp;
     memset(&resp, 0, sizeof(resp));
 
-    resp.magic      = YAI_FRAME_MAGIC;
-    resp.version    = YAI_PROTOCOL_IDS_VERSION;
-    resp.command_id = command_id;
+    resp.magic       = YAI_FRAME_MAGIC;
+    resp.version     = YAI_PROTOCOL_IDS_VERSION;
+    resp.command_id  = command_id;
     resp.payload_len = payload_len;
 
-    /* Echo identity */
     strncpy(resp.ws_id, req->ws_id, sizeof(resp.ws_id) - 1);
     strncpy(resp.trace_id, req->trace_id, sizeof(resp.trace_id) - 1);
 
-    resp.role    = 0;
-    resp.arming  = 0;
-    resp.checksum = 0;
+    resp.role     = 0;
+    resp.arming   = 0;
+    resp.checksum  = 0;
 
     yai_control_write_frame(fd, &resp, payload);
 }
 
-/* ------------------------------------------------------------
-   Binary connection handler (ONE SHOT)
-   ------------------------------------------------------------ */
-
+/* ============================================================
+   Binary connection handler (one-shot, Root or WS)
+============================================================ */
 void yai_kernel_handle_binary_connection(int cfd)
 {
     yai_rpc_envelope_t env;
@@ -70,19 +69,12 @@ void yai_kernel_handle_binary_connection(int cfd)
            env.arming);
 
     /* -------- Strict protocol validation -------- */
-
-    if (env.magic != YAI_FRAME_MAGIC) {
-        close(cfd);
-        return;
-    }
-
-    if (env.version != YAI_PROTOCOL_IDS_VERSION) {
+    if (env.magic != YAI_FRAME_MAGIC || env.version != YAI_PROTOCOL_IDS_VERSION) {
         close(cfd);
         return;
     }
 
     /* -------- HANDSHAKE -------- */
-
     if (env.command_id == YAI_CMD_HANDSHAKE) {
 
         if ((size_t)r != sizeof(yai_handshake_req_t)) {
@@ -90,9 +82,7 @@ void yai_kernel_handle_binary_connection(int cfd)
             return;
         }
 
-        yai_handshake_req_t *req =
-            (yai_handshake_req_t *)payload;
-
+        yai_handshake_req_t *req = (yai_handshake_req_t *)payload;
         yai_handshake_ack_t ack;
         memset(&ack, 0, sizeof(ack));
 
@@ -101,49 +91,31 @@ void yai_kernel_handle_binary_connection(int cfd)
         ack.session_id           = 1;
         ack.status               = YAI_PROTO_STATE_READY;
 
-        send_frame(
-            cfd,
-            &env,
-            YAI_CMD_HANDSHAKE,
-            &ack,
-            sizeof(ack)
-        );
-
+        send_frame(cfd, &env, YAI_CMD_HANDSHAKE, &ack, sizeof(ack));
         printf("[KERNEL] Handshake OK\n");
         close(cfd);
         return;
     }
 
-    /* -------- PING -------- */
-
+    /* -------- PING / Root Status -------- */
     if (env.command_id == YAI_CMD_PING) {
 
-        const char *pong = "{\"pong\":true}";
+        // Distinguish between Root Plane and WS if needed
+        const char *pong;
+        if (strcmp(env.ws_id, "root") == 0) {
+            pong = "{\"status\":\"pong\",\"plane\":\"root\"}";
+        } else {
+            pong = "{\"status\":\"pong\"}";
+        }
 
-        send_frame(
-            cfd,
-            &env,
-            YAI_CMD_PING,
-            pong,
-            (uint32_t)strlen(pong)
-        );
-
+        send_frame(cfd, &env, YAI_CMD_PING, pong, (uint32_t)strlen(pong));
         printf("[KERNEL] Pong sent\n");
         close(cfd);
         return;
     }
 
-    /* -------- DEFAULT OK -------- */
-
+    /* -------- DEFAULT RESPONSE -------- */
     const char *ok = "{\"status\":\"ok\"}";
-
-    send_frame(
-        cfd,
-        &env,
-        env.command_id,
-        ok,
-        (uint32_t)strlen(ok)
-    );
-
+    send_frame(cfd, &env, env.command_id, ok, (uint32_t)strlen(ok));
     close(cfd);
 }

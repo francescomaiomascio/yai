@@ -3,43 +3,24 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include "rpc_envelope.h"  // sostituisce <protocol/rpc_envelope.h>
 
-#include <protocol/transport.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* ============================================================
-   CONTROL TRANSPORT (Binary Envelope v1)
-   ============================================================ */
-
-#ifndef YAI_CONTROL_BACKLOG
 #define YAI_CONTROL_BACKLOG 16
-#endif
 
 /* Return codes */
-#define YAI_CTL_OK                 0
-#define YAI_CTL_ERR_ARG           -1
-#define YAI_CTL_ERR_SOCKET        -2
-#define YAI_CTL_ERR_BIND          -3
-#define YAI_CTL_ERR_LISTEN        -4
-#define YAI_CTL_ERR_ACCEPT        -5
-#define YAI_CTL_ERR_READ          -6
-#define YAI_CTL_ERR_WRITE         -7
-#define YAI_CTL_ERR_OVERFLOW      -8
+#define YAI_CTL_OK           0
+#define YAI_CTL_ERR_SOCKET  -1
+#define YAI_CTL_ERR_BIND    -2
+#define YAI_CTL_ERR_LISTEN  -3
+#define YAI_CTL_ERR_READ    -4
+#define YAI_CTL_ERR_WRITE   -5
+#define YAI_CTL_ERR_OVERFLOW -6
 
-/* ============================================================
-   Listener lifecycle
-   ============================================================ */
+/* Listen for control connections at a UNIX socket path */
+int yai_control_listen_at(const char *path);
 
-int  yai_control_listen(const char *control_sock_path);
-int  yai_control_accept(void);
-
-/* ============================================================
-   Frame I/O
-   ============================================================ */
-
+/* Read a single frame (envelope + payload) */
 ssize_t yai_control_read_frame(
     int fd,
     yai_rpc_envelope_t *env,
@@ -47,19 +28,9 @@ ssize_t yai_control_read_frame(
     size_t payload_cap
 );
 
+/* Write a single frame (envelope + payload) */
 int yai_control_write_frame(
     int fd,
     const yai_rpc_envelope_t *env,
     const void *payload
 );
-
-/* ============================================================
-   Close helpers
-   ============================================================ */
-
-void yai_control_close_fd(int fd);
-void yai_control_close(void);
-
-#ifdef __cplusplus
-}
-#endif
