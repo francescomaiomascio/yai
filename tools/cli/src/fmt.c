@@ -1,24 +1,42 @@
+#include "../include/yai_fmt.h"
 // tools/cli/src/fmt.c
+
 #include "../include/yai_fmt.h"
 #include <stdio.h>
 #include <string.h>
 
-static void print_line_ensure_nl(const char *s) {
+/*
+ * Formatting layer (CLI output only).
+ *
+ * No parsing.
+ * No transformation.
+ * Server output is considered authoritative.
+ */
+
+static void print_line_ensure_nl(const char *s)
+{
     if (!s) return;
+
     fputs(s, stdout);
+
     size_t n = strlen(s);
-    if (n == 0 || s[n - 1] != '\n') fputc('\n', stdout);
+    if (n == 0 || s[n - 1] != '\n')
+        fputc('\n', stdout);
 }
 
-void yai_print_response(const char *json_line, int json_mode) {
-    if (!json_line) return;
+void yai_print_response(const char *payload, int json_mode)
+{
+    if (!payload)
+        return;
 
-    if (json_mode) {
-        print_line_ensure_nl(json_line);
+    if (json_mode)
+    {
+        /* Raw mode: exact server payload */
+        print_line_ensure_nl(payload);
         return;
     }
 
-    // Human mode: prefix + line (no JSON parsing; keep deterministic)
+    /* Human mode: deterministic prefix */
     fputs("[yai] ", stdout);
-    print_line_ensure_nl(json_line);
+    print_line_ensure_nl(payload);
 }

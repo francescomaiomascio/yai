@@ -1,3 +1,4 @@
+#include "../include/yai_fmt.h"
 #include "../include/yai_cli.h"
 #include "../include/yai_rpc.h"
 
@@ -8,23 +9,31 @@
 #include <stdlib.h>
 
 /*
- * L2: Engine Gates Dispatcher (BINARY PROTOCOL)
+ * L2: Engine Gates Dispatcher (Workspace Plane)
  *
  * Usage:
- *   yai engine [--ws id] <storage|provider|embedding> <method> [params_json]
+ *   yai engine --ws <id> <storage|provider|embedding> <method> [params_json]
  */
 
 int yai_cmd_engine(int argc, char **argv, const yai_cli_opts_t *opt)
 {
     if (argc < 2) {
         printf("Engine Gates (L2)\n");
-        printf("Usage: yai engine [--ws id] <storage|provider|embedding> <method> [params_json]\n");
+        printf("Usage: yai engine --ws <id> <storage|provider|embedding> <method> [params_json]\n");
         return 1;
+    }
+
+    if (!opt || !opt->ws_id || !opt->ws_id[0]) {
+        fprintf(stderr, "FATAL: engine requires --ws <id>\n");
+        return 2;
     }
 
     const char *gate   = argv[0];
     const char *method = argv[1];
-    const char *params = (argc > 2 && argv[2] && argv[2][0]) ? argv[2] : "{}";
+    const char *params =
+        (argc > 2 && argv[2] && argv[2][0])
+        ? argv[2]
+        : "{}";
 
     uint32_t command_id = 0;
 
@@ -36,37 +45,49 @@ int yai_cmd_engine(int argc, char **argv, const yai_cli_opts_t *opt)
         command_id = YAI_CMD_EMBEDDING_RPC;
     else {
         fprintf(stderr, "ERR: invalid gate\n");
-        return 2;
+        return 3;
     }
 
     yai_rpc_client_t client;
     char response[YAI_RPC_LINE_MAX];
     uint32_t resp_len = 0;
 
-    if (yai_rpc_connect(&client, opt ? opt->ws_id : NULL) != 0)
-        return -1;
+    /* -------- CONNECT TO WORKSPACE PLANE -------- */
 
-    /* ---------- AUTHORITY ---------- */
+    if (yai_rpc_connect(&client, opt->ws_id) != 0)
+        return -4;
 
-    if (opt && opt->arming)
-        yai_rpc_set_authority(&client, 1, "operator");
-    else
-        yai_rpc_set_authority(&client, 0, "guest");
+    /* -------- AUTHORITY -------- */
+
+    yai_rpc_set_authority(
+        &client,
+        opt->arming ? 1 : 0,
+        opt->role ? opt->role : "guest"
+    );
+
+    /* -------- HANDSHAKE -------- */
 
     if (yai_rpc_handshake(&client) != 0) {
         yai_rpc_close(&client);
-        return -2;
+        return -5;
     }
 
+    /* -------- PAYLOAD -------- */
+
     char payload[8192];
-    int n = snprintf(payload, sizeof(payload),
+
+    int n = snprintf(payload,
+                     sizeof(payload),
                      "{\"method\":\"%s\",\"params\":%s}",
-                     method, params);
+                     method,
+                     params);
 
     if (n <= 0 || (size_t)n >= sizeof(payload)) {
         yai_rpc_close(&client);
-        return -3;
+        return -6;
     }
+
+    /* -------- RPC CALL -------- */
 
     int rc = yai_rpc_call_raw(
         &client,
@@ -80,7 +101,7 @@ int yai_cmd_engine(int argc, char **argv, const yai_cli_opts_t *opt)
 
     if (rc == 0) {
         response[resp_len] = '\0';
-        printf("%s\n", response);
+        yai_print_response(response, opt ? opt->json : 0);
     }
 
     yai_rpc_close(&client);
