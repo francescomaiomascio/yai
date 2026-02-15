@@ -6,7 +6,7 @@ extern "C" {
 
 // Root Plane (L1) hardened UDS server.
 // The frame/envelope is defined by Law.
-#include <protocol/transport.h>
+#include "transport.h"
 #include <stdint.h>
 
 // Initialize root-plane UDS listener at the given path.

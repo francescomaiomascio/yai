@@ -4,6 +4,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#define LAW_PATH_MAX 512
+
 static int file_exists(const char *p) {
     struct stat st;
     return (p && p[0] && stat(p, &st) == 0 && S_ISREG(st.st_mode));
@@ -14,35 +16,42 @@ static int dir_exists(const char *p) {
     return (p && p[0] && stat(p, &st) == 0 && S_ISDIR(st.st_mode));
 }
 
-/**
+/*
  * Resolve repository-relative prefix for accessing `law/...`
- * Returns:
- *   ""      -> current working dir contains `law/`
- *   "../"   -> parent contains `law/`
- *   "../../" ...
- *   NULL    -> not found
  */
 static const char* find_law_prefix(void) {
-    if (dir_exists("law")) return "";
-    if (dir_exists("../law")) return "../";
-    if (dir_exists("../../law")) return "../../";
-    if (dir_exists("../../../law")) return "../../../";
+    static const char *CANDIDATES[] = {
+        "",
+        "../",
+        "../../",
+        "../../../",
+        NULL
+    };
+
+    for (int i = 0; CANDIDATES[i]; i++) {
+        char path[LAW_PATH_MAX];
+        int n = snprintf(path, sizeof(path), "%slaw", CANDIDATES[i]);
+        if (n > 0 && (size_t)n < sizeof(path) && dir_exists(path)) {
+            return CANDIDATES[i];
+        }
+    }
+
     return NULL;
 }
 
 typedef struct {
     const char *rel_path;
-    int must_be_dir; // 0 = file, 1 = dir
+    int must_be_dir;
 } law_req_t;
 
 static const law_req_t REQ[] = {
     { "law/specs/control/control_plane.v1.json", 0 },
     { "law/specs/control/authority.json",        0 },
-    { "law/specs/protocol/protocol.h",          0 },
-    { "law/specs/protocol/transport.h",         0 },
-    { "law/specs/protocol/yai_protocol_ids.h",  0 },
-    { "law/formal/YAI_KERNEL.tla",              0 },
-    { "law/formal/spec_map.md",                 0 },
+    { "law/specs/protocol/protocol.h",           0 },
+    { "law/specs/protocol/transport.h",          0 },
+    { "law/specs/protocol/yai_protocol_ids.h",   0 },
+    { "law/formal/YAI_KERNEL.tla",               0 },
+    { "law/formal/spec_map.md",                  0 },
     { NULL, 0 }
 };
 
@@ -59,22 +68,35 @@ static void law_usage(void) {
 static int cmd_check(void) {
     const char *prefix = find_law_prefix();
     if (!prefix) {
-        fprintf(stderr, "[law][FATAL] Could not locate 'law/' directory. Run from repo root or tools/cli.\n");
+        fprintf(stderr, "[law][FATAL] 'law/' not found. Run from repo root.\n");
         return 2;
     }
 
     int ok = 1;
-    printf("[law] Integrity check (prefix: %s)\n", prefix[0] ? prefix : "./");
+    printf("[law] Integrity check (prefix: %s)\n",
+           prefix[0] ? prefix : "./");
 
-    for (int i = 0; REQ[i].rel_path != NULL; i++) {
-        char full[512];
-        snprintf(full, sizeof(full), "%s%s", prefix, REQ[i].rel_path);
+    for (int i = 0; REQ[i].rel_path; i++) {
+        char full[LAW_PATH_MAX];
+        int n = snprintf(full, sizeof(full), "%s%s",
+                         prefix, REQ[i].rel_path);
 
-        int exists = REQ[i].must_be_dir ? dir_exists(full) : file_exists(full);
+        if (n <= 0 || (size_t)n >= sizeof(full)) {
+            fprintf(stderr, "  [FAIL] %s (path overflow)\n",
+                    REQ[i].rel_path);
+            ok = 0;
+            continue;
+        }
+
+        int exists = REQ[i].must_be_dir
+            ? dir_exists(full)
+            : file_exists(full);
+
         if (exists) {
             printf("  [OK]   %s\n", REQ[i].rel_path);
         } else {
-            fprintf(stderr, "  [FAIL] %s (missing)\n", REQ[i].rel_path);
+            fprintf(stderr, "  [FAIL] %s (missing)\n",
+                    REQ[i].rel_path);
             ok = 0;
         }
     }
@@ -90,12 +112,12 @@ static int cmd_check(void) {
 
 static int cmd_tree(void) {
     puts("law/ (Sovereignty Root)");
-    puts("├── axioms/        # Fundamental truths");
-    puts("├── boundaries/    # L0-Lx isolation rules");
-    puts("├── formal/        # TLA+ specifications");
-    puts("└── specs/         # Machine-readable laws (json/h)");
-    puts("    ├── control/   # Root plane authority");
-    puts("    ├── protocol/  # Wire + IDs + auth/audit");
+    puts("├── axioms/");
+    puts("├── boundaries/");
+    puts("├── formal/");
+    puts("└── specs/");
+    puts("    ├── control/");
+    puts("    ├── protocol/");
     puts("    └── ...");
     return 0;
 }
@@ -103,16 +125,22 @@ static int cmd_tree(void) {
 static int cmd_status(void) {
     const char *prefix = find_law_prefix();
     if (prefix) {
-        printf("[law] FOUND (prefix: %s)\n", prefix[0] ? prefix : "./");
+        printf("[law] FOUND (prefix: %s)\n",
+               prefix[0] ? prefix : "./");
         return 0;
     }
-    fprintf(stderr, "[law] NOT_FOUND (run inside repo)\n");
+
+    fprintf(stderr, "[law] NOT_FOUND\n");
     return 2;
 }
 
 int yai_cmd_law(int argc, char **argv, const yai_cli_opts_t *opt) {
     (void)opt;
-    if (argc < 1) { law_usage(); return 1; }
+
+    if (argc < 1) {
+        law_usage();
+        return 1;
+    }
 
     const char *sub = argv[0];
 

@@ -1,11 +1,12 @@
-# ===============================
-# YAI CLI Build System (Tools)
-# ADR-002/004 aligned
-# ===============================
+# ==========================================
+# YAI CLI Build System (Stable)
+# ==========================================
 
 CC := gcc
 
+# ---- Artifact roots ----
 ART_ROOT ?= $(HOME)/.yai/artifacts/yai-core
+
 OUT_BUILD_DIR ?=
 OUT_BIN_DIR ?=
 
@@ -18,35 +19,56 @@ TARGET := $(BIN_DIR)/yai
 LAW_DIR := ../../law/specs
 
 CFLAGS := -Wall -Wextra -O2 -MMD -MP \
-  -I./include \
-  -I$(LAW_DIR)
+	-I./include \
+	-I$(LAW_DIR)
 
 LDFLAGS :=
 
-# ---- Sources ----
-SRC_DIR := src
-SRCS := $(shell find $(SRC_DIR) -name "*.c")
+# ---- Explicit Sources (NO find, NO magic) ----
+SRCS := \
+	src/main.c \
+	src/cmd_engine.c \
+	src/cmd_kernel.c \
+	src/cmd_mind.c \
+	src/cmd_root.c \
+	src/cmd_ws.c \
+	src/cmd_law.c \
+	src/cmd_test.c \
+	src/cmd_up.c \
+	src/env.c \
+	src/envelope.c \
+	src/fmt.c \
+	src/paths.c \
+	src/rpc.c
 
 # ---- Objects ----
-OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+OBJS := $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 
 .PHONY: all clean dirs
+
+# ==========================================
+# Build
+# ==========================================
 
 all: dirs $(TARGET)
 
 dirs:
-	@mkdir -p $(BUILD_DIR) $(BIN_DIR)
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BIN_DIR)
 
 $(TARGET): $(OBJS)
-	@mkdir -p $(dir $@)
 	@echo "Linking CLI: $@"
-	@$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 	@echo "--- [YAI-CLI] Build Complete ---"
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | dirs
-	@mkdir -p $(dir $@)
+# Compile rule
+$(BUILD_DIR)/%.o: src/%.c | dirs
 	@echo "CC $<"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ==========================================
+# Clean
+# ==========================================
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)

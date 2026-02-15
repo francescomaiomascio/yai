@@ -1,83 +1,93 @@
 #include "../include/yai_cli.h"
 #include "../include/yai_rpc.h"
+
+#include <protocol/yai_protocol_ids.h>
+
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-/**
- * L1: Kernel Dispatcher (canonico)
- * Comandi globali (no tenant isolation):
- *   yai kernel <status|ping|stop>
+/*
+ * L1: Kernel Dispatcher (Binary Protocol)
  *
- * Wire:
- *   bin          = "kernel"
- *   request_type = "control"
- *   payload      = {"method":"status|ping|stop","params":{}}
+ * Usage:
+ *   yai kernel <ping|status|stop|...>
+ *
+ * Behavior:
+ *   - One connection per command
+ *   - Authority set before handshake
+ *   - Strict binary envelope
  */
-int yai_cmd_kernel(int argc, char **argv, const yai_cli_opts_t *opt) {
-    if (argc < 1) {
-        printf("Kernel Control (L1)\nUsage: yai kernel <status|ping|stop>\n");
+
+int yai_cmd_kernel(int argc, char **argv, const yai_cli_opts_t *opt)
+{
+    if (argc < 1)
         return 1;
-    }
 
     const char *cmd = argv[0];
 
-    // whitelist dura (no drift)
-    if (strcmp(cmd, "status") != 0 &&
-        strcmp(cmd, "ping")   != 0 &&
-        strcmp(cmd, "stop")   != 0) {
-        fprintf(stderr, "ERR: unsupported kernel command: %s\n", cmd);
-        fprintf(stderr, "Usage: yai kernel <status|ping|stop>\n");
-        return 2;
-    }
+    uint32_t command_id =
+        (strcmp(cmd, "ping") == 0)
+        ? YAI_CMD_PING
+        : YAI_CMD_CONTROL;
 
     yai_rpc_client_t client;
     char response[YAI_RPC_LINE_MAX];
+    uint32_t resp_len = 0;
 
-    // L1: no ws_id
-    if (yai_rpc_connect(&client, NULL) != 0) {
-        fprintf(stderr, "ERR: Connection to Root Plane failed. Is yai-kernel running?\n");
+    /* ---------------- CONNECT ---------------- */
+
+    if (yai_rpc_connect(&client, opt ? opt->ws_id : NULL) != 0)
         return -1;
-    }
 
-    
-    yai_rpc_set_authority(&client, opt ? opt->arming : 0, opt ? opt->role : "user");
-// handshake: valida protocollo/compatibilità (best effort ma se fallisce -> stop)
-    const char *ver = (opt && opt->client_version && opt->client_version[0])
-                        ? opt->client_version
-                        : "cli-c/1.0";
+    /* ---------------- AUTHORITY ---------------- */
 
-    if (yai_rpc_handshake(&client, "kernel", ver) != 0) {
-        fprintf(stderr, "ERR: Protocol handshake failed.\n");
+    yai_rpc_set_authority(&client,
+                          opt ? opt->arming : 0,
+                          opt ? opt->role : "user");
+
+    /* ---------------- HANDSHAKE ---------------- */
+
+    if (yai_rpc_handshake(&client) != 0)
+    {
         yai_rpc_close(&client);
-        return 4;
+        return -2;
     }
 
-    // Canonical payload (sempre method+params)
+    /* ---------------- PAYLOAD ---------------- */
+
     char payload[256];
-    int n = snprintf(payload, sizeof(payload),
+
+    int n = snprintf(payload,
+                     sizeof(payload),
                      "{\"method\":\"%s\",\"params\":{}}",
                      cmd);
-    if (n <= 0 || (size_t)n >= sizeof(payload)) {
-        fprintf(stderr, "ERR: payload build failed\n");
+
+    if (n <= 0 || (size_t)n >= sizeof(payload))
+    {
         yai_rpc_close(&client);
-        return 5;
+        return -3;
     }
 
-    // request_type canonico per L1
-    int rc = yai_rpc_call(
+    /* ---------------- RPC CALL ---------------- */
+
+    int rc = yai_rpc_call_raw(
         &client,
-        "kernel",         // bin target
-        "control",        // request type canonico L1
-        payload,          // payload canonico
+        command_id,
+        payload,
+        (uint32_t)strlen(payload),
         response,
-        sizeof(response)
+        sizeof(response) - 1,
+        &resp_len
     );
 
-    if (rc == 0) {
+    if (rc == 0)
+    {
+        response[resp_len] = '\0';
         printf("%s\n", response);
-    } else {
-        fprintf(stderr, "RPC_ERROR: %d\n", rc);
     }
+
+    /* ---------------- CLOSE ---------------- */
 
     yai_rpc_close(&client);
     return rc;
