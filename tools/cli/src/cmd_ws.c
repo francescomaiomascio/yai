@@ -1,3 +1,4 @@
+#include "../include/yai_fmt.h"
 #include "../include/yai_cli.h"
 #include "../include/yai_rpc.h"
 
@@ -6,18 +7,24 @@
 #include <stdio.h>
 #include <string.h>
 
+/* ============================================================
+   L1: Workspace Management (via Root Machine Plane)
+   ============================================================ */
+
 static void ws_usage(void) {
-    printf("Workspace Management (L1)\n");
+    printf("Workspace Management (L1 - Root Plane)\n");
     printf("Usage:\n");
-    printf("  yai kernel ws create  <id>\n");
-    printf("  yai kernel ws list\n");
-    printf("  yai kernel ws destroy <id>   (requires --arming)\n");
+    printf("  yai ws create  <id>\n");
+    printf("  yai ws list\n");
+    printf("  yai ws destroy <id>   (requires --arming)\n");
 }
 
 int yai_cmd_ws(int argc, char **argv, const yai_cli_opts_t *opt)
 {
-    if (argc < 1)
+    if (argc < 1) {
+        ws_usage();
         return 1;
+    }
 
     const char *sub = argv[0];
 
@@ -25,28 +32,53 @@ int yai_cmd_ws(int argc, char **argv, const yai_cli_opts_t *opt)
     char response[YAI_RPC_LINE_MAX];
     uint32_t resp_len = 0;
 
-    if (yai_rpc_connect(&client, NULL) != 0)
+    /* ============================================================
+       CONNECT TO ROOT MACHINE PLANE
+       ============================================================ */
+
+    /* CRITICAL: root machine ws_id is "system" */
+    if (yai_rpc_connect(&client, "system") != 0) {
+        fprintf(stderr, "ERR: cannot connect to root plane\n");
         return -1;
+    }
 
-    /* ---------- AUTHORITY ---------- */
+    /* ============================================================
+       AUTHORITY
+       ============================================================ */
 
-    if (opt && opt->arming)
-        yai_rpc_set_authority(&client, 1, "operator");
-    else
-        yai_rpc_set_authority(&client, 0, "guest");
+    yai_rpc_set_authority(
+        &client,
+        (opt && opt->arming) ? 1 : 0,
+        (opt && opt->role) ? opt->role : "operator"
+    );
+
+    /* ============================================================
+       HANDSHAKE
+       ============================================================ */
 
     if (yai_rpc_handshake(&client) != 0) {
+        fprintf(stderr, "ERR: handshake failed\n");
         yai_rpc_close(&client);
         return -2;
     }
 
+    /* ============================================================
+       BUILD PAYLOAD
+       ============================================================ */
+
     char payload[512];
 
     if (strcmp(sub, "list") == 0) {
+
         snprintf(payload, sizeof(payload),
                  "{\"method\":\"ws_list\",\"params\":{}}");
-    } else {
+
+    } 
+    else if (strcmp(sub, "create") == 0 ||
+             strcmp(sub, "destroy") == 0) {
+
         if (argc < 2) {
+            ws_usage();
             yai_rpc_close(&client);
             return -3;
         }
@@ -58,8 +90,18 @@ int yai_cmd_ws(int argc, char **argv, const yai_cli_opts_t *opt)
 
         snprintf(payload, sizeof(payload),
                  "{\"method\":\"%s\",\"params\":{\"ws_id\":\"%s\"}}",
-                 method, argv[1]);
+                 method,
+                 argv[1]);
+    } 
+    else {
+        ws_usage();
+        yai_rpc_close(&client);
+        return -4;
     }
+
+    /* ============================================================
+       RPC CALL
+       ============================================================ */
 
     int rc = yai_rpc_call_raw(
         &client,
@@ -73,7 +115,9 @@ int yai_cmd_ws(int argc, char **argv, const yai_cli_opts_t *opt)
 
     if (rc == 0) {
         response[resp_len] = '\0';
-        printf("%s\n", response);
+        yai_print_response(response, opt ? opt->json : 0);
+    } else {
+        fprintf(stderr, "ERR: ws command failed (%d)\n", rc);
     }
 
     yai_rpc_close(&client);

@@ -55,25 +55,33 @@ void yai_make_trace_id(char out[36]) {
     static uint32_t ctr = 0;
     snprintf(out, 36, "tr-%lx-%u", (unsigned long)time(NULL), ctr++);
 }
-
 /* ============================================================
-   CONNECT
+   CONNECT (ROOT AWARE)
    ============================================================ */
 
-static int build_control_sock_path(const char *ws_id, char *out, size_t cap) {
+static int build_root_sock_path(char *out, size_t cap)
+{
     const char *home = getenv("HOME");
     if (!home) return -1;
-    snprintf(out, cap, "%s/.yai/run/%s/control.sock", home, ws_id);
+
+    snprintf(out, cap,
+             "%s/.yai/run/root/control.sock",
+             home);
+
     return 0;
 }
 
-int yai_rpc_connect(yai_rpc_client_t *c, const char *ws_id) {
-    if (!c || !ws_id) return -1;
+int yai_rpc_connect(yai_rpc_client_t *c, const char *ws_id)
+{
+    if (!c)
+        return -1;
 
     memset(c, 0, sizeof(*c));
 
     char sock_path[256];
-    if (build_control_sock_path(ws_id, sock_path, sizeof(sock_path)) < 0)
+
+    /* ALWAYS connect to root plane */
+    if (build_root_sock_path(sock_path, sizeof(sock_path)) < 0)
         return -2;
 
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -83,15 +91,32 @@ int yai_rpc_connect(yai_rpc_client_t *c, const char *ws_id) {
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, sock_path, sizeof(addr.sun_path) - 1);
 
-    if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    strncpy(addr.sun_path,
+            sock_path,
+            sizeof(addr.sun_path) - 1);
+
+    socklen_t len =
+        offsetof(struct sockaddr_un, sun_path) +
+        strlen(addr.sun_path);
+
+    if (connect(fd, (struct sockaddr *)&addr, len) < 0) {
         close(fd);
         return -4;
     }
 
     c->fd = fd;
-    strncpy(c->ws_id, ws_id, sizeof(c->ws_id) - 1);
+
+    /* ws_id MUST be logical, never a path */
+    if (!ws_id || strchr(ws_id, '/'))
+        ws_id = "system";
+
+    strncpy(c->ws_id,
+            ws_id,
+            sizeof(c->ws_id) - 1);
+
+    c->ws_id[sizeof(c->ws_id) - 1] = '\0';
+
     c->connected = true;
 
     return 0;

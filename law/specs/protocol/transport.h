@@ -3,29 +3,25 @@
 
 #include <stdint.h>
 
-#define YAI_FRAME_MAGIC 0x59414950u   /* "YAIP" */
-#define YAI_MAX_PAYLOAD 65536u        /* 64KB hard limit */
+#define YAI_FRAME_MAGIC 0x59414950u
+#define YAI_MAX_PAYLOAD 65536u
 
 #pragma pack(push, 1)
 
-/*
- * Envelope Sovrano (L2 <-> L3)
- * Dimensione fissa: 96 byte
- */
 typedef struct yai_rpc_envelope {
-    uint32_t magic;          /* Must be YAI_FRAME_MAGIC */
-    uint32_t version;        /* YAI_PROTOCOL_IDS_VERSION */
+    uint32_t magic;
+    uint32_t version;
 
-    char     ws_id[36];      /* Workspace UUID */
-    char     trace_id[36];   /* Trace UUID */
+    char     ws_id[36];
+    char     trace_id[36];
 
-    uint32_t command_id;     /* From yai_protocol_ids.h */
-    uint16_t role;           /* 0=Guest,1=Operator,2=Sovereign */
-    uint8_t  arming;         /* 1=true */
+    uint32_t command_id;
+    uint16_t role;
+    uint8_t  arming;
     uint8_t  _pad;
 
-    uint32_t payload_len;    /* Following payload size */
-    uint32_t checksum;       /* Reserved (0 for now) */
+    uint32_t payload_len;
+    uint32_t checksum;
 
 } yai_rpc_envelope_t;
 
@@ -34,4 +30,4 @@ typedef struct yai_rpc_envelope {
 _Static_assert(sizeof(yai_rpc_envelope_t) == 96,
                "yai_rpc_envelope_t must be 96 bytes");
 
-#endif /* YAI_PROTOCOL_TRANSPORT_H */
+#endif

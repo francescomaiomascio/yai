@@ -3,6 +3,7 @@
 
 #include "storage_gate.h"
 #include "provider_gate.h"
+#include "rpc_router.h"
 
 #include "cJSON.h"
 
@@ -10,8 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
+/* ============================================================
+   Helper JSON error
+============================================================ */
 static char* json_err(const char* code) {
     char* out = (char*)malloc(128);
     if (!out) return NULL;
@@ -19,6 +21,9 @@ static char* json_err(const char* code) {
     return out;
 }
 
+/* ============================================================
+   STORAGE RPC DISPATCH
+============================================================ */
 static char* dispatch_storage_rpc(const char* ws_id, const char* payload) {
     if (!payload) return json_err("ERR_MISSING_PAYLOAD");
 
@@ -33,9 +38,10 @@ static char* dispatch_storage_rpc(const char* ws_id, const char* payload) {
         return json_err("ERR_MISSING_METHOD");
     }
 
-    // params può essere assente -> {}
     char* params_str = NULL;
-    if (params_j) params_str = cJSON_PrintUnformatted(params_j);
+    if (params_j) {
+        params_str = cJSON_PrintUnformatted(params_j);
+    }
     if (!params_str) {
         params_str = strdup("{}");
         if (!params_str) { cJSON_Delete(root); return NULL; }
@@ -48,31 +54,39 @@ static char* dispatch_storage_rpc(const char* ws_id, const char* payload) {
     return resp;
 }
 
-char* yai_rpc_router_dispatch(const char* ws_id, const yai_rpc_envelope_t* env, const char* payload) {
-    if (!env || !ws_id) return NULL;
+/* ============================================================
+   RPC ROUTER
+============================================================ */
+char* yai_rpc_router_dispatch(
+    const char* ws_id,
+    const yai_rpc_envelope_t* env,
+    const char* payload)
+{
+    if (!env || !ws_id)
+        return json_err("ERR_INVALID_ARGS");
 
     switch (env->command_id) {
-        // CONTROL
+
+        /* ---------------- CONTROL ---------------- */
         case YAI_CMD_PING:
             return strdup("{\"status\":\"PONG\"}");
 
-        // STORAGE (single command_id, methods in payload)
+        /* ---------------- STORAGE ---------------- */
         case YAI_CMD_STORAGE_RPC:
-            // payload atteso:
-            // { "method": "put_node" | "get_node" | "...", "params": { ... } }
             return dispatch_storage_rpc(ws_id, payload);
 
-        // PROVIDERS
+        /* ---------------- PROVIDER ---------------- */
         case YAI_CMD_PROVIDER_RPC:
-            // provider gate non ha bisogno di ws_id (l’envelope lo porta già / oppure lo gestisce il livello sopra)
             return yai_provider_gate_dispatch(env, payload);
 
+        /* ---------------- EMBEDDING ---------------- */
         case YAI_CMD_EMBEDDING_RPC:
-            // se non lo hai ancora implementato, rispondi esplicitamente
             return json_err("ERR_NOT_IMPLEMENTED");
 
+        /* ---------------- DEFAULT ---------------- */
         default:
-            fprintf(stderr, "[ROUTER] Unknown command_id: 0x%x for WS: %s\n", env->command_id, ws_id);
+            fprintf(stderr, "[ROUTER] Unknown command_id: 0x%x for WS: %s\n",
+                    env->command_id, ws_id);
             return json_err("ERR_UNSUPPORTED_COMMAND");
     }
 }

@@ -1,3 +1,4 @@
+#include "../include/yai_fmt.h"
 #include "../include/yai_cli.h"
 #include "../include/yai_rpc.h"
 
@@ -8,21 +9,23 @@
 #include <stdlib.h>
 
 /*
- * L1: Kernel Dispatcher (Binary Protocol)
+ * L1: Kernel Dispatcher (via Root Machine Plane)
  *
  * Usage:
  *   yai kernel <ping|status|stop|...>
  *
  * Behavior:
- *   - One connection per command
+ *   - Connects to Root Machine Plane (ws_id = "system")
  *   - Authority set before handshake
  *   - Strict binary envelope
  */
 
 int yai_cmd_kernel(int argc, char **argv, const yai_cli_opts_t *opt)
 {
-    if (argc < 1)
+    if (argc < 1) {
+        fprintf(stderr, "Usage: yai kernel <command>\n");
         return 1;
+    }
 
     const char *cmd = argv[0];
 
@@ -35,41 +38,58 @@ int yai_cmd_kernel(int argc, char **argv, const yai_cli_opts_t *opt)
     char response[YAI_RPC_LINE_MAX];
     uint32_t resp_len = 0;
 
-    /* ---------------- CONNECT ---------------- */
+    /* ============================================================
+       CONNECT TO ROOT MACHINE PLANE
+       ============================================================ */
 
-    if (yai_rpc_connect(&client, opt ? opt->ws_id : NULL) != 0)
+    /* CRITICAL: root plane ws_id is "system" */
+    if (yai_rpc_connect(&client, "system") != 0) {
+        fprintf(stderr, "ERR: cannot connect to root plane\n");
         return -1;
+    }
 
-    /* ---------------- AUTHORITY ---------------- */
+    /* ============================================================
+       AUTHORITY
+       ============================================================ */
 
-    yai_rpc_set_authority(&client,
-                          opt ? opt->arming : 0,
-                          opt ? opt->role : "user");
+    yai_rpc_set_authority(
+        &client,
+        opt ? opt->arming : 0,
+        opt && opt->role ? opt->role : "operator"
+    );
 
-    /* ---------------- HANDSHAKE ---------------- */
+    /* ============================================================
+       HANDSHAKE
+       ============================================================ */
 
-    if (yai_rpc_handshake(&client) != 0)
-    {
+    if (yai_rpc_handshake(&client) != 0) {
+        fprintf(stderr, "ERR: handshake failed\n");
         yai_rpc_close(&client);
         return -2;
     }
 
-    /* ---------------- PAYLOAD ---------------- */
+    /* ============================================================
+       BUILD PAYLOAD
+       ============================================================ */
 
     char payload[256];
 
-    int n = snprintf(payload,
-                     sizeof(payload),
-                     "{\"method\":\"%s\",\"params\":{}}",
-                     cmd);
+    int n = snprintf(
+        payload,
+        sizeof(payload),
+        "{\"method\":\"%s\",\"params\":{}}",
+        cmd
+    );
 
-    if (n <= 0 || (size_t)n >= sizeof(payload))
-    {
+    if (n <= 0 || (size_t)n >= sizeof(payload)) {
+        fprintf(stderr, "ERR: payload build failed\n");
         yai_rpc_close(&client);
         return -3;
     }
 
-    /* ---------------- RPC CALL ---------------- */
+    /* ============================================================
+       RPC CALL
+       ============================================================ */
 
     int rc = yai_rpc_call_raw(
         &client,
@@ -81,13 +101,12 @@ int yai_cmd_kernel(int argc, char **argv, const yai_cli_opts_t *opt)
         &resp_len
     );
 
-    if (rc == 0)
-    {
+    if (rc == 0) {
         response[resp_len] = '\0';
-        printf("%s\n", response);
+        yai_print_response(response, opt ? opt->json : 0);
+    } else {
+        fprintf(stderr, "ERR: kernel command failed (%d)\n", rc);
     }
-
-    /* ---------------- CLOSE ---------------- */
 
     yai_rpc_close(&client);
     return rc;

@@ -1,146 +1,126 @@
-// tools/cli/src/cmd_root.c
+#define _POSIX_C_SOURCE 200809L
 
 #include "../include/yai_cmd.h"
 #include "../include/yai_rpc.h"
+#include "../include/yai_fmt.h"
+
+#include <protocol/yai_protocol_ids.h>
 
 #include <stdio.h>
 #include <string.h>
 
 /* ============================================================
-   USAGE HELPERS
+   USAGE
    ============================================================ */
 
-static void usage_global(void) {
+static void usage_root(void)
+{
     fprintf(stderr,
-        "YAI SOVEREIGN CLI\n"
-        "\nUSAGE:\n"
-        "  yai kernel <status|ping|stop|ws>\n"
-        "  yai engine --ws <id> <storage|provider|embedding> <method> [params_json]\n"
-        "  yai mind   --ws <id> <chat|think|query> <prompt>\n"
-        "  yai law    <check|tree|status>\n"
-        "\nTry:\n"
-        "  yai kernel help\n"
-        "  yai engine help\n"
-        "  yai mind help\n"
-        "  yai law help\n"
-    );
-}
-
-static void usage_kernel(void) {
-    fprintf(stderr,
-        "Kernel Control (L1)\n"
+        "Machine Root Plane\n"
         "Usage:\n"
-        "  yai kernel <status|ping|stop>\n"
-        "  yai kernel ws <create|list|destroy> [id]\n"
-        "\nNotes:\n"
-        "  - L1 is global (no --ws required)\n"
-        "  - ws destroy requires --arming\n"
-    );
-}
-
-static void usage_engine(void) {
-    fprintf(stderr,
-        "Engine Gates (L2)\n"
-        "Usage:\n"
-        "  yai engine --ws <id> <storage|provider|embedding> <method> [params_json]\n"
-        "\nNotes:\n"
-        "  - --ws is mandatory (ADR-001)\n"
-    );
-}
-
-static void usage_mind(void) {
-    fprintf(stderr,
-        "Mind Interface (L3)\n"
-        "Usage:\n"
-        "  yai mind --ws <id> <chat|think|query> <prompt>\n"
-        "\nNotes:\n"
-        "  - --ws is mandatory (ADR-001)\n"
-    );
-}
-
-static void usage_law(void) {
-    fprintf(stderr,
-        "Law (local)\n"
-        "Usage:\n"
-        "  yai law <check|tree|status>\n"
-    );
-}
-
-static int is_help_cmd(int argc, char **argv) {
-    return (argc >= 1 && argv && argv[0] &&
-            (strcmp(argv[0], "help") == 0 ||
-             strcmp(argv[0], "--help") == 0 ||
-             strcmp(argv[0], "-h") == 0));
+        "  yai root status\n"
+        "  yai root ping\n");
 }
 
 /* ============================================================
-   CENTRAL DISPATCHER (ADR-002 Root Control)
+   CONNECT ROOT (system plane)
    ============================================================ */
 
-int yai_cmd_dispatch(
-    const char *binary,
-    int argc,
-    char **argv,
-    const yai_cli_opts_t *opt
-) {
-    if (!binary || !binary[0]) {
-        usage_global();
-        return 2;
+static int connect_root(yai_rpc_client_t *c)
+{
+    memset(c, 0, sizeof(*c));
+
+    /* Root machine plane uses ws_id = "system" */
+    if (yai_rpc_connect(c, "system") != 0)
+        return -1;
+
+    return 0;
+}
+
+/* ============================================================
+   HANDSHAKE
+   ============================================================ */
+
+static int root_handshake(yai_rpc_client_t *c,
+                          const yai_cli_opts_t *opt)
+{
+    /* Authority before handshake */
+    yai_rpc_set_authority(
+        c,
+        opt && opt->arming ? 1 : 0,
+        opt && opt->role ? opt->role : "operator"
+    );
+
+    return yai_rpc_handshake(c);
+}
+
+/* ============================================================
+   STATUS / PING
+   ============================================================ */
+
+static int cmd_root_status(const yai_cli_opts_t *opt)
+{
+    yai_rpc_client_t c;
+
+    if (connect_root(&c) != 0)
+        return -5;
+
+    if (root_handshake(&c, opt) != 0) {
+        yai_rpc_close(&c);
+        return -6;
     }
 
-    /* ---- HELP (no RPC) ---- */
+    char response[YAI_RPC_LINE_MAX];
+    uint32_t resp_len = 0;
 
-    if (is_help_cmd(argc, argv)) {
-        if (strcmp(binary, "kernel") == 0) { usage_kernel(); return 0; }
-        if (strcmp(binary, "engine") == 0) { usage_engine(); return 0; }
-        if (strcmp(binary, "mind")   == 0) { usage_mind();   return 0; }
-        if (strcmp(binary, "law")    == 0) { usage_law();    return 0; }
+    int rc = yai_rpc_call_raw(
+        &c,
+        YAI_CMD_PING,
+        NULL,
+        0,
+        response,
+        sizeof(response) - 1,
+        &resp_len
+    );
 
-        usage_global();
+    if (rc == 0) {
+        response[resp_len] = '\0';
+        yai_print_response(response, opt ? opt->json : 0);
+    }
+
+    yai_rpc_close(&c);
+    return rc;
+}
+
+static int cmd_root_ping(const yai_cli_opts_t *opt)
+{
+    return cmd_root_status(opt);
+}
+
+/* ============================================================
+   ENTRY
+   ============================================================ */
+
+int yai_cmd_root(int argc,
+                 char **argv,
+                 const yai_cli_opts_t *opt)
+{
+    if (argc < 1) {
+        usage_root();
+        return 1;
+    }
+
+    if (strcmp(argv[0], "status") == 0)
+        return cmd_root_status(opt);
+
+    if (strcmp(argv[0], "ping") == 0)
+        return cmd_root_ping(opt);
+
+    if (strcmp(argv[0], "help") == 0) {
+        usage_root();
         return 0;
     }
 
-    /* ---- LAW (always local, never RPC) ---- */
-
-    if (strcmp(binary, "law") == 0) {
-        if (argc < 1) {
-            usage_law();
-            return 1;
-        }
-        return yai_cmd_law(argc, argv, opt);
-    }
-
-    /* ---- ADR-001: ws required for L2/L3 ---- */
-
-    if (strcmp(binary, "engine") == 0 ||
-        strcmp(binary, "mind")   == 0) {
-
-        if (!opt || !opt->ws_id || !opt->ws_id[0]) {
-            fprintf(stderr,
-                "FATAL: '%s' requires --ws <id> (ADR-001)\n",
-                binary);
-            return 2;
-        }
-    }
-
-    /* ---- ROUTING ---- */
-
-    if (strcmp(binary, "kernel") == 0) {
-        if (argc > 0 && strcmp(argv[0], "ws") == 0) {
-            return yai_cmd_ws(argc - 1, argv + 1, opt);
-        }
-        return yai_cmd_kernel(argc, argv, opt);
-    }
-
-    if (strcmp(binary, "engine") == 0) {
-        return yai_cmd_engine(argc, argv, opt);
-    }
-
-    if (strcmp(binary, "mind") == 0) {
-        return yai_cmd_mind(argc, argv, opt);
-    }
-
-    fprintf(stderr, "ERR: Unknown target: %s\n", binary);
-    usage_global();
+    usage_root();
     return 2;
 }
