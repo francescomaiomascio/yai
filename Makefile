@@ -17,13 +17,15 @@ ENGINE_DIR := engine
 SPECS_DIR  := $(ROOT_DIR)/deps/yai-specs
 
 DOXYFILE := Doxyfile
+DOXYGEN ?= doxygen
+DOXY_OUT ?= dist/docs
 
-.PHONY: all boot core kernel engine clean docs
+.PHONY: all boot core kernel engine clean docs docs-clean
 
 # -----------------------------------------
 # Build Order
 # -----------------------------------------
-all: boot core kernel engine
+all: docs boot core kernel engine
 	@echo "--- [YAI] Build Complete ---"
 
 # -----------------------------------------
@@ -73,6 +75,9 @@ clean:
 # Docs
 # -----------------------------------------
 docs:
-	@mkdir -p dist/docs/doxygen
-	@doxygen $(DOXYFILE)
-	@echo "✔ Doxygen: dist/docs/doxygen/html/index.html"
+	@mkdir -p $(DOXY_OUT)
+	@$(DOXYGEN) $(DOXYFILE)
+	@echo "✔ Doxygen: $(DOXY_OUT)/doxygen/html/index.html"
+
+docs-clean:
+	@rm -rf $(DOXY_OUT)

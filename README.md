@@ -104,3 +104,5 @@ See `LICENSE`.
 
 YAI is not intelligence.  
 It is the structure that makes intelligence accountable.
+
+API Reference (Doxygen): https://francescomaiomascio.github.io/yai/
