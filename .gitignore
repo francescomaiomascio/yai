@@ -458,7 +458,7 @@ benchmark_results/
 /.yai/
 /tmp/
 
-bin/
+
 # END mind/.gitignore
 
 # local data
