@@ -1,0 +1,3 @@
+[submodule "deps/yai-specs"]
+	path = deps/yai-specs
+	url = git@github.com:francescomaiomascio/yai-specs.git
