@@ -1,17 +1,8 @@
-/**
- * @file rpc_runtime.c
- * @brief Implementation of YAI RPC runtime helpers.
- */
-
 #include "rpc_runtime.h"
-
 #include <protocol/yai_protocol_ids.h>
 #include <string.h>
 #include <stdio.h>
 
-/**
- * @brief Validate an RPC envelope.
- */
 bool yai_envelope_validate(
     const yai_rpc_envelope_t* env,
     const char* expected_ws_id)
@@ -36,24 +27,19 @@ bool yai_envelope_validate(
     return true;
 }
 
-/**
- * @brief Prepare an ACK envelope.
- */
-void yai_envelope_prepare_ack(
+void yai_envelope_prepare_response(
     yai_rpc_envelope_t* out,
-    const yai_rpc_envelope_t* request)
+    const yai_rpc_envelope_t* request,
+    uint32_t command_id,
+    uint32_t payload_len)
 {
-    if (!out || !request)
-        return;
-
     memset(out, 0, sizeof(*out));
 
     out->magic       = YAI_FRAME_MAGIC;
     out->version     = YAI_PROTOCOL_IDS_VERSION;
-    out->command_id  = request->command_id;
-    out->payload_len = 0;
+    out->command_id  = command_id;
+    out->payload_len = payload_len;
 
-    /* Safe copy */
     snprintf(out->ws_id,
              sizeof(out->ws_id),
              "%s",
@@ -63,8 +49,4 @@ void yai_envelope_prepare_ack(
              sizeof(out->trace_id),
              "%s",
              request->trace_id);
-
-    out->role     = 0;
-    out->arming   = 0;
-    out->checksum = 0;
 }
