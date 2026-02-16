@@ -34,15 +34,17 @@ jobs:
       - name: Resolve docs path
         id: docs
         run: |
-          if [ -d dist/docs/doxygen/html ]; then
-            echo "path=dist/docs/doxygen/html" >> "$GITHUB_OUTPUT"
-          elif [ -d dist/docs/html ]; then
-            echo "path=dist/docs/html" >> "$GITHUB_OUTPUT"
-          else
-            echo "Docs output not found. Contents of dist/docs:"
-            ls -la dist/docs || true
-            exit 1
+          DOC_INDEX=$(find dist/docs -type f -name index.html -path "*/doxygen/*" -print -quit)
+          if [ -n "$DOC_INDEX" ]; then
+            DOC_DIR=$(dirname "$DOC_INDEX")
+            echo "path=$DOC_DIR" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "Docs output not found. Contents of dist/docs:"
+          ls -la dist/docs || true
+          echo "Contents of dist/docs/doxygen (if present):"
+          ls -la dist/docs/doxygen || true
+          exit 1
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
