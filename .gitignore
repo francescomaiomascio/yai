@@ -472,3 +472,9 @@ engine/compile_commands.json
 obj/
 
 dist/docs/doxygen/
+/build/
+/dist/
+/artifacts/
+/tools/cli/build/
+/tools/cli/dist/
+/tools/cli/obj/
