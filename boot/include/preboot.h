@@ -1,15 +1,10 @@
-#ifndef PREBOOT_H
-#define PREBOOT_H
+#ifndef YAI_PREBOOT_H
+#define YAI_PREBOOT_H
 
 #include "yai_vault.h"
 
-// Verifica l'integrità dell'ambiente
-int yai_run_preboot_checks();
-
-// Mappa l'ambiente, crea le directory (~/.yai/run/dev) e popola il Vault
+int yai_run_preboot_checks(void);
+int yai_ensure_runtime_layout(const char *ws_id);
 void yai_discover_environment(yai_vault_t *vault);
-
-// Helper per garantire che i path esistano
-int yai_ensure_directories(const char *ws_id);
 
 #endif

@@ -1,13 +1,13 @@
 #define _POSIX_C_SOURCE 200809L
-
 #include "preboot.h"
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <limits.h>
 
 static int mkdir_safe(const char *path)
 {
@@ -17,14 +17,13 @@ static int mkdir_safe(const char *path)
     if (errno == EEXIST)
         return 0;
 
+    perror("[PREBOOT] mkdir failed");
     return -1;
 }
 
-static int ensure_dir(const char *base, const char *sub)
+static void cleanup_socket(const char *path)
 {
-    char path[1024];
-    snprintf(path, sizeof(path), "%s/%s", base, sub);
-    return mkdir_safe(path);
+    unlink(path);
 }
 
 int yai_ensure_runtime_layout(const char *ws_id)
@@ -33,52 +32,55 @@ int yai_ensure_runtime_layout(const char *ws_id)
     if (!home)
         return -1;
 
-    char root[1024];
-    snprintf(root, sizeof(root), "%s/.yai", home);
+    char path[PATH_MAX];
 
-    if (mkdir_safe(root) != 0)
+    /* ~/.yai */
+    snprintf(path, sizeof(path), "%s/.yai", home);
+    if (mkdir_safe(path) != 0)
         return -2;
 
-    char run[1024];
-    snprintf(run, sizeof(run), "%s/.yai/run", home);
-
-    if (mkdir_safe(run) != 0)
+    /* ~/.yai/run */
+    snprintf(path, sizeof(path), "%s/.yai/run", home);
+    if (mkdir_safe(path) != 0)
         return -3;
 
-    if (ensure_dir(run, ws_id) != 0)
+    /* planes */
+    snprintf(path, sizeof(path), "%s/.yai/run/root", home);
+    if (mkdir_safe(path) != 0)
         return -4;
 
-    if (ensure_dir(run, "kernel") != 0)
+    snprintf(path, sizeof(path), "%s/.yai/run/kernel", home);
+    if (mkdir_safe(path) != 0)
         return -5;
 
-    if (ensure_dir(run, "logs") != 0)
+    snprintf(path, sizeof(path), "%s/.yai/run/engine", home);
+    if (mkdir_safe(path) != 0)
         return -6;
+
+    /* workspace */
+    if (ws_id && ws_id[0]) {
+        snprintf(path, sizeof(path), "%s/.yai/run/%s", home, ws_id);
+        if (mkdir_safe(path) != 0)
+            return -7;
+    }
+
+    /* cleanup stale sockets */
+    snprintf(path, sizeof(path), "%s/.yai/run/root/root.sock", home);
+    cleanup_socket(path);
+
+    snprintf(path, sizeof(path), "%s/.yai/run/kernel/control.sock", home);
+    cleanup_socket(path);
+
+    snprintf(path, sizeof(path), "%s/.yai/run/engine/control.sock", home);
+    cleanup_socket(path);
 
     return 0;
 }
 
 int yai_run_preboot_checks(void)
 {
-    if (getuid() == 0) {
-        printf("[PREBOOT] Warning: Running as root is not YAI-compliant\n");
-    }
+    if (getuid() == 0)
+        printf("[PREBOOT] Warning: Running as root is not recommended\n");
 
     return 0;
-}
-
-void yai_discover_environment(yai_vault_t *vault)
-{
-    printf("[DISCOVERY] Mapping workspace: %s\n",
-           vault->workspace_id);
-
-    if (yai_ensure_runtime_layout(vault->workspace_id) == 0)
-        printf("[DISCOVERY] Runtime directory ready for %s\n",
-               vault->workspace_id);
-    else
-        printf("[DISCOVERY-WARN] Runtime layout incomplete\n");
-
-    snprintf(vault->trace_id,
-             MAX_TRACE_ID,
-             "boot-%08x",
-             0xDEADC0DE);
 }
