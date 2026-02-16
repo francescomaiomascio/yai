@@ -4,65 +4,88 @@
 
 CC := gcc
 
-# ---- Artifact root ----
-ART_ROOT ?= $(HOME)/.yai/artifacts/yai-core
+# --------------------------------
+# Output layout (repo-native)
+# --------------------------------
 
 OUT_BUILD_DIR ?=
 OUT_BIN_DIR   ?=
 
-BUILD_DIR := $(if $(OUT_BUILD_DIR),$(OUT_BUILD_DIR),$(ART_ROOT)/build/boot)
-BIN_DIR   := $(if $(OUT_BIN_DIR),$(OUT_BIN_DIR),$(ART_ROOT)/bin)
+BUILD_DIR := $(if $(OUT_BUILD_DIR),$(OUT_BUILD_DIR),../build/boot)
+BIN_DIR   := $(if $(OUT_BIN_DIR),$(OUT_BIN_DIR),../dist/bin)
 
-LOG_DIR   := $(ART_ROOT)/logs
-TMP_DIR   := $(ART_ROOT)/tmp
-CACHE_DIR := $(ART_ROOT)/cache
-
-# ---- Target ----
 TARGET := $(BIN_DIR)/yai-boot
 
-# ---- Compiler flags ----
-CFLAGS := -Wall -Wextra -O2 -MMD -MP \
+# --------------------------------
+# Compiler flags
+# --------------------------------
+
+CFLAGS := -Wall -Wextra -O2 -std=c11 -MMD -MP \
           -I./include \
           -I../kernel/include \
           -I../law/specs \
           -I../law/specs/vault
 
-# ---- Sources ----
+LDFLAGS :=
+
+# --------------------------------
+# Sources
+# --------------------------------
+
 SRCS := \
-    src/bootstrap.c \
     src/preboot.c \
+    src/bootstrap.c \
     src/yai_boot_main.c
 
-OBJS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRCS))
+OBJS := $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 
-# ---- Phony targets ----
+# --------------------------------
+# Phony targets
+# --------------------------------
+
 .PHONY: all clean dirs
 
-# ===============================
-# Main build target
-# ===============================
+# =================================
+# Main target
+# =================================
+
 all: dirs $(TARGET)
 	@echo "--- [YAI-BOOT] L0 Build Complete ---"
 
-# ---- Directories ----
+# --------------------------------
+# Directories
+# --------------------------------
+
 dirs:
-	@mkdir -p $(BUILD_DIR) $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
-	@mkdir -p $(BUILD_DIR)/src  # manteniamo struttura per gli oggetti
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BIN_DIR)
 
-# ---- Link Boot ----
+# --------------------------------
+# Link
+# --------------------------------
+
 $(TARGET): $(OBJS)
-	@echo "[LINK] Linking YAI Boot..."
-	$(CC) $(OBJS) -o $@
+	@echo "[LINK] $@"
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-# ---- Compile individual objects ----
-$(BUILD_DIR)/%.o: %.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
+# --------------------------------
+# Compile
+# --------------------------------
 
-# ---- Clean ----
+$(BUILD_DIR)/%.o: src/%.c | dirs
+	@echo "[CC] $<"
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# --------------------------------
+# Clean
+# --------------------------------
+
 clean:
 	@echo "[CLEAN] Boot build..."
-	rm -rf $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
 
-# ---- Auto dependencies ----
+# --------------------------------
+# Auto deps
+# --------------------------------
+
 -include $(OBJS:.o=.d)
