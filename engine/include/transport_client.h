@@ -5,7 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../law/specs/protocol/transport.h"
+#include "protocol/transport.h"
+
 
 #ifdef __cplusplus
 extern "C" {

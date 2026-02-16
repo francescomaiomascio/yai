@@ -2,7 +2,8 @@
 #ifndef YAI_RPC_ROUTER_H
 #define YAI_RPC_ROUTER_H
 
-#include "../../law/specs/protocol/transport.h"
+#include "protocol/transport.h"
+
 
 /**
  * Firma universale per gli handler del router.

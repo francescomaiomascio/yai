@@ -1,7 +1,8 @@
 #ifndef YAI_SHARED_CONSTANTS_H
 #define YAI_SHARED_CONSTANTS_H
 
-#include "../../law/specs/protocol/yai_protocol_ids.h"
+#include "protocol/yai_protocol_ids.h"
+
 
 // Allineamento rigoroso con transport.h
 #define YAI_WS_ID_LEN    36

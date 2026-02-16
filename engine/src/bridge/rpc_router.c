@@ -1,5 +1,7 @@
-#include "../../law/specs/protocol/yai_protocol_ids.h"
-#include "../../law/specs/protocol/transport.h"
+#include "protocol/yai_protocol_ids.h"
+
+#include "protocol/transport.h"
+
 
 #include "storage_gate.h"
 #include "provider_gate.h"

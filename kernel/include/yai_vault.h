@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "yai_vault_abi.h"
-#include "../../law/specs/protocol/yai_protocol_ids.h" // <--- Aggiornato: Sorgente Unica
+#include "protocol/yai_protocol_ids.h" // <--- Aggiornato: Sorgente Unica
 
 #ifdef __cplusplus
 extern "C" {

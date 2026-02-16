@@ -1,7 +1,8 @@
 #ifndef YAI_PROVIDER_GATE_H
 #define YAI_PROVIDER_GATE_H
 
-#include "../../law/specs/protocol/transport.h"
+#include "protocol/transport.h"
+
 #include <stdbool.h>
 
 typedef struct {

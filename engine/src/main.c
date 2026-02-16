@@ -15,9 +15,9 @@
 #include "../include/storage_gate.h"
 #include "../include/rpc_router.h"
 
-// Header della LAW
-#include "../../law/specs/protocol/transport.h"
-#include "../../law/specs/protocol/yai_protocol_ids.h"
+#include "protocol/transport.h"
+
+#include "protocol/yai_protocol_ids.h"
 
 static volatile int keep_running = 1;
 
