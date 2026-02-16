@@ -1,8 +1,8 @@
 PROJECT_NAME           = "YAI Core"
-OUTPUT_DIRECTORY       = dist/docs/doxygen
-GENERATE_HTML          = YES
-GENERATE_LATEX         = NO
-GENERATE_XML           = YES
+OUTPUT_DIRECTORY = dist/docs/doxygen
+GENERATE_HTML    = YES
+GENERATE_XML     = YES
+
 
 MARKDOWN_SUPPORT       = YES
 USE_MDFILE_AS_MAINPAGE = docs/reference/api/C_MAINPAGE.md
@@ -26,7 +26,8 @@ INPUT                  = \
   engine/include \
   tools/cli/include \
   law/specs/protocol \
-  law/specs/vault
+  law/specs/vault \
+  docs/reference/api/C_MAINPAGE.md
 
 FILE_PATTERNS          = *.h *.c *.md
 

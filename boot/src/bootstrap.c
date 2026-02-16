@@ -5,13 +5,40 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <libgen.h>
+#include <sys/wait.h>
 
 #define SYSTEM_WS "system"
 #define SHM_VAULT_PREFIX "/yai_vault_"
+
+#define YAI_BIN_DIR "./dist/bin"
+#define ROOT_BIN    "yai-root-server"
+#define KERNEL_BIN  "yai-kernel"
+
+static int spawn_process(const char *bin_path)
+{
+    pid_t pid = fork();
+    if (pid < 0)
+        return -1;
+
+    if (pid == 0) {
+        execl(bin_path, bin_path, "--master", NULL);
+        perror("[BOOT-FATAL] exec failed");
+        _exit(1);
+    }
+
+    return pid;
+}
+
+/* ============================================================
+   VAULT POPULATE
+   ============================================================ */
 
 void yai_vault_populate(
     yai_vault_t *vault,
@@ -33,7 +60,7 @@ void yai_vault_populate(
 }
 
 /* ============================================================
-   SYSTEM SHM (Machine Plane Vault)
+   SYSTEM SHM
    ============================================================ */
 
 int yai_init_system_shm(void)
@@ -79,19 +106,57 @@ int yai_init_system_shm(void)
 }
 
 /* ============================================================
-   HANDOFF (not used yet, reserved)
+   MACHINE STARTUP
    ============================================================ */
 
-int yai_handoff_to_engine(yai_vault_t *vault)
+int yai_boot_master(void)
 {
-    if (!vault)
-        return -1;
+    printf("\n=== YAI MACHINE ENTRYPOINT (L0) ===\n");
 
-    if (vault->authority_lock)
-        return -1;
+    printf("[DISCOVERY] Mapping workspace: %s\n", SYSTEM_WS);
 
-    vault->authority_lock = true;
-    vault->status = YAI_STATE_HANDOFF_COMPLETE;
+    if (yai_init_system_shm() != 0) {
+        printf("[BOOT-FATAL] System SHM init failed\n");
+        return -1;
+    }
+
+    printf("[BOOT] Environment verified. Launching Root Control Plane...\n");
+
+    char root_path[PATH_MAX];
+    char kernel_path[PATH_MAX];
+
+    snprintf(root_path, sizeof(root_path),
+             "%s/%s", YAI_BIN_DIR, ROOT_BIN);
+
+    snprintf(kernel_path, sizeof(kernel_path),
+             "%s/%s", YAI_BIN_DIR, KERNEL_BIN);
+
+    if (access(root_path, X_OK) != 0) {
+        printf("[BOOT-FATAL] Root binary missing: %s\n", root_path);
+        return -2;
+    }
+
+    if (access(kernel_path, X_OK) != 0) {
+        printf("[BOOT-FATAL] Kernel binary missing: %s\n", kernel_path);
+        return -3;
+    }
+
+    int root_pid = spawn_process(root_path);
+    if (root_pid < 0) {
+        printf("[BOOT-FATAL] Root spawn failed\n");
+        return -4;
+    }
+
+    int kernel_pid = spawn_process(kernel_path);
+    if (kernel_pid < 0) {
+        printf("[BOOT-FATAL] Kernel spawn failed\n");
+        return -5;
+    }
+
+    printf("[BOOT] Root (%d) and Kernel (%d) launched successfully\n",
+           root_pid, kernel_pid);
+
+    printf("[BOOT] Boot completed. Machine runtime is UP.\n");
 
     return 0;
 }

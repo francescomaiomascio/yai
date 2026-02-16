@@ -4,34 +4,36 @@
 
 CC ?= cc
 
-# ---- Artifact root ----
-ART_ROOT  ?= $(HOME)/.yai/artifacts/yai-core
-BUILD_DIR ?= $(ART_ROOT)/build/kernel
-BIN_DIR   ?= $(ART_ROOT)/bin
-LOG_DIR   ?= $(ART_ROOT)/logs
-TMP_DIR   ?= $(ART_ROOT)/tmp
-CACHE_DIR ?= $(ART_ROOT)/cache
+# ---- Repo root (kernel/ is one level down) ----
+ROOT_DIR := $(abspath ..)
 
-# ---- Compiler flags ----
+# ---- Unified repo-local layout ----
+BUILD_DIR ?= $(ROOT_DIR)/build/kernel
+BIN_DIR   ?= $(ROOT_DIR)/dist/bin
+
+LOG_DIR   := $(ROOT_DIR)/dist/logs
+TMP_DIR   := $(ROOT_DIR)/dist/tmp
+CACHE_DIR := $(ROOT_DIR)/dist/cache
+
 CFLAGS  ?= -Wall -Wextra -O2 -std=c11 -MMD -MP
 LDFLAGS ?=
 
 # ---- Include paths ----
 INCLUDES := \
 	-I./include \
-	-I../boot/include \
-	-I../core/include \
-	-I../law/specs \
-	-I../law/specs/protocol \
-	-I../law/specs/protocol/runtime \
-	-I../law/specs/vault
+	-I$(ROOT_DIR)/boot/include \
+	-I$(ROOT_DIR)/core/include \
+	-I$(ROOT_DIR)/law/specs \
+	-I$(ROOT_DIR)/law/specs/protocol \
+	-I$(ROOT_DIR)/law/specs/protocol/runtime \
+	-I$(ROOT_DIR)/law/specs/vault
 
 # -----------------------------
 # L0 Boot sources
 # -----------------------------
 BOOT_SRC := \
-	../boot/src/bootstrap.c \
-	../boot/src/preboot.c
+	$(ROOT_DIR)/boot/src/bootstrap.c \
+	$(ROOT_DIR)/boot/src/preboot.c
 
 # -----------------------------
 # L1 Kernel sources
@@ -51,8 +53,8 @@ KERNEL_SRC := \
 # -----------------------------
 # External shared sources
 # -----------------------------
-PROTOCOL_RUNTIME_SRC := ../law/specs/protocol/runtime/rpc_runtime.c
-CORE_CONTROL_SRC     := ../core/src/control_transport.c
+PROTOCOL_RUNTIME_SRC := $(ROOT_DIR)/law/specs/protocol/runtime/rpc_runtime.c
+CORE_CONTROL_SRC     := $(ROOT_DIR)/core/src/control_transport.c
 
 # -----------------------------
 # Objects
@@ -63,33 +65,23 @@ OBJS_KERNEL := $(patsubst %.c,$(BUILD_DIR)/%.o,$(KERNEL_SRC))
 PROTOCOL_RUNTIME_OBJ := $(BUILD_DIR)/protocol_runtime.o
 CORE_CONTROL_OBJ     := $(BUILD_DIR)/control_transport.o
 
-# Kernel binary
 TARGET_KERNEL := $(BIN_DIR)/yai-kernel
 
-# -----------------------------
-# Phony targets
-# -----------------------------
 .PHONY: all dirs abi kernel root clean purge
 
+# ===============================
+# Main
+# ===============================
 all: dirs abi kernel root
-	@echo "--- [YAI] Build Complete (kernel + root) ---"
+	@echo "--- [YAI-KERNEL] Build Complete ---"
 
-# -----------------------------
-# ABI guard
-# -----------------------------
 abi:
-	@test -f ../law/specs/vault/yai_vault_abi.h || \
-	(echo "ERROR: Missing yai_vault_abi.h. Run scripts/gen-vault-abi"; exit 1)
+	@test -f $(ROOT_DIR)/law/specs/vault/yai_vault_abi.h || \
+	 (echo "ERROR: Missing yai_vault_abi.h"; exit 1)
 
-# -----------------------------
-# Create directories
-# -----------------------------
 dirs:
 	@mkdir -p $(BUILD_DIR) $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
 
-# -----------------------------
-# Link kernel
-# -----------------------------
 kernel: $(TARGET_KERNEL)
 
 $(TARGET_KERNEL): $(OBJS_BOOT) $(OBJS_KERNEL) $(PROTOCOL_RUNTIME_OBJ) $(CORE_CONTROL_OBJ)
@@ -98,11 +90,13 @@ $(TARGET_KERNEL): $(OBJS_BOOT) $(OBJS_KERNEL) $(PROTOCOL_RUNTIME_OBJ) $(CORE_CON
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 # -----------------------------
-# Build Root Control Plane
+# Root Control Plane (delegated)
 # -----------------------------
 root:
-	@echo "[DELEGATE] building root control plane in ../core ..."
-	@$(MAKE) -C ../core
+	@echo "[DELEGATE] building root control plane..."
+	@$(MAKE) -C $(ROOT_DIR)/core \
+		OUT_BIN_DIR=$(BIN_DIR) \
+		OUT_BUILD_DIR=$(BUILD_DIR)/core
 
 # -----------------------------
 # Explicit build rules
@@ -116,27 +110,21 @@ $(CORE_CONTROL_OBJ): $(CORE_CONTROL_SRC)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # -----------------------------
-# Generic rule (kernel + boot only)
+# Generic rule
 # -----------------------------
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo "[CC] $<"
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# -----------------------------
-# Cleaning
-# -----------------------------
 clean:
-	@echo "[CLEAN] kernel build..."
 	@rm -rf $(BUILD_DIR)
 	@rm -f $(TARGET_KERNEL)
+	@echo "--- [YAI-KERNEL] Cleaned ---"
 
 purge: clean
 	@rm -rf $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
 
-# -----------------------------
-# Auto-dependencies
-# -----------------------------
 -include $(OBJS_BOOT:.o=.d)
 -include $(OBJS_KERNEL:.o=.d)
 -include $(PROTOCOL_RUNTIME_OBJ:.o=.d)
