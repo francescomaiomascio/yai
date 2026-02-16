@@ -1,3 +1,6 @@
+#define _DEFAULT_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>

@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "yai_session.h"
 #include "control_transport.h"
 
@@ -10,6 +12,8 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
@@ -228,7 +232,7 @@ void yai_session_dispatch(
     if (!env)
         return;
 
-    if (!env->ws_id || strlen(env->ws_id) == 0) {
+    if (env->ws_id[0] == '\0' || strlen(env->ws_id) == 0) {
         send_binary_response(
             client_fd,
             env,

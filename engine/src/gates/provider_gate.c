@@ -1,3 +1,6 @@
+#define _DEFAULT_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
 #include "../../include/provider_gate.h"
 #include "../../include/shared_constants.h"
 #include "cJSON.h"
@@ -8,6 +11,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <errno.h>
+#include <sys/time.h>
 
 static yai_provider_config_t current_provider;
 
@@ -41,7 +45,7 @@ static char* http_post_raw(const char* host, int port, const char* path, const c
 
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
+    memcpy(&serv_addr.sin_addr.s_addr, server->h_addr_list[0], server->h_length);
     serv_addr.sin_port = htons(port);
 
     // Timeout per evitare che l'Engine si blocchi se il llama-server è offline
