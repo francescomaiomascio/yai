@@ -1,12 +1,11 @@
 # ===============================
-# YAI Kernel Build System (L0+L1+Root)
+# YAI Kernel Build System (L0+L1)
 # ===============================
 
-CC := gcc
+CC ?= cc
 
 # ---- Artifact root ----
-ART_ROOT ?= $(HOME)/.yai/artifacts/yai-core
-
+ART_ROOT  ?= $(HOME)/.yai/artifacts/yai-core
 BUILD_DIR ?= $(ART_ROOT)/build/kernel
 BIN_DIR   ?= $(ART_ROOT)/bin
 LOG_DIR   ?= $(ART_ROOT)/logs
@@ -14,67 +13,62 @@ TMP_DIR   ?= $(ART_ROOT)/tmp
 CACHE_DIR ?= $(ART_ROOT)/cache
 
 # ---- Compiler flags ----
-CFLAGS := -Wall -Wextra -O2 -MMD -MP \
-          -I./include \
-          -I../boot/include \
-          -I../law/specs \
-          -I../law/specs/protocol \
-          -I../law/specs/vault
+CFLAGS  ?= -Wall -Wextra -O2 -std=c11 -MMD -MP
+LDFLAGS ?=
 
-LDFLAGS :=
+# ---- Include paths ----
+INCLUDES := \
+	-I./include \
+	-I../boot/include \
+	-I../core/include \
+	-I../law/specs \
+	-I../law/specs/protocol \
+	-I../law/specs/vault
 
 # -----------------------------
-# Source files
+# Source files (L0: Boot)
 # -----------------------------
-# Root server specific
-ROOT_CFLAGS := $(CFLAGS) -I./include -I../include
-$(BUILD_DIR)/src/bin/yai_root_server.o: src/bin/yai_root_server.c
-	@mkdir -p $(dir $@)
-	$(CC) $(ROOT_CFLAGS) -c $< -o $@
-
-# L0: Boot / Ignition
 BOOT_SRC := \
-    ../boot/src/bootstrap.c \
-    ../boot/src/preboot.c
+	../boot/src/bootstrap.c \
+	../boot/src/preboot.c
 
-# L1: Kernel core
-KERNEL_CORE_SRC := \
-    src/enforcement/enforcement.c \
-    src/core/fsm.c \
-    src/core/ids.c \
-    src/core/logger.c \
-    src/core/project_tree.c \
-    src/core/transport.c \
-    src/core/yai_session.c \
-    src/core/control_transport.c \
-    src/core/rpc_binary.c \
-    src/bin/workspace_kernel_main.c
+# -----------------------------
+# Source files (L1: Kernel)
+# -----------------------------
+KERNEL_SRC := \
+	src/enforcement/enforcement.c \
+	src/core/fsm.c \
+	src/core/ids.c \
+	src/core/logger.c \
+	src/core/project_tree.c \
+	src/core/transport.c \
+	src/core/yai_session.c \
+	src/core/rpc_binary.c \
+	src/core/rpc_codec.c \
+	src/bin/workspace_kernel_main.c
 
-# L0+L1 unified kernel
-SRCS_KERNEL := $(BOOT_SRC) $(KERNEL_CORE_SRC)
-OBJS_KERNEL := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRCS_KERNEL))
+# -----------------------------
+# Core shim required by kernel
+# -----------------------------
+CORE_CONTROL_SRC := ../core/src/control_transport.c
+CORE_CONTROL_OBJ := $(BUILD_DIR)/../core/src/control_transport.o
+
+# -----------------------------
+# Objects
+# -----------------------------
+OBJS_BOOT   := $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
+OBJS_KERNEL := $(patsubst %.c,$(BUILD_DIR)/%.o,$(KERNEL_SRC))
+
+# Kernel binary
 TARGET_KERNEL := $(BIN_DIR)/yai-kernel
-
-# -----------------------------
-# Root Control Plane (Persistent)
-# -----------------------------
-ROOT_SRC := \
-    src/bin/yai_root_server.c \
-    src/core/control_transport.c \
-    src/core/yai_session.c \
-    src/core/rpc_binary.c \
-    src/enforcement/enforcement.c
-
-OBJS_ROOT := $(patsubst %.c,$(BUILD_DIR)/%.o,$(ROOT_SRC))
-TARGET_ROOT := $(BIN_DIR)/yai-root-server
 
 # -----------------------------
 # Phony targets
 # -----------------------------
-.PHONY: all clean purge dirs abi kernel root
+.PHONY: all dirs abi kernel root clean purge
 
 all: dirs abi kernel root
-	@echo "--- [YAI-KERNEL] Build Complete (L0+L1+Root) ---"
+	@echo "--- [YAI] Build Complete (kernel + root) ---"
 
 # -----------------------------
 # ABI guard
@@ -88,47 +82,54 @@ abi:
 # -----------------------------
 dirs:
 	@mkdir -p $(BUILD_DIR) $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
-	@mkdir -p $(BUILD_DIR)/../boot/src  # Per oggetti boot
 
 # -----------------------------
 # Build kernel (L0+L1)
 # -----------------------------
 kernel: $(TARGET_KERNEL)
 
-$(TARGET_KERNEL): $(OBJS_KERNEL)
-	@echo "[LINK] yai-kernel..."
+$(TARGET_KERNEL): $(OBJS_BOOT) $(OBJS_KERNEL) $(CORE_CONTROL_OBJ)
+	@echo "[LINK] $@"
 	@mkdir -p $(dir $@)
-	$(CC) $(OBJS_KERNEL) -o $@ $(LDFLAGS)
+	$(CC) $(OBJS_BOOT) $(OBJS_KERNEL) $(CORE_CONTROL_OBJ) -o $@ $(LDFLAGS)
 
 # -----------------------------
-# Build Root Control Plane
+# Build Root Control Plane (delegated to ../core)
 # -----------------------------
-root: $(TARGET_ROOT)
+root:
+	@echo "[DELEGATE] building root control plane in ../core ..."
+	@$(MAKE) -C ../core
 
-$(TARGET_ROOT): $(OBJS_ROOT)
-	@echo "[LINK] yai-root-server..."
+# -----------------------------
+# Explicit build rule for core shim (no ambiguity)
+# -----------------------------
+$(CORE_CONTROL_OBJ): $(CORE_CONTROL_SRC)
 	@mkdir -p $(dir $@)
-	$(CC) $(OBJS_ROOT) -o $@ $(LDFLAGS)
+	@echo "[CC] $<"
+	$(CC) $(CFLAGS) $(INCLUDES) $(EXTRA_CFLAGS) -c $< -o $@
 
 # -----------------------------
-# Generic rule for building objects
+# Generic rule for building objects (boot + kernel)
 # -----------------------------
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
+	@echo "[CC] $<"
+	$(CC) $(CFLAGS) $(INCLUDES) $(EXTRA_CFLAGS) -c $< -o $@
 
 # -----------------------------
 # Cleaning
 # -----------------------------
 clean:
-	@echo "[CLEAN] Kernel build..."
-	rm -rf $(BUILD_DIR)
+	@echo "[CLEAN] kernel build..."
+	@rm -rf $(BUILD_DIR)
+	@rm -f $(TARGET_KERNEL)
 
 purge: clean
-	rm -rf $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
+	@rm -rf $(BIN_DIR) $(LOG_DIR) $(TMP_DIR) $(CACHE_DIR)
 
 # -----------------------------
 # Auto-dependencies
 # -----------------------------
+-include $(OBJS_BOOT:.o=.d)
 -include $(OBJS_KERNEL:.o=.d)
--include $(OBJS_ROOT:.o=.d)
+-include $(CORE_CONTROL_OBJ:.o=.d)
