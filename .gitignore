@@ -458,8 +458,6 @@ benchmark_results/
 /.yai/
 /tmp/
 
-bin/
-# END mind/.gitignore
 
 # local data
 Data/db/
@@ -471,3 +469,5 @@ engine/compile_commands.json
 
 
 obj/
+
+dist/docs/doxygen/
