@@ -241,6 +241,18 @@ if [ "$CLI_REF_SPECS_PIN" != "$EXPECTED_SPECS_SHA" ]; then
   fail 5 "yai-cli.ref commit is not aligned to expected specs pin" "$EXPECTED_SPECS_SHA" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN" "$CLI_SHA" "$CLI_REF_SPECS_PIN"
 fi
 
+REQUIRED_SPECS_PATHS=(
+  "$ROOT/deps/yai-specs/VERSION"
+  "$ROOT/deps/yai-specs/SPEC_MAP.md"
+  "$ROOT/deps/yai-specs/specs/protocol/include/protocol.h"
+  "$ROOT/deps/yai-specs/specs/vault/include/yai_vault_abi.h"
+  "$ROOT/deps/yai-specs/formal/tla/YAI_KERNEL.tla"
+  "$ROOT/deps/yai-specs/tools/release/bump_version.sh"
+)
+for path in "${REQUIRED_SPECS_PATHS[@]}"; do
+  [ -f "$path" ] || fail 3 "missing required specs path: ${path#$ROOT/}"
+done
+
 if [ "${STRICT_BUNDLE_ENTRYPOINT:-0}" = "1" ]; then
   [ -x "$ROOT/scripts/bundle/build_bundle.sh" ] || fail 3 "missing executable scripts/bundle/build_bundle.sh"
   [ -x "$ROOT/scripts/bundle/manifest.sh" ] || fail 3 "missing executable scripts/bundle/manifest.sh"

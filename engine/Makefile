@@ -14,7 +14,10 @@ BUILD_DIR := $(COMPONENT_BUILD_DIR)
 BIN_DIR := $(BIN_BUILD)
 
 SPECS_DIR := $(ROOT_DIR)/deps/yai-specs
-VAULT_ABI_SRC := $(SPECS_DIR)/vault/yai_vault_abi.h
+SPECS_INC_PROTOCOL := $(SPECS_DIR)/specs/protocol/include
+SPECS_INC_RUNTIME := $(SPECS_DIR)/specs/protocol/runtime/include
+SPECS_INC_VAULT := $(SPECS_DIR)/specs/vault/include
+VAULT_ABI_SRC := $(SPECS_INC_VAULT)/yai_vault_abi.h
 
 SRC_DIR := src
 THIRD_PARTY_DIR := third_party
@@ -31,10 +34,11 @@ CFLAGS ?= -Wall -Wextra -O2 -std=c11 -MMD -MP
 CFLAGS += -I./include
 CFLAGS += -I./third_party/cjson
 CFLAGS += -I$(ROOT_DIR)/kernel/include
+CFLAGS += -I$(ROOT_DIR)/include/specs_compat
 CFLAGS += -I$(SPECS_DIR)
-CFLAGS += -I$(SPECS_DIR)/protocol
-CFLAGS += -I$(SPECS_DIR)/protocol/runtime
-CFLAGS += -I$(SPECS_DIR)/vault
+CFLAGS += -I$(SPECS_INC_PROTOCOL)
+CFLAGS += -I$(SPECS_INC_RUNTIME)
+CFLAGS += -I$(SPECS_INC_VAULT)
 
 LDFLAGS ?= -lpthread -lsqlite3
 
@@ -50,7 +54,7 @@ build: abi dirs $(TARGET)
 
 abi:
 	@test -f $(VAULT_ABI_SRC) || \
-	 (echo "ERROR: Missing yai_vault_abi.h in deps/yai-specs/vault"; exit 1)
+	 (echo "ERROR: Missing yai_vault_abi.h in deps/yai-specs/specs/vault/include"; exit 1)
 
 dirs:
 	@mkdir -p $(BUILD_DIR) $(BIN_DIR) $(BUILD_DIR)/tests

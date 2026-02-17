@@ -14,9 +14,9 @@
 #include "control_transport.h"
 #include "yai_session.h"
 
-#include <protocol/transport.h>
-#include <protocol/yai_protocol_ids.h>
-#include <protocol/protocol.h>   /* 👈 UNICA DEFINIZIONE HANDSHAKE */
+#include <transport.h>
+#include <yai_protocol_ids.h>
+#include <protocol.h>   /* 👈 UNICA DEFINIZIONE HANDSHAKE */
 
 /* ============================================================
    Ensure runtime directory

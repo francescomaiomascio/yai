@@ -1,7 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <protocol/transport.h>
-#include <protocol/yai_protocol_ids.h>
+#include <transport.h>
+#include <yai_protocol_ids.h>
 
 #include "kernel.h"
 #include "yai_kernel.h"

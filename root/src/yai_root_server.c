@@ -11,10 +11,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include <protocol/transport.h>
-#include <protocol/yai_protocol_ids.h>
-#include <protocol/roles.h>
-#include <protocol/protocol.h> /* yai_handshake_req_t / yai_handshake_ack_t */
+#include <transport.h>
+#include <yai_protocol_ids.h>
+#include <roles.h>
+#include <protocol.h> /* yai_handshake_req_t / yai_handshake_ack_t */
 
 #include "control_transport.h"
 

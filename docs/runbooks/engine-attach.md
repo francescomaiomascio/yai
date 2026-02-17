@@ -68,9 +68,9 @@ It's "ICE-grade" and avoids a thousand ambiguities later.
 ## STEP 1: Law/Spec Add Engine Paths + IDs (If Missing)
 
 ### Files to read FIRST
-- `deps/yai-specs/protocol/yai_protocol_ids.h`
-- `deps/yai-specs/protocol/transport.h`
-- `deps/yai-specs/protocol/errors.h` (optional)
+- `deps/yai-specs/specs/protocol/yai_protocol_ids.h`
+- `deps/yai-specs/specs/protocol/transport.h`
+- `deps/yai-specs/specs/protocol/errors.h` (optional)
 
 ### Deliverables
 

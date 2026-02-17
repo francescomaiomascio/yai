@@ -8,9 +8,9 @@
 #include "yai_kernel.h"
 #include "control_transport.h"
 
-#include <protocol/transport.h>
-#include <protocol/yai_protocol_ids.h>
-#include <protocol/protocol.h>
+#include <transport.h>
+#include <yai_protocol_ids.h>
+#include <protocol.h>
 
 #define YAI_BINARY_PAYLOAD_MAX 65536
 

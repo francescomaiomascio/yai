@@ -276,7 +276,7 @@ void yai_log_deny(const char *ws_id, unsigned cmd_id, const char *reason)
 
 ### Files to create
 
-**A) Spec:** `deps/yai-specs/contracts/formal/YAI_KERNEL.tla`
+**A) Spec:** `deps/yai-specs/formal/YAI_KERNEL.tla`
 
 ```tla
 ------------------------------ MODULE YAI_KERNEL ------------------------------
@@ -362,7 +362,7 @@ THEOREM Spec => []IsolationInvariant
 =============================================================================
 ```
 
-**B) Config:** `deps/yai-specs/contracts/formal/YAI_KERNEL.cfg`
+**B) Config:** `deps/yai-specs/formal/YAI_KERNEL.cfg`
 
 ```
 SPECIFICATION Spec
@@ -432,7 +432,7 @@ typedef struct {
 /* Global access (or pass pointer around) */
 yai_session_table_t *yai_session_table(void);
 
-/* Workspace id validate (ideally use the inline in deps/yai-specs/protocol/transport.h) */
+/* Workspace id validate (ideally use the inline in deps/yai-specs/specs/protocol/transport.h) */
 bool yai_ws_validate_id(const char *ws_id);
 
 /* Acquire / create session */
