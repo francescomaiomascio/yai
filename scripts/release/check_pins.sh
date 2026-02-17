@@ -22,8 +22,10 @@ print_fix_plan() {
   echo
   echo "Fix (required before release):"
   echo
+  echo "export YAI_WORKSPACE=\"\${YAI_WORKSPACE:-\$HOME/Developer/YAI}\""
+  echo
   echo "yai-cli (bump deps/yai-specs to ${expected_sha})"
-  echo "cd ~/Developer/YAI/yai-cli"
+  echo "cd \"\$YAI_WORKSPACE/yai-cli\""
   echo "git checkout main && git pull --rebase"
   echo "git checkout -b chore/bump-specs-${short}"
   echo "git -C deps/yai-specs fetch origin"
@@ -33,7 +35,7 @@ print_fix_plan() {
   echo "git push -u origin chore/bump-specs-${short}"
   echo
   echo "yai (bump deps/yai-specs to ${expected_sha})"
-  echo "cd ~/Developer/YAI/yai"
+  echo "cd \"\$YAI_WORKSPACE/yai\""
   echo "git checkout main && git pull --rebase"
   echo "git checkout -b chore/bump-specs-${short}"
   echo "git -C deps/yai-specs fetch origin"

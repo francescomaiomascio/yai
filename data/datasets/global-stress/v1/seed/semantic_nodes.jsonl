@@ -1,7 +1,7 @@
 {"id": "node:user:test_user", "kind": "user", "meta": {"display": "Test User", "role": "developer"}, "tags": ["user", "synthetic"]}
 {"id": "node:machine:macbook_dev", "kind": "machine", "meta": {"os": "macOS", "arch": "arm64", "label": "MacBook Dev"}, "tags": ["machine", "local"]}
 {"id": "node:machine:gpu_lan_01", "kind": "machine", "meta": {"os": "linux", "gpu": "RTX", "label": "GPU LAN 01"}, "tags": ["machine", "lan"]}
-{"id": "node:project:yai", "kind": "project", "meta": {"name": "YAI", "repo_root": "~/Developer/YAI"}, "tags": ["project"]}
+{"id": "node:project:yai", "kind": "project", "meta": {"name": "YAI", "repo_root": "$YAI_WORKSPACE"}, "tags": ["project"]}
 {"id": "node:project:ecoh_governance_demo", "kind": "project", "meta": {"name": "Ecoh Governance Demo", "domain": "ecohmedia.com"}, "tags": ["project", "enterprise"]}
 {"id": "node:std:gdpr", "kind": "standard", "meta": {"name": "GDPR", "type": "privacy"}, "tags": ["standard", "privacy"]}
 {"id": "node:std:iso27001", "kind": "standard", "meta": {"name": "ISO/IEC 27001", "type": "security_mgmt"}, "tags": ["standard", "security"]}

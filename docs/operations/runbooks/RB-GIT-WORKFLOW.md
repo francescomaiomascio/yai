@@ -27,6 +27,21 @@ This runbook applies to:
 
 ---
 
+## Workspace convention
+
+Use a canonical workspace variable in examples:
+
+```bash
+export YAI_WORKSPACE="${YAI_WORKSPACE:-$HOME/Developer/YAI}"
+```
+
+All commands below assume repositories are located at:
+- `$YAI_WORKSPACE/yai-specs`
+- `$YAI_WORKSPACE/yai-cli`
+- `$YAI_WORKSPACE/yai`
+
+---
+
 ## Definitions
 
 | Term | Meaning |
@@ -179,7 +194,7 @@ git -C deps/yai-specs rev-parse HEAD   # for specs submodule
 ### 1) Specs changes (yai-specs)
 
 ```bash
-cd ~/Developer/YAI/yai-specs
+cd $YAI_WORKSPACE/yai-specs
 git checkout main
 git pull --rebase
 
@@ -210,7 +225,7 @@ git show $SPEC_SHA --no-patch
 ### 2) CLI changes (yai-cli)
 
 ```bash
-cd ~/Developer/YAI/yai-cli
+cd $YAI_WORKSPACE/yai-cli
 git checkout main
 git pull --rebase
 
@@ -242,7 +257,7 @@ git show $CLI_SHA --no-patch
 ### 3) Runtime changes (yai)
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
@@ -267,7 +282,7 @@ git push -u origin feat/runtime-<topic>
 ### Update Specs pin in yai (runtime)
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
@@ -292,7 +307,7 @@ git push -u origin chore/bump-specs
 ### Update Specs pin in yai-cli
 
 ```bash
-cd ~/Developer/YAI/yai-cli
+cd $YAI_WORKSPACE/yai-cli
 git checkout main
 git pull --rebase
 
@@ -353,14 +368,14 @@ Rules:
 ### Update CLI pin in yai
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
 git checkout -b chore/bump-cli
 
 # Get the SHA from yai-cli
-CLI_SHA=$(git -C ~/Developer/YAI/yai-cli rev-parse HEAD)
+CLI_SHA=$(git -C $YAI_WORKSPACE/yai-cli rev-parse HEAD)
 echo "cli_sha=$CLI_SHA" > deps/yai-cli.ref
 
 # Verify file content
@@ -395,7 +410,7 @@ A `yai` tag (e.g., `v0.1.1`) triggers CI to build and publish the Runtime Bundle
 ### Preconditions (verify before tagging)
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
@@ -423,7 +438,7 @@ make bundle
 ### Release commands
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
@@ -499,7 +514,7 @@ git fetch --dry-run
 ```bash
 for repo in yai-specs yai-cli yai; do
   echo "=== $repo ==="
-  git -C ~/Developer/YAI/$repo log --oneline -1
+  git -C $YAI_WORKSPACE/$repo log --oneline -1
   echo ""
 done
 ```
@@ -507,13 +522,13 @@ done
 ### Cross-check pins vs actual repo state
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 
 SPEC_PIN=$(git -C deps/yai-specs rev-parse HEAD)
 CLI_PIN=$(grep 'cli_sha=' deps/yai-cli.ref | cut -d= -f2)
 
-SPEC_ACTUAL=$(git -C ~/Developer/YAI/yai-specs rev-parse HEAD)
-CLI_ACTUAL=$(git -C ~/Developer/YAI/yai-cli rev-parse HEAD)
+SPEC_ACTUAL=$(git -C $YAI_WORKSPACE/yai-specs rev-parse HEAD)
+CLI_ACTUAL=$(git -C $YAI_WORKSPACE/yai-cli rev-parse HEAD)
 
 echo "--- Specs ---"
 echo "Pinned:  $SPEC_PIN"
@@ -544,7 +559,7 @@ git -C deps/yai-specs diff <OLD_SHA>..<NEW_SHA> --stat
 Before every release, run the following checks:
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 
 # 1. No uncommitted changes in deps
 git status deps/
@@ -582,7 +597,7 @@ If `deps/yai-specs` differs from the intended pin, the release MUST be blocked u
 
 ```bash
 # On your local machine, verify the SHA exists in yai-cli
-cd ~/Developer/YAI/yai-cli
+cd $YAI_WORKSPACE/yai-cli
 git fetch origin
 git cat-file -t <CLI_SHA_FROM_REF>
 # If output is NOT "commit", the SHA is invalid or not pushed
@@ -591,8 +606,8 @@ git cat-file -t <CLI_SHA_FROM_REF>
 git log --oneline -5
 
 # Update the pin to a valid SHA and re-push
-cd ~/Developer/YAI/yai
-echo "cli_sha=$(git -C ~/Developer/YAI/yai-cli rev-parse HEAD)" > deps/yai-cli.ref
+cd $YAI_WORKSPACE/yai
+echo "cli_sha=$(git -C $YAI_WORKSPACE/yai-cli rev-parse HEAD)" > deps/yai-cli.ref
 git add deps/yai-cli.ref
 git commit -m "fix(cli): correct cli pin to valid SHA"
 git push origin main
@@ -608,7 +623,7 @@ git push origin main
 
 ```bash
 # Verify the SHA exists on yai-specs remote
-cd ~/Developer/YAI/yai-specs
+cd $YAI_WORKSPACE/yai-specs
 git fetch origin
 SPEC_SHA=$(cat ../yai/deps/yai-specs/.git 2>/dev/null || git -C ../yai/deps/yai-specs rev-parse HEAD)
 git cat-file -t $SPEC_SHA
@@ -618,7 +633,7 @@ git cat-file -t $SPEC_SHA
 git push origin $SPEC_SHA:refs/heads/main   # only if it's a legit commit
 
 # Or re-pin to the current valid HEAD
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git -C deps/yai-specs fetch origin
 git -C deps/yai-specs checkout origin/main
 git add deps/yai-specs
@@ -654,7 +669,7 @@ git -C deps/yai-specs rev-parse HEAD
 **Debug steps:**
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 
 # Check build artifacts
 make clean-all
@@ -680,7 +695,7 @@ Use when a critical bug must be fixed in a shipped version without pulling in un
 ### Setup hotfix branch
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 
 # Find the tag SHA you want to hotfix
 git log --oneline --decorate | grep "tag:"
@@ -726,7 +741,7 @@ git show v0.1.2 --stat
 After the hotfix is released, the fix MUST be backported to `main` to avoid regression.
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 git checkout main
 git pull --rebase
 
@@ -762,7 +777,7 @@ SHA pinning is immutable. A branch ref can be force-pushed or overwritten, makin
 ### How do I audit what went into a specific release?
 
 ```bash
-cd ~/Developer/YAI/yai
+cd $YAI_WORKSPACE/yai
 
 # Checkout the release tag
 git checkout v0.1.1
@@ -804,16 +819,16 @@ Paste this into any terminal to get a full snapshot of all three repos and curre
 echo "===== YAI State Report $(date -u +%Y-%m-%dT%H:%M:%SZ) =====" && \
 echo "" && \
 echo "--- yai-specs ---" && \
-git -C ~/Developer/YAI/yai-specs log --oneline -3 && \
+git -C $YAI_WORKSPACE/yai-specs log --oneline -3 && \
 echo "" && \
 echo "--- yai-cli ---" && \
-git -C ~/Developer/YAI/yai-cli log --oneline -3 && \
+git -C $YAI_WORKSPACE/yai-cli log --oneline -3 && \
 echo "" && \
 echo "--- yai (runtime) ---" && \
-git -C ~/Developer/YAI/yai log --oneline -3 && \
+git -C $YAI_WORKSPACE/yai log --oneline -3 && \
 echo "" && \
 echo "--- Pins in yai ---" && \
-echo "specs pin : $(git -C ~/Developer/YAI/yai/deps/yai-specs rev-parse HEAD 2>/dev/null || echo 'NOT FOUND')" && \
-echo "cli pin   : $(grep 'cli_sha=' ~/Developer/YAI/yai/deps/yai-cli.ref 2>/dev/null || echo 'NOT FOUND')" && \
+echo "specs pin : $(git -C $YAI_WORKSPACE/yai/deps/yai-specs rev-parse HEAD 2>/dev/null || echo 'NOT FOUND')" && \
+echo "cli pin   : $(grep 'cli_sha=' $YAI_WORKSPACE/yai/deps/yai-cli.ref 2>/dev/null || echo 'NOT FOUND')" && \
 echo ""
 ```

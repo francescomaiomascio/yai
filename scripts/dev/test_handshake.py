@@ -3,6 +3,7 @@ import socket
 import struct
 import json
 import time
+import os
 
 # ====================================================
 # Costanti del protocollo (allineate al kernel)
@@ -11,7 +12,7 @@ YAI_FRAME_MAGIC = 0x59414950
 YAI_PROTOCOL_IDS_VERSION = 1
 YAI_CMD_HANDSHAKE = 0x0102
 YAI_CMD_PING      = 0x0101
-SOCK_PATH = "/home/mothx/.yai/run/root/control.sock"
+SOCK_PATH = os.environ.get("YAI_SOCK_PATH", os.path.expanduser("~/.yai/run/root/control.sock"))
 
 # ====================================================
 # Envelope builder

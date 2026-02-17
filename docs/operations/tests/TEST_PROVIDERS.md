@@ -2,7 +2,7 @@
 
 ## Quick Gate
 ```bash
-cd ~/Developer/YAI/yai
+cd "$(git rev-parse --show-toplevel)"
 ./scripts/gates/providers.sh dev
 ```
 
