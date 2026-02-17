@@ -1,250 +1,428 @@
-# YAI Workspaces Lifecycle v3 — Operational Runbook
+---
+id: RB-WORKSPACES-LIFECYCLE
+title: Workspaces Lifecycle
+status: active
+owner: runtime
+effective_date: 2026-02-18
+revision: 1
+supersedes: []
+depends_on:
+  - RB-ROOT-HARDENING
+related:
+  adr:
+    - docs/design/adr/ADR-007-workspace-isolation.md
+    - docs/design/adr/ADR-008-connection-lifecycle.md
+  specs:
+    - deps/yai-specs/specs/protocol/include/transport.h
+    - deps/yai-specs/specs/protocol/include/auth.h
+    - deps/yai-specs/specs/protocol/include/errors.h
+    - deps/yai-specs/specs/protocol/include/yai_protocol_ids.h
+  test_plans:
+    - docs/test-plans/hardfail.md
+  tools:
+    - tools/bin/yai-verify
+    - tools/bin/yai-gate
+    - tools/bin/yai-suite
+---
 
-**Branch:** `feat/workspaces-lifecycle-v1`  
-**Objective:** Transition workspace commands from "stub OK" to "real side-effects" with L0↔L1 hardening maintained.
+# RB-WORKSPACES-LIFECYCLE — Workspace Commands With Real Side-Effects (YAI 0.1.x)
+
+This runbook upgrades workspace commands from "stub OK" to **real, governed, deterministic side-effects** while preserving Root hardening.
+
+Non-negotiable outcomes:
+- `yai kernel ws create <id>` creates `~/.yai/run/<id>/` and minimal state files
+- `yai kernel ws destroy <id>` removes deterministically, guarded against traversal
+- Root remains a pure router (envelope validation + byte-perfect forward/relay)
+- Kernel enforces policy and applies side-effects only when valid + authorized
 
 ---
 
-## Objective
+## 1) Sequencing and prerequisites
 
-Bring workspace commands from "stub OK" to "real side-effects":
-- `yai kernel ws create <id>` actually creates `~/.yai/run/<id>/` (with minimal files)
-- `yai kernel ws destroy <id>` removes deterministically (with guardrails)
-- Root remains pure router: validates envelope + byte-perfect forward to Kernel
-- Kernel does enforcement (defense-in-depth) and applies side-effects only if valid/authorized
+### Position in the global sequence
+
+1. Root hardening ✅
+2. Workspaces lifecycle ✅ (this document)
+3. Engine attach
+4. Data plane
+5. Mind Redis STM
+
+### Hard prerequisites
+
+- Root hardening is complete enough that:
+  - handshake gate is active
+  - ws_id validation exists and is used
+  - Root forwards byte-perfect to Kernel
+  - deterministic error replies exist (no silent drop)
+- Kernel boots and can respond to control plane requests
+- CLI can run at least:
+  - `yai root ping`
+  - `yai kernel status` (or any kernel command that hits the kernel)
+
+If these are not true, stop and complete RB-ROOT-HARDENING first.
 
 ---
 
-## Pre-flight (Always the Same)
+## 2) Scope
+
+### In scope
+
+- Implement Kernel handlers for:
+  - `ws.create`
+  - `ws.destroy`
+  - `ws.list` (minimal)
+- Ensure side effects happen ONLY under:
+  - valid ws_id
+  - successful handshake
+  - correct authority for privileged ops (arming+role)
+- Minimal on-disk workspace layout (0.1.x)
+- Deterministic response behavior + logging for all outcomes
+
+### Out of scope
+
+- Data plane databases (LMDB/DuckDB) beyond a minimal manifest placeholder
+- Engine attachment and engine per-workspace sockets
+- Mind STM / Redis
+- Expanding protocol schema or adding new envelope fields
+
+---
+
+## 3) Operational workflow (daily)
+
+### Clean runtime before each test round
+
+```bash
+pkill -f yai-root-server || true
+pkill -f yai-kernel || true
+pkill -f yai-boot || true
+```
+
+### Build + boot baseline
 
 ```bash
 make clean
 make
-pkill -f yai-root-server || true
-pkill -f yai-boot || true
 yai-boot --master
+```
+
+### Sanity checks
+
+```bash
 yai root ping
 ```
 
----
+Expected:
 
-## STEP 0: Protocol Robustness Minimum (If Not Already Done in v2)
-
-### Files to read FIRST
-- `deps/yai-specs/specs/protocol/transport.h`
-- `deps/yai-specs/specs/protocol/yai_protocol_ids.h`
-- `deps/yai-specs/specs/protocol/errors.h` (create if doesn't exist)
-
-### Deliverables
-
-**1. Standard error codes (numeric) used everywhere (root+kernel+cli)**
-- `YAI_E_BAD_MAGIC`
-- `YAI_E_BAD_VERSION`
-- `YAI_E_BAD_WS_ID`
-- `YAI_E_NEED_HANDSHAKE`
-- `YAI_E_PAYLOAD_TOO_BIG`
-- `YAI_E_ARMING_REQUIRED`
-- `YAI_E_ROLE_REQUIRED`
-- `YAI_E_BAD_CHECKSUM` (even if checksum not active today)
-
-**2. Frame invariant rules**
-- `payload_len <= YAI_MAX_PAYLOAD`
-- `arming ∈ {0,1}`
-- `role` in known range
-- `ws_id` always validated with shared function (see STEP 2)
-
-**3. Error reply always as valid frame**
-- Valid envelope
-- Short JSON payload like: `{"ok":false,"code":123,"msg":"bad_ws_id"}`
+- Root responds
+- logs exist (root/kernel), and failures are deterministic
 
 ---
 
-## STEP 1: Root Forward CONTROL to Kernel (No More "ok" Stub)
-
-### Why
-Today `ws create/destroy` responds OK but creates nothing because Root is not forwarding to Kernel.
-
-### Files to read FIRST
-- `kernel/src/bin/yai_root_server.c`
-- `kernel/src/core/control_transport.c` (for frame read/write helpers)
-- `kernel/src/core/rpc_binary.c` (if relay logic already there)
-- `deps/yai-specs/specs/protocol/transport.h`
-
-### Implementation
-
-**Root accepts only:**
-- `HANDSHAKE` (always)
-- Other commands ONLY after handshake
-
-**Root validates invariants:**
-- magic/version/len/ws_id/arming-role range
-
-**Root does byte-perfect relay to Kernel (kernel plane socket):**
-- Writes identical envelope + identical payload to Kernel
-- Reads envelope+payload response from Kernel
-- Rewrites identical to client
-
-**Root does not:**
-- Interpret payload
-- Mutate trace_id
-- Mutate ws_id
-
-### Acceptance
-- `yai kernel ws create testws` produces log in root: "FORWARD cmd=... ws=system"
-- See Kernel receive/respond (kernel log or temporary debug)
+## 4) Deliverables (phased)
 
 ---
 
-## STEP 2: Centralize ws_id Validation (SINGLE Definition)
+### 0.1.0 — Define Minimal Workspace Layout + Manifest Stub
 
-### Target file
-- `deps/yai-specs/specs/protocol/transport.h`
+**Branch:** `feat/workspaces-lifecycle-0.1.0-layout`  
+**Goal:** decide and implement the minimal filesystem footprint created by `ws create`.
 
-### Add
-`static inline int yai_ws_id_is_valid(const char *s)` with strong rule:
-- Length: 1..35
-- Charset: `[A-Za-z0-9_-]`
-- Forbid: `/` `~` spaces
-- (Optional) forbid initial `.`
+#### Minimal layout (0.1.x)
 
-### Used by
-- Root
-- Kernel
-- CLI
-- (Later) Engine
+`~/.yai/run/<ws_id>/`
 
-### Acceptance
-Root and Kernel deterministically reject:
-- `"ws_id":"../../x"`
-- `"ws_id":"~blah"`
-- `"ws_id":"a b"`
+- `manifest.json` (required)
+- `logs/` (directory; optional creation in 0.1.0, mandatory by later runbooks)
 
----
+`manifest.json` (0.1.x stub, stable keys):
 
-## STEP 3: Kernel Actually Implement ws.create/ws.destroy/ws.list
-
-### Files to read FIRST
-- `kernel/src/core/yai_session.c`
-- `kernel/src/core/rpc_binary.c` (or wherever dispatch arrives)
-- `kernel/src/enforcement/enforcement.c` (if already parsing JSON payload)
-- `kernel/src/core/transport.c` (paths / run dir)
-
-### Practical method (zero client rework)
-
-**1. Read payload that CLI sends for `yai kernel ws create testws`**
-- File to open: `tools/cli/src/cmd_kernel.c` (or where JSON is composed)
-
-**2. Kernel must recognize operation (even with minimal parsing) and do:**
-
-**For `create`:**
-- Create `~/.yai/run/<ws_id>/`
-- Create `semantic.sqlite` (even empty or "touch" for now)
-- Create `lock` / `kernel.pid` if already planned
-
-**For `destroy`:**
-- Remove safely ONLY inside `~/.yai/run/<ws_id>/` (never path traversal)
-
-**For `list`:**
-- List present workspaces (even rough: dir scan)
-
-### Fundamental guardrail
-- No side-effects if ws_id invalid
-- Response always deterministic (ok/error code)
-
-### Real warning fix (you saw this)
-Replace:
-```c
-if (!env->ws_id || strlen(env->ws_id) == 0)
-```
-With:
-```c
-if (env->ws_id[0] == '\0')
-```
-
-### Acceptance
-```bash
-yai kernel ws create testws
-ls -la ~/.yai/run/testws
-yai kernel ws destroy testws
-test ! -d ~/.yai/run/testws && echo OK
-```
-
----
-
-## STEP 4: Authority Enforcement Envelope-Only (Defense in Depth)
-
-### Files to read FIRST
-- `deps/yai-specs/specs/protocol/auth.h` (or define policy table there)
-- Root + Kernel (same command matrix → required role/arming)
-
-### Rule
-- Root blocks already, Kernel re-blocks anyway
-- Enforcement ONLY on envelope metadata (command_id, role, arming), never on payload
-
-### Practical note
-If you start requiring `arming=1 role=operator` for `ws destroy/create`, then:
-- Update CLI (cmd_kernel) to set authority before call
-- Or add flags `--arming --role operator` CLI-side
-
-### Acceptance
-- `yai kernel ws destroy testws` without arming → FAIL (code "arming required")
-- With arming+operator → OK
-
----
-
-## STEP 5: Test Matrix "Workspace + Protocol"
-
-### Mandatory minimum
-- Handshake ok
-- Handshake wrong version
-- ws create valid → creates dir
-- ws create invalid id → deterministic reject
-- ws destroy without arming → reject
-- payload_len > max → reject
-- magic/version wrong → reject
-
-### Recommended script
-- `scripts/protocol_torture.sh` (15 cases, PASS/FAIL)
-
----
-
-## Final Checklist
-
-- [ ] `yai kernel ws create testws` creates `~/.yai/run/testws/`
-- [ ] `yai kernel ws destroy testws` removes directory
-- [ ] Invalid ws_id rejected deterministically
-- [ ] Authority checks enforced (arming+role)
-- [ ] Root forwards byte-perfect to Kernel
-- [ ] All test cases pass
-
----
-
-## Expected Output (When Complete)
-
-- **Root** = pure router, validates and forwards
-- **Kernel** = real workspace lifecycle + enforcement
-- **Workspaces** = actual directories with state files
-- **Protocol** = hardened end-to-end
-
----
-
-## Bonus Enhancement
-
-When implementing `ws create`, also create minimal `manifest.json` inside `~/.yai/run/<ws_id>/`:
 ```json
 {
   "ws_id": "testws",
-  "created_at": "2026-02-16T10:30:00Z",
+  "created_at": "2026-02-18T00:00:00Z",
   "owner_role": "operator"
 }
 ```
-This becomes single source of truth for L2/L3 layers.
+
+#### File targets
+
+Specs/doc (optional but recommended even as a short note):
+
+- `docs/runbooks/workspaces-lifecycle.md` (this file; update if needed)
+
+Kernel paths/helpers:
+
+- `kernel/src/core/project_tree.c` (if it already builds directories)
+- or introduce:
+  - `kernel/include/storage_paths.h` (NEW, if not already created by other runbooks)
+  - `kernel/src/core/storage_paths.c` (NEW)
+
+Ensure directory creation is jailed under `~/.yai/run/`.
+
+#### Verification
+
+Create a workspace:
+
+```bash
+yai kernel ws create testws
+```
+
+Confirm:
+
+- `~/.yai/run/testws/manifest.json` exists and contains ws_id
+
+#### Acceptance (0.1.0)
+
+- [ ] minimal layout decision is written (in this runbook section is enough)
+- [ ] `ws create` produces directory + manifest stub
+- [ ] all paths are inside `~/.yai/run/<ws_id>/` only
 
 ---
 
-## Next Steps After v3
+### 0.1.1 — Kernel Implements ws.create With Guardrails
 
-Once workspaces are real and hardened:
-1. Document socket layout decision in ADR
-2. Attach L2 Engine to tenant plane (see next runbook)
-3. Add workspace manifest validation
+**Branch:** `feat/workspaces-lifecycle-0.1.1-ws-create`  
+**Goal:** `ws create` performs real side-effects only when input is valid and authorized.
+
+#### File targets (read-first)
+
+Specs:
+
+- `deps/yai-specs/specs/protocol/include/transport.h`
+- `deps/yai-specs/specs/protocol/include/yai_protocol_ids.h`
+- `deps/yai-specs/specs/protocol/include/errors.h`
+- `deps/yai-specs/specs/protocol/include/auth.h`
+
+Kernel dispatch/codec/session:
+
+- `kernel/src/core/rpc_binary.c` (or current dispatch entry)
+- `kernel/src/core/rpc_codec.c` (if present)
+- `kernel/src/core/yai_session.c`
+- `kernel/src/core/transport.c` or `kernel/src/core/project_tree.c` (filesystem ops)
+
+CLI command assembly (so you know what payload looks like):
+
+- wherever kernel ws commands are built (CLI source in this repo)
+
+#### Rules (hard)
+
+No side effects if:
+
+- ws_id is invalid
+- ws_id empty
+- handshake not established (if applicable to your current session model)
+- authority is insufficient for this command (see 0.1.3)
+
+Deterministic response always:
+
+- on success: OK response frame
+- on failure: error response frame, with stable numeric code
+
+#### C correctness note (must fix if present)
+
+Do not check ws_id as pointer:
+
+```c
+if (!env->ws_id || strlen(env->ws_id) == 0)   // WRONG
+```
+
+Use:
+
+```c
+if (env->ws_id[0] == '\0')                    // RIGHT
+```
+
+#### Verification
+
+```bash
+yai kernel ws create testws
+ls -la ~/.yai/run/testws
+cat ~/.yai/run/testws/manifest.json
+```
+
+#### Acceptance (0.1.1)
+
+- [ ] `ws create` creates `~/.yai/run/<ws_id>/`
+- [ ] manifest stub is created deterministically
+- [ ] invalid ws_id produces deterministic reject and creates nothing
+
+---
+
+### 0.1.2 — Kernel Implements ws.list (Minimal)
+
+**Branch:** `feat/workspaces-lifecycle-0.1.2-ws-list`  
+**Goal:** list existing workspaces deterministically (even a simple dir scan is fine in 0.1.x).
+
+#### File targets
+
+Kernel:
+
+- `kernel/src/core/transport.c` / `project_tree.c` (dir scan utilities)
+- `kernel/src/core/rpc_binary.c` (dispatch)
+
+CLI:
+
+- ws list command if missing
+
+#### Rules
+
+- Only list directories under `~/.yai/run/`
+- Must ignore non-directories and invalid names (apply ws_id validator)
+
+#### Verification
+
+```bash
+yai kernel ws create testws
+yai kernel ws list
+```
+
+#### Acceptance (0.1.2)
+
+- [ ] `ws list` returns at least `testws`
+- [ ] output is deterministic and filtered by validator
+
+---
+
+### 0.1.3 — ws.destroy + Authority Enforcement (arming+role)
+
+**Branch:** `feat/workspaces-lifecycle-0.1.3-ws-destroy-authority`  
+**Goal:** destroy is privileged and must be envelope-governed; Kernel must re-check even if Root does.
+
+#### File targets
+
+Specs:
+
+- `deps/yai-specs/specs/protocol/include/auth.h`
+- `deps/yai-specs/specs/protocol/include/roles.h` (if present)
+
+Root (only if you mirror policy fast-fail; Kernel is mandatory):
+
+- `root/src/yai_root_server.c`
+
+Kernel:
+
+- `kernel/src/core/rpc_binary.c`
+- `kernel/src/core/yai_session.c`
+- filesystem removal code location (`transport.c` / `project_tree.c`)
+
+#### Policy (0.1.x baseline)
+
+`ws.destroy` requires:
+
+- `arming=1`
+- `role>=operator`
+
+`ws.create` can be either:
+
+- privileged (same as destroy) OR
+- allowed for `role>=user` with arming optional
+
+Choose ONE policy and document it here (do not drift).
+
+Recommended for safety during early 0.1.x: make both create and destroy privileged until you formalize tenancy.
+
+#### Guardrails (critical)
+
+Deletion must be jailed:
+
+- target path must be exactly `~/.yai/run/<ws_id>/`
+- refuse if ws_id invalid (no attempt)
+- refuse if computed path escapes jail
+
+Deletion must be deterministic:
+
+- if workspace missing: return NOTFOUND code (or OK with "already absent"), but pick one and keep it stable
+- always log outcome
+
+#### Verification
+
+```bash
+yai kernel ws create testws
+
+# should fail without authority
+yai kernel ws destroy testws
+
+# should pass with authority (depending on your CLI flags model)
+yai kernel ws destroy testws --arming --role operator
+
+test ! -d ~/.yai/run/testws && echo OK
+```
+
+#### Acceptance (0.1.3)
+
+- [ ] destroy without arming rejects deterministically
+- [ ] destroy with arming+operator succeeds
+- [ ] deletion cannot traverse paths (no rm -rf outside jail)
+
+---
+
+### 0.1.4 — Torture + Repeatability (Workspace + Protocol)
+
+**Branch:** `feat/workspaces-lifecycle-0.1.4-torture`  
+**Goal:** prove workspace lifecycle correctness with repeatable tests.
+
+#### Minimum test cases
+
+1. handshake ok
+2. handshake wrong version → reject
+3. ws create valid → creates dir + manifest
+4. ws create invalid id → reject + no side effects
+5. ws destroy without arming → reject
+6. ws destroy with arming+role → ok
+7. payload_len > max → reject
+8. magic/version wrong → reject
+
+#### Tools
+
+Preferred (move toward tools/):
+
+- `tools/bin/yai-gate ws`
+- `tools/bin/yai-suite` (add a workspace sub-suite)
+
+Temporary compatibility allowed:
+
+- `scripts/...` only as shim; do not add new logic there
+
+#### Verification
+
+One command that runs all cases and prints PASS/FAIL per case.
+
+#### Acceptance (0.1.4)
+
+- [ ] tests are repeatable on a clean runtime
+- [ ] every failure produces deterministic error codes and logs
+
+---
+
+## 5) Observability and audit
+
+Minimum log expectations:
+
+- Root logs FORWARD/REJECT decisions (already covered by RB-ROOT-HARDENING)
+- Kernel logs:
+  - ws.create attempt + outcome
+  - ws.destroy attempt + outcome
+  - filesystem path actually used (after jail resolution)
+
+Always include ws_id + trace_id when available.
+
+---
+
+## 6) Rollback
+
+Rollback is phase-based:
+
+- each phase is merged only after its acceptance passes
+- if a phase regresses:
+  - revert the phase branch merge
+  - do not "patch-forward" in later phases
+
+---
+
+## 7) Final Definition of Done (Workspaces lifecycle complete)
+
+- [ ] `yai kernel ws create testws` creates `~/.yai/run/testws/manifest.json`
+- [ ] `yai kernel ws list` lists created workspaces deterministically
+- [ ] `yai kernel ws destroy testws` requires authority and deletes only inside jail
+- [ ] invalid ws_id is rejected deterministically with zero side effects
+- [ ] workspace+protocol torture suite passes repeatably
