@@ -92,25 +92,36 @@ EOF
 print_triangle_fix_plan() {
   local expected_sha="$1"
   local cli_sha="$2"
-  local cli_ref_specs="$3"
-  local short="${expected_sha:0:7}"
+  local cli_ref_specs_pin="$3"
+  local shortspecs="${expected_sha:0:7}"
 
   cat <<EOF
 [SUMMARY]
   expected_specs_sha : ${expected_sha}
   yai_cli_ref_sha    : ${cli_sha}
-  yai_cli_ref_specs  : ${cli_ref_specs}
+  yai_cli_ref_specs  : ${cli_ref_specs_pin}
 
 Fix (required before release):
 
-  Option A: bump yai-cli specs pin to ${expected_sha}, then update yai cli ref to that new yai-cli commit.
-  Option B: choose a yai-cli commit already pinned to ${expected_sha}, then update deps/yai-cli.ref in yai.
+  export YAI_WORKSPACE="<path-to-your-yai-workspace>"
 
-  Inspect yai-cli commit pinned in yai:
-    git clone --no-checkout ${YAI_CLI_REPO} /tmp/yai-cli-ref-check
-    git -C /tmp/yai-cli-ref-check fetch --depth 1 origin ${cli_sha}
-    git -C /tmp/yai-cli-ref-check checkout -q ${cli_sha}
-    git -C /tmp/yai-cli-ref-check ls-tree -d HEAD deps/yai-specs
+  yai-cli (choose/prepare an aligned commit pinned to ${expected_sha})
+    cd "\$YAI_WORKSPACE/yai-cli"
+    git checkout main && git pull --rebase
+    git rev-parse HEAD
+    git ls-tree -d HEAD deps/yai-specs
+    # if deps/yai-specs gitlink is not ${expected_sha}, bump specs pin in yai-cli first.
+    # when ready, keep HEAD as aligned commit:
+    NEW_CLI_SHA=\$(git rev-parse HEAD)
+
+  yai (update deps/yai-cli.ref to aligned CLI commit)
+    cd "\$YAI_WORKSPACE/yai"
+    git checkout main && git pull --rebase
+    git checkout -b chore/bump-cli-ref-${shortspecs}
+    printf "cli_sha=%s\n" "\$NEW_CLI_SHA" > deps/yai-cli.ref
+    git add deps/yai-cli.ref
+    git commit -m "chore(release): pin yai-cli to \${NEW_CLI_SHA:0:7}"
+    git push -u origin chore/bump-cli-ref-${shortspecs}
 EOF
 }
 
@@ -121,7 +132,7 @@ fail() {
   local yai_pin="${4:-unknown}"
   local yai_cli_pin="${5:-unknown}"
   local yai_cli_ref_sha="${6:-unknown}"
-  local yai_cli_ref_specs="${7:-unknown}"
+  local yai_cli_ref_specs_pin="${7:-unknown}"
   echo
   echo "[RESULT] FAIL"
   echo "[REASON] $msg"
@@ -129,7 +140,7 @@ fail() {
     print_fix_plan "$expected_sha" "$yai_pin" "$yai_cli_pin"
   fi
   if [ -n "$expected_sha" ] && [ "$code" -eq 5 ]; then
-    print_triangle_fix_plan "$expected_sha" "$yai_cli_ref_sha" "$yai_cli_ref_specs"
+    print_triangle_fix_plan "$expected_sha" "$yai_cli_ref_sha" "$yai_cli_ref_specs_pin"
   fi
   echo
   echo "[MACHINE]"
@@ -139,7 +150,7 @@ fail() {
   echo "yai_pin=$yai_pin"
   echo "yai_cli_pin=$yai_cli_pin"
   echo "yai_cli_ref_sha=$yai_cli_ref_sha"
-  echo "yai_cli_ref_specs=$yai_cli_ref_specs"
+  echo "yai_cli_ref_specs_pin=$yai_cli_ref_specs_pin"
   if [ -n "$expected_sha" ]; then
     echo "expected_specs_sha=$expected_sha"
   fi
@@ -162,9 +173,15 @@ if ! echo "$YAI_CLI_MAIN_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
   fail 3 "cannot resolve yai-cli main HEAD from $YAI_CLI_REPO"
 fi
 
-CLI_TMP="$TMP_DIR/yai-cli"
-git clone --depth 1 "$YAI_CLI_REPO" "$CLI_TMP" >/dev/null 2>&1
-YAI_CLI_SPECS_PIN="$(extract_specs_gitlink "$CLI_TMP" HEAD)"
+CLI_MAIN_TMP="$TMP_DIR/yai-cli-main"
+git clone --no-checkout "$YAI_CLI_REPO" "$CLI_MAIN_TMP" >/dev/null 2>&1
+if ! git -C "$CLI_MAIN_TMP" fetch --depth 1 origin "$YAI_CLI_MAIN_SHA" >/dev/null 2>&1; then
+  fail 3 "cannot fetch yai-cli main commit $YAI_CLI_MAIN_SHA from $YAI_CLI_REPO"
+fi
+if ! git -C "$CLI_MAIN_TMP" checkout -q "$YAI_CLI_MAIN_SHA" >/dev/null 2>&1; then
+  fail 3 "cannot checkout yai-cli main commit $YAI_CLI_MAIN_SHA"
+fi
+YAI_CLI_SPECS_PIN="$(extract_specs_gitlink "$CLI_MAIN_TMP" HEAD)"
 if ! echo "$YAI_CLI_SPECS_PIN" | grep -Eq '^[0-9a-f]{40}$'; then
   fail 3 "could not resolve yai-cli specs pin from gitlink deps/yai-specs"
 fi
@@ -218,6 +235,7 @@ EXPECTED_SPECS_SHA="$YAI_SPECS_PIN"
 if [ "$STRICT_SPECS_HEAD" = "1" ]; then
   EXPECTED_SPECS_SHA="$SPECS_HEAD"
 fi
+echo "  expected_specs_sha : $(short_sha "$EXPECTED_SPECS_SHA")"
 
 if [ "$CLI_REF_SPECS_PIN" != "$EXPECTED_SPECS_SHA" ]; then
   fail 5 "yai-cli.ref commit is not aligned to expected specs pin" "$EXPECTED_SPECS_SHA" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN" "$CLI_SHA" "$CLI_REF_SPECS_PIN"
@@ -234,6 +252,6 @@ echo "exit_code=0"
 echo "yai_pin=$YAI_SPECS_PIN"
 echo "yai_cli_pin=$YAI_CLI_SPECS_PIN"
 echo "yai_cli_ref_sha=$CLI_SHA"
-echo "yai_cli_ref_specs=$CLI_REF_SPECS_PIN"
+echo "yai_cli_ref_specs_pin=$CLI_REF_SPECS_PIN"
 echo "expected_specs_sha=$EXPECTED_SPECS_SHA"
 echo "PASS: yai, yai-cli, and yai-cli.ref are aligned and valid."

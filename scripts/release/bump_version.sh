@@ -118,8 +118,14 @@ if [ ! -x "$PIN_SCRIPT" ]; then
   exit 1
 fi
 
+EXPECTED_SPECS_SHA="$(git -C deps/yai-specs rev-parse HEAD 2>/dev/null || true)"
+if ! echo "$EXPECTED_SPECS_SHA" | grep -Eq "^[0-9a-f]{40}$"; then
+  echo "ERROR: cannot resolve deps/yai-specs pin for EXPECTED_SPECS_SHA" >&2
+  exit 1
+fi
+
 PIN_BEFORE="$(awk -F= '/^cli_sha=/{print $2}' "$ROOT/deps/yai-cli.ref" 2>/dev/null || true)"
-PIN_AFTER="$("$PIN_SCRIPT")"
+PIN_AFTER="$(EXPECTED_SPECS_SHA="$EXPECTED_SPECS_SHA" "$PIN_SCRIPT")"
 echo "Resolved yai-cli pin: $PIN_AFTER"
 
 if ! echo "$PIN_AFTER" | grep -Eq "^[0-9a-f]{40}$"; then
@@ -127,19 +133,26 @@ if ! echo "$PIN_AFTER" | grep -Eq "^[0-9a-f]{40}$"; then
   exit 1
 fi
 
+PIN_CHANGED=0
 if [ "$PIN_BEFORE" != "$PIN_AFTER" ]; then
-  git add deps/yai-cli.ref
-  git commit -m "chore(release): pin yai-cli to ${PIN_AFTER:0:12}"
-  echo "Committed yai-cli pin update to ${PIN_AFTER:0:12}"
+  PIN_CHANGED=1
 fi
 
 if [ "$DO_COMMIT" -eq 1 ]; then
   git add VERSION CHANGELOG.md
+  if [ "$PIN_CHANGED" -eq 1 ]; then
+    git add deps/yai-cli.ref
+  fi
   git commit -m "chore(release): bump version to v${NEW}"
   echo "Created commit for v${NEW}"
+else
+  if [ "$PIN_CHANGED" -eq 1 ]; then
+    echo "Updated deps/yai-cli.ref (not committed; run with --commit to include it)."
+  fi
 fi
 
 if [ "$DO_TAG" -eq 1 ]; then
+  STRICT_SPECS_HEAD=1 bash "$ROOT/scripts/release/check_pins.sh"
   git tag -a "v${NEW}" -m "Release v${NEW}"
   echo "Created annotated tag v${NEW}"
 fi
