@@ -4,9 +4,9 @@ This matrix defines baseline compatibility for the `yai` runtime.
 
 ## Runtime and Specs
 
-| yai | deps/yai-specs | Notes |
-|---|---|---|
-| main (development) | pinned submodule commit in `deps/yai-specs` | authoritative contracts for current tree |
+| yai | SPECS_API_VERSION | deps/yai-specs pin | Notes |
+|---|---|---|---|
+| v0.1.x | v1 | pinned submodule commit in `deps/yai-specs` | initial public baseline |
 
 ## Platform Support (Current)
 

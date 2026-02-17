@@ -3,6 +3,9 @@
 YAI is the core runtime in C for sovereign execution: boot, root plane, kernel, and engine.
 Canonical contracts are pinned in `deps/yai-specs`.
 
+Current release baseline: `v0.1.0`.
+Current contract line: `SPECS_API_VERSION=v1`.
+
 ## Core Contract
 
 `deps/yai-specs` is the source of truth for protocol, control, graph, providers, vault, and formal contracts.

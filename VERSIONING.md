@@ -4,13 +4,15 @@
 
 This policy applies to the `yai` core runtime repository.
 
+Public release baseline: `v0.1.0` (2026-02-17).
+
 ## Scheme
 
 `yai` follows Semantic Versioning: `MAJOR.MINOR.PATCH`.
 
 - `MAJOR`: breaking runtime behavior or compatibility guarantees
 - `MINOR`: backward-compatible features or additive behavior
-- `PATCH`: backward-compatible fixes, hardening, docs, or maintenance
+- `PATCH`: backward-compatible fixes, hardening, docs, packaging, or maintenance
 
 ## Specs Pinning Requirement
 
@@ -32,6 +34,11 @@ or workspace/process lifecycle guarantees.
 ## Compatibility Link
 
 Compatibility guarantees and support matrix are maintained in `COMPATIBILITY.md`.
+
+## Legacy Tag Note
+
+Legacy tags like `v1.0.0-foundation` and `v1.1.0-foundation` are pre-public internal milestones.
+The public SemVer line starts at `v0.1.0`.
 
 ## License
 

@@ -7,18 +7,23 @@ and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
 
+- No unreleased changes.
+
+## [0.1.0] - 2026-02-17
+
 ### Added
 
-- Repository legal and governance hardening for public release readiness.
+- Canonical `build/ -> dist/ -> bundle/` pipeline with reproducible release assets.
+- Release bundle artifacts (`tar.gz`, `zip`, `manifest`, `SHA256SUMS`) and CI workflow.
 
 ### Changed
 
-- Repository license switched to Apache-2.0.
-- Meta/governance/security/versioning documentation aligned with spec-first model.
+- Repository legal/governance hardening for public release readiness.
+- Runtime build outputs standardized under `build/bin`.
 
 ### Security
 
-- Clarified disclosure process, threat model summary, and hardening checklist.
+- Public disclosure process and hardening checklist documented.
 
 ## License
 
