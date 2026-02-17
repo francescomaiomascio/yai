@@ -5,7 +5,9 @@
 # local
 
 target/
+# Canonical build/staging outputs
 build/
+dist/
 out/
 .next/
 node_modules/
