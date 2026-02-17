@@ -6,9 +6,13 @@ on:
   pull_request:
 
 jobs:
-  build-ubuntu:
-    name: Build and verify (Ubuntu)
-    runs-on: ubuntu-latest
+  build-linux:
+    name: Build and verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,8 +55,12 @@ jobs:
         run: bash scripts/dev/check-generated.sh
 
   build-macos:
-    name: Build (macOS)
-    runs-on: macos-latest
+    name: Build (macOS ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
