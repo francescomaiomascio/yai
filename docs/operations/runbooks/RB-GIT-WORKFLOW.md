@@ -32,7 +32,7 @@ This runbook applies to:
 Use a canonical workspace variable in examples:
 
 ```bash
-export YAI_WORKSPACE="${YAI_WORKSPACE:-$HOME/Developer/YAI}"
+export YAI_WORKSPACE="<path-to-your-yai-workspace>"
 ```
 
 All commands below assume repositories are located at:
