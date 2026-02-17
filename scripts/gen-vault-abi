@@ -93,7 +93,7 @@ def main() -> int:
     law_text = render_law_ids(spec, generated)
 
     header_path = out_dir / "deps/yai-specs/vault/yai_vault_abi.h"
-    law_path = out_dir / "law/formal/LAW_IDS.tla"
+    law_path = out_dir / "deps/yai-specs/contracts/formal/LAW_IDS.tla"
     header_path.parent.mkdir(parents=True, exist_ok=True)
     law_path.parent.mkdir(parents=True, exist_ok=True)
     header_path.write_text(header_text, encoding="utf-8")

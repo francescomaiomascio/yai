@@ -2,12 +2,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-LAW="$ROOT/law"
-FORMAL="$LAW/formal"
+SPECS_CONTRACTS="$ROOT/deps/yai-specs/contracts"
+FORMAL="$SPECS_CONTRACTS/formal"
 TLA_JAR="${TLA_JAR:-$HOME/Developer/tools/tla/tla2tools.jar}"
 
 echo "=== CORE ROOT: $ROOT"
-echo "=== LAW:       $LAW"
+echo "=== CONTRACTS: $SPECS_CONTRACTS"
 echo "=== FORMAL:    $FORMAL"
 echo "=== TLA_JAR:   $TLA_JAR"
 
@@ -49,12 +49,12 @@ PY
 
 echo "=== COMPLIANCE BASELINE CHECK"
 compliance_files=(
-  "law/extensions/compliance/C-001-compliance-context.md"
+  "deps/yai-specs/contracts/extensions/compliance/C-001-compliance-context.md"
   "deps/yai-specs/compliance/compliance.context.v1.json"
-  "law/compliance/packs/gdpr-eu/2026Q1/pack.meta.json"
-  "law/compliance/packs/gdpr-eu/2026Q1/taxonomy.data_classes.json"
-  "law/compliance/packs/gdpr-eu/2026Q1/taxonomy.purposes.json"
-  "law/compliance/packs/gdpr-eu/2026Q1/taxonomy.legal_basis.json"
+  "deps/yai-specs/contracts/compliance/packs/gdpr-eu/2026Q1/pack.meta.json"
+  "deps/yai-specs/contracts/compliance/packs/gdpr-eu/2026Q1/taxonomy.data_classes.json"
+  "deps/yai-specs/contracts/compliance/packs/gdpr-eu/2026Q1/taxonomy.purposes.json"
+  "deps/yai-specs/contracts/compliance/packs/gdpr-eu/2026Q1/taxonomy.legal_basis.json"
 )
 for f in "${compliance_files[@]}"; do
   if [[ ! -f "$f" ]]; then

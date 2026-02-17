@@ -3,7 +3,7 @@
 This document captures the **machine-level architecture commitments**
 of YAI as of the current runtime refactor phase.
 
-It is grounded in `law/` invariants and reflects the
+It is grounded in `deps/yai-specs/contracts/` invariants and reflects the
 post-envelope, post-authority enforcement state.
 
 The architecture is stratified across:
@@ -364,4 +364,3 @@ Law enforced at L1.
 Effects executed at L2.  
 Proposals generated at L3.  
 Governed by Root.
-

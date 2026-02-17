@@ -7,7 +7,7 @@ It is strict by design. Deviations must be explicit and justified.
 
 ## 1) Scope and Sources of Truth
 
-1. `law/` is the source of truth for:
+1. `deps/yai-specs/contracts/` is the source of truth for:
    - formal specs (schemas, contracts, protocol headers)
    - invariants and boundaries
    - formal models (TLA+), compliance packs
@@ -16,10 +16,10 @@ It is strict by design. Deviations must be explicit and justified.
    - operational runbooks (how to operate/build/test)
    - architecture narratives (how components fit together)
    - governance of documentation itself (this policy)
-   - reference pointers that link to `law/` (never duplicated specs)
+   - reference pointers that link to `deps/yai-specs/contracts/` (never duplicated specs)
 
-3. Documentation MUST NOT duplicate formal specifications from `law/`.
-   `docs/` may only explain or point to `law/`.
+3. Documentation MUST NOT duplicate formal specifications from `deps/yai-specs/contracts/`.
+   `docs/` may only explain or point to `deps/yai-specs/contracts/`.
 
 ---
 
@@ -30,7 +30,7 @@ YAI accepts these document types:
 - **RUNBOOK (RB-*)**: operational procedures, step-by-step execution.
 - **ADR (ADR-*)**: architecture decision records.
 - **GUIDE (G-*)**: conceptual explanations and usage guidance.
-- **REFERENCE (REF-*)**: pointers, indexes, quick links to `law/` and other docs.
+- **REFERENCE (REF-*)**: pointers, indexes, quick links to `deps/yai-specs/contracts/` and other docs.
 
 A document MUST fit exactly one type.
 
@@ -65,7 +65,7 @@ revision: <integer>
 supersedes: [<id>, ...]
 owner: <area>
 law_refs:
-  - <path in law/...>
+  - <path in deps/yai-specs/contracts/...>
 tags: [<tag>, ...]
 ---
 ```
@@ -75,7 +75,7 @@ Rules:
 - `id` MUST match the filename.
 - `revision` increments by 1 on meaningful changes.
 - `supersedes` is used when replacing a document.
-- `law_refs` MUST list the controlling `law/` references when applicable.
+- `law_refs` MUST list the controlling `deps/yai-specs/contracts/` references when applicable.
 
 ---
 
@@ -98,7 +98,7 @@ Rules:
 - `docs/guides/`
   Guides and conceptual docs.
 - `docs/reference/`
-  Indexes, pointers, and curated links (may reference `law/`).
+  Indexes, pointers, and curated links (may reference `deps/yai-specs/contracts/`).
 
 Prohibited:
 
@@ -159,7 +159,7 @@ ADRs MUST NOT contain operational procedures. Those belong in Runbooks.
 ## 9) Link and Reference Discipline
 
 1. Links MUST be relative paths inside the repo.
-2. Documents MUST prefer pointing to `law/` rather than copying content.
+2. Documents MUST prefer pointing to `deps/yai-specs/contracts/` rather than copying content.
 3. If a doc references a protocol field, it MUST link to the canonical header in `deps/yai-specs/`.
 
 ---
@@ -169,7 +169,7 @@ ADRs MUST NOT contain operational procedures. Those belong in Runbooks.
 1. Any change to:
    - `docs/governance/`
    - `docs/architecture/adr/`
-   - `law/`
+   - `deps/yai-specs/contracts/`
    
    requires a review before merge (no self-merge).
 

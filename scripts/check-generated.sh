@@ -25,8 +25,8 @@ if [[ -n "$DIFF_A" ]]; then
   exit 1
 fi
 
-DIFF_B=$(diff -u <(strip_generated < "$ROOT/law/formal/LAW_IDS.tla") \
-                 <(strip_generated < "$TMP_DIR/law/formal/LAW_IDS.tla") || true)
+DIFF_B=$(diff -u <(strip_generated < "$ROOT/deps/yai-specs/contracts/formal/LAW_IDS.tla") \
+                 <(strip_generated < "$TMP_DIR/deps/yai-specs/contracts/formal/LAW_IDS.tla") || true)
 if [[ -n "$DIFF_B" ]]; then
   echo "ERROR: LAW_IDS.tla drift"
   echo "$DIFF_B"
