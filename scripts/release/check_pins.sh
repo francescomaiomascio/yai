@@ -12,37 +12,51 @@ cleanup() {
 }
 trap cleanup EXIT
 
+short_sha() {
+  local sha="${1:-}"
+  if echo "$sha" | grep -Eq '^[0-9a-f]{40}$'; then
+    printf "%s" "${sha:0:12}"
+  else
+    printf "%s" "$sha"
+  fi
+}
+
 print_fix_plan() {
   local expected_sha="$1"
   local yai_pin="$2"
   local yai_cli_pin="$3"
   local short="${expected_sha:0:7}"
 
-  echo "summary: expected_specs_sha=${expected_sha} yai_pin=${yai_pin} yai_cli_pin=${yai_cli_pin}"
-  echo
-  echo "Fix (required before release):"
-  echo
-  echo "export YAI_WORKSPACE=\"\${YAI_WORKSPACE:-\$HOME/Developer/YAI}\""
-  echo
-  echo "yai-cli (bump deps/yai-specs to ${expected_sha})"
-  echo "cd \"\$YAI_WORKSPACE/yai-cli\""
-  echo "git checkout main && git pull --rebase"
-  echo "git checkout -b chore/bump-specs-${short}"
-  echo "git -C deps/yai-specs fetch origin"
-  echo "git -C deps/yai-specs checkout ${expected_sha}"
-  echo "git add deps/yai-specs"
-  echo "git commit -m \"chore(specs): bump yai-specs pin to ${short} in yai-cli\""
-  echo "git push -u origin chore/bump-specs-${short}"
-  echo
-  echo "yai (bump deps/yai-specs to ${expected_sha})"
-  echo "cd \"\$YAI_WORKSPACE/yai\""
-  echo "git checkout main && git pull --rebase"
-  echo "git checkout -b chore/bump-specs-${short}"
-  echo "git -C deps/yai-specs fetch origin"
-  echo "git -C deps/yai-specs checkout ${expected_sha}"
-  echo "git add deps/yai-specs"
-  echo "git commit -m \"chore(specs): bump yai-specs pin to ${short} in yai\""
-  echo "git push -u origin chore/bump-specs-${short}"
+  cat <<EOF
+[SUMMARY]
+  expected_specs_sha : ${expected_sha}
+  yai_pin            : ${yai_pin}
+  yai_cli_pin        : ${yai_cli_pin}
+
+Fix (required before release):
+
+  export YAI_WORKSPACE="<path-to-your-yai-workspace>"
+
+  yai-cli (bump deps/yai-specs to ${expected_sha})
+    cd "\$YAI_WORKSPACE/yai-cli"
+    git checkout main && git pull --rebase
+    git checkout -b chore/bump-specs-${short}
+    git -C deps/yai-specs fetch origin
+    git -C deps/yai-specs checkout ${expected_sha}
+    git add deps/yai-specs
+    git commit -m "chore(specs): bump yai-specs pin to ${short} in yai-cli"
+    git push -u origin chore/bump-specs-${short}
+
+  yai (bump deps/yai-specs to ${expected_sha})
+    cd "\$YAI_WORKSPACE/yai"
+    git checkout main && git pull --rebase
+    git checkout -b chore/bump-specs-${short}
+    git -C deps/yai-specs fetch origin
+    git -C deps/yai-specs checkout ${expected_sha}
+    git add deps/yai-specs
+    git commit -m "chore(specs): bump yai-specs pin to ${short} in yai"
+    git push -u origin chore/bump-specs-${short}
+EOF
 }
 
 fail() {
@@ -51,12 +65,22 @@ fail() {
   local expected_sha="${3:-}"
   local yai_pin="${4:-unknown}"
   local yai_cli_pin="${5:-unknown}"
-  echo "result=FAIL"
-  echo "reason=$msg"
+  echo
+  echo "[RESULT] FAIL"
+  echo "[REASON] $msg"
   if [ -n "$expected_sha" ] && { [ "$code" -eq 2 ] || [ "$code" -eq 3 ] || [ "$code" -eq 4 ]; }; then
     print_fix_plan "$expected_sha" "$yai_pin" "$yai_cli_pin"
   fi
-  echo "ERROR: $msg" >&2
+  echo
+  echo "[MACHINE]"
+  echo "result=FAIL"
+  echo "reason=$msg"
+  echo "exit_code=$code"
+  echo "yai_pin=$yai_pin"
+  echo "yai_cli_pin=$yai_cli_pin"
+  if [ -n "$expected_sha" ]; then
+    echo "expected_specs_sha=$expected_sha"
+  fi
   exit "$code"
 }
 
@@ -96,11 +120,12 @@ if ! git -C "$CHECK_TMP" cat-file -e "${YAI_SPECS_PIN}^{commit}" >/dev/null 2>&1
   fail 3 "yai specs pin $YAI_SPECS_PIN is not a valid commit in $YAI_SPECS_REPO" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 
-echo "yai_pin=$YAI_SPECS_PIN"
-echo "yai_cli_pin=$YAI_CLI_SPECS_PIN"
-echo "yai_cli_main_head=$YAI_CLI_MAIN_SHA"
-echo "yai_specs_main_head=$SPECS_HEAD"
-echo "strict_specs_head=$STRICT_SPECS_HEAD"
+echo "[CHECK]"
+echo "  yai_pin            : $(short_sha "$YAI_SPECS_PIN")"
+echo "  yai_cli_pin        : $(short_sha "$YAI_CLI_SPECS_PIN")"
+echo "  yai_cli_main_head  : $(short_sha "$YAI_CLI_MAIN_SHA")"
+echo "  yai_specs_main_head: $(short_sha "$SPECS_HEAD")"
+echo "  strict_specs_head  : $STRICT_SPECS_HEAD"
 
 if [ "$YAI_SPECS_PIN" != "$YAI_CLI_SPECS_PIN" ]; then
   fail 2 "pin mismatch between yai and yai-cli" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
@@ -110,6 +135,15 @@ if [ "$STRICT_SPECS_HEAD" = "1" ] && [ "$YAI_SPECS_PIN" != "$SPECS_HEAD" ]; then
   fail 4 "strict mode enabled and pin is not yai-specs/main HEAD" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 
+echo
+echo "[RESULT] PASS"
+echo "[REASON] aligned specs pins"
+echo
+echo "[MACHINE]"
 echo "result=PASS"
 echo "reason=aligned specs pins"
+echo "exit_code=0"
+echo "yai_pin=$YAI_SPECS_PIN"
+echo "yai_cli_pin=$YAI_CLI_SPECS_PIN"
+echo "expected_specs_sha=$SPECS_HEAD"
 echo "PASS: yai and yai-cli specs pins are aligned and valid."
