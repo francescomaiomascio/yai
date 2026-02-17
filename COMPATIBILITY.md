@@ -11,7 +11,7 @@ This matrix defines baseline compatibility for the `yai` runtime.
 ## Platform Support (Current)
 
 | Platform | Status | CI Coverage | Notes |
-|---|---|---|
+|---|---|---|---|
 | Ubuntu 22.04 | Supported | `ci.yml` | full build + generated artifact checks |
 | Ubuntu latest | Supported | `ci.yml` | full build + generated artifact checks |
 | Arch Linux (latest) | Supported | `ci.yml` (container) | full build + generated artifact checks |
