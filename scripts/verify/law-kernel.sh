@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SPECS_CONTRACTS="$ROOT/deps/yai-specs/contracts"
-FORMAL="$SPECS_CONTRACTS/formal"
+FORMAL="$ROOT/deps/yai-specs/formal"
 KERNEL="$ROOT/kernel"
 
 TLA_JAR="${TLA_JAR:-$HOME/Developer/tools/tla/tla2tools.jar}"

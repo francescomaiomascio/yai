@@ -226,7 +226,7 @@ impl KernelClient {
     
     pub fn handshake(&mut self) -> Result<(), String> {
         // Implement YAI_CMD_HANDSHAKE protocol
-        // (use protocol from deps/yai-specs/protocol/transport.h)
+        // (use protocol from deps/yai-specs/specs/protocol/transport.h)
         todo!("Implement handshake")
     }
     
