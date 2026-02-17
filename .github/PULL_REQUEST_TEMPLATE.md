@@ -1,8 +1,26 @@
 ## Context
 
-## Changes
+## What Changed
+
+## Why
 
 ## Verification
-- [ ] `make clean && make all`
-- [ ] `make docs`
-- [ ] `rg -n "deps/yai-specs" docs scripts` (0 matches)
+- [ ] `make all`
+- [ ] Relevant verify/gate scripts executed (specify below)
+- [ ] Documentation updated (if needed)
+
+### Commands Run
+```bash
+# paste commands here
+```
+
+## Contract Alignment
+- [ ] No contract changes in `deps/yai-specs`
+- [ ] Contract changes included and linked
+
+## Risk / Rollback
+
+## Checklist
+- [ ] No secrets/PII committed
+- [ ] Third-party notices updated (if vendoring/importing code)
+- [ ] CHANGELOG/compatibility impact considered
