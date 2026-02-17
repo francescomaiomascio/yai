@@ -112,6 +112,27 @@ mv "$TMP" CHANGELOG.md
 echo "Updated VERSION: $CURRENT -> $NEW"
 echo "Updated CHANGELOG: added section [${NEW}]"
 
+PIN_SCRIPT="$ROOT/scripts/release/pin_cli.sh"
+if [ ! -x "$PIN_SCRIPT" ]; then
+  echo "ERROR: missing executable pin script at $PIN_SCRIPT" >&2
+  exit 1
+fi
+
+PIN_BEFORE="$(awk -F= '/^cli_sha=/{print $2}' "$ROOT/deps/yai-cli.ref" 2>/dev/null || true)"
+PIN_AFTER="$("$PIN_SCRIPT")"
+echo "Resolved yai-cli pin: $PIN_AFTER"
+
+if ! echo "$PIN_AFTER" | grep -Eq "^[0-9a-f]{40}$"; then
+  echo "ERROR: resolved pin is invalid: $PIN_AFTER" >&2
+  exit 1
+fi
+
+if [ "$PIN_BEFORE" != "$PIN_AFTER" ]; then
+  git add deps/yai-cli.ref
+  git commit -m "chore(release): pin yai-cli to ${PIN_AFTER:0:12}"
+  echo "Committed yai-cli pin update to ${PIN_AFTER:0:12}"
+fi
+
 if [ "$DO_COMMIT" -eq 1 ]; then
   git add VERSION CHANGELOG.md
   git commit -m "chore(release): bump version to v${NEW}"
