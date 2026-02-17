@@ -12,11 +12,48 @@ cleanup() {
 }
 trap cleanup EXIT
 
+print_fix_plan() {
+  local expected_sha="$1"
+  local yai_pin="$2"
+  local yai_cli_pin="$3"
+  local short="${expected_sha:0:7}"
+
+  echo "summary: expected_specs_sha=${expected_sha} yai_pin=${yai_pin} yai_cli_pin=${yai_cli_pin}"
+  echo
+  echo "Fix (required before release):"
+  echo
+  echo "yai-cli (bump deps/yai-specs to ${expected_sha})"
+  echo "cd ~/Developer/YAI/yai-cli"
+  echo "git checkout main && git pull --rebase"
+  echo "git checkout -b chore/bump-specs-${short}"
+  echo "git -C deps/yai-specs fetch origin"
+  echo "git -C deps/yai-specs checkout ${expected_sha}"
+  echo "git add deps/yai-specs"
+  echo "git commit -m \"chore(specs): bump yai-specs pin to ${short} in yai-cli\""
+  echo "git push -u origin chore/bump-specs-${short}"
+  echo
+  echo "yai (bump deps/yai-specs to ${expected_sha})"
+  echo "cd ~/Developer/YAI/yai"
+  echo "git checkout main && git pull --rebase"
+  echo "git checkout -b chore/bump-specs-${short}"
+  echo "git -C deps/yai-specs fetch origin"
+  echo "git -C deps/yai-specs checkout ${expected_sha}"
+  echo "git add deps/yai-specs"
+  echo "git commit -m \"chore(specs): bump yai-specs pin to ${short} in yai\""
+  echo "git push -u origin chore/bump-specs-${short}"
+}
+
 fail() {
   local code="$1"
   local msg="$2"
+  local expected_sha="${3:-}"
+  local yai_pin="${4:-unknown}"
+  local yai_cli_pin="${5:-unknown}"
   echo "result=FAIL"
   echo "reason=$msg"
+  if [ -n "$expected_sha" ] && { [ "$code" -eq 2 ] || [ "$code" -eq 3 ] || [ "$code" -eq 4 ]; }; then
+    print_fix_plan "$expected_sha" "$yai_pin" "$yai_cli_pin"
+  fi
   echo "ERROR: $msg" >&2
   exit "$code"
 }
@@ -51,10 +88,10 @@ CHECK_TMP="$TMP_DIR/specs-check"
 git init -q "$CHECK_TMP"
 git -C "$CHECK_TMP" remote add origin "$YAI_SPECS_REPO"
 if ! git -C "$CHECK_TMP" fetch --depth 1 origin "$YAI_SPECS_PIN" >/dev/null 2>&1; then
-  fail 3 "yai specs pin $YAI_SPECS_PIN is not reachable in $YAI_SPECS_REPO"
+  fail 3 "yai specs pin $YAI_SPECS_PIN is not reachable in $YAI_SPECS_REPO" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 if ! git -C "$CHECK_TMP" cat-file -e "${YAI_SPECS_PIN}^{commit}" >/dev/null 2>&1; then
-  fail 3 "yai specs pin $YAI_SPECS_PIN is not a valid commit in $YAI_SPECS_REPO"
+  fail 3 "yai specs pin $YAI_SPECS_PIN is not a valid commit in $YAI_SPECS_REPO" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 
 echo "yai_pin=$YAI_SPECS_PIN"
@@ -64,11 +101,11 @@ echo "yai_specs_main_head=$SPECS_HEAD"
 echo "strict_specs_head=$STRICT_SPECS_HEAD"
 
 if [ "$YAI_SPECS_PIN" != "$YAI_CLI_SPECS_PIN" ]; then
-  fail 2 "pin mismatch between yai and yai-cli"
+  fail 2 "pin mismatch between yai and yai-cli" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 
 if [ "$STRICT_SPECS_HEAD" = "1" ] && [ "$YAI_SPECS_PIN" != "$SPECS_HEAD" ]; then
-  fail 4 "strict mode enabled and pin is not yai-specs/main HEAD"
+  fail 4 "strict mode enabled and pin is not yai-specs/main HEAD" "$SPECS_HEAD" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN"
 fi
 
 echo "result=PASS"
