@@ -17,13 +17,16 @@ CFLAGS ?= -Wall -Wextra -O2 -std=c11 -MMD -MP
 LDFLAGS ?=
 
 SPECS_DIR := $(ROOT_DIR)/deps/yai-specs
+SPECS_INC_PROTOCOL := $(SPECS_DIR)/specs/protocol/include
+SPECS_INC_RUNTIME := $(SPECS_DIR)/specs/protocol/runtime/include
+SPECS_INC_VAULT := $(SPECS_DIR)/specs/vault/include
 
 INCLUDES := \
 	-I./include \
 	-I$(SPECS_DIR) \
-	-I$(SPECS_DIR)/protocol \
-	-I$(SPECS_DIR)/protocol/runtime \
-	-I$(SPECS_DIR)/vault
+	-I$(SPECS_INC_PROTOCOL) \
+	-I$(SPECS_INC_RUNTIME) \
+	-I$(SPECS_INC_VAULT)
 
 ROOT_SRC := \
 	src/yai_root_server.c \

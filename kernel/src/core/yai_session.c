@@ -3,9 +3,9 @@
 #include "yai_session.h"
 #include "control_transport.h"
 
-#include <protocol/transport.h>
-#include <protocol/yai_protocol_ids.h>
-#include <protocol/protocol.h>
+#include <transport.h>
+#include <yai_protocol_ids.h>
+#include <protocol.h>
 
 #include <stdlib.h>
 #include <fcntl.h>

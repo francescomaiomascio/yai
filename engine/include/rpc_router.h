@@ -2,7 +2,7 @@
 #ifndef YAI_RPC_ROUTER_H
 #define YAI_RPC_ROUTER_H
 
-#include "protocol/transport.h"
+#include "transport.h"
 
 
 /**

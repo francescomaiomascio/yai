@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <protocol/transport.h>
+#include <transport.h>
 
 #define MAX_SESSIONS    32
 #define MAX_WS_ID_LEN   64

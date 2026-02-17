@@ -4,9 +4,9 @@
 
 #include "yai_kernel.h"
 #include "control_transport.h"
-#include <protocol/transport.h>
-#include <protocol/protocol.h>
-#include <protocol/yai_protocol_ids.h>
+#include <transport.h>
+#include <protocol.h>
+#include <yai_protocol_ids.h>
 
 /*
  * Scrive un errore protocol-level usando Envelope Binario.

@@ -16,9 +16,9 @@ INPUT                  = boot/include \
                          kernel/include \
                          engine/include \
                          runtime/protocol \
-                         deps/yai-specs/protocol \
-                         deps/yai-specs/protocol/runtime \
-                         deps/yai-specs/vault \
+                         deps/yai-specs/specs/protocol/include \
+                         deps/yai-specs/specs/protocol/runtime/include \
+                         deps/yai-specs/specs/vault/include \
                          README.md \
                          docs/dev-guide/doxygen-mainpage.md
 

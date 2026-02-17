@@ -15,14 +15,17 @@ BIN_DIR := $(BIN_BUILD)
 TARGET := $(BIN_DIR)/yai-boot
 
 SPECS_DIR := $(ROOT_DIR)/deps/yai-specs
+SPECS_INC_PROTOCOL := $(SPECS_DIR)/specs/protocol/include
+SPECS_INC_RUNTIME := $(SPECS_DIR)/specs/protocol/runtime/include
+SPECS_INC_VAULT := $(SPECS_DIR)/specs/vault/include
 
 CFLAGS ?= -Wall -Wextra -O2 -std=c11 -MMD -MP
 CFLAGS += -I./include
 CFLAGS += -I$(ROOT_DIR)/kernel/include
 CFLAGS += -I$(SPECS_DIR)
-CFLAGS += -I$(SPECS_DIR)/protocol
-CFLAGS += -I$(SPECS_DIR)/protocol/runtime
-CFLAGS += -I$(SPECS_DIR)/vault
+CFLAGS += -I$(SPECS_INC_PROTOCOL)
+CFLAGS += -I$(SPECS_INC_RUNTIME)
+CFLAGS += -I$(SPECS_INC_VAULT)
 
 LDFLAGS ?=
 

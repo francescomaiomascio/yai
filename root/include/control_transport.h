@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-#include <protocol/runtime/rpc_runtime.h>
+#include <rpc_runtime.h>
 
 
 
