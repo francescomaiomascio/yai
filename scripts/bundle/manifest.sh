@@ -15,27 +15,34 @@ CLI_GIT_SHA="$6"
 SPECS_GIT_SHA="$7"
 PLATFORM_OS="$8"
 PLATFORM_ARCH="$9"
+CLI_REF_SHA="$CLI_REF"
 
 BIN_DIR="$STAGE_DIR/bin"
 OUT_MANIFEST="$STAGE_DIR/manifest.json"
 
+fail() { echo "ERROR: $*" >&2; exit 1; }
+
 for req in "$STAGE_DIR" "$BUNDLE_VERSION" "$CORE_VERSION" "$CORE_GIT_SHA" "$CLI_REF" "$CLI_GIT_SHA" "$SPECS_GIT_SHA" "$PLATFORM_OS" "$PLATFORM_ARCH"; do
   if [ -z "$req" ]; then
-    echo "ERROR: manifest requires non-empty fields" >&2
-    exit 1
+    fail "manifest requires non-empty fields"
   fi
 done
 
-if [ ! -d "$BIN_DIR" ]; then
-  echo "ERROR: missing bin directory in stage: $BIN_DIR" >&2
-  exit 1
-fi
+# core git sha must be available
+[ -n "${CORE_GIT_SHA:-}" ] || fail "core.git_sha missing"
+echo "$CORE_GIT_SHA" | grep -Eq '^[0-9a-f]{40}$' || fail "core.git_sha invalid: $CORE_GIT_SHA"
+
+# cli ref must be available
+[ -n "${CLI_REF_SHA:-}" ] || fail "cli.ref missing"
+echo "$CLI_REF_SHA" | grep -Eq '^[0-9a-f]{40}$' || fail "cli.ref invalid: $CLI_REF_SHA"
+
+[ -d "$BIN_DIR" ] || fail "missing bin directory in stage: $BIN_DIR"
+[ -f "$STAGE_DIR/bin/yai" ] || fail "manifest expects bin/yai but it's missing in stage"
 
 required_bins=(yai-boot yai-root-server yai-kernel yai-engine yai)
 for bin in "${required_bins[@]}"; do
   if [ ! -f "$BIN_DIR/$bin" ]; then
-    echo "ERROR: missing required binary for manifest: $BIN_DIR/$bin" >&2
-    exit 1
+    fail "missing required binary for manifest: $BIN_DIR/$bin"
   fi
 done
 
@@ -46,8 +53,7 @@ hash_file() {
   elif command -v shasum >/dev/null 2>&1; then
     shasum -a 256 "$f" | awk '{print $1}'
   else
-    echo "ERROR: no sha256 tool found (sha256sum/shasum)" >&2
-    exit 1
+    fail "no sha256 tool found (sha256sum/shasum)"
   fi
 }
 
@@ -100,5 +106,9 @@ CREATED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   printf '\n  ]\n'
   printf '}\n'
 } > "$OUT_MANIFEST"
+
+for must in bin/yai bin/yai-boot bin/yai-kernel bin/yai-root-server bin/yai-engine; do
+  grep -q "\"path\": \"$must\"" "$OUT_MANIFEST" || fail "manifest missing artifact entry: $must"
+done
 
 echo "Generated manifest: $OUT_MANIFEST"

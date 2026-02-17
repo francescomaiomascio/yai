@@ -36,6 +36,7 @@ jobs:
       - name: Release preflight (specs pin alignment)
         env:
           STRICT_SPECS_HEAD: "1"
+          STRICT_BUNDLE_ENTRYPOINT: "1"
         run: bash scripts/release/check_pins.sh
 
       - name: Validate release metadata (tags only)
@@ -96,6 +97,9 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           FILES="$(find release-assets -type f \( -name '*.tar.gz' -o -name '*.zip' \) | sort)"
+          echo "TAG=$TAG"
+          echo "FILES:"
+          echo "$FILES"
           if [ -z "$FILES" ]; then
             echo "ERROR: no bundle zip/tar assets found for release upload"
             exit 1

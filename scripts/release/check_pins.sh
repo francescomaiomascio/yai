@@ -241,6 +241,13 @@ if [ "$CLI_REF_SPECS_PIN" != "$EXPECTED_SPECS_SHA" ]; then
   fail 5 "yai-cli.ref commit is not aligned to expected specs pin" "$EXPECTED_SPECS_SHA" "$YAI_SPECS_PIN" "$YAI_CLI_SPECS_PIN" "$CLI_SHA" "$CLI_REF_SPECS_PIN"
 fi
 
+if [ "${STRICT_BUNDLE_ENTRYPOINT:-0}" = "1" ]; then
+  [ -x "$ROOT/scripts/bundle/build_bundle.sh" ] || fail 3 "missing executable scripts/bundle/build_bundle.sh"
+  [ -x "$ROOT/scripts/bundle/manifest.sh" ] || fail 3 "missing executable scripts/bundle/manifest.sh"
+  grep -qE '^bundle:' "$ROOT/Makefile" || fail 3 "Makefile missing bundle target"
+  echo "[CHECK] bundle entrypoint scripts present"
+fi
+
 echo
 echo "[RESULT] PASS"
 echo "[REASON] aligned specs pins and yai-cli.ref triangle"

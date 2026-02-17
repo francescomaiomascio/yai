@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+fail() { echo "ERROR: $*" >&2; exit 1; }
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DIST_ROOT="${DIST_ROOT:-$ROOT_DIR/dist}"
 BIN_DIST="${BIN_DIST:-$DIST_ROOT/bin}"
@@ -19,32 +21,17 @@ EXPECTED_BINS=(
   yai-engine
 )
 
-if [ ! -d "$BIN_DIST" ]; then
-  echo "ERROR: missing $BIN_DIST. Run 'make dist' first." >&2
-  exit 1
-fi
+[ -d "$BIN_DIST" ] || fail "missing $BIN_DIST. Run 'make dist' first."
 
 for bin in "${EXPECTED_BINS[@]}"; do
-  if [ ! -f "$BIN_DIST/$bin" ]; then
-    echo "ERROR: missing dist binary $BIN_DIST/$bin. Run 'make dist'." >&2
-    exit 1
-  fi
+  [ -f "$BIN_DIST/$bin" ] || fail "missing dist binary $BIN_DIST/$bin. Run 'make dist'."
 done
 
-if [ ! -d "$ROOT_DIR/deps/yai-specs" ]; then
-  echo "ERROR: missing deps/yai-specs. Run 'git submodule update --init --recursive'." >&2
-  exit 1
-fi
+[ -d "$ROOT_DIR/deps/yai-specs" ] || fail "missing deps/yai-specs. Run 'git submodule update --init --recursive'."
 
-if [ ! -f "$CLI_PIN_FILE" ]; then
-  echo "ERROR: missing CLI pin file $CLI_PIN_FILE" >&2
-  exit 1
-fi
+[ -f "$CLI_PIN_FILE" ] || fail "missing CLI pin file $CLI_PIN_FILE"
 CLI_PIN_SHA="$(awk -F= '/^cli_sha=/{print $2}' "$CLI_PIN_FILE" | tr -d '[:space:]')"
-if ! echo "$CLI_PIN_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
-  echo "ERROR: invalid cli_sha in $CLI_PIN_FILE (expected 40-hex SHA)" >&2
-  exit 1
-fi
+echo "$CLI_PIN_SHA" | grep -Eq '^[0-9a-f]{40}$' || fail "invalid cli_sha in $CLI_PIN_FILE (expected 40-hex SHA)"
 
 CORE_GIT_SHA="$(git -C "$ROOT_DIR" rev-parse HEAD)"
 CORE_GIT_SHA_SHORT="$(git -C "$ROOT_DIR" rev-parse --short=12 HEAD)"
@@ -81,10 +68,7 @@ done
 CLI_SRC_DIR="$TMP_ROOT/yai-cli"
 echo "[bundle] ingesting yai-cli from $YAI_CLI_REPO @ $CLI_PIN_SHA"
 git clone "$YAI_CLI_REPO" "$CLI_SRC_DIR"
-if ! git -C "$CLI_SRC_DIR" checkout "$CLI_PIN_SHA"; then
-  echo "ERROR: failed to checkout pinned yai-cli SHA $CLI_PIN_SHA" >&2
-  exit 1
-fi
+git -C "$CLI_SRC_DIR" checkout "$CLI_PIN_SHA" || fail "failed to checkout pinned yai-cli SHA $CLI_PIN_SHA"
 
 # Force specs parity with this runtime bundle pin to avoid drift.
 rm -rf "$CLI_SRC_DIR/deps/yai-specs"
@@ -100,19 +84,13 @@ mkdir -p "$CLI_SRC_DIR/deps/yai-specs"
 # Build only the CLI executable target (skip docs side effects).
 make -C "$CLI_SRC_DIR" "$CLI_SRC_DIR/dist/bin/yai-cli"
 CLI_BIN="$CLI_SRC_DIR/dist/bin/yai-cli"
-if [ ! -f "$CLI_BIN" ]; then
-  echo "ERROR: yai-cli build succeeded but binary not found at $CLI_BIN" >&2
-  exit 1
-fi
+[ -f "$CLI_BIN" ] || fail "yai-cli build succeeded but binary not found at $CLI_BIN"
 cp "$CLI_BIN" "$STAGE_DIR/bin/yai"
 chmod +x "$STAGE_DIR/bin/yai"
 
 CLI_GIT_SHA="$(git -C "$CLI_SRC_DIR" rev-parse HEAD)"
 CLI_GIT_SHA_SHORT="$(git -C "$CLI_SRC_DIR" rev-parse --short=12 HEAD)"
-if [ "$CLI_GIT_SHA" != "$CLI_PIN_SHA" ]; then
-  echo "ERROR: checked out CLI SHA ($CLI_GIT_SHA) does not match pinned SHA ($CLI_PIN_SHA)" >&2
-  exit 1
-fi
+[ "$CLI_GIT_SHA" = "$CLI_PIN_SHA" ] || fail "checked out CLI SHA ($CLI_GIT_SHA) does not match pinned SHA ($CLI_PIN_SHA)"
 
 if [ -n "${BUNDLE_VERSION:-}" ]; then
   VERSION="$BUNDLE_VERSION"
@@ -179,10 +157,34 @@ bash "$ROOT_DIR/scripts/bundle/manifest.sh" \
       shasum -a 256 "$f"
     done > SHA256SUMS
   else
-    echo "ERROR: sha256 tool not found (sha256sum/shasum)." >&2
-    exit 1
+    fail "sha256 tool not found (sha256sum/shasum)."
   fi
 )
+
+# --- HARD CHECKS (CLI = bin/yai) ---
+STAGE_BIN="$STAGE_DIR/bin"
+[ -d "$STAGE_BIN" ] || fail "stage bin dir missing: $STAGE_BIN"
+
+# CLI entrypoint must exist
+[ -f "$STAGE_BIN/yai" ] || fail "missing CLI entrypoint: bin/yai"
+[ -x "$STAGE_BIN/yai" ] || fail "bin/yai is not executable"
+
+# Planes must exist
+for p in yai-boot yai-kernel yai-root-server yai-engine; do
+  [ -f "$STAGE_BIN/$p" ] || fail "missing plane binary: bin/$p"
+  [ -x "$STAGE_BIN/$p" ] || fail "bin/$p is not executable"
+done
+
+# No empty bin set and no empty required binaries.
+[ "$(find "$STAGE_BIN" -maxdepth 1 -type f | wc -l | tr -d '[:space:]')" -gt 0 ] || fail "bin directory is empty: $STAGE_BIN"
+for p in yai yai-boot yai-kernel yai-root-server yai-engine; do
+  [ "$(wc -c < "$STAGE_BIN/$p" | tr -d '[:space:]')" -gt 0 ] || fail "bin/$p is empty"
+done
+
+# CLI must be runnable in help mode (no vault attach)
+"$STAGE_BIN/yai" --help >/dev/null 2>&1 || fail "bin/yai --help failed"
+
+echo "[bundle] HARD CHECKS PASS: CLI=bin/yai and planes present"
 
 TAR_OUT="$OUT_ROOT/${BUNDLE_NAME}.tar.gz"
 ZIP_OUT="$OUT_ROOT/${BUNDLE_NAME}.zip"
@@ -198,10 +200,7 @@ tar -C "$STAGE_ROOT" -czf "$TAR_OUT" "$BUNDLE_NAME"
 cp "$STAGE_DIR/manifest.json" "$MANIFEST_OUT"
 cp "$STAGE_DIR/SHA256SUMS" "$SHA_OUT"
 
-if [ ! -x "$STAGE_DIR/bin/yai" ]; then
-  echo "ERROR: bundled CLI is not executable at $STAGE_DIR/bin/yai" >&2
-  exit 1
-fi
+[ -x "$STAGE_DIR/bin/yai" ] || fail "bundled CLI is not executable at $STAGE_DIR/bin/yai"
 
 rm -rf "$TMP_ROOT"
 
