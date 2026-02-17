@@ -56,6 +56,17 @@ Fix (required before release):
     git add deps/yai-specs
     git commit -m "chore(specs): bump yai-specs pin to ${short} in yai"
     git push -u origin chore/bump-specs-${short}
+
+  close bump branches (after PR merge to main)
+    cd "\$YAI_WORKSPACE/yai-cli"
+    git checkout main && git pull --rebase
+    git branch -d chore/bump-specs-${short} || git branch -D chore/bump-specs-${short}
+    git push origin --delete chore/bump-specs-${short} || true
+
+    cd "\$YAI_WORKSPACE/yai"
+    git checkout main && git pull --rebase
+    git branch -d chore/bump-specs-${short} || git branch -D chore/bump-specs-${short}
+    git push origin --delete chore/bump-specs-${short} || true
 EOF
 }
 
