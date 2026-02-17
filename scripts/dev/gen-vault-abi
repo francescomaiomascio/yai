@@ -33,7 +33,7 @@ def pascal_case(value: str) -> str:
 def render_header(spec: dict, generated: str) -> str:
     header = spec["header"]
     lines = [
-        "/* AUTO-GENERATED: deps/yai-specs/vault/vault_abi.json */",
+        "/* AUTO-GENERATED: vault/vault_abi.json */",
         f"/* Generated: {generated} */",
         "#ifndef YAI_VAULT_ABI_H",
         "#define YAI_VAULT_ABI_H",
@@ -53,7 +53,7 @@ def render_header(spec: dict, generated: str) -> str:
 def render_law_ids(spec: dict, generated: str) -> str:
     header = spec["header"]
     lines = [
-        "\\* AUTO-GENERATED: deps/yai-specs/vault/vault_abi.json",
+        "\\* AUTO-GENERATED: vault/vault_abi.json",
         f"\\* Generated: {generated}",
         "---- MODULE LAW_IDS ----",
         f"VaultAbiVersion == {spec['version']}",
