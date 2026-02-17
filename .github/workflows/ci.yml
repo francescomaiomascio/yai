@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.YAI_REPO_READ_TOKEN != '' && secrets.YAI_REPO_READ_TOKEN || github.token }}
 
       - name: Install toolchain
         run: |
@@ -47,6 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.YAI_REPO_READ_TOKEN != '' && secrets.YAI_REPO_READ_TOKEN || github.token }}
 
       - name: Build
         run: make all
@@ -69,6 +71,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.YAI_REPO_READ_TOKEN != '' && secrets.YAI_REPO_READ_TOKEN || github.token }}
 
       - name: Build
         run: make all
@@ -90,6 +93,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.YAI_REPO_READ_TOKEN != '' && secrets.YAI_REPO_READ_TOKEN || github.token }}
 
       - name: Build
         run: make all
@@ -109,6 +113,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.YAI_REPO_READ_TOKEN != '' && secrets.YAI_REPO_READ_TOKEN || github.token }}
 
       - name: Build
         run: make all
