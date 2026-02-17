@@ -1,29 +1,46 @@
 # Governance
 
-Governance in YAI is a structural constraint derived from the Foundation and enforced by the runtime.
-It defines how authority, responsibility, and accountability are treated across all layers.
+## Scope
 
-## Authority
+This document defines governance for the `yai` runtime implementation repository.
+Canonical normative contracts are maintained in `deps/yai-specs`.
 
-All execution must satisfy:
-- explicit authority
-- traceable authority
-- accountable authority
+## Spec-First Process
 
-Authority is never inferred or implicit.
+For protocol, control, graph, vault, and compliance contract changes:
 
-## Responsibility and Accountability
+1. Update contract source in `deps/yai-specs` (or upstream `yai-specs`) first.
+2. Review and merge contract change with compatibility/versioning rationale.
+3. Update runtime implementation in `yai` to match pinned contracts.
+4. Verify with runtime and contract-facing tests before release.
 
-Every action must be attributable and reconstructable.
-Automation does not remove responsibility.
+Runtime-first changes that alter normative behavior are not accepted.
 
-## Non-Bypassability
+## ADR Policy
 
-Governance constraints cannot be bypassed by implementation details, optimizations, or tooling shortcuts.
-Violations invalidate compliance for the project.
+- ADR location: `docs/architecture/adr/`
+- Use template: `docs/templates/ADR.template.md`
+- ADR required for:
+  - cross-layer boundary changes
+  - authority/enforcement model changes
+  - wire/protocol behavior changes
+  - compatibility policy changes
 
-## References
+## Ownership Model
 
-- `docs/architecture/`
-- `docs/governance/`
-- `deps/yai-specs/contracts/`
+- Specs (`deps/yai-specs/*`) are normative.
+- Runtime (`boot/`, `core/`, `kernel/`, `engine/`, `runtime/`) is implementation.
+- If implementation conflicts with specs, implementation must be corrected.
+
+## Required Review Areas
+
+Changes in these areas require explicit maintainer review:
+
+- `deps/yai-specs/*` pointer updates in this repo
+- `kernel/` enforcement and authority gating
+- `engine/` provider gates and execution boundaries
+- `runtime/protocol/` envelope/protocol integration
+
+## License
+
+Governance policy files in this repository are licensed under Apache-2.0.

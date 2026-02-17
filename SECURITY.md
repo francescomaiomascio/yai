@@ -1,135 +1,47 @@
-# Security Policy — YAI Law
+# Security Policy
 
-## Purpose
+## Scope
 
-This document defines the **security posture** of the YAI Law repository.
+This policy covers the `yai` runtime repository.
+Contract-level normative behavior is defined in `deps/yai-specs` and consumed by this runtime.
 
-Its purpose is to explicitly establish:
+## Disclosure Process
 
-- the scope of security applicability
-- what constitutes a security concern at the foundation level
-- which classes of issues are explicitly out of scope
-- how security-relevant issues are reported and handled
+Use one of the following channels:
 
-This policy exists to prevent ambiguity, misplaced expectations,
-and improper escalation of concerns that do not belong to this layer.
+- Open a private GitHub Security Advisory for this repository, if available.
+- Otherwise open a GitHub issue with clear impact, reproduction, and affected paths.
 
----
-
-## Repository Scope
-
-YAI Law contains the **axiomatic and authoritative layer** of the YAI ecosystem.
-
-It includes exclusively:
-
-- axioms and first principles
-- structural invariants
-- canonical definitions
-- governance rules
-- semantic boundaries and exclusions
-
-It explicitly does **not** include:
-
-- executable code
-- runtime components
-- svcs or daemons
-- APIs, protocols, or interfaces
-- infrastructure definitions
-- deployment or operational artifacts
-
-As a result, this repository exposes **no operational, network, or execution-level attack surface**.
-
----
+Do not include secrets, tokens, credentials, or private data in reports.
 
 ## Supported Versions
 
-YAI Law does not define “supported versions” in an operational or
-security-maintenance sense.
+- Active development line: `main`
+- Release support windows and compatibility guarantees are defined in `VERSIONING.md` and `COMPATIBILITY.md`.
 
-Security relevance in this repository applies only to:
+## Exposure Model
 
-- conceptual correctness
-- semantic consistency
-- preservation of declared authority boundaries
-- non-violation of stated axioms and invariants
+`yai` is local-first and not internet-exposed by default.
+Primary runtime surfaces are local process boundaries and workspace-scoped Unix Domain Sockets.
 
-No guarantees are made regarding downstream implementations,
-even when they claim compliance.
+## Threat Model (Summary)
 
----
+Primary security boundaries:
 
-## Definition of a Security Issue
+- Root plane authority and process supervision (`core/`)
+- Workspace UDS control sockets and envelope validation
+- Workspace isolation across run directories and process state
+- Provider gate attachment/detachment and trust transitions (`engine/`)
 
-Within the scope of YAI Law, a **security issue** is any change,
-omission, or inconsistency that compromises the integrity of the foundation.
+## Hardening Checklist
 
-This includes, but is not limited to:
+- Keep `deps/yai-specs` pinned and verified before upgrade.
+- Validate request envelope/version before dispatch.
+- Enforce role/arming/authority checks on privileged operations.
+- Keep workspace-scoped sockets, locks, and runtime files isolated.
+- Ensure logs/events are emitted for critical state transitions and denials.
+- Do not commit runtime logs, secrets, or generated state.
 
-- violation of declared axioms or invariants
-- introduction of implicit or hidden authority
-- semantic ambiguity that may enable unsafe downstream interpretations
-- erosion of explicit conceptual boundaries
-- contradictions that undermine the trustworthiness of the foundation layer
+## License
 
-Security at this level is **epistemic**, not operational.
-
----
-
-## Explicitly Out of Scope
-
-The following are **not security issues** for this repository:
-
-- software vulnerabilities
-- dependency or supply-chain issues
-- cryptographic concerns
-- runtime exploits
-- infrastructure or deployment security
-- third-party integrations
-
-Such concerns must be addressed in the appropriate downstream repositories.
-
----
-
-## Reporting Process
-
-Security-relevant issues should be reported by opening a **public GitHub Issue**
-in this repository.
-
-Reports must:
-
-- explicitly reference the affected documents or sections
-- describe the semantic or structural impact
-- explain why the issue constitutes a security concern at the foundation level
-
-There is **no private disclosure channel** for this repository.
-
----
-
-## Disclosure Model
-
-All reports, discussions, and resolutions are handled **publicly and transparently**.
-
-YAI Law contains no sensitive operational information and therefore
-does not require embargoed disclosure or coordinated vulnerability handling.
-
----
-
-## Authority Definition
-
-For YAI Law, **security is defined as**:
-
-> The preservation of conceptual integrity, semantic clarity,
-> and explicit authority boundaries across the YAI system.
-
-Any change that weakens these properties is considered a security risk,
-even in the absence of executable code.
-
----
-
-## Canonical Status
-
-This policy is authoritative for YAI Law.
-
-Downstream repositories must define their own security policies,
-appropriate to their execution and operational scope,
-while remaining consistent with the principles defined here.
+This security policy document is licensed under Apache-2.0.

@@ -1,23 +1,28 @@
 # Foundation
 
-YAI derives its axioms, invariants, and boundary constraints from **YAI Foundation v1.0.0**.
-This dependency is explicit and non-negotiable.
+YAI is a sovereign runtime: authority is explicit, execution is deterministic, and effects are traceable.
+The system is designed so contracts define behavior and runtime enforces behavior without silent drift.
 
-## Scope
+## Layer Model
 
-Foundation constrains what this repository may assume, infer, and execute.
-No implementation decision may override or weaken Foundation authority.
+- `L0 Contracts` - canonical normative contracts in `deps/yai-specs/`
+- `L1 Kernel` - authority enforcement, boundary checks, and policy gating
+- `L2 Engine` - deterministic execution under kernel-governed constraints
+- `L3 Mind/Clients` - proposers/orchestrators that never override authority
 
-## Reference
+## Non-Negotiable Principles
 
-- Repository: https://github.com/francescomaiomascio/yai-foundation
-- Version: `v1.0.0`
-- Tag: `v1.0.0-foundation`
+- Auditability: externally relevant actions must be reconstructible from logs/events.
+- No silent side effects: state/effect changes require explicit command path and policy checks.
+- Effect boundary: authority boundaries are explicit and enforced at runtime interfaces.
+- Spec-first: runtime contracts are implemented from `deps/yai-specs`; implementation is never normative.
 
-## Alignment
+## Runtime Guarantees
 
-Architecture and governance guidance live in:
-- `docs/architecture/`
-- `docs/governance/`
+- Authority decisions are made in governed planes, not inferred ad hoc.
+- Workspace isolation is first-class and enforced across socket/process boundaries.
+- Deterministic components remain deterministic even when integrated with probabilistic clients.
 
-This document defines conceptual dependency only; runtime details live in this repo and must remain aligned.
+## License
+
+Foundation and governance artifacts in this repository are distributed under Apache-2.0.

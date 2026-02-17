@@ -1,43 +1,49 @@
 # YAI
 
-YAI is a **layered, sovereign runtime** for governed cognition.
-It separates probabilistic intelligence from deterministic control and makes authority explicit, enforceable, and auditable.
+YAI is the core runtime in C for sovereign execution: boot, root plane, kernel, and engine.
+Canonical contracts are pinned in `deps/yai-specs`.
+
+## Core Contract
+
+`deps/yai-specs` is the source of truth for protocol, control, graph, providers, vault, and formal contracts.
+If runtime behavior diverges from `deps/yai-specs`, runtime is a bug and must be fixed.
+
+## Repository Map
+
+- `deps/yai-specs/` - L0 canonical contracts (submodule)
+- `boot/` - runtime bootstrap and bring-up entrypoints
+- `core/` - root plane services and control-plane core
+- `kernel/` - L1 authority enforcement runtime
+- `engine/` - L2 deterministic execution and provider gates
+- `runtime/` - runtime glue and protocol integration surface
+- `scripts/` - operations, verification, and gate scripts
+- `docs/` - architecture, guides, runbooks, and reference docs
+- `data/` - local datasets used by tests/ops; policy in `DATA_POLICY.md`
 
 ## Quickstart
 
 ```bash
-make clean && make all
+git submodule update --init --recursive
+make all
 ./dist/bin/yai-boot
-./dist/bin/yai-kernel status
 ```
 
-## Repository Map
+Verification commands available in this repo:
 
-- `boot/` — root entrypoint and workspace bring-up
-- `core/` — control plane core services
-- `kernel/` — authority and enforcement runtime (C)
-- `engine/` — deterministic execution bridge and gates (C)
-- `runtime/` — protocol/runtime interfaces
-- `docs/` — architecture, guides, reference, operations
-- `scripts/` — verification and tooling
+```bash
+./scripts/yai-verify
+./scripts/verify-core.sh
+./scripts/verify-events.sh
+```
 
-## Contracts (Canonical)
+## Ecosystem
 
-All contracts are defined in `deps/yai-specs` and are authoritative for protocol, control, graph, vault, and compliance.
-This repo consumes those headers and JSONs directly.
-
-## Tooling
-
-Related repos:
-- `yai-cli`
-- `yai-yx`
-- `yai-mind`
-
-## Documentation
-
-- `docs/README.md`
-- API Reference (Doxygen): https://francescomaiomascio.github.io/yai/
+- `yai-specs` - normative contracts repository
+- `yai-cli` - operator/developer command-line client
+- `yai-yx` - graphical runtime cockpit
+- `yai-mind` - higher-level orchestration layer
 
 ## License
 
-See `LICENSE`.
+This repository is licensed under Apache-2.0. See `LICENSE` and `NOTICE`.
+Third-party components keep their own licenses as documented in `THIRD_PARTY_NOTICES.md`.
