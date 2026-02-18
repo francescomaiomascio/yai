@@ -12,7 +12,7 @@ OUT_ROOT="$BUNDLE_ROOT/out"
 TMP_ROOT="$BUNDLE_ROOT/.bundle_tmp"
 CLI_PIN_FILE="$ROOT_DIR/deps/yai-cli.ref"
 
-YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/francescomaiomascio/yai-cli.git}"
+YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/yai-labs/yai-cli.git}"
 
 EXPECTED_BINS=(
   yai-boot

@@ -1,14 +1,14 @@
 # Default owner
-* @francescomaiomascio
+* @yai-labs/maintainers
 
 # Critical runtime boundaries
-/boot/** @francescomaiomascio
-/root/** @francescomaiomascio
-/kernel/** @francescomaiomascio
-/engine/** @francescomaiomascio
-/runtime/** @francescomaiomascio
+/boot/** @yai-labs/maintainers
+/root/** @yai-labs/maintainers
+/kernel/** @yai-labs/maintainers
+/engine/** @yai-labs/maintainers
+/runtime/** @yai-labs/maintainers
 
 # Build and operations
-/Makefile @francescomaiomascio
-/scripts/** @francescomaiomascio
-/.github/workflows/** @francescomaiomascio
+/Makefile @yai-labs/maintainers
+/scripts/** @yai-labs/maintainers
+/.github/workflows/** @yai-labs/maintainers

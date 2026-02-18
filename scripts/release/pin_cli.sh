@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 PIN_FILE="$ROOT/deps/yai-cli.ref"
-YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/francescomaiomascio/yai-cli.git}"
+YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/yai-labs/yai-cli.git}"
 YAI_CLI_BRANCH="${YAI_CLI_BRANCH:-main}"
 EXPECTED_SPECS_SHA="${EXPECTED_SPECS_SHA:-}"
 

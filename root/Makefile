@@ -23,7 +23,7 @@ SPECS_INC_VAULT := $(SPECS_DIR)/specs/vault/include
 
 INCLUDES := \
 	-I./include \
-	-I$(ROOT_DIR)/include/specs_compat \
+	-I$(ROOT_DIR)/include \
 	-I$(SPECS_DIR) \
 	-I$(SPECS_INC_PROTOCOL) \
 	-I$(SPECS_INC_RUNTIME) \

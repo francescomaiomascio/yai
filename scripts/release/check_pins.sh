@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-YAI_SPECS_REPO="${YAI_SPECS_REPO:-https://github.com/francescomaiomascio/yai-specs.git}"
-YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/francescomaiomascio/yai-cli.git}"
+YAI_SPECS_REPO="${YAI_SPECS_REPO:-https://github.com/yai-labs/yai-specs.git}"
+YAI_CLI_REPO="${YAI_CLI_REPO:-https://github.com/yai-labs/yai-cli.git}"
 STRICT_SPECS_HEAD="${STRICT_SPECS_HEAD:-1}"
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"

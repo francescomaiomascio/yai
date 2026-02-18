@@ -25,7 +25,7 @@ INCLUDES := \
 	-I./include \
 	-I$(ROOT_DIR)/boot/include \
 	-I$(ROOT_DIR)/root/include \
-	-I$(ROOT_DIR)/include/specs_compat \
+	-I$(ROOT_DIR)/include \
 	-I$(SPECS_DIR) \
 	-I$(SPECS_INC_PROTOCOL) \
 	-I$(SPECS_INC_RUNTIME) \
