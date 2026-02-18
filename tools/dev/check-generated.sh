@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SPEC="$ROOT/deps/yai-specs/specs/vault/schema/vault_abi.json"
-GEN="$ROOT/scripts/dev/gen-vault-abi"
+GEN="$ROOT/tools/dev/gen-vault-abi"
 
 TMP_DIR="$(mktemp -d)"
 cleanup() {
