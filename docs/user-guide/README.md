@@ -1,14 +1,25 @@
-# Specs Index
+# User Guide Pointers
 
-Canonical contracts live in `deps/yai-specs/**`.
+This folder contains editorial pointers for navigation.
+Normative law/specs remain in `deps/yai-specs/**`.
 
-This folder is editorial-only and contains short pointers for human navigation.
+## Canonical spec pointers
 
-Canonical map:
+- Engine cortex:
+  - `deps/yai-specs/specs/engine/engine_cortex.v1.json`
+- Control/events:
+  - `deps/yai-specs/specs/control/control_plane.v1.json`
+- Graph:
+  - `deps/yai-specs/specs/graph/GRAPH_V1.md`
+  - `deps/yai-specs/specs/graph/graph.v1.json`
+- Providers trust:
+  - `deps/yai-specs/specs/providers/PROVIDERS_TRUST.md`
+  - `deps/yai-specs/specs/providers/providers.v1.json`
+- RPC/CLI surface:
+  - `deps/yai-specs/specs/cli/CLI_PUBLIC_INTERFACE.md`
+  - `deps/yai-specs/specs/cli/commands.v1.json`
 
-- Engine Cortex: `deps/yai-specs/specs/engine/engine_cortex.v1.json`
-- Events: `deps/yai-specs/specs/control/control_plane.v1.json`
-- Graph: `deps/yai-specs/specs/graph/GRAPH_V1.md` and `deps/yai-specs/specs/graph/graph.v1.json`
-- Providers Trust: `deps/yai-specs/specs/providers/PROVIDERS_TRUST.md` and `deps/yai-specs/specs/providers/providers.v1.json`
-- RPC/CLI Surface: `deps/yai-specs/specs/cli/CLI_PUBLIC_INTERFACE.md`, `deps/yai-specs/specs/cli/commands.v1.json`, `deps/yai-specs/specs/control/control_plane.v1.json`
-- Legacy TUI Cockpit (deprecated): `deps/yai-specs/specs/cli/TUI_COCKPIT_V1.md`
+## Boundary rule
+
+If a change modifies contract/spec behavior, it belongs upstream in `yai-specs`.
+This folder should remain explanatory/navigation-only.

@@ -1,8 +1,14 @@
 # ADR Index
 
-Architecture Decision Records for the YAI runtime.
+Architecture Decision Records (ADRs) capture irreversible or high-impact technical choices.
 
-## Canonical ADRs
+An ADR should answer:
+- what was decided,
+- why alternatives were rejected,
+- what consequences are accepted,
+- which law/spec anchors govern the decision.
+
+## Canonical ADR set
 
 - `ADR-001-single-runtime.md`
 - `ADR-002-root-entrypoint.md`
@@ -15,8 +21,16 @@ Architecture Decision Records for the YAI runtime.
 - `ADR-009-engine-attachment.md`
 - `ADR-010-boot-entrypoint.md`
 
-The previous consolidated archive has been removed after split.
+## Template policy
 
-Template:
-
+The ADR template is canonical only in:
 - `docs/templates/adr/ADR-000-template.md`
+
+No template copy should be kept inside this ADR directory.
+
+## Maintenance notes
+
+When adding a new ADR:
+- update this index,
+- ensure law/spec references are explicit,
+- add downstream runbook linkage when available.

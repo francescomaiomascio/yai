@@ -1,18 +1,31 @@
 # Milestone Packs
 
-This directory stores Milestone Packs (MP) used by the cross-repo release train workflow.
+Milestone Packs (MP) package delivery outcomes with explicit traceability and evidence.
 
-For Root Hardening:
+They are not generic notes.
+An MP is a closure artifact for a concrete phase and should make review/audit straightforward.
 
-- `MP-ROOT-HARDENING-0.1.0`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
-- `MP-ROOT-HARDENING-0.1.1`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
-- `MP-ROOT-HARDENING-0.1.2`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.2.md`
-- `MP-ROOT-HARDENING-0.1.3`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.3.md`
-- `MP-ROOT-HARDENING-0.1.4`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
-- `MP-ROOT-HARDENING-0.1.5`: `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`
+## What an MP should state
 
-Reference workflow: `docs/dev-guide/cross-repo-workflow.md`
+- what changed,
+- which phase/runbook it belongs to,
+- which repos are impacted,
+- compatibility classification,
+- proof/evidence pointers.
 
-Canonical template:
+## Current track: Root hardening
+
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.2.md`
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.3.md`
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
+- `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`
+
+## Template
 
 - `docs/templates/milestone-packs/MP-000-template.md`
+
+## Workflow reference
+
+- `docs/dev-guide/cross-repo-workflow.md`
