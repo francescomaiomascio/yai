@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 ITERATIONS="${ITERATIONS:-5}"
 WS_PREFIX="${WS_PREFIX:-stress_v1}"
 source "$ROOT/tools/dev/resolve-yai-bin.sh"

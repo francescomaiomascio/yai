@@ -7,7 +7,7 @@ if (( ${#WS_RAW} > 23 )); then
   # Keep start + end so randomized suffixes survive while fitting shm name limits.
   WS="${WS_RAW:0:14}_${WS_RAW: -8}"
 fi
-ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "$ROOT_DIR/tools/dev/resolve-yai-bin.sh"
 BIN="$(yai_resolve_bin "$ROOT_DIR" || true)"
 REQUIRE_ACTIVE_PROVIDER="${REQUIRE_ACTIVE_PROVIDER:-0}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 WS="${1:-perf_v1}"
 ITERATIONS="${ITERATIONS:-40}"
 P95_BUDGET_MS="${P95_BUDGET_MS:-2000}"

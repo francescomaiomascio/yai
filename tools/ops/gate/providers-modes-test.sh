@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "$ROOT/tools/dev/resolve-yai-bin.sh"
 BIN="$(yai_resolve_bin "$ROOT" || true)"
 WS="${1:-providers_modes_test}"
@@ -22,7 +22,7 @@ YAI_REMOTE_ENDPOINT="$ENDPOINT" YAI_REMOTE_MODEL="qwen-test" \
 "$BIN" providers trust --id "$PROVIDER_ID" --state revoked >/dev/null
 
 OUT1="$(mktemp)"
-./tools/gates/providers.sh "$WS" >"$OUT1" 2>&1
+./tools/ops/gate/providers.sh "$WS" >"$OUT1" 2>&1
 grep -Fq "SKIP: no trusted provider (non-strict)" "$OUT1" || {
   echo "FAIL: non-strict mode did not skip on revoked provider"
   cat "$OUT1"
@@ -30,11 +30,11 @@ grep -Fq "SKIP: no trusted provider (non-strict)" "$OUT1" || {
 }
 
 "$BIN" providers trust --id "$PROVIDER_ID" --state trusted >/dev/null
-REQUIRE_ACTIVE_PROVIDER=1 ./tools/gates/providers.sh "$WS" >/dev/null
+REQUIRE_ACTIVE_PROVIDER=1 ./tools/ops/gate/providers.sh "$WS" >/dev/null
 
 "$BIN" providers trust --id "$PROVIDER_ID" --state revoked >/dev/null
 set +e
-REQUIRE_ACTIVE_PROVIDER=1 ./tools/gates/providers.sh "$WS" >/tmp/providers_modes_strict_fail.txt 2>&1
+REQUIRE_ACTIVE_PROVIDER=1 ./tools/ops/gate/providers.sh "$WS" >/tmp/providers_modes_strict_fail.txt 2>&1
 RC=$?
 set -e
 if [[ "$RC" -eq 0 ]]; then

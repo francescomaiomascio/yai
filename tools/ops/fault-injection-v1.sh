@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-exec "$ROOT/tools/suites/ops/fault-injection-v1.sh" "$@"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+exec "$ROOT/tools/ops/suite/ops/fault-injection-v1.sh" "$@"

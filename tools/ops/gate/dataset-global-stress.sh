@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 DATASET_DIR="$ROOT/data/datasets/global-stress/v1"
 DATASET_SCRIPTS_DIR="$ROOT/data/datasets/global-stress/v1/scripts"
 WS="${1:-dataset_stress}"

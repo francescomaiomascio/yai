@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 SPECS_CONTRACTS="$ROOT/deps/yai-specs/contracts"
 FORMAL="$ROOT/deps/yai-specs/formal"
 TLA_JAR="${TLA_JAR:-$HOME/Developer/tools/tla/tla2tools.jar}"
