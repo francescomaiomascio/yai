@@ -112,7 +112,7 @@ mv "$TMP" CHANGELOG.md
 echo "Updated VERSION: $CURRENT -> $NEW"
 echo "Updated CHANGELOG: added section [${NEW}]"
 
-PIN_SCRIPT="$ROOT/scripts/release/pin_cli.sh"
+PIN_SCRIPT="$ROOT/tools/release/pin_cli.sh"
 if [ ! -x "$PIN_SCRIPT" ]; then
   echo "ERROR: missing executable pin script at $PIN_SCRIPT" >&2
   exit 1
@@ -152,7 +152,7 @@ else
 fi
 
 if [ "$DO_TAG" -eq 1 ]; then
-  STRICT_SPECS_HEAD=1 bash "$ROOT/scripts/release/check_pins.sh"
+  STRICT_SPECS_HEAD=1 bash "$ROOT/tools/release/check_pins.sh"
   git tag -a "v${NEW}" -m "Release v${NEW}"
   echo "Created annotated tag v${NEW}"
 fi

@@ -254,8 +254,8 @@ for path in "${REQUIRED_SPECS_PATHS[@]}"; do
 done
 
 if [ "${STRICT_BUNDLE_ENTRYPOINT:-0}" = "1" ]; then
-  [ -x "$ROOT/scripts/bundle/build_bundle.sh" ] || fail 3 "missing executable scripts/bundle/build_bundle.sh"
-  [ -x "$ROOT/scripts/bundle/manifest.sh" ] || fail 3 "missing executable scripts/bundle/manifest.sh"
+  [ -x "$ROOT/tools/bundle/build_bundle.sh" ] || fail 3 "missing executable tools/bundle/build_bundle.sh"
+  [ -x "$ROOT/tools/bundle/manifest.sh" ] || fail 3 "missing executable tools/bundle/manifest.sh"
   grep -qE '^bundle:' "$ROOT/Makefile" || fail 3 "Makefile missing bundle target"
   echo "[CHECK] bundle entrypoint scripts present"
 fi
