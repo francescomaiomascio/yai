@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SUITES_DIR="$ROOT/tools/ops/suite"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  tools/bin/yai-suite list
+  tools/bin/yai-suite <suite-path> [args...]
+
+Examples:
+  tools/bin/yai-suite levels/l0-l7
+  tools/bin/yai-suite ops/no-llm-360
+USAGE
+}
+
+list_suites() {
+  find "$SUITES_DIR" -type f -name "*.sh" -print \
+    | sed -e "s#^$SUITES_DIR/##" -e 's/\.sh$//' \
+    | rg -v '^suite$' \
+    | sort
+}
+
+if [[ "${1:-}" == "" ]]; then
+  usage
+  exit 1
+fi
+
+if [[ "${1:-}" == "list" ]]; then
+  list_suites
+  exit 0
+fi
+
+NAME="$1"
+shift
+TARGET="$SUITES_DIR/$NAME.sh"
+if [[ ! -x "$TARGET" ]]; then
+  echo "FAIL: unknown suite '$NAME'"
+  echo "Available suites:"
+  list_suites
+  exit 1
+fi
+
+if [[ "$NAME" == "suite" ]]; then
+  echo "FAIL: suite 'suite' is internal-only"
+  exit 1
+fi
+
+exec "$TARGET" "$@"

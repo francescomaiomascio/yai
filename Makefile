@@ -42,7 +42,7 @@ dist: build
 	@echo "--- [YAI] Dist staged in $(BIN_DIST) ---"
 
 bundle: dist
-	@bash scripts/bundle/build_bundle.sh
+	@bash tools/bundle/build_bundle.sh
 
 boot:
 	$(MAKE) -C $(BOOT_DIR) build BUILD_ROOT=$(BUILD_ROOT) BIN_BUILD=$(BIN_BUILD)
@@ -67,14 +67,14 @@ clean-dist:
 clean-all: clean clean-dist
 
 verify:
-	@if [ -x ./scripts/yai-verify ]; then \
-		./scripts/yai-verify; \
+	@if [ -x ./tools/bin/yai-verify ]; then \
+		./tools/bin/yai-verify; \
 	else \
-		echo "No verify script found at ./scripts/yai-verify"; \
+		echo "No verify script found at ./tools/bin/yai-verify"; \
 	fi
 
 preflight-release:
-	@bash scripts/release/check_pins.sh
+	@bash tools/release/check_pins.sh
 
 docs:
 	@mkdir -p $(DOXY_OUT)

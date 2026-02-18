@@ -26,7 +26,7 @@ This matrix defines baseline compatibility for the `yai` runtime.
 |---|---|
 | C compiler | gcc or clang |
 | Build | GNU make |
-| Python | Python 3 (scripts/verification helpers) |
+| Python | Python 3 (tools/ops/verify helpers) |
 
 ## Notes
 

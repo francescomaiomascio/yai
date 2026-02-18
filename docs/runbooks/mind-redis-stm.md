@@ -540,7 +540,7 @@ If `P:meta:schema_version` != expected:
 
 ### Scripts
 
-**A) Test script:** `scripts/test_mind_stm.sh`
+**A) Test script:** `tests/e2e/test_mind_stm.sh`
 
 ```bash
 #!/bin/bash
@@ -585,7 +585,7 @@ yai kernel ws destroy $WS_ID --arming --role operator
 echo "=== Test PASS ==="
 ```
 
-**B) Cross-tenant test:** `scripts/test_mind_isolation.sh`
+**B) Cross-tenant test:** `tests/e2e/test_mind_isolation.sh`
 
 ```bash
 #!/bin/bash

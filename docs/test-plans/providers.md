@@ -3,7 +3,7 @@
 ## Quick Gate
 ```bash
 cd "$(git rev-parse --show-toplevel)"
-./scripts/gates/providers.sh dev
+./tools/ops/gate/providers.sh dev
 ```
 
 ## Trust Override (unblock L7)
@@ -17,14 +17,14 @@ yai providers trust --id "$PROVIDER_ID" --state trusted
 ## Gate Modes
 Non-strict (default):
 ```bash
-./scripts/gates/providers.sh "$WS"
+./tools/ops/gate/providers.sh "$WS"
 ```
 If no trusted provider is available, it exits `0` with:
 `SKIP: no trusted provider (non-strict)`
 
 Strict:
 ```bash
-REQUIRE_ACTIVE_PROVIDER=1 ./scripts/gates/providers.sh "$WS"
+REQUIRE_ACTIVE_PROVIDER=1 ./tools/ops/gate/providers.sh "$WS"
 ```
 Fails if no trusted provider exists.
 
@@ -54,5 +54,5 @@ yai providers --ws "$WS" revoke "$PROVIDER_ID"
 
 ## Mode Test
 ```bash
-./scripts/gates/providers-modes-test.sh
+./tools/ops/gate/providers-modes-test.sh
 ```

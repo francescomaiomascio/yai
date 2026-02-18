@@ -242,7 +242,7 @@ yai kernel ws destroy testws
 ## STEP 6: Test Matrix v4 (End-to-End)
 
 ### Recommended script
-- `scripts/test_l2_engine.sh`
+- `tests/integration/test_l2_engine.sh`
 
 ### Minimum cases
 1. start on non-existent ws → deterministic fail

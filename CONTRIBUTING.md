@@ -29,9 +29,9 @@ Before opening a PR, run the checks relevant to your change:
 
 ```bash
 make all
-./scripts/yai-verify
-./scripts/verify-core.sh
-./scripts/verify-events.sh
+./tools/bin/yai-verify
+./tools/ops/verify-core.sh
+./tools/ops/verify-events.sh
 ```
 
 ## Contract-Impacting Changes

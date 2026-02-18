@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$ROOT/tools/dev/resolve-yai-bin.sh"
+BIN="$(yai_resolve_bin "$ROOT" || true)"
+WS_DEFAULT="${YAI_WS_DEFAULT:-dev}"
+
+echo "=== YAI Doctor"
+echo "root: ${ROOT}"
+
+echo "=== Binaries"
+DIST_BIN="$ROOT/dist/bin"
+
+for f in "${DIST_BIN}/yai-boot" "${DIST_BIN}/yai-kernel" "${DIST_BIN}/yai-engine" "${DIST_BIN}/yai-root-server"; do
+  [[ -x "${f}" ]] && echo "OK: ${f}" || echo "MISSING: ${f}"
+done
+
+echo "=== yai in PATH"
+if [[ -n "$BIN" ]]; then
+  echo "OK: $(command -v yai)"
+  if "$BIN" status --help >/dev/null 2>&1; then
+    "$BIN" status --ws "${WS_DEFAULT}" || true
+  else
+    echo "SKIP: yai status command not available in current CLI"
+  fi
+  "$BIN" monitor --help >/dev/null 2>&1 && echo "OK: monitor command available"
+else
+  echo "MISSING: yai not found in PATH"
+fi
+
+echo "=== Duplicate yai binaries"
+if [[ -d "${HOME}/.yai/artifacts" ]]; then
+  find "${HOME}/.yai/artifacts" -type f -name "yai" -perm -111 -print || true
+else
+  echo "SKIP: legacy artifacts directory not present"
+fi
+
+echo "OK: doctor complete"
