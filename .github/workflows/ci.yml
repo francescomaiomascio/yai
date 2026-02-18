@@ -29,7 +29,7 @@ jobs:
         run: make all
 
       - name: Verify generated artifacts
-        run: bash scripts/dev/check-generated.sh
+        run: bash tools/dev/check-generated.sh
 
       - name: Build docs
         run: make docs
@@ -54,7 +54,7 @@ jobs:
         run: make all
 
       - name: Verify generated artifacts
-        run: bash scripts/dev/check-generated.sh
+        run: bash tools/dev/check-generated.sh
 
   build-debian:
     name: Build and verify (Debian)
@@ -77,7 +77,7 @@ jobs:
         run: make all
 
       - name: Verify generated artifacts
-        run: bash scripts/dev/check-generated.sh
+        run: bash tools/dev/check-generated.sh
 
   build-fedora:
     name: Build and verify (Fedora)
@@ -99,7 +99,7 @@ jobs:
         run: make all
 
       - name: Verify generated artifacts
-        run: bash scripts/dev/check-generated.sh
+        run: bash tools/dev/check-generated.sh
 
   build-macos:
     name: Build (macOS ${{ matrix.os }})
@@ -119,4 +119,4 @@ jobs:
         run: make all
 
       - name: Verify generated artifacts
-        run: bash scripts/dev/check-generated.sh
+        run: bash tools/dev/check-generated.sh
