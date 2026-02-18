@@ -71,3 +71,17 @@ Goal: remove legacy `scripts` tree and make `tools` + `tests` canonical.
 | scripts:recovery-compat-v1.sh | tools/ops/recovery-compat-v1.sh | ops | wrapper retained by name |
 | scripts:security-sanity-v1.sh | tools/ops/security-sanity-v1.sh | ops | wrapper retained by name |
 | scripts:stress-v1.sh | tools/ops/stress-v1.sh | ops | wrapper retained by name |
+
+## Verification
+
+Date: 2026-02-18
+
+- `make clean && make`: PASS
+- `tools/bin/yai-verify --help`: exits with `FAIL: unknown verify '--help'` and lists checks (expected current CLI behavior)
+- `tools/bin/yai-suite --help`: exits with `FAIL: unknown suite '--help'` and lists suites (expected current CLI behavior)
+- `tools/bin/yai-gate --help`: exits with `FAIL: unknown gate '--help'` and lists gates (expected current CLI behavior)
+- `tools/bin/yai-doctor --help`: executable runs diagnostics and completes
+- `tools/bin/yai-purge --help`: no dedicated help flag; executes purge flow
+- `find . -type d -name scripts`: no output (zero directories)
+- `rg -n "scripts slash pattern" -S .`: no output for legacy script-path references
+- `tree -a tools | head -n 200`: canonical layout present (`bin`, `ops`, `dev`, `release`, `data`, `bundle`, `lib`)
