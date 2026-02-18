@@ -1,36 +1,39 @@
-# GitHub Templates Workflow
+# GitHub Templates & Governance Kit (v1)
 
-This guide defines which GitHub template to use for each case in `yai`.
-
-## Issue templates
-
-- Bug: `.github/ISSUE_TEMPLATE/bug.yml`
-- Feature: `.github/ISSUE_TEMPLATE/feature.yml`
-- Runbook phase delivery: `.github/ISSUE_TEMPLATE/runbook-phase.yml`
-- Docs governance/templates: `.github/ISSUE_TEMPLATE/docs-governance.yml`
+This repository uses selectable PR templates and enforced PR metadata.
 
 ## PR templates
+Location: `.github/PULL_REQUEST_TEMPLATE/`
 
-- Generic: `.github/PULL_REQUEST_TEMPLATE/default.md`
-- Milestone Type A: `.github/PULL_REQUEST_TEMPLATE/type-a-milestone.md`
-- Milestone Type B (Twin PR): `.github/PULL_REQUEST_TEMPLATE/type-b-twin-pr.md`
-- Docs governance: `.github/PULL_REQUEST_TEMPLATE/docs-governance.md`
+Rules:
+- Only this folder must exist (no single-template files).
+- Every PR must contain `## PR-METADATA` with a YAML fenced block.
+- Placeholders are forbidden. Use `N/A`.
 
-## Required IDs in PR body
+## CLI usage (agents/humans)
+Create PR with explicit template:
 
-Every PR must include:
+```bash
+gh pr create --template 20-core-change.md
+```
 
-- `Issue-ID: #<number>` (or `N/A` when justified)
-- `MP-ID: MP-...-X.Y.Z` (or `N/A`)
-- `Compatibility: A|B|N/A`
-- `Base-Commit: <40-char-sha>` (or `N/A`)
+Update body from template (recommended automation):
 
-Type B additionally requires:
+```bash
+BASE_SHA="$(git rev-parse HEAD)"
+tmp="$(mktemp)"
+cp .github/PULL_REQUEST_TEMPLATE/20-core-change.md "$tmp"
+perl -pi -e "s/<40-char-sha>/$BASE_SHA/g" "$tmp"
+perl -pi -e "s/#<issue-number>/N\/A/g" "$tmp"
+gh pr edit --body-file "$tmp"
+```
 
-- `yai-cli PR: https://...`
+## Enforcement
 
-## Validation
+Workflow: `.github/workflows/validate-pr-metadata.yml`
 
-PR metadata is validated by:
+Fails when:
 
-- `.github/workflows/validate-pr-metadata.yml`
+- missing PR-METADATA
+- placeholders exist
+- missing Commands run section
