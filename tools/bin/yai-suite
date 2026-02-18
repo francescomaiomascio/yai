@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SUITES_DIR="$ROOT/scripts/suites"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SUITES_DIR="$ROOT/tools/ops/suite"
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
-  scripts/yai-suite list
-  scripts/yai-suite <suite-path> [args...]
+  tools/bin/yai-suite list
+  tools/bin/yai-suite <suite-path> [args...]
 
 Examples:
-  scripts/yai-suite levels/l0-l7
-  scripts/yai-suite ops/no-llm-360
-EOF
+  tools/bin/yai-suite levels/l0-l7
+  tools/bin/yai-suite ops/no-llm-360
+USAGE
 }
 
 list_suites() {

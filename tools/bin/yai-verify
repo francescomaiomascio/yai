@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VERIFY_DIR="$ROOT/scripts/verify"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+VERIFY_DIR="$ROOT/tools/ops/verify"
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
-  scripts/yai-verify list
-  scripts/yai-verify <verify-name> [args...]
+  tools/bin/yai-verify list
+  tools/bin/yai-verify <verify-name> [args...]
 
 Examples:
-  scripts/yai-verify core
-  scripts/yai-verify law-kernel
-EOF
+  tools/bin/yai-verify core
+  tools/bin/yai-verify law-kernel
+USAGE
 }
 
 list_checks() {

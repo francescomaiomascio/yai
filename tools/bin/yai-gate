@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-GATES_DIR="$ROOT/scripts/gates"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+GATES_DIR="$ROOT/tools/ops/gate"
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
-  scripts/yai-gate list
-  scripts/yai-gate <gate-name> [args...]
+  tools/bin/yai-gate list
+  tools/bin/yai-gate <gate-name> [args...]
 
 Examples:
-  scripts/yai-gate ws dev
-  scripts/yai-gate graph graph_gate
-EOF
+  tools/bin/yai-gate ws dev
+  tools/bin/yai-gate graph graph_gate
+USAGE
 }
 
 list_gates() {
