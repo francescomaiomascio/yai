@@ -53,7 +53,8 @@ jobs:
               return fail("Issue-ID must be #<number> or N/A.");
             }
             if (/^N\/A$/i.test(issue)) {
-              const reason = extract("Issue-Reason") || extract("Issue-Reason \(required if N\/A\)");
+              const reasonMatch = body.match(/Issue-Reason[^:\n\r]*:\s*([^\n\r]+)/i);
+              const reason = reasonMatch ? reasonMatch[1].trim() : "";
               if (!reason || /<required/i.test(reason)) {
                 return fail("Issue-ID is N/A but Issue-Reason is missing.");
               }
