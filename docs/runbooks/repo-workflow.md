@@ -406,7 +406,7 @@ git status
 ### Step 2 — Preflight (hard gate)
 
 ```bash
-STRICT_SPECS_HEAD=1 bash scripts/release/check_pins.sh
+STRICT_SPECS_HEAD=1 bash tools/release/check_pins.sh
 ```
 
 `check_pins.sh` enforces:
@@ -418,7 +418,7 @@ STRICT_SPECS_HEAD=1 bash scripts/release/check_pins.sh
 ### Step 3 — Bump version and update changelog
 
 ```bash
-./scripts/release/bump_version.sh patch --commit
+./tools/release/bump_version.sh patch --commit
 # or: minor / major / X.Y.Z
 ```
 
@@ -427,7 +427,7 @@ This commits updated `VERSION` and `CHANGELOG.md`.
 ### Step 4 — Re-run preflight (must be PASS)
 
 ```bash
-STRICT_SPECS_HEAD=1 bash scripts/release/check_pins.sh
+STRICT_SPECS_HEAD=1 bash tools/release/check_pins.sh
 ```
 
 ### Step 5 — Create annotated tag from VERSION
@@ -458,7 +458,7 @@ git tag --sort=-v:refname | head -5
 
 On tag `v*`, CI MUST:
 
-1. Run `scripts/release/check_pins.sh` (strict mode) — abort if FAIL.
+1. Run `tools/release/check_pins.sh` (strict mode) — abort if FAIL.
 2. Validate that tag version == `VERSION` and `CHANGELOG.md` contains `[X.Y.Z]`.
 3. Build runtime core binaries.
 4. Read `deps/yai-cli.ref`, checkout `yai-cli` at the pinned SHA.
@@ -549,7 +549,7 @@ git push origin main
 **Recovery:**
 
 ```bash
-./scripts/release/bump_version.sh X.Y.Z --commit
+./tools/release/bump_version.sh X.Y.Z --commit
 # Delete the wrong tag if already pushed
 git tag -d vX.Y.Z
 git push origin --delete vX.Y.Z

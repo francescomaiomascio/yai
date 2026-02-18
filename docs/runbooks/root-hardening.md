@@ -406,7 +406,7 @@ Send invalid ws_id:
 
 #### Tools
 
-In 0.1.x we move tests under tools. If `scripts/` still exists, it is temporary.
+In 0.1.x we move tests under tools. If `tools/` still exists, it is temporary.
 
 Preferred:
 
@@ -415,8 +415,8 @@ Preferred:
 
 Temporary compatibility:
 
-- `scripts/test_handshake.py`
-- `scripts/protocol_tester`
+- `tests/integration/test_handshake.py`
+- `tools/dev/protocol_tester`
 
 #### Verification commands (must be runnable)
 

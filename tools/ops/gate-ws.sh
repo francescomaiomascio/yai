@@ -2,4 +2,4 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-exec "$ROOT/scripts/gates/dataset-global-stress.sh" "$@"
+exec "$ROOT/tools/gates/ws.sh" "$@"

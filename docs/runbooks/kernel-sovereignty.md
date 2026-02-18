@@ -509,7 +509,7 @@ bool yai_ws_path_is_safe(const char *ws_id, const char *path)
 ## STEP 4: Test Matrix v5 (Sovereignty + Security)
 
 ### Script
-`scripts/test_kernel_sovereignty.sh`
+`tests/e2e/test_kernel_sovereignty.sh`
 
 ### Minimum test cases
 1. **Isolation:**
@@ -560,7 +560,7 @@ Verify system behavior under adversarial conditions
 5. **Path traversal battery:** 50 different escape attempts
 
 ### Tools
-- `scripts/stress_kernel.sh`
+- `tools/ops/stress-v1.sh`
 - Python test harness with threading
 
 ### Acceptance

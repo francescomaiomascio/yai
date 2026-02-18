@@ -218,4 +218,4 @@ Must be explicit and stable.
 - ADR: `docs/design/adr/ADR-xxx-*.md`
 - Specs: `deps/yai-specs/...`
 - Test plans: `docs/test-plans/...`
-- Tools: `tools/...` (preferred) or `scripts/compat/...` (temporary only)
+- Tools: `tools/...` (preferred) or `tools/compat/...` (temporary only)

@@ -56,9 +56,9 @@ Goal: remove legacy `scripts` tree and make `tools` + `tests` canonical.
 | scripts:data/fetch-embeddings.sh | tools/data/fetch-embeddings.sh | data | canonical copy |
 | scripts:fetch-embeddings.sh | (deleted) | data | duplicate wrapper removed |
 | scripts:data/dataset-global-stress.sh | tools/data/dataset-global-stress.sh | data | data gate wrapper |
-| data:datasets/global-stress/v1/scripts/import-seed-via-cli.sh | tools/data/global-stress/v1/import-seed-via-cli.sh | data | tooling moved out of data |
-| data:datasets/global-stress/v1/scripts/load-events-log.sh | tools/data/global-stress/v1/load-events-log.sh | data | tooling moved out of data |
-| data:datasets/global-stress/v1/scripts/README.md | tools/data/global-stress/v1/README.md | data | updated tooling location |
+| data:datasets/global-stress/v1:import-seed-via-cli.sh | tools/data/global-stress/v1/import-seed-via-cli.sh | data | tooling moved out of data |
+| data:datasets/global-stress/v1:load-events-log.sh | tools/data/global-stress/v1/load-events-log.sh | data | tooling moved out of data |
+| data:datasets/global-stress/v1:README.md | tools/data/global-stress/v1/README.md | data | updated tooling location |
 | scripts:test_handshake.py | tests/integration/test_handshake.py | test | duplicate consolidated |
 | scripts:dev/test_handshake.py | (deleted) | test | duplicate removed |
 | scripts:bundle/build_bundle.sh | tools/bundle/build_bundle.sh | dev | bundling helper |

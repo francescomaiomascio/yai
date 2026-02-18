@@ -2,4 +2,4 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-exec "$ROOT/scripts/gates/graph.sh" "$@"
+exec "$ROOT/tools/gates/providers.sh" "$@"

@@ -63,7 +63,7 @@ The runtime implements these contracts—**and must remain aligned**. When align
 
 - `docs/` — architecture notes, runbooks, guides, and operational procedures  
 - `data/` — datasets used for local tests/ops (see `DATA_POLICY.md`)  
-- `scripts/` — verification and gate scripts used in CI and release pipelines
+- `tools/` — verification and gate tooling used in CI and release pipelines
 
 ---
 

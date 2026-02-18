@@ -381,7 +381,7 @@ Preferred (move toward tools/):
 
 Temporary compatibility allowed:
 
-- `scripts/...` only as shim; do not add new logic there
+- `tools/...` only as shim; do not add new logic there
 
 #### Verification
 

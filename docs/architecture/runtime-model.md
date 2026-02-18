@@ -33,13 +33,13 @@ Single canonical entrypoint (Root).
 
 | Layer | Responsibility | API / ABI Surface | Storage Scope | Events Domain | Certification Gates |
 |------|---------------|------------------|--------------|--------------|--------------------|
-| L0 | Law specs, canonical ABI, protocol, identifiers | `deps/yai-specs/*`, generated headers | ABI + schema artifacts | N/A (spec-level only) | `scripts/verify/law-kernel.sh`, `scripts/verify/core.sh` |
-| Root | Machine control plane, routing, runtime registry | root socket, control-plane contract | machine runtime metadata | runtime lifecycle + attach events | `scripts/gates/ws.sh`, `scripts/verify/core.sh` |
-| L1 | Kernel authority, session control, isolation, enforcement | `kernel/include/*`, FSM, session registry | per-workspace runtime surface | authority transitions + violations | `scripts/verify/law-kernel.sh` |
-| L2 | Engine deterministic execution + gates + cortex | `engine/include/*` | deterministic execution state | execution evidence + gate signals | `scripts/gates/cortex.sh`, `scripts/verify/core.sh` |
-| L3 | Mind workspace plane (cognition + memory + providers) | `mind/src/*` | per-workspace graph + provider state | graph + provider + memory events | `scripts/gates/events.sh`, `scripts/gates/graph.sh`, `scripts/gates/providers.sh` |
+| L0 | Law specs, canonical ABI, protocol, identifiers | `deps/yai-specs/*`, generated headers | ABI + schema artifacts | N/A (spec-level only) | `tools/ops/verify/law-kernel.sh`, `tools/ops/verify/core.sh` |
+| Root | Machine control plane, routing, runtime registry | root socket, control-plane contract | machine runtime metadata | runtime lifecycle + attach events | `tools/ops/gate/ws.sh`, `tools/ops/verify/core.sh` |
+| L1 | Kernel authority, session control, isolation, enforcement | `kernel/include/*`, FSM, session registry | per-workspace runtime surface | authority transitions + violations | `tools/ops/verify/law-kernel.sh` |
+| L2 | Engine deterministic execution + gates + cortex | `engine/include/*` | deterministic execution state | execution evidence + gate signals | `tools/ops/gate/cortex.sh`, `tools/ops/verify/core.sh` |
+| L3 | Mind workspace plane (cognition + memory + providers) | `mind/src/*` | per-workspace graph + provider state | graph + provider + memory events | `tools/ops/gate/events.sh`, `tools/ops/gate/graph.sh`, `tools/ops/gate/providers.sh` |
 | L4 | CLI / Cockpit interface layer | `tools/cli/*` | no authority state | command status only | `yai verify core`, `yai verify full` |
-| L5 | Deterministic release/test orchestration | `scripts/verify/*`, `scripts/gates/*`, `scripts/suites/*` | test artifacts + logs | pass/fail evidence | `scripts/suites/levels/l0-l7.sh`, `scripts/suites/ops/no-llm-360.sh` |
+| L5 | Deterministic release/test orchestration | `tools/ops/verify/*`, `tools/ops/gate/*`, `tools/ops/suite/*` | test artifacts + logs | pass/fail evidence | `tools/ops/suite/levels/l0-l7.sh`, `tools/ops/suite/ops/no-llm-360.sh` |
 
 ---
 
@@ -200,8 +200,8 @@ No per-workspace engine processes long-term.
 
 # Certification Sequence (Deterministic)
 
-1. `scripts/suites/levels/l0-l7.sh`
-2. `scripts/suites/ops/no-llm-360.sh`
+1. `tools/ops/suite/levels/l0-l7.sh`
+2. `tools/ops/suite/ops/no-llm-360.sh`
 3. Provider isolation gates
 4. Cortex deterministic tests
 5. Prompt/LLM suites (separate certification phase)
