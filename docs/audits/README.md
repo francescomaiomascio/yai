@@ -7,23 +7,24 @@ effective_date: 2026-02-19
 
 # Audits
 
-This directory contains audit-grade assessments and supporting material.
+Public audits in this folder are canonical governance artifacts.
 
-## Structure
+Draft or provisional audits must stay local in:
+- `docs/audits/.private/` (gitignored)
 
-- `AUDIT-TRL-0001-yai-program-readiness.md`
-  Program-level readiness assessment (narrative + TRL rubric).
-- `AUDIT-TRL-0001-evidence-index.md`
-  Evidence inventory and execution index for TRL-0001.
-- `scorecards/`
-  Per-repository scorecards (`yai-specs`, `yai`, `yai-cli`, `yai-mind`).
-- `evidence/TRL-0001/`
-  Artifact pointers and captured outputs for TRL-0001.
-- `findings/`
-  Optional granular finding records (one file per finding).
+## When an audit is canonical
 
-## Conventions
+An audit should be published in `docs/audits/` only when all are true:
 
-- Use stable IDs (`AUDIT-*`, `SC-*`, `FINDING-*`).
-- Keep commands and results reproducible (date + command + outcome + pointer).
-- Prefer repo-relative links.
+1. A milestone phase is closed (MP status aligned with delivered scope).
+2. Evidence is attached and reproducible (commands, outputs, CI pointers, dates).
+3. Traceability is explicit (`proposal -> ADR -> runbook -> MP -> evidence`).
+4. Human maintainer review is completed.
+
+If one of these is missing, keep the audit private and treat it as working draft.
+
+## Suggested workflow
+
+1. Agent prepares draft audit under `docs/audits/.private/...`.
+2. Maintainer reviews and challenges claims.
+3. Promote only the finalized version to `docs/audits/`.
