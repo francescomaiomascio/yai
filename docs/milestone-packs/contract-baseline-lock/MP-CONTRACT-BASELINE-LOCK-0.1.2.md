@@ -1,0 +1,60 @@
+---
+id: MP-CONTRACT-BASELINE-LOCK-0.1.2
+status: draft
+runbook: docs/runbooks/contract-baseline-lock.md
+phase: "0.1.2 — No Pass-on-Skip Enforcement"
+adrs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/contracts/invariants/I-001-traceability.md
+  - deps/yai-specs/contracts/invariants/I-003-governance.md
+issues:
+  - N/A
+issue_reason: "Foundational docs track creation; issue ID not assigned yet."
+---
+# MP-CONTRACT-BASELINE-LOCK-0.1.2
+
+## Metadata
+
+- Runbook: `docs/runbooks/contract-baseline-lock.md`
+- Phase: `0.1.2 — No Pass-on-Skip Enforcement`
+- Owner: `governance`
+- Status: `draft`
+
+## Links
+
+- ADR: `docs/design/adr/ADR-011-contract-baseline-lock.md`
+- Proposal: `docs/design/proposals/PRP-004-contract-baseline-lock-and-pin-policy.md`
+- Evidence plans: `docs/test-plans/hardfail.md`
+
+Objective:
+- Prevent mandatory proof and contract checks from passing through skip paths.
+
+Contract Delta:
+- Envelope: none.
+- Authority: none.
+- Errors: skipped mandatory checks must return failure.
+- Logging: CI logs must expose skipped mandatory checks as failures.
+
+Repo Split:
+- `yai`: mandatory checks configured as hard-fail when skipped.
+- `yai-cli`: mandatory checks configured as hard-fail when skipped.
+
+Evidence Plan (minimum):
+- Positive cases:
+  - Mandatory checks execute and pass when all prerequisites exist.
+  - Governance checks report complete mandatory coverage.
+- Negative cases:
+  - Simulated skip of required check fails pipeline.
+  - Missing mandatory evidence blocks merge.
+
+Compatibility Classification:
+- Type: A
+- Rationale: governance policy hardening without API/protocol change.
+- Upgrade path: no runtime migration required.
+
+Definition of Done:
+- [ ] Mandatory proof checks cannot pass via skip.
+- [ ] Pipeline fails deterministically on missing mandatory evidence.
+- [ ] Failure semantics are documented and auditable.
+- [ ] Runbook/ADR references are present in closure evidence.

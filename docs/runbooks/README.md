@@ -10,10 +10,15 @@ A good runbook must be deterministic:
 
 ## Typical runbooks in this repo
 
+- `docs/runbooks/contract-baseline-lock.md`
+- `docs/runbooks/specs-refactor-foundation.md`
 - `docs/runbooks/root-hardening.md`
 - `docs/runbooks/workspaces-lifecycle.md`
 - `docs/runbooks/engine-attach.md`
-- `docs/runbooks/specs-refactor-foundation.md`
+- `docs/runbooks/data-plane.md`
+- `docs/runbooks/mind-redis-stm.md`
+- `docs/runbooks/kernel-sovereignty.md`
+- `docs/runbooks/operations.md`
 
 ## Template
 

@@ -1,4 +1,79 @@
-# YAI L3 Mind Redis STM v5.3 — Operational Runbook
+---
+id: RB-MIND-REDIS-STM
+title: Mind Redis STM
+status: draft
+owner: runtime
+effective_date: 2026-02-19
+revision: 1
+supersedes: []
+depends_on:
+  - RB-ENGINE-ATTACH
+  - RB-DATA-PLANE
+related:
+  adr:
+    - docs/design/adr/ADR-005-mind-proposer.md
+    - docs/design/adr/ADR-008-connection-lifecycle.md
+  specs:
+    - deps/yai-specs/specs/protocol/include/transport.h
+    - deps/yai-specs/specs/protocol/include/auth.h
+  test_plans:
+    - docs/test-plans/hardfail.md
+  tools:
+    - tools/bin/yai-verify
+    - tools/bin/yai-gate
+tags:
+  - runtime
+  - mind
+  - redis
+---
+
+# RB-MIND-REDIS-STM — Mind Redis STM
+
+## 1) Purpose
+Define a tenant-safe, deterministic short-term memory model for Mind using Redis with strict `ws_id` scoping and governed attach workflow.
+
+## 2) Preconditions
+- [ ] Root/Kernel attach path is stable for Mind clients.
+- [ ] Redis runtime endpoint and security model are defined.
+- [ ] Workspace isolation controls are active.
+
+## 3) Inputs
+- Mind runtime/client modules and Redis integration code
+- Keyspace schema and TTL policy definitions
+- Validation tooling: verify/gate commands + integration vectors
+
+## 4) Procedure
+Execute the staged sequence in this document: lifecycle contract, Redis topology, keyspace contract, implementation, and closure checks.
+
+## 5) Verification
+- Run startup/attach checks and Redis health checks.
+- Validate keyspace isolation, TTL behavior, and degraded-mode behavior.
+
+## 6) Failure Modes
+- Symptom: Redis outage causes uncontrolled runtime failure.
+  - Fix: enforce deterministic degraded mode with explicit logging.
+- Symptom: cross-tenant key leakage appears.
+  - Fix: enforce `yai:<ws_id>:...` keyspace guards and reject non-scoped keys.
+
+## 7) Rollback
+- Stop mind/redis test processes, restore previous runtime behavior, and re-run baseline control-plane checks.
+- Revert only active phase changes before retrying.
+
+## 8) References
+- ADR: `docs/design/adr/ADR-005-mind-proposer.md`
+- Runbooks: `docs/runbooks/engine-attach.md`, `docs/runbooks/data-plane.md`
+- Test plans: `docs/test-plans/hardfail.md`
+
+## Traceability
+- ADR refs:
+  - `docs/design/adr/ADR-005-mind-proposer.md`
+  - `docs/design/adr/ADR-008-connection-lifecycle.md`
+- MPs (to be filled as phases ship):
+  - `docs/milestone-packs/...`
+
+## Appendix — Detailed Operational Notes (Legacy Detailed Content)
+
+### YAI L3 Mind Redis STM v5.3 — Operational Runbook
 
 **Branch:** `feat/data-plane-v5.3-redis`  
 **Dependencies:** v2/v3 (ws_id validation + path jail) + v4 (handshake+attach real) + v5.1 (LMDB authority) recommended  

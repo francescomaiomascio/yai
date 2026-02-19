@@ -4,9 +4,9 @@ status: draft
 effective_date: 2026-02-19
 supersedes: []
 applies_to:
-  runbook: docs/runbooks/root-hardening.md
+  runbook: docs/runbooks/contract-baseline-lock.md
   phase: 0.1.0
-  anchor: "#phase-0-1-0-protocol-guardrails"
+  anchor: "#phase-0-1-0-pin-baseline-freeze"
 law_refs:
   - deps/yai-specs/contracts/invariants/I-001-traceability.md
   - deps/yai-specs/contracts/invariants/I-002-determinism.md
@@ -54,9 +54,10 @@ A lock provides a stable legal/technical floor so later runbook phases can evolv
   - `docs/design/proposals/PRP-004-contract-baseline-lock-and-pin-policy.md`
   - `docs/design/proposals/PRP-005-formal-coverage-roadmap.md`
 - Implemented by runbooks:
-  - `docs/runbooks/root-hardening.md`
+  - `docs/runbooks/contract-baseline-lock.md`
+  - `docs/runbooks/root-hardening.md` (downstream hardening)
 - Milestone packs:
-  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+  - `docs/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.0.md` (planned)
 
 ## Status
 

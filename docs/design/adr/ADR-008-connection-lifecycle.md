@@ -54,7 +54,8 @@ A strict lifecycle avoids hidden state transitions and improves forensic clarity
   - `docs/runbooks/workspaces-lifecycle.md`
   - `docs/runbooks/engine-attach.md`
 - Milestone packs:
-  - *(TBD for workspace/engine tracks)*
+  - `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
+  - `docs/milestone-packs/engine-attach/MP-ENGINE-ATTACH-0.1.0.md` *(planned)*
 
 ## Status
 

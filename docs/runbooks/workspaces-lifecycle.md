@@ -8,13 +8,7 @@ revision: 1
 supersedes: []
 depends_on:
   - RB-ROOT-HARDENING
-decisions:
-  - docs/design/adr/ADR-007-workspace-isolation.md
-  - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
-adr_refs:
-  - docs/design/adr/ADR-007-workspace-isolation.md
-  - docs/design/adr/ADR-008-connection-lifecycle.md
   adr:
     - docs/design/adr/ADR-007-workspace-isolation.md
     - docs/design/adr/ADR-008-connection-lifecycle.md
@@ -29,6 +23,9 @@ adr_refs:
     - tools/bin/yai-verify
     - tools/bin/yai-gate
     - tools/bin/yai-suite
+tags:
+  - runtime
+  - workspace
 ---
 
 # RB-WORKSPACES-LIFECYCLE — Workspace Commands With Real Side-Effects (YAI 0.1.x)
@@ -41,14 +38,28 @@ Non-negotiable outcomes:
 - Root remains a pure router (envelope validation + byte-perfect forward/relay)
 - Kernel enforces policy and applies side-effects only when valid + authorized
 
-## Decisions
+## 1) Purpose
 
-- docs/design/adr/ADR-007-workspace-isolation.md
-- docs/design/adr/ADR-008-connection-lifecycle.md
+Upgrade workspace commands from stub behavior to deterministic governed side-effects while preserving Root hardening invariants.
 
----
+## 2) Preconditions
 
-## 1) Sequencing and prerequisites
+- [ ] Root hardening baseline is active (handshake gate, ws_id validation, deterministic errors).
+- [ ] Kernel is reachable from control plane commands.
+- [ ] `yai root ping` and one kernel command are already green.
+
+## 3) Inputs
+
+- Protocol anchors:
+  - `deps/yai-specs/specs/protocol/include/transport.h`
+  - `deps/yai-specs/specs/protocol/include/auth.h`
+  - `deps/yai-specs/specs/protocol/include/errors.h`
+- Tooling:
+  - `tools/bin/yai-verify`
+  - `tools/bin/yai-gate`
+  - `tools/bin/yai-suite`
+
+## 4) Procedure
 
 ### Position in the global sequence
 
@@ -74,7 +85,7 @@ If these are not true, stop and complete RB-ROOT-HARDENING first.
 
 ---
 
-## 2) Scope
+### Scope
 
 ### In scope
 
@@ -98,7 +109,7 @@ If these are not true, stop and complete RB-ROOT-HARDENING first.
 
 ---
 
-## 3) Operational workflow (daily)
+### Operational Workflow (Daily)
 
 ### Clean runtime before each test round
 
@@ -129,7 +140,7 @@ Expected:
 
 ---
 
-## 4) Deliverables (phased)
+### Deliverables (Phased)
 
 ---
 
@@ -407,7 +418,7 @@ One command that runs all cases and prints PASS/FAIL per case.
 
 ---
 
-## 5) Observability and audit
+## 5) Verification
 
 Minimum log expectations:
 
@@ -421,7 +432,16 @@ Always include ws_id + trace_id when available.
 
 ---
 
-## 6) Rollback
+## 6) Failure Modes
+
+- Symptom: workspace side-effects appear outside `~/.yai/run/<ws_id>`.
+  - Fix: enforce path jail and ws_id validation before applying FS mutations.
+- Symptom: create/destroy behavior is non-deterministic across retries.
+  - Fix: harden idempotency paths and rerun lifecycle checks.
+- Symptom: unauthorized workspace operations pass.
+  - Fix: reapply envelope authority gate (`arming` + `role`) in kernel handlers.
+
+## 7) Rollback
 
 Rollback is phase-based:
 
@@ -432,18 +452,34 @@ Rollback is phase-based:
 
 ---
 
-## 7) Final Definition of Done (Workspaces lifecycle complete)
+## 8) References
 
-## Upstream proposals
+### Upstream proposals
 
 - `docs/design/proposals/PRP-003-workspace-lifecycle-and-isolation.md`
 
-## Milestone packs
+### Milestone packs
 
-- *(TBD: add workspace lifecycle MP references as phases are shipped)*
+- `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
+- `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.1.md` *(planned)*
+
+## 9) Final Definition of Done
 
 - [ ] `yai kernel ws create testws` creates `~/.yai/run/testws/manifest.json`
 - [ ] `yai kernel ws list` lists created workspaces deterministically
 - [ ] `yai kernel ws destroy testws` requires authority and deletes only inside jail
 - [ ] invalid ws_id is rejected deterministically with zero side effects
 - [ ] workspace+protocol torture suite passes repeatably
+
+## Traceability
+
+- ADR refs:
+  - `docs/design/adr/ADR-007-workspace-isolation.md`
+  - `docs/design/adr/ADR-008-connection-lifecycle.md`
+- Law/spec refs:
+  - `deps/yai-specs/specs/protocol/include/transport.h`
+  - `deps/yai-specs/specs/protocol/include/auth.h`
+  - `deps/yai-specs/specs/protocol/include/errors.h`
+- MPs:
+  - `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
+  - `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.1.md` *(planned)*

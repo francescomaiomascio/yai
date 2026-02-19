@@ -1,4 +1,78 @@
-# YAI L2 Engine Attach v4 — Operational Runbook
+---
+id: RB-ENGINE-ATTACH
+title: Engine Attach
+status: draft
+owner: runtime
+effective_date: 2026-02-19
+revision: 1
+supersedes: []
+depends_on:
+  - RB-ROOT-HARDENING
+  - RB-WORKSPACES-LIFECYCLE
+related:
+  adr:
+    - docs/design/adr/ADR-009-engine-attachment.md
+    - docs/design/adr/ADR-008-connection-lifecycle.md
+  specs:
+    - deps/yai-specs/specs/protocol/include/transport.h
+    - deps/yai-specs/specs/protocol/include/yai_protocol_ids.h
+  test_plans:
+    - docs/test-plans/hardfail.md
+  tools:
+    - tools/bin/yai-verify
+    - tools/bin/yai-gate
+tags:
+  - runtime
+  - engine
+---
+
+# RB-ENGINE-ATTACH — Engine Attach
+
+## 1) Purpose
+Bring L2 Engine inside the governed Root/Kernel control path with workspace-bound lifecycle and deterministic protocol behavior.
+
+## 2) Preconditions
+- [ ] Workspace lifecycle baseline is active.
+- [ ] Root boundary hardening is already green.
+- [ ] Protocol IDs and error mapping can be updated in sync with specs.
+
+## 3) Inputs
+- Runtime targets: `root`, `kernel`, `engine`, `yai-cli`
+- Spec anchors: protocol IDs, transport, error codes
+- Validation tooling: `tools/bin/yai-verify`, `tools/bin/yai-gate`
+
+## 4) Procedure
+Execute the phased attach sequence in this document (ADR decision first, then kernel lifecycle commands, then CLI/operator flows).
+
+## 5) Verification
+- Run pre-flight and per-step acceptance checks.
+- Confirm deterministic start/stop/status semantics and socket/pid lifecycle.
+
+## 6) Failure Modes
+- Symptom: engine process starts but socket is missing.
+  - Fix: enforce socket poll timeout + cleanup in kernel start path.
+- Symptom: mismatched authority behavior between kernel and CLI.
+  - Fix: enforce envelope authority checks (`arming` + `role`) on server side and align client expectations.
+
+## 7) Rollback
+- Stop engine processes, clean workspace runtime artifacts, and revert only the active phase changes.
+- Re-run baseline ping and kernel status checks before retry.
+
+## 8) References
+- ADR: `docs/design/adr/ADR-009-engine-attachment.md`
+- Runbooks: `docs/runbooks/root-hardening.md`, `docs/runbooks/workspaces-lifecycle.md`
+- Test plans: `docs/test-plans/hardfail.md`
+
+## Traceability
+- ADR refs:
+  - `docs/design/adr/ADR-009-engine-attachment.md`
+  - `docs/design/adr/ADR-008-connection-lifecycle.md`
+- MPs (to be filled as phases ship):
+  - `docs/milestone-packs/...`
+
+## Appendix — Detailed Operational Notes (Legacy Detailed Content)
+
+### YAI L2 Engine Attach v4 — Operational Runbook
 
 **Branch:** `feat/l2-engine-attach-v1`  
 **Objective:** Bring L2 Engine into L0↔L1 governed pipeline with workspace-bound lifecycle management.

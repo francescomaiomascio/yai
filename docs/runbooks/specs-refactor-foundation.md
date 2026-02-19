@@ -7,7 +7,7 @@ effective_date: 2026-02-19
 revision: 1
 supersedes: []
 depends_on:
-  - RB-CONTRACT-BASELINE-LOCK (planned)
+  - RB-CONTRACT-BASELINE-LOCK
 adr_refs:
   - docs/design/adr/ADR-011-contract-baseline-lock.md
 decisions:

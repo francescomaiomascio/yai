@@ -1,4 +1,77 @@
-# YAI Data Plane v5 — Operational Runbook Series
+---
+id: RB-DATA-PLANE
+title: Data Plane
+status: draft
+owner: runtime
+effective_date: 2026-02-19
+revision: 1
+supersedes: []
+depends_on:
+  - RB-ROOT-HARDENING
+  - RB-WORKSPACES-LIFECYCLE
+  - RB-ENGINE-ATTACH
+related:
+  adr: []
+  specs:
+    - deps/yai-specs/specs/protocol/include/transport.h
+    - deps/yai-specs/specs/protocol/include/auth.h
+  test_plans:
+    - docs/test-plans/hardfail.md
+  tools:
+    - tools/bin/yai-verify
+    - tools/bin/yai-gate
+    - tools/bin/yai-suite
+tags:
+  - runtime
+  - data-plane
+---
+
+# RB-DATA-PLANE — Data Plane
+
+## 1) Purpose
+Define and deliver the staged data-plane rollout with deterministic tenant isolation, storage layout, and operational verification.
+
+## 2) Preconditions
+- [ ] Workspace path-jail and centralized `ws_id` validation are already active.
+- [ ] Root/Kernel baseline command path is stable.
+- [ ] Logger pipeline is available for storage/debug traces.
+
+## 3) Inputs
+- Repos/components: `yai`, `yai-cli`, `yai-specs`
+- Storage targets: LMDB (authority), DuckDB (events), Redis (STM/context)
+- Validation tooling: `tools/bin/yai-verify`, `tools/bin/yai-gate`
+
+## 4) Procedure
+Use phased execution (`v5.0` to `v5.4`) with closure gates per phase and no cross-phase partial merges.
+
+## 5) Verification
+- Execute per-phase acceptance checks in this document.
+- Capture command outputs, artifacts, and logs for each phase closure.
+
+## 6) Failure Modes
+- Symptom: cross-tenant path leakage or side effects.
+  - Fix: enforce path jail helpers and block merges until tests pass.
+- Symptom: storage schema drifts between code and docs.
+  - Fix: update specs + implementation atomically and rerun gates.
+
+## 7) Rollback
+- Revert only the active phase branch and restore last green storage baseline.
+- Re-run build + verify before reopening the phase.
+
+## 8) References
+- Runbooks: `docs/runbooks/root-hardening.md`, `docs/runbooks/workspaces-lifecycle.md`, `docs/runbooks/engine-attach.md`
+- Test plans: `docs/test-plans/hardfail.md`
+
+## Traceability
+- ADR refs:
+  - `docs/design/adr/ADR-003-kernel-authority.md`
+  - `docs/design/adr/ADR-004-engine-execution.md`
+  - `docs/design/adr/ADR-010-boot-entrypoint.md`
+- MPs (to be filled as phases ship): `docs/milestone-packs/...`
+
+## Appendix — Detailed Operational Series (Legacy Detailed Content)
+
+### YAI Data Plane v5 — Operational Runbook Series
 
 **Branch:** `feat/data-plane-v5`  
 **Dependencies:** v2/v3 (ws_id validation + path jail) + v4 (L2 engine attach) + logger MANDATORY
