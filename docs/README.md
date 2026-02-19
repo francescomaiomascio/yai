@@ -19,6 +19,7 @@ The goal of this map is to reduce ambiguity:
 - Templates (single source): `docs/templates/`
 - Developer guides (workflow/tooling/release): `docs/dev-guide/`
   - Agent execution guide: `docs/dev-guide/agent-playbook.md`
+  - Agent normative contract: `docs/dev-guide/agent-contract.md`
 - Getting started (onboarding): `docs/getting-started/`
 - User-guide pointers: `docs/user-guide/`
 
