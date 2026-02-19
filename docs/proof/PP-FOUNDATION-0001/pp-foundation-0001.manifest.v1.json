@@ -23,7 +23,7 @@
     "yai": {
       "version": "0.1.7",
       "tag": "UNTAGGED",
-      "commit": "7ab0529bcebd04a837b41494ee54b2038891ee28"
+      "commit": "6f3af5cdf73b20429deb9b66d8aca8df565aaea5"
     },
     "yai_specs": {
       "version_line": "v0.1.0 / SPECS_API_VERSION v1",
