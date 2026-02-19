@@ -3,6 +3,7 @@
 .vscode
 *.swp
 # local
+docs/proof/.private/
 
 target/
 # Canonical build/staging outputs

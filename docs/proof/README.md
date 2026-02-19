@@ -1,19 +1,17 @@
-# Proof Packs (Canonical)
+# Proof Packs
 
-This directory is the single source of truth for YAI evidence/proof packs.
+Proof packs in progress are kept locally under `docs/proof/.private/` (gitignored).
 
 Rules:
-- Canonical evidence lives only under `docs/proof/` in `yai`.
-- Other repos (`yai-cli`, `yai-mind`) must keep pointer files only.
-- Every proof pack must pin explicit versions/tags/commits for:
+- Draft/private packs live in `docs/proof/.private/` and are not tracked.
+- Public packs (when promoted) must live directly under `docs/proof/`.
+- Other repos (`yai-cli`, `yai-mind`) keep pointer files only.
+- Every public proof pack must pin explicit versions/tags/commits for:
   - `yai-specs`
   - `yai-cli`
   - `yai-mind`
-- Every proof pack must split:
+- Every public proof pack must split:
   - existing evidence
   - missing evidence
   - non-skip gates
   - skipped gates
-
-Current canonical pack:
-- `docs/proof/PP-FOUNDATION-0001/`

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Set
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-DEFAULT_MANIFEST = REPO_ROOT / "docs" / "proof" / "PP-FOUNDATION-0001" / "pp-foundation-0001.manifest.v1.json"
+DEFAULT_MANIFEST = REPO_ROOT / "docs" / "proof" / ".private" / "PP-FOUNDATION-0001" / "pp-foundation-0001.manifest.v1.json"
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
@@ -240,6 +240,15 @@ def main() -> int:
     args = parser.parse_args()
 
     manifest = args.manifest if args.manifest.is_absolute() else (REPO_ROOT / args.manifest)
+    rel_manifest = manifest.relative_to(REPO_ROOT).as_posix()
+    if "/.private/" in f"/{rel_manifest}":
+        print(f"[proof-pack] SKIP: private draft manifest ({rel_manifest})")
+        print("[proof-pack] SKIP: publish under docs/proof/<PACK-ID>/ to enforce proof-pack gates")
+        return 0
+    if not manifest.exists() and manifest.resolve() == DEFAULT_MANIFEST.resolve():
+        print(f"[proof-pack] SKIP: default manifest not found ({rel_manifest})")
+        print("[proof-pack] SKIP: keep draft packs under docs/proof/.private/ until publication")
+        return 0
     doc = read_json(manifest)
 
     errors = validate_schema(doc)
