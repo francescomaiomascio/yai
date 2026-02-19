@@ -431,6 +431,14 @@ Rollback is phase-based:
 
 ## 7) Final Definition of Done (Workspaces lifecycle complete)
 
+## Upstream proposals
+
+- `docs/design/proposals/PRP-003-workspace-lifecycle-and-isolation.md`
+
+## Milestone packs
+
+- *(TBD: add workspace lifecycle MP references as phases are shipped)*
+
 - [ ] `yai kernel ws create testws` creates `~/.yai/run/testws/manifest.json`
 - [ ] `yai kernel ws list` lists created workspaces deterministically
 - [ ] `yai kernel ws destroy testws` requires authority and deletes only inside jail
