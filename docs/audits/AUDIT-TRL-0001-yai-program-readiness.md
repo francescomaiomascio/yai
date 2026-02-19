@@ -1,3 +1,21 @@
+---
+id: AUDIT-TRL-0001
+status: draft
+owner: governance
+effective_date: 2026-02-19
+scope:
+  - yai-specs
+  - yai
+  - yai-cli
+  - yai-mind
+related:
+  evidence_index: docs/audits/AUDIT-TRL-0001-evidence-index.md
+  scorecards:
+    - docs/audits/scorecards/SC-yai-specs.md
+    - docs/audits/scorecards/SC-yai-core.md
+    - docs/audits/scorecards/SC-yai-cli.md
+    - docs/audits/scorecards/SC-yai-mind.md
+---
 # AUDIT-TRL-0001 — YAI Program Readiness & TRL Assessment
 
 Date: 2026-02-19
@@ -390,3 +408,9 @@ Medium
 - Non-skip E2E proof chain.
 - CLI/spec realignment or explicit compatibility narrowing.
 - Mind build/test stabilization and cross-repo evidence integration.
+
+## 7) Immediate Actions
+
+1. Create concrete artifact pointers under `docs/audits/evidence/TRL-0001/` for each command listed in the evidence index.
+2. Convert top 5 risks into atomic records under `docs/audits/findings/` with owner and verification command.
+3. Re-run this audit after non-skip gate policy is enforced for required TRL tracks.

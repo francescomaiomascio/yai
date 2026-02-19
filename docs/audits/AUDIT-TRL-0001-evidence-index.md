@@ -1,3 +1,11 @@
+---
+id: AUDIT-TRL-0001-EVIDENCE
+status: draft
+owner: governance
+effective_date: 2026-02-19
+related:
+  audit: docs/audits/AUDIT-TRL-0001-yai-program-readiness.md
+---
 # AUDIT-TRL-0001 Evidence Index
 
 Date: 2026-02-19
@@ -93,3 +101,13 @@ Date: 2026-02-19
 - Core↔mind integration proof with passing automated tests and traceable run artifacts.
 - Reproducibility evidence for dataset-driven flows (seed/replay with stable outcomes).
 - Consolidated audit pack linking command runs, CI URLs/artifacts, log excerpts, trace_id correlations.
+
+## Execution Log (reproducible)
+
+| Date | Repo | Command | Result | Artifact / Pointer |
+|---|---|---|---|---|
+| 2026-02-19 | `yai-specs` | `make formal-coverage` | pass | `docs/audits/evidence/TRL-0001/` *(add concrete log pointer)* |
+| 2026-02-19 | `yai` | `tools/bin/yai-verify core` | pass | `docs/audits/evidence/TRL-0001/` *(add concrete log pointer)* |
+| 2026-02-19 | `yai-cli` | `./tools/bin/yai-cli-verify --profile ci` | pass | `docs/audits/evidence/TRL-0001/` *(add concrete log pointer)* |
+| 2026-02-19 | `yai` | `tools/ops/suite/levels/l0-l7.sh` | partial (L3-L7 skipped) | `docs/audits/evidence/TRL-0001/` *(add concrete log pointer)* |
+| 2026-02-19 | `yai-mind` | `cargo test` | fail | `docs/audits/evidence/TRL-0001/` *(add concrete log pointer)* |

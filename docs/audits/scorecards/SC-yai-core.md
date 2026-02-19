@@ -1,3 +1,9 @@
+---
+id: SC-yai-core
+status: draft
+owner: governance
+effective_date: 2026-02-19
+---
 # SC-yai-core
 
 ## 1) Health
@@ -54,3 +60,10 @@ Medium
 1. Introduce strict TRL profile where required gates fail (not skip) when capability missing.
 2. Align runtime gate expectations with currently shipped CLI command surface and enforce via CI.
 3. Close root/workspace/engine phase evidence with artifacted positive+negative deterministic outputs.
+
+## 5) Actions
+
+- Action owner: `TBD`
+- Due date: `TBD`
+- Verification command: `TBD`
+- Exit criteria: `TBD`

@@ -1,3 +1,9 @@
+---
+id: SC-yai-cli
+status: draft
+owner: governance
+effective_date: 2026-02-19
+---
 # SC-yai-cli
 
 ## 1) Health
@@ -54,3 +60,10 @@ Medium
 1. Reconcile `commands.v1.json` with actual CLI surface (spec update or implementation update).
 2. Expand tests to include deterministic negative vectors mapped to protocol errors/roles/arming.
 3. Add CI check that validates exported command tree against pinned command schema.
+
+## 5) Actions
+
+- Action owner: `TBD`
+- Due date: `TBD`
+- Verification command: `TBD`
+- Exit criteria: `TBD`

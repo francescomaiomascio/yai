@@ -1,3 +1,9 @@
+---
+id: SC-yai-mind
+status: draft
+owner: governance
+effective_date: 2026-02-19
+---
 # SC-yai-mind
 
 ## 1) Health
@@ -52,3 +58,10 @@ High
 1. Restore compile/test integrity and add mandatory CI gates.
 2. Define and enforce explicit specs pinning/alignment strategy with `yai-specs`.
 3. Produce minimal ops-grade docs (versioning/compatibility/security/testing) aligned to core program governance.
+
+## 5) Actions
+
+- Action owner: `TBD`
+- Due date: `TBD`
+- Verification command: `TBD`
+- Exit criteria: `TBD`

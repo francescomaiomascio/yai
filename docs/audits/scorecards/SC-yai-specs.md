@@ -1,3 +1,9 @@
+---
+id: SC-yai-specs
+status: draft
+owner: governance
+effective_date: 2026-02-19
+---
 # SC-yai-specs
 
 ## 1) Health
@@ -53,3 +59,10 @@ High
 1. Add consumer-facing conformance matrix artifacts linking each invariant to downstream executable tests.
 2. Tighten semantics around vectors (currently marked informative in `REGISTRY.md`) for higher TRL claims.
 3. Publish a machine-readable “required downstream checks” profile per release tag.
+
+## 5) Actions
+
+- Action owner: `TBD`
+- Due date: `TBD`
+- Verification command: `TBD`
+- Exit criteria: `TBD`
