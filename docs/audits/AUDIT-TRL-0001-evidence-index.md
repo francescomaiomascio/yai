@@ -87,6 +87,7 @@ Date: 2026-02-19
 
 ## Missing Evidence (required to raise TRL)
 
+- Pre-hardening runbook execution evidence for specs foundation track (tree/map/link/wiring/guardrails/formal/TLA) from `docs/runbooks/specs-refactor-foundation.md`.
 - Non-skip E2E gate artifacts (ws/cortex/events/graph/providers) for current shipped CLI/runtime.
 - Deterministic negative reject matrix with stable code mapping from specs -> core -> CLI output.
 - Core↔mind integration proof with passing automated tests and traceable run artifacts.

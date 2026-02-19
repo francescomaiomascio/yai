@@ -13,6 +13,7 @@ A good runbook must be deterministic:
 - `docs/runbooks/root-hardening.md`
 - `docs/runbooks/workspaces-lifecycle.md`
 - `docs/runbooks/engine-attach.md`
+- `docs/runbooks/specs-refactor-foundation.md`
 
 ## Template
 

@@ -8,6 +8,7 @@ Method: docs-first audit + code/proof mapping + local verification runs
 
 ### Snapshot (what is true today)
 - Contract anchor quality is strong: `yai-specs` has explicit axioms/invariants/boundaries, protocol headers, vectors, formal mapping, and CI formal coverage checks.
+- Sequencing is now explicit: `RB-CONTRACT-BASELINE-LOCK` first, then `RB-SPECS-REFACTOR-FOUNDATION`, then runtime hardening tracks (`root-hardening` onwards).
 - Core build/formal baseline is executable: `yai` `make all` and `tools/bin/yai-verify core` pass locally, including TLC quick+deep checks.
 - CLI repo has a functioning CI verify pipeline (`./tools/bin/yai-cli-verify --profile ci`) with build and tests passing locally.
 - Cross-repo pin governance is explicit and strict in release tooling (`yai` checks specs pin triangle and `deps/yai-cli.ref`).
@@ -144,6 +145,7 @@ High
 - `yai-mind` fails local tests and lacks CI/governance maturity.
 - Many runbook/MP claims are documented but not tied to archived repeatable artifacts.
 - E2E negative proof is partially present in scripts but not consistently executed and recorded.
+- Pre-hardening specs-refactor foundation is now defined as a dedicated runbook, but execution evidence is still pending.
 
 ## 4) Proof & Test Realism Ladder
 
@@ -249,6 +251,7 @@ Status scale:
 | RB-ROOT-HARDENING 0.1.3 | ws validator centralization | B | Written but Not Implemented | shared validator | drift persists across repos |
 | RB-ROOT-HARDENING 0.1.4 | hard reject invalid ws | A | Implemented but Not Proven | kernel/session paths | missing explicit side-effect tests |
 | RB-ROOT-HARDENING 0.1.5 | torture repeatability | B | Implemented but Not Proven | suite/gate | L3-L7 skip paths |
+| RB-SPECS-REFACTOR-FOUNDATION 0.1.0..0.1.8 | pre-hardening specs foundation sequence | mixed | Written but Not Implemented | `docs/runbooks/specs-refactor-foundation.md` | concept sequence defined; phase artifacts pending |
 | RB-WORKSPACES 0.1.0 | workspace layout | A | Implemented but Not Proven | `kernel/src/core/project_tree.c` | no direct evidence artifact |
 | RB-WORKSPACES 0.1.1 | ws.create guardrails | B | Implemented but Not Proven | kernel enforcement | no non-skip e2e evidence |
 | RB-WORKSPACES 0.1.2 | ws.list deterministic | A | Implemented but Not Proven | kernel/cli | no deterministic output artifact |
@@ -340,6 +343,8 @@ Status scale:
 
 | MP ID | Type | Repos | Evidence required | Risk reduced |
 |---|---|---|---|---|
+| MP-SPECS-REFACTOR-FOUNDATION-0.1.x | B | `yai-specs`, `yai`, `yai-cli` | phase-closure artifacts from `RB-SPECS-REFACTOR-FOUNDATION` (tree/map/link/wiring/CI/formal/TLA) | establishes deterministic specs platform before root hardening |
+| MP-CONTRACT-BASELINE-LOCK-0.1.x | B | `yai`, `yai-cli`, `yai-specs` | phase-closure artifacts from contract baseline lock runbook | establishes truthful non-skip baseline before advanced tracks |
 | MP-TRL-001-contract-cli-realignment | B | `yai-specs`, `yai-cli`, `yai` | contract diff + conformance tests non-skip | eliminates command drift |
 | MP-TRL-002-l7-no-skip-policy | B | `yai` | gates fail-on-missing capability in TRL mode; CI artifacts | removes false positives |
 | MP-TRL-003-mind-build-stability | B | `yai-mind` | `cargo test` green + CI workflow | restores L3 baseline credibility |
