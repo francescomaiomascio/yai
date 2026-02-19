@@ -34,6 +34,18 @@ def _set_twin_pr_links_default(md: str) -> str:
     return md
 
 
+def _set_closes_issue(md: str, issue_val: str) -> str:
+    closes = "N/A" if issue_val == "N/A" else f"Closes {issue_val}"
+    if has_kv_line(md, "Closes-Issue"):
+        return set_kv_line(md, "Closes-Issue", closes)
+    return md
+
+
+def _set_issue_linkage_line(md: str, issue_val: str) -> str:
+    closes = f"Closes {issue_val}" if issue_val != "N/A" else "Closes N/A"
+    return re.sub(r"(^-\s+Closes\s+#<issue-id>.*$)", f"- {closes}", md, flags=re.MULTILINE)
+
+
 def _fmt_bullets(items: list[str]) -> str:
     return "\n".join([f"- {x}" for x in items])
 
@@ -121,6 +133,8 @@ def generate_pr_body(
 
     issue_val = normalize_issue(issue)
     md = set_kv_line(md, "Issue-ID", issue_val)
+    md = _set_closes_issue(md, issue_val)
+    md = _set_issue_linkage_line(md, issue_val)
 
     if issue_val == "N/A":
         r = reason.strip()

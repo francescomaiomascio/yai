@@ -38,6 +38,7 @@ jobs:
 
             const banned = [
               "#<issue-number>",
+              "<issue-id>",
               "<40-char-sha>",
               "MP-<TRACK>-<X.Y.Z>",
               "docs/runbooks/<name>.md#<anchor>",
