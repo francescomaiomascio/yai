@@ -1,3 +1,16 @@
+---
+id: MP-CONTRACT-BASELINE-LOCK-0.1.0
+status: active
+runbook: docs/runbooks/contract-baseline-lock.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/SPEC_MAP.md
+issues:
+  - "N/A: index-only overview document"
+---
+
 # Milestone Packs
 
 Milestone Packs (MP) package delivery outcomes with explicit traceability and evidence.
@@ -12,6 +25,22 @@ An MP is a closure artifact for a concrete phase and should make review/audit st
 - which repos are impacted,
 - compatibility classification,
 - proof/evidence pointers.
+
+## Current track: Contract baseline lock (foundational)
+
+- `docs/milestone-packs/contract-baseline-lock/README.md`
+
+## Planned track: Workspaces lifecycle
+
+- `docs/milestone-packs/workspaces-lifecycle/README.md`
+
+## Planned track: Engine attach
+
+- `docs/milestone-packs/engine-attach/README.md`
+
+## Planned track: Specs refactor foundation
+
+- `docs/milestone-packs/specs-refactor-foundation/README.md`
 
 ## Current track: Root hardening
 

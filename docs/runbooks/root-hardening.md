@@ -8,15 +8,15 @@ revision: 1
 supersedes: []
 depends_on:
   - RB-WORKSPACES-LIFECYCLE (optional, if already exists)
+adr_refs:
+  - docs/design/adr/ADR-002-root-entrypoint.md
+  - docs/design/adr/ADR-006-unified-rpc.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
 decisions:
   - docs/design/adr/ADR-002-root-entrypoint.md
   - docs/design/adr/ADR-006-unified-rpc.md
   - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
-adr_refs:
-  - docs/design/adr/ADR-002-root-entrypoint.md
-  - docs/design/adr/ADR-006-unified-rpc.md
-  - docs/design/adr/ADR-008-connection-lifecycle.md
   adr:
     - docs/design/adr/ADR-002-root-entrypoint.md
     - docs/design/adr/ADR-006-unified-rpc.md
@@ -32,6 +32,9 @@ adr_refs:
     - tools/bin/yai-verify
     - tools/bin/yai-gate
     - tools/bin/yai-suite
+tags:
+  - runtime
+  - hardening
 ---
 
 # RB-ROOT-HARDENING — Root ↔ Kernel Boundary Hardening (YAI 0.1.x)
@@ -49,15 +52,28 @@ Root must behave like a governed cable:
 
 This runbook does NOT redesign architecture. It strengthens enforcement and observability without changing the planes model.
 
-## Decisions
+## 1) Purpose
 
-- docs/design/adr/ADR-002-root-entrypoint.md
-- docs/design/adr/ADR-006-unified-rpc.md
-- docs/design/adr/ADR-008-connection-lifecycle.md
+Harden the Root control plane as a deterministic, auditable, envelope-only boundary between clients and the Kernel.
 
----
+## 2) Preconditions
 
-## 1) Sequencing and prerequisites
+- [ ] `deps/yai-specs` protocol headers are present and treated as source-of-truth.
+- [ ] Kernel boots and accepts control connections.
+- [ ] A baseline end-to-end ping command is already green.
+
+## 3) Inputs
+
+- Protocol anchors:
+  - `deps/yai-specs/specs/protocol/include/transport.h`
+  - `deps/yai-specs/specs/protocol/include/auth.h`
+  - `deps/yai-specs/specs/protocol/include/errors.h`
+- Tooling:
+  - `tools/bin/yai-verify`
+  - `tools/bin/yai-gate`
+  - `tools/bin/yai-suite`
+
+## 4) Procedure
 
 ### Position in the global sequence
 
@@ -77,7 +93,7 @@ If any prerequisite is not true: stop and fix baseline first.
 
 ---
 
-## 2) Scope
+### Scope
 
 ### In scope
 
@@ -96,7 +112,7 @@ If any prerequisite is not true: stop and fix baseline first.
 
 ---
 
-## 3) Operational workflow (daily)
+### Operational Workflow (Daily)
 
 ### Clean runtime before each test round
 
@@ -129,7 +145,7 @@ Expected:
 
 ---
 
-## 4) Deliverables (phased)
+### Deliverables (Phased)
 
 This runbook is delivered through sub-phases under YAI 0.1.x.
 Each phase must compile, run, and be verifiable before moving on.
@@ -456,7 +472,7 @@ Temporary compatibility:
 
 ---
 
-## 5) Observability and audit
+## 5) Verification
 
 Mandatory log location:
 
@@ -473,7 +489,16 @@ Every reject must produce:
 
 ---
 
-## 6) Rollback
+## 6) Failure Modes
+
+- Symptom: root/kernal behavior diverges on malformed envelope handling.
+  - Fix: realign reject codes and response framing before phase closure.
+- Symptom: silent drops appear in negative-path tests.
+  - Fix: force deterministic error frames and rerun hardfail vectors.
+- Symptom: logging evidence is incomplete for rejects.
+  - Fix: restore append-only root log path and attach CI/runtime artifacts.
+
+## 7) Rollback
 
 Rollback must be clean:
 
@@ -488,16 +513,16 @@ If a phase causes regressions:
 
 ---
 
-## 7) Final Definition of Done (Root Hardening complete)
+## 8) References
 
-## Upstream proposals
+### Upstream proposals
 
 - `docs/design/proposals/PRP-001-runtime-topology-and-authority.md`
 - `docs/design/proposals/PRP-002-unified-rpc-and-cli-contract.md`
 - `docs/design/proposals/PRP-004-contract-baseline-lock-and-pin-policy.md`
 - `docs/design/proposals/PRP-005-formal-coverage-roadmap.md`
 
-## Milestone packs
+### Milestone packs
 
 - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
 - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
@@ -506,6 +531,8 @@ If a phase causes regressions:
 - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
 - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`
 
+## 9) Final Definition of Done
+
 - [ ] Root validates invariants + handshake gate
 - [ ] Root is byte-perfect forward/relay
 - [ ] Root never silent drops (always responds)
@@ -513,3 +540,21 @@ If a phase causes regressions:
 - [ ] Kernel rejects invalid ws_id with zero side effects
 - [ ] authority gating enforced in Root + Kernel
 - [ ] torture suite passes and is repeatable
+
+## Traceability
+
+- ADR refs:
+  - `docs/design/adr/ADR-002-root-entrypoint.md`
+  - `docs/design/adr/ADR-006-unified-rpc.md`
+  - `docs/design/adr/ADR-008-connection-lifecycle.md`
+- Law/spec refs:
+  - `deps/yai-specs/specs/protocol/include/transport.h`
+  - `deps/yai-specs/specs/protocol/include/auth.h`
+  - `deps/yai-specs/specs/protocol/include/errors.h`
+- MPs:
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.2.md`
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.3.md`
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
+  - `docs/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`

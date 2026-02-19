@@ -20,3 +20,8 @@ A test plan should make verification reproducible and reviewable.
 ## Scope boundary
 
 Test plans describe how to validate; they do not replace normative contract/spec definitions.
+
+## Suggested progression
+
+- Start with a preparation plan: `docs/test-plans/contract-baseline-lock-prep.md`
+- Promote to an official plan only after commands/evidence are stable in CI.

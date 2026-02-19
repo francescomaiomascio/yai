@@ -49,7 +49,7 @@ Shared attachment improves operability and keeps execution behavior aligned with
   - `docs/runbooks/workspaces-lifecycle.md`
   - `docs/runbooks/engine-attach.md`
 - Milestone packs:
-  - *(TBD for workspace/engine tracks)*
+  - `docs/milestone-packs/engine-attach/MP-ENGINE-ATTACH-0.1.0.md` *(planned)*
 
 ## Status
 

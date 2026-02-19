@@ -50,7 +50,8 @@ The model keeps tenancy explicit and reduces accidental cross-workspace effects 
   - `docs/runbooks/workspaces-lifecycle.md`
   - `docs/runbooks/engine-attach.md`
 - Milestone packs:
-  - *(TBD for workspace/engine tracks)*
+  - `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
+  - `docs/milestone-packs/engine-attach/MP-ENGINE-ATTACH-0.1.0.md` *(planned)*
 
 ## Status
 

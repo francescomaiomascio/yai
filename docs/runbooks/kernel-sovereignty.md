@@ -1,4 +1,84 @@
-# YAI Kernel Sovereignty v5 — Operational Runbook
+---
+id: RB-KERNEL-SOVEREIGNTY
+title: Kernel Sovereignty
+status: draft
+owner: runtime
+effective_date: 2026-02-19
+revision: 1
+supersedes: []
+depends_on:
+  - RB-ROOT-HARDENING
+  - RB-ENGINE-ATTACH
+adr_refs:
+  - docs/design/adr/ADR-003-kernel-authority.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
+decisions:
+  - docs/design/adr/ADR-003-kernel-authority.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
+related:
+  adr:
+    - docs/design/adr/ADR-003-kernel-authority.md
+    - docs/design/adr/ADR-008-connection-lifecycle.md
+  specs:
+    - deps/yai-specs/specs/protocol/include/transport.h
+    - deps/yai-specs/specs/protocol/include/auth.h
+  test_plans:
+    - docs/test-plans/hardfail.md
+  tools:
+    - tools/bin/yai-verify
+    - tools/bin/yai-gate
+tags:
+  - runtime
+  - kernel
+---
+
+# RB-KERNEL-SOVEREIGNTY — Kernel Sovereignty
+
+## 1) Purpose
+Harden kernel authority boundaries with deterministic session/state handling, formal verification, and production-grade observability.
+
+## 2) Preconditions
+- [ ] Root boundary controls are active.
+- [ ] Baseline engine attach flow is available for realistic cross-plane testing.
+- [ ] Logging and path-jail prerequisites are present.
+
+## 3) Inputs
+- Core kernel modules: session, transport, enforcement, logger
+- Formal assets: TLA+/traceability artifacts
+- Validation tooling: `tools/bin/yai-verify`, hardfail/test suites
+
+## 4) Procedure
+Execute staged hardening in this document (logger first, then session/path hardening, then stress/fault injection closure).
+
+## 5) Verification
+- Execute all acceptance criteria per step.
+- Collect deterministic logs and traceability outputs for each phase closure.
+
+## 6) Failure Modes
+- Symptom: workspace isolation breaks under concurrency/stress.
+  - Fix: block merge and rework session table + path guards before proceeding.
+- Symptom: authority decisions differ across code paths.
+  - Fix: centralize enforcement path and rerun deterministic vectors.
+
+## 7) Rollback
+- Revert active phase changes only and restore last green kernel baseline.
+- Re-run core verify and handshake smoke checks before reopening.
+
+## 8) References
+- ADR: `docs/design/adr/ADR-003-kernel-authority.md`
+- Runbooks: `docs/runbooks/root-hardening.md`, `docs/runbooks/engine-attach.md`
+- Test plans: `docs/test-plans/hardfail.md`
+
+## Traceability
+- ADR refs:
+  - `docs/design/adr/ADR-003-kernel-authority.md`
+  - `docs/design/adr/ADR-008-connection-lifecycle.md`
+- MPs (to be filled as phases ship):
+  - `docs/milestone-packs/...`
+
+## Appendix — Detailed Operational Notes (Legacy Detailed Content)
+
+### YAI Kernel Sovereignty v5 — Operational Runbook
 
 **Branch:** `feat/kernel-sovereignty-v1`  
 **Dependencies:** v2/v3 (centralized ws_id validate) + v4 (L2 attach) recommended, but logger can be done immediately.

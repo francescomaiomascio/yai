@@ -16,13 +16,20 @@ issues:
   - N/A
 issue_reason: "Docs-only traceability alignment PR without dedicated issue."
 ---
-Milestone Pack: `MP-ROOT-HARDENING-0.1.0`
-Runbook link: `docs/runbooks/root-hardening.md` (phase `0.1.0 — Protocol Guardrails`)
-ADR links: `docs/design/adr/ADR-002-root-entrypoint.md`, `docs/design/adr/ADR-006-unified-rpc.md`, `docs/design/adr/ADR-008-connection-lifecycle.md`, `docs/design/adr/ADR-011-contract-baseline-lock.md`
-Proposal links: `docs/design/proposals/PRP-001-runtime-topology-and-authority.md`, `docs/design/proposals/PRP-002-unified-rpc-and-cli-contract.md`, `docs/design/proposals/PRP-004-contract-baseline-lock-and-pin-policy.md`, `docs/design/proposals/PRP-005-formal-coverage-roadmap.md`
-Evidence links: `docs/test-plans/hardfail.md`
+# MP-ROOT-HARDENING-0.1.0
 
-Owner: runtime
+## Metadata
+
+- Runbook: `docs/runbooks/root-hardening.md`
+- Phase: `0.1.0 — Protocol Guardrails`
+- Owner: `runtime`
+- Status: `active`
+
+## Links
+
+- ADRs: `docs/design/adr/ADR-002-root-entrypoint.md`, `docs/design/adr/ADR-006-unified-rpc.md`, `docs/design/adr/ADR-008-connection-lifecycle.md`, `docs/design/adr/ADR-011-contract-baseline-lock.md`
+- Proposals: `docs/design/proposals/PRP-001-runtime-topology-and-authority.md`, `docs/design/proposals/PRP-002-unified-rpc-and-cli-contract.md`, `docs/design/proposals/PRP-004-contract-baseline-lock-and-pin-policy.md`, `docs/design/proposals/PRP-005-formal-coverage-roadmap.md`
+- Evidence plans: `docs/test-plans/hardfail.md`
 
 Objective:
 - Root and Kernel enforce the same mechanical envelope invariants and deterministic protocol rejects.

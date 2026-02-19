@@ -52,7 +52,7 @@ A single entrypoint improves reproducibility, policy enforcement, and incident d
   - `docs/runbooks/workspaces-lifecycle.md`
   - `docs/runbooks/engine-attach.md`
 - Milestone packs:
-  - *(TBD for workspace/engine tracks)*
+  - `docs/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
 
 ## Status
 
