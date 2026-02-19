@@ -9,6 +9,9 @@ supersedes: []
 depends_on:
   - RB-ROOT-HARDENING
   - RB-WORKSPACES-LIFECYCLE
+adr_refs:
+  - docs/design/adr/ADR-003-kernel-authority.md
+  - docs/design/adr/ADR-006-unified-rpc.md
 related:
   adr: []
   specs: []

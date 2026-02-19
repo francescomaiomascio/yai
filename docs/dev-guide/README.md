@@ -16,7 +16,8 @@ Canonical developer and maintainer guidance for repository workflow, tooling, an
 2. `docs/dev-guide/agent-contract.md`
 3. `docs/dev-guide/repo-tooling.md`
 4. `docs/dev-guide/github-templates.md`
-5. `docs/dev-guide/cross-repo-workflow.md`
+5. `docs/dev-guide/github-program-governance.md`
+6. `docs/dev-guide/cross-repo-workflow.md`
 
 ## Core guides
 
@@ -44,4 +45,3 @@ Canonical developer and maintainer guidance for repository workflow, tooling, an
 - `tools/bin/yai-docs-graph --check`
 - `tools/bin/yai-agent-pack --check`
 - `tools/bin/yai-docs-doctor --mode ci --base <BASE_SHA> --head <HEAD_SHA>`
-

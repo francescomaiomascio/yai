@@ -1,3 +1,10 @@
+---
+id: RB-RUNBOOKS-README
+status: active
+adr_refs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+---
+
 # Runbooks
 
 Runbooks translate decisions into phased, repeatable execution.

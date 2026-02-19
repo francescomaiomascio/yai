@@ -9,6 +9,9 @@ supersedes: []
 depends_on:
   - RB-ROOT-HARDENING
   - RB-ENGINE-ATTACH
+adr_refs:
+  - docs/design/adr/ADR-003-kernel-authority.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
   adr:
     - docs/design/adr/ADR-003-kernel-authority.md

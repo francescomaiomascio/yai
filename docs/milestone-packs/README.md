@@ -1,3 +1,16 @@
+---
+id: MP-CONTRACT-BASELINE-LOCK-0.1.0
+status: active
+runbook: docs/runbooks/contract-baseline-lock.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/SPEC_MAP.md
+issues:
+  - "N/A: index-only overview document"
+---
+
 # Milestone Packs
 
 Milestone Packs (MP) package delivery outcomes with explicit traceability and evidence.

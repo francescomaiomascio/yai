@@ -1,3 +1,16 @@
+---
+id: MP-ENGINE-ATTACH-0.1.0
+status: active
+runbook: docs/runbooks/engine-attach.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-009-engine-attachment.md
+spec_anchors:
+  - deps/yai-specs/specs/protocol/include/transport.h
+issues:
+  - "N/A: track index document"
+---
+
 # Engine Attach Milestone Packs
 
 Runbook reference:

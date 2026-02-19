@@ -8,6 +8,10 @@ revision: 1
 supersedes: []
 depends_on:
   - RB-WORKSPACES-LIFECYCLE (optional, if already exists)
+adr_refs:
+  - docs/design/adr/ADR-002-root-entrypoint.md
+  - docs/design/adr/ADR-006-unified-rpc.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
   adr:
     - docs/design/adr/ADR-002-root-entrypoint.md

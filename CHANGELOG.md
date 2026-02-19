@@ -20,6 +20,7 @@ and this project adheres to Semantic Versioning.
 - Aligned cross-repo pins for `yai-specs` and `yai-cli` on branch `meta/governance-proof-pack-lock` with canonical proof manifest updates.
 - Strengthened docs traceability chain by linking proposal -> ADR -> runbook -> milestone pack with explicit evidence pointers.
 - Added canonical agent governance guidance and moved draft TRL audits to a private local folder policy.
+- Formalized the GitHub PMO governance model for runbook/MP execution, including cross-repo milestone closure rules and Project v2 operating standards.
 
 ## [0.1.7] - 2026-02-17
 

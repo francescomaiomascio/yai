@@ -21,6 +21,7 @@ The goal of this map is to reduce ambiguity:
   - Dev guide index: `docs/dev-guide/README.md`
   - Agent execution guide: `docs/dev-guide/agent-playbook.md`
   - Agent normative contract: `docs/dev-guide/agent-contract.md`
+  - Program PMO governance model: `docs/dev-guide/github-program-governance.md`
 - Getting started (onboarding): `docs/getting-started/`
 - User-guide pointers: `docs/user-guide/`
 

@@ -9,6 +9,9 @@ supersedes: []
 depends_on:
   - RB-ENGINE-ATTACH
   - RB-DATA-PLANE
+adr_refs:
+  - docs/design/adr/ADR-005-mind-proposer.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
   adr:
     - docs/design/adr/ADR-005-mind-proposer.md

@@ -1,3 +1,16 @@
+---
+id: MP-WORKSPACES-LIFECYCLE-0.1.0
+status: active
+runbook: docs/runbooks/workspaces-lifecycle.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-007-workspace-isolation.md
+spec_anchors:
+  - deps/yai-specs/specs/protocol/include/transport.h
+issues:
+  - "N/A: track index document"
+---
+
 # Workspaces Lifecycle Milestone Packs
 
 Runbook reference:

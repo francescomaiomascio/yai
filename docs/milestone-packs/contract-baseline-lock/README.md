@@ -1,3 +1,16 @@
+---
+id: MP-CONTRACT-BASELINE-LOCK-0.1.0
+status: active
+runbook: docs/runbooks/contract-baseline-lock.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/contracts/invariants/I-001-traceability.md
+issues:
+  - "N/A: track index document"
+---
+
 # Contract Baseline Lock Milestone Packs
 
 This is the foundational MP track for ADR-011.

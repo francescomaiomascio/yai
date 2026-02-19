@@ -1,3 +1,16 @@
+---
+id: MP-SPECS-REFACTOR-FOUNDATION-0.1.0
+status: active
+runbook: docs/runbooks/specs-refactor-foundation.md
+phase: index
+adrs:
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/SPEC_MAP.md
+issues:
+  - "N/A: track index document"
+---
+
 # Specs Refactor Foundation Milestone Packs
 
 Runbook reference:

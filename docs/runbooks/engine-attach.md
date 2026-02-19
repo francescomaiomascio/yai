@@ -9,6 +9,9 @@ supersedes: []
 depends_on:
   - RB-ROOT-HARDENING
   - RB-WORKSPACES-LIFECYCLE
+adr_refs:
+  - docs/design/adr/ADR-009-engine-attachment.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
 related:
   adr:
     - docs/design/adr/ADR-009-engine-attachment.md
@@ -67,8 +70,8 @@ Execute the phased attach sequence in this document (ADR decision first, then ke
 - ADR refs:
   - `docs/design/adr/ADR-009-engine-attachment.md`
   - `docs/design/adr/ADR-008-connection-lifecycle.md`
-- MPs (to be filled as phases ship):
-  - `docs/milestone-packs/...`
+- MPs (planned):
+  - `docs/milestone-packs/engine-attach/MP-ENGINE-ATTACH-0.1.0.md` (ID: `MP-ENGINE-ATTACH-0.1.0`)
 
 ## Appendix — Detailed Operational Notes (Legacy Detailed Content)
 

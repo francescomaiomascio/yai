@@ -8,11 +8,20 @@ This repo enforces a consistent workflow: issues are structured, PRs are auditab
 - CI gate that rejects PRs without the required PR body structure
 
 ## The rule (canonical)
-1) Prefer: **Issue → Branch → Commits → Push → PR → Review/Merge**
+1) Prefer: **Issue -> Branch -> Commits -> Push -> PR -> Review/Merge**
 2) Every PR must use a template and must include:
    - Issue-ID (or N/A with Issue-Reason only when allowed)
    - Base-Commit (40-char SHA)
    - Evidence + commands run
+
+## Program Governance Linkage
+PR templates are the **tactical layer** for metadata quality.
+Program execution governance (Project v2, milestone model, closure discipline) is defined in:
+- `docs/dev-guide/github-program-governance.md`
+
+Operational rule:
+- Use PR templates to guarantee required fields.
+- Use PMO governance model to decide when a phase can be closed.
 
 ## When an Issue is mandatory
 Default: **always** create an issue first.
@@ -49,7 +58,6 @@ tools/bin/yai-pr-body --template default --issue 123 --out /tmp/pr.md
 ```
 
 Then paste /tmp/pr.md into the PR description (UI or GH CLI).
-
 
 ## Tool-assisted workflow (dev commands)
 Use canonical helpers to avoid drift:
