@@ -1,3 +1,21 @@
+---
+id: MP-ROOT-HARDENING-0.1.2
+status: active
+runbook: docs/runbooks/root-hardening.md
+phase: "0.1.2 — Envelope-Only Authority Gate"
+adrs:
+  - docs/design/adr/ADR-002-root-entrypoint.md
+  - docs/design/adr/ADR-006-unified-rpc.md
+  - docs/design/adr/ADR-008-connection-lifecycle.md
+  - docs/design/adr/ADR-011-contract-baseline-lock.md
+spec_anchors:
+  - deps/yai-specs/specs/protocol/include/transport.h
+  - deps/yai-specs/specs/protocol/include/auth.h
+  - deps/yai-specs/specs/protocol/include/errors.h
+issues:
+  - N/A
+issue_reason: "Docs-only traceability alignment PR without dedicated issue."
+---
 Milestone Pack: `MP-ROOT-HARDENING-0.1.2`
 Runbook link: `docs/runbooks/root-hardening.md` (phase `0.1.2 — Envelope-Only Authority Gate`)
 ADR links: `docs/design/adr/ADR-002-root-entrypoint.md`, `docs/design/adr/ADR-006-unified-rpc.md`, `docs/design/adr/ADR-008-connection-lifecycle.md`, `docs/design/adr/ADR-011-contract-baseline-lock.md`
