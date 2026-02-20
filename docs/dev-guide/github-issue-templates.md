@@ -26,7 +26,18 @@
 - PR:
   - `track:<track>`
   - `phase:<phase>`
-  - keep existing functional labels (for example `type:docs`)
+  - keep existing functional labels (for example `type:docs` / `work-type:docs`)
+
+## Label badge color policy
+- Colors are assigned automatically by label namespace (no manual per-label tuning):
+  - `phase:*` -> blue
+  - `track:*` -> green
+  - `class:*` -> amber
+  - `type:*` / `work-type:*` -> light blue
+  - `area:*` -> deep blue
+  - governance/core labels (`runbook`, `governance`, `mp-closure`) keep fixed canonical colors
+- Source of truth is in `tools/python/yai_tools/cli.py` (`label-sync` + label ensure paths).
+- `tools/bin/yai-dev-fix-phase --apply` also normalizes colors for labels touched by phase issues/PRs.
 
 ## Templates in `.github/ISSUE_TEMPLATE`
 - `phase-issue.yml`: execution issue for the phase.
@@ -76,3 +87,17 @@ tools/bin/yai-dev-fix-phase \
   --repo yai-labs/yai \
   --apply
 ```
+
+Sync palette repo-wide (dry-run/apply):
+
+```bash
+tools/bin/yai-dev-label-sync --repo yai-labs/yai
+tools/bin/yai-dev-label-sync --repo yai-labs/yai --apply
+```
+
+## Operational sequence (recommended)
+1. Open an issue for rollout (example: "Label palette rollout").
+2. Implement/update logic on a dedicated branch and open PR.
+3. Merge PR to `main`.
+4. Run workflow `label-palette-sync` with `apply=true` once to normalize all existing labels.
+5. Keep workflow schedule active for drift detection (`apply=false` on schedule, no write).
