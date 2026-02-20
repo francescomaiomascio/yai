@@ -111,11 +111,12 @@ The Project is the execution control surface (status, blockers, cadence), not a 
 
 ### 6.1 Naming
 Program phase milestone naming in `yai` is canonical:
-- `RB-<TRACK>-<PHASE>`
+- `PHASE: <track>@<phase>`
+- `RB-*` remains only a runbook identifier inside docs/issues; it is not a milestone naming format.
 
 Examples:
-- `RB-CONTRACT-BASELINE-LOCK-0.1.0`
-- `RB-SPECS-REFACTOR-FOUNDATION-0.1.3`
+- `PHASE: contract-baseline-lock@0.1.0`
+- `PHASE: specs-refactor-foundation@0.1.3`
 
 ### 6.2 Closure contract
 A phase milestone MUST NOT be closed unless all are true:
@@ -126,8 +127,9 @@ A phase milestone MUST NOT be closed unless all are true:
 ### 6.3 One phase -> one closure artifact chain
 Each runbook phase maps to one canonical closure chain:
 - runbook phase anchor,
-- milestone `RB-*`,
+- milestone `PHASE: <track>@<phase>`,
 - MP `MP-*`,
+- MP Closure issue (`mp-closure: <MP-ID> — <phase> Closure`),
 - evidence pointers (commands, CI, logs).
 
 ---

@@ -17,7 +17,9 @@ Canonical developer and maintainer guidance for repository workflow, tooling, an
 3. `docs/dev-guide/repo-tooling.md`
 4. `docs/dev-guide/github-templates.md`
 5. `docs/dev-guide/github-program-governance.md`
-6. `docs/dev-guide/cross-repo-workflow.md`
+6. `docs/dev-guide/github-milestone-template.md`
+7. `docs/dev-guide/github-issue-templates.md`
+8. `docs/dev-guide/cross-repo-workflow.md`
 
 ## Core guides
 
