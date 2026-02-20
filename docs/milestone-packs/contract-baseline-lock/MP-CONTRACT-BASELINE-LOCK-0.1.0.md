@@ -1,8 +1,6 @@
 ---
 id: MP-CONTRACT-BASELINE-LOCK-0.1.0
-status: closed
-closed_at: 2026-02-20
-closure_issue: https://github.com/yai-labs/yai/issues/124
+status: active
 runbook: docs/runbooks/contract-baseline-lock.md
 phase: "0.1.0 — Pin Baseline Freeze"
 adrs:
@@ -23,7 +21,7 @@ issue_reason: "Phase tracked by governance runbook issue #125."
 - Runbook: `docs/runbooks/contract-baseline-lock.md`
 - Phase: `0.1.0 — Pin Baseline Freeze`
 - Owner: `governance`
-- Status: `closed`
+- Status: `active`
 
 ## Links
 
