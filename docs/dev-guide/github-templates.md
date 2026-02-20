@@ -18,6 +18,8 @@ This repo enforces a consistent workflow: issues are structured, PRs are auditab
 PR templates are the **tactical layer** for metadata quality.
 Program execution governance (Project v2, milestone model, closure discipline) is defined in:
 - `docs/dev-guide/github-program-governance.md`
+- `docs/dev-guide/github-milestone-template.md`
+- `docs/dev-guide/github-issue-templates.md`
 
 Operational rule:
 - Use PR templates to guarantee required fields.
@@ -63,8 +65,9 @@ Then paste /tmp/pr.md into the PR description (UI or GH CLI).
 Use canonical helpers to avoid drift:
 
 ```bash
-tools/bin/yai-dev-issue --type runbook --title "Root hardening phase 0.1.0" --mp-id MP-ROOT-HARDENING-0.1.0 --runbook docs/runbooks/root-hardening.md --phase 0.1.0 --out .pr/ISSUE_BODY.md
-tools/bin/yai-dev-branch --type feat --issue 123 --area root --desc hardening-forward
-tools/bin/yai-dev-pr-body --template default --issue 123 --mp-id MP-ROOT-HARDENING-0.1.0 --runbook docs/runbooks/root-hardening.md#phase-0-1-0-protocol-guardrails --classification FEATURE --compatibility A --out .pr/PR_BODY.md
+tools/bin/yai-dev-milestone-body --track contract-baseline-lock --phase 0.1.0 --rb-anchor docs/runbooks/contract-baseline-lock.md#0.1.0 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --out .pr/MILESTONE_BODY.md
+tools/bin/yai-dev-issue phase --track contract-baseline-lock --phase 0.1.0 --rb-id RB-CONTRACT-BASELINE-LOCK --title "Pin Baseline Freeze" --rb-anchor docs/runbooks/contract-baseline-lock.md#0.1.0 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --repo yai-labs/yai
+tools/bin/yai-dev-branch --type feat --issue 123 --area governance --desc phase-canonization
+tools/bin/yai-dev-pr-body --template default --issue 123 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --runbook docs/runbooks/contract-baseline-lock.md#0.1.0 --classification DOCS --compatibility A --out .pr/PR_BODY.md
 tools/bin/yai-dev-pr-check .pr/PR_BODY.md
 ```

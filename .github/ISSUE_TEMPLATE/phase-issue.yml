@@ -1,0 +1,81 @@
+name: Phase issue (runbook execution)
+description: Create the canonical phase execution issue linked to a PHASE milestone.
+title: "runbook: <RB-ID> — <phase> <short title>"
+labels: ["runbook", "governance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is a manual fallback. Preferred path is `tools/bin/yai-dev-issue phase ...`.
+        After submit, enforce canonical milestone + labels with:
+        `tools/bin/yai-dev-fix-phase --track <track> --phase <phase> --repo yai-labs/yai --apply`
+
+  - type: input
+    id: track
+    attributes:
+      label: Track
+      placeholder: "contract-baseline-lock"
+    validations:
+      required: true
+
+  - type: input
+    id: phase
+    attributes:
+      label: Phase
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: rb_id
+    attributes:
+      label: RB-ID
+      placeholder: "RB-CONTRACT-BASELINE-LOCK"
+    validations:
+      required: true
+
+  - type: input
+    id: short_title
+    attributes:
+      label: Short title
+      placeholder: "Pin Baseline Freeze"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: class
+    attributes:
+      label: Class
+      options:
+        - A
+        - B
+        - C
+      default: 0
+    validations:
+      required: false
+
+  - type: input
+    id: runbook_anchor
+    attributes:
+      label: Runbook anchor path
+      placeholder: "docs/runbooks/contract-baseline-lock.md#0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: mp_id
+    attributes:
+      label: Target MP-ID
+      placeholder: "MP-CONTRACT-BASELINE-LOCK-0.1.0"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Standard checklist (required)
+        - [ ] Milestone is `PHASE: <track>@<phase>`
+        - [ ] Phase labels are aligned (`track:*`, `phase:*`)
+        - [ ] PR list is maintained in this issue
+        - [ ] Gate status is explicit and updated
+        - [ ] Closure is delegated to the MP Closure issue

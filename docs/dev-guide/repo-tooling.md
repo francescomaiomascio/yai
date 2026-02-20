@@ -13,6 +13,8 @@ So workflow stays consistent even when multiple agents touch the repo:
 
 ## Canonical commands
 - `tools/bin/yai-dev-issue`
+- `tools/bin/yai-dev-milestone-body`
+- `tools/bin/yai-dev-fix-phase`
 - `tools/bin/yai-dev-branch`
 - `tools/bin/yai-dev-pr-body`
 - `tools/bin/yai-dev-pr-check`
@@ -22,10 +24,28 @@ So workflow stays consistent even when multiple agents touch the repo:
 - `tools/bin/yai-docs-doctor`
 
 ## Quick usage
-Generate issue draft body:
+Generate milestone body:
 
 ```bash
-tools/bin/yai-dev-issue --type runbook --title "Root hardening phase 0.1.0" --mp-id MP-ROOT-HARDENING-0.1.0 --runbook docs/runbooks/root-hardening.md --phase 0.1.0 --out .pr/ISSUE_BODY.md
+tools/bin/yai-dev-milestone-body --track contract-baseline-lock --phase 0.1.0 --rb-anchor docs/runbooks/contract-baseline-lock.md#0.1.0 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --out .pr/MILESTONE_BODY.md
+```
+
+Create canonical phase issue:
+
+```bash
+tools/bin/yai-dev-issue phase --track contract-baseline-lock --phase 0.1.0 --rb-id RB-CONTRACT-BASELINE-LOCK --title "Pin Baseline Freeze" --rb-anchor docs/runbooks/contract-baseline-lock.md#0.1.0 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --repo yai-labs/yai
+```
+
+Create canonical MP closure issue:
+
+```bash
+tools/bin/yai-dev-issue mp-closure --track contract-baseline-lock --phase 0.1.0 --mp-id MP-CONTRACT-BASELINE-LOCK-0.1.0 --repo yai-labs/yai
+```
+
+Dry-run retroactive fix for existing phase items:
+
+```bash
+tools/bin/yai-dev-fix-phase --track contract-baseline-lock --phase 0.1.0 --repo yai-labs/yai
 ```
 
 Generate a branch name:

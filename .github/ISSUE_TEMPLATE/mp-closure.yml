@@ -1,0 +1,89 @@
+name: MP closure (phase notarization)
+description: Create the canonical closure issue for a PHASE milestone.
+title: "mp-closure: <MP-ID> — <phase> Closure"
+labels: ["mp-closure", "governance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is a manual fallback. Preferred path is `tools/bin/yai-dev-issue mp-closure ...`.
+        After submit, enforce canonical milestone + labels with:
+        `tools/bin/yai-dev-fix-phase --track <track> --phase <phase> --repo yai-labs/yai --apply`
+
+  - type: input
+    id: track
+    attributes:
+      label: Track
+      placeholder: "contract-baseline-lock"
+    validations:
+      required: true
+
+  - type: input
+    id: phase
+    attributes:
+      label: Phase
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: mp_id
+    attributes:
+      label: MP-ID
+      placeholder: "MP-CONTRACT-BASELINE-LOCK-0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: milestone_name
+    attributes:
+      label: Milestone name
+      placeholder: "PHASE: contract-baseline-lock@0.1.0"
+      value: "PHASE: <track>@<phase>"
+    validations:
+      required: true
+
+  - type: textarea
+    id: pr_links
+    attributes:
+      label: PR links
+      description: One PR per line (core/docs/specs/cli as needed).
+      placeholder: |
+        https://github.com/yai-labs/yai/pull/126
+        https://github.com/yai-labs/yai-cli/pull/99
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gate_status
+    attributes:
+      label: Gate status
+      options:
+        - Not started
+        - Running
+        - Passed
+        - Failed
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence_links
+    attributes:
+      label: Gate and evidence links
+      description: Include CI logs/artifacts/proof-pack links.
+      placeholder: |
+        - CI run: https://github.com/...
+        - Proof pack: https://github.com/...
+        - Verify log: https://github.com/...
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Evidence checklist (required)
+        - [ ] MP document linked from `docs/milestone-packs/...`
+        - [ ] All phase PRs linked
+        - [ ] Gate status is `Passed`
+        - [ ] Evidence is reproducible and reviewable
+        - [ ] Closure decision recorded explicitly

@@ -1,6 +1,6 @@
-name: Runbook phase (execution)
-description: Track a phase from a runbook/milestone pack with strict acceptance.
-title: "runbook: <RB-ID> — <phase>"
+name: Runbook phase (legacy)
+description: Legacy form. Prefer `Phase issue (runbook execution)` for canonical PHASE workflow.
+title: "runbook: <RB-ID> — <phase> <short title>"
 labels: ["runbook"]
 body:
   - type: input

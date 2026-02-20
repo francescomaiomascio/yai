@@ -1,8 +1,8 @@
 ---
 id: DEV-GUIDE-GITHUB-PROGRAM-GOVERNANCE
 status: active
-effective_date: 2026-02-19
-revision: 1
+effective_date: 2026-02-20
+revision: 2
 owner: governance
 ---
 
@@ -23,14 +23,16 @@ The model is designed to make phase closure auditable, deterministic, and cross-
 
 ## 2) Canonical objects
 - **Runbook phase**: execution intent (`0.1.X`) with gate and claim.
-- **Milestone (`RB-*`)**: GitHub phase container.
+- **Milestone (`PHASE: <track>@<phase>`)**: GitHub phase container.
 - **Milestone Pack (`MP-*`)**: closure artifact with evidence.
+- **MP Closure issue (`mp-closure: ...`)**: notarization artifact for milestone closure.
 - **Issue**: scoped work unit.
 - **PR**: change unit with explicit evidence.
 - **Project item**: board tracking object for status/blockers.
 
 Canonical formats:
-- Milestone: `RB-<TRACK>-<PHASE>`
+- Milestone: `PHASE: <track>@<phase>`
+- RB-ID: `RB-*` (runbook identifier only; never milestone naming)
 - MP: `MP-<TRACK>-<X.Y.Z>`
 - Runbook ref in PR body: `docs/runbooks/<name>.md#<anchor>`
 
@@ -69,7 +71,7 @@ Use one cross-repo GitHub Project v2 for the entire delivery program.
 - They MUST link their issues/PRs to the controlling `yai` milestone.
 
 ### 4.3 Milestone description template
-Every `RB-*` milestone description SHOULD include:
+Every `PHASE:*` milestone description SHOULD include:
 - objective (phase claim)
 - runbook anchor
 - done-when gate checklist
@@ -98,9 +100,10 @@ If used, PR body MUST provide:
 ## 6) Closure checklist (copy/paste)
 
 ```text
-Phase closure checklist (RB-*):
+Phase closure checklist (PHASE:*):
 [ ] Gate checks passed (local + CI where required)
 [ ] MP file exists and is linked
+[ ] MP Closure issue exists and is complete
 [ ] Runbook phase references updated (if required)
 [ ] Linked issues/PRs closed or explicitly waived
 [ ] Class B twin PR requirement satisfied
@@ -115,7 +118,7 @@ Cadence: once per week, fixed slot.
 Agenda:
 1. Triage blocked items (`Gate Status = Blocked`)
 2. Review `Class = B` items missing twin PR linkage
-3. Burn-down by milestone (`RB-*`) and track
+3. Burn-down by milestone (`PHASE:*`) and track
 4. Validate upcoming closure prerequisites (MP, evidence, gate)
 
 Outputs:
@@ -147,5 +150,5 @@ Outputs:
 - One Project v2 cross-repo.
 - Official phase milestones in `yai`.
 - `yai-cli` and `yai-specs` use linked issues/PRs, not duplicate canonical milestones.
-- Every runbook phase maps to one `RB-*` milestone.
+- Every runbook phase maps to one `PHASE: <track>@<phase>` milestone.
 - No milestone closure without MP and verifiable evidence.
