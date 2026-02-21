@@ -77,3 +77,15 @@ Definition of Done:
 - [ ] Evidence artifacts are attached for review.
 - [ ] Traceability links to ADR-011 and runbook phase are present.
 - [ ] Mandatory command outcomes are recorded as `PASS` (no `SKIP` closure).
+
+## Execution Snapshot (2026-02-21)
+
+- Evidence bundle: `docs/milestone-packs/contract-baseline-lock/evidence/wave0-2026-02-21/`
+- `tools/release/check_pins.sh` -> `FAIL` (`exit=4`)
+- `tools/bin/yai-docs-trace-check --all` -> `PASS` (`exit=0`)
+
+Phase state:
+- `BLOCKED` by strict pin mismatch.
+
+Blocking issue:
+- `#147` (`Wave 0 blocker: strict specs pin alignment (yai + yai-cli)`)

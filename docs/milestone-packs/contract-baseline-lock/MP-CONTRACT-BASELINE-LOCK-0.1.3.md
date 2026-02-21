@@ -76,3 +76,16 @@ Definition of Done:
 - [ ] Evidence shows explicit contract-to-verify mapping.
 - [ ] All links are traceable in docs and CI output.
 - [ ] Mandatory command outcomes are recorded as `PASS` (no `SKIP` closure).
+
+## Execution Snapshot (2026-02-21)
+
+- Evidence bundle: `docs/milestone-packs/contract-baseline-lock/evidence/wave0-2026-02-21/`
+- `tools/bin/yai-proof-check` -> `SKIP` (`exit=0`) -> treated as `FAIL` by closure policy
+- `tools/bin/yai-verify core` -> `PASS` (`exit=0`)
+- `tools/bin/yai-verify law-kernel` -> `PASS` (`exit=0`)
+
+Phase state:
+- `BLOCKED` because one mandatory check remains `SKIP`.
+
+Blocking issue:
+- `#146` (`Wave 0 blocker: no-pass-on-skip for proof-check`)

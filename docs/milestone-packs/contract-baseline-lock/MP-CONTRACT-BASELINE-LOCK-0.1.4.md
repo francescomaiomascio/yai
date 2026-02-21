@@ -79,3 +79,17 @@ Definition of Done:
 - [ ] Closure review is reproducible from documented commands.
 - [ ] ADR-011 closure readiness is demonstrated by artifacts.
 - [ ] Mandatory command outcomes are recorded as `PASS` (no `SKIP` closure).
+
+## Execution Snapshot (2026-02-21)
+
+- Evidence bundle: `docs/milestone-packs/contract-baseline-lock/evidence/wave0-2026-02-21/`
+- `tools/release/check_pins.sh` -> `FAIL` (`exit=4`)
+- `tools/bin/yai-docs-trace-check --all` -> `PASS` (`exit=0`)
+- `tools/bin/yai-proof-check` -> `SKIP` (`exit=0`) -> treated as `FAIL` by closure policy
+
+Phase state:
+- `BLOCKED` until strict pins align and proof-check is non-skip.
+
+Blocking issues:
+- `#147` (`Wave 0 blocker: strict specs pin alignment (yai + yai-cli)`)
+- `#146` (`Wave 0 blocker: no-pass-on-skip for proof-check`)
