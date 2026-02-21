@@ -75,3 +75,15 @@ Definition of Done:
 - [ ] Failure semantics are documented and auditable.
 - [ ] Runbook/ADR references are present in closure evidence.
 - [ ] Mandatory command outcomes are recorded as `PASS` (no `SKIP` closure).
+
+## Execution Snapshot (2026-02-21)
+
+- Evidence bundle: `docs/milestone-packs/contract-baseline-lock/evidence/wave0-2026-02-21/`
+- `tools/bin/yai-proof-check` -> `SKIP` (`exit=0`) -> treated as `FAIL` by closure policy
+- `tools/bin/yai-docs-trace-check --all` -> `PASS` (`exit=0`)
+
+Phase state:
+- `BLOCKED` because mandatory check cannot close on `SKIP`.
+
+Blocking issue:
+- `#146` (`Wave 0 blocker: no-pass-on-skip for proof-check`)
