@@ -42,6 +42,7 @@ Out of scope for v0.1.0 GREEN:
 - full OS hardening product level (seccomp/cgroups/LSM completeness),
 - production SOC/SIEM maturity claims.
 
+<a id="4-two-official-gates"></a>
 ## 4) Two Official Gates
 ### Gate A - Audit Green Core (L0-L2)
 Domains: control plane, network, providers, storage, resources/workspaces, audit pipeline.
