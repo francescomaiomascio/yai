@@ -3,8 +3,8 @@ id: AUDIT-CONVERGENCE-MATRIX-v0.1.0
 status: draft
 owner: governance
 updated: 2026-03-03
-registry: docs/50-validation/audits/claims/infra-grammar.v0.1.json
-plan: docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
+registry: docs/program/audit-convergence/claims/infra-grammar.v0.1.json
+plan: docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
 ---
 
 # Audit Convergence Matrix (v0.1.0)
@@ -29,13 +29,13 @@ Legend:
 | Mind (L3) | `RB-MIND-REDIS-STM#phase-mind-proposer` | `RB-MIND-REDIS-STM#phase-mind-proposer` | `RB-MIND-REDIS-STM` + `ADR-005-mind-proposer` | `RB-MIND-REDIS-STM#phase-mind-proposer` | Kernel/Engine mediated path required by runbook closure | End-to-end proposal->enforcement evidence bundle | `C-MIND-PROPOSER-KERNEL-ENFORCER` | B | not_present |
 
 ## 2) Runbook Re-centering Order
-1. `docs/20-program/23-runbooks/contract-baseline-lock.md` (continue from active `0.1.1`, no mid-phase rewrite)
-2. `docs/20-program/23-runbooks/specs-refactor-foundation.md` (backbone binding)
-3. `docs/20-program/23-runbooks/root-hardening.md`
-4. `docs/20-program/23-runbooks/workspaces-lifecycle.md`
-5. `docs/20-program/23-runbooks/engine-attach.md`
-6. `docs/20-program/23-runbooks/data-plane.md`
-7. `docs/20-program/23-runbooks/mind-redis-stm.md`
+1. `docs/program/23-runbooks/contract-baseline-lock.md` (continue from active `0.1.1`, no mid-phase rewrite)
+2. `docs/program/23-runbooks/specs-refactor-foundation.md` (backbone binding)
+3. `docs/program/23-runbooks/root-hardening.md`
+4. `docs/program/23-runbooks/workspaces-lifecycle.md`
+5. `docs/program/23-runbooks/engine-attach.md`
+6. `docs/program/23-runbooks/data-plane.md`
+7. `docs/program/23-runbooks/mind-redis-stm.md`
 
 ## 3) Mandatory Evidence Command Families
 - Pins/contracts:
@@ -61,16 +61,15 @@ Do not report synthetic percentages disconnected from claim status.
 ## 5) Gate A D1 Progress Snapshot (2026-02-24)
 - Qualification harness (`QT-0.1-001-SC102`) executed for `D1-digital/egress-v1` with `baseline-deny`.
 - Run command:
-  - `cd docs/40-qualification/QT-0.1-001-SC102`
-  - `DOMAIN_PACK_ID=D1-digital/egress-v1 BASELINE_ID=baseline-deny ./run/run-three.sh`
+  - tracked in `docs/program/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md`
 - Result: `3/3 PASS` (simulation harness) with indexed evidence per run.
-- Canonical finding: `docs/50-validation/audits/findings/FINDING-001-sc102-d1-harness-runset.md`
+- Canonical status reference: `docs/program/audit-convergence/SC102-AUDIT-STATUS-2026-03-03.md`
 
 ## 6) Execution Spine Snapshot (2026-03-03)
 
 Cross-repo deterministic execution spine branches prepared and pushed:
 - `yai-law` `feat/law-control-call-v1` (`79da14a`)
-- `yai` `feat/runtime-control-call-spine-v1` (`bbf11ab`)
+- `yai` `feat/runtime-control-call-spine-v1` (`01afdc6`)
 - `yai-sdk` `feat/sdk-abi-control-call-v1` (`cb82630`)
 - `yai-cli` `chore/cli-bump-sdk-control-call-v1` (`3ff0df3`)
 
@@ -81,3 +80,13 @@ Observed runtime semantics for command path:
 Gate impact:
 - Strengthens Trigger->Decision->Enforcement chain readiness for Gate A.
 - Does not by itself flip claims to `confirmed`; claim registry update remains mandatory closure step.
+
+## 7) Claim Registry Snapshot (2026-03-03)
+
+Source of truth:
+- `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
+
+Summary:
+- Gate A claims mapped claim-by-claim with evidence refs and explicit gaps.
+- Gate A currently remains `partial` (not green).
+- Gate B (`C-MIND-PROPOSER-KERNEL-ENFORCER`) remains `not_present` in this phase.

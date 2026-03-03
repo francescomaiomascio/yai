@@ -1,0 +1,36 @@
+# yai transport protocol tests
+$ cargo test --manifest-path mind/Cargo.toml transport::protocol::tests -- --nocapture
+   Compiling yai-mind v0.1.0 (/home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai/mind)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/debug/deps/yai_mind-cfc1f48e42609b24)
+
+running 2 tests
+test transport::protocol::tests::target_plane_validation_is_strict ... ok
+test transport::protocol::tests::nyi_reply_is_deterministic ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/yai_mind-14a121dc20f00b30)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration_test.rs (target/debug/deps/integration_test-7c6c1af05e0df40f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/memory_rag.rs (target/debug/deps/memory_rag-d074719f5cc85119)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/providers.rs (target/debug/deps/providers-77c40a216d991825)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

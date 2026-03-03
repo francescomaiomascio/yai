@@ -10,11 +10,9 @@ issue:
   - https://github.com/yai-labs/yai/issues/185
   - https://github.com/yai-labs/yai/issues/186
 related:
-  - docs/30-catalog/scenarios/SC-102.md
-  - docs/30-catalog/domains/packs/D1-digital/egress-v1/pack.meta.json
-  - docs/40-qualification/QT-0.1-001-SC102/README.md
-  - docs/50-validation/audits/claims/infra-grammar.v0.1.json
-  - docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
+  - docs/program/audit-convergence/claims/infra-grammar.v0.1.json
+  - docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
+  - docs/program/audit-convergence/SC102-AUDIT-STATUS-2026-03-03.md
 ---
 
 # SC-102 Gate A Workplan (v0.1.0)
@@ -38,10 +36,10 @@ Out of scope:
 ## 2) Entry Checklist
 
 1. Program anchors reviewed:
-   - `docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
-   - `docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
+   - `docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
+   - `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
 2. Claims baseline reviewed:
-   - `docs/50-validation/audits/claims/infra-grammar.v0.1.json`
+   - `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
 3. Scenario/gate anchors locked:
    - `docs/30-catalog/scenarios/SC-102.md`
    - `docs/40-qualification/QT-0.1-001-SC102/README.md`
@@ -88,7 +86,7 @@ Execution spine alignment has been completed across canonical repos to support d
 
 Integrated branches:
 - `yai-law`: `feat/law-control-call-v1` (`79da14a`)
-- `yai`: `feat/runtime-control-call-spine-v1` (`bbf11ab`)
+- `yai`: `feat/runtime-control-call-spine-v1` (`01afdc6`)
 - `yai-sdk`: `feat/sdk-abi-control-call-v1` (`cb82630`)
 - `yai-cli`: `chore/cli-bump-sdk-control-call-v1` (`3ff0df3`)
 
@@ -105,3 +103,5 @@ Current Gate A interpretation:
 - D1 harness evidence remains valid as baseline.
 - Cross-repo execution spine is now in place for deterministic command-path behavior.
 - Closure to GREEN still requires claim-level confirmation updates in claims registry and matrix alignment.
+- Claims are now mapped claim-by-claim in:
+  - `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`

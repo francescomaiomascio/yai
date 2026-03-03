@@ -4,11 +4,11 @@ status: active
 owner: governance
 updated: 2026-03-03
 related:
-  - docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
-  - docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
-  - docs/50-validation/audits/claims/infra-grammar.v0.1.json
-  - docs/20-program/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md
-  - docs/20-program/22-adr/ADR-012-audit-convergence-gates.md
+  - docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
+  - docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
+  - docs/program/audit-convergence/claims/infra-grammar.v0.1.json
+  - docs/program/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md
+  - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 issue:
   - https://github.com/yai-labs/yai/issues/140
 ---
@@ -19,12 +19,12 @@ This folder is the canonical backbone for converging runbooks/ADR/MP to one targ
 Infra Grammar audit green on all domains, including Mind.
 
 Canonical artifacts:
-- Execution plan: `docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
-- Convergence matrix: `docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
-- Claims registry: `docs/50-validation/audits/claims/infra-grammar.v0.1.json`
-- Active Gate A workplan: `docs/20-program/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md`
+- Execution plan: `docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
+- Convergence matrix: `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
+- Claims registry: `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
+- Active Gate A workplan: `docs/program/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md`
 - Current status report: `docs/program/audit-convergence/SC102-AUDIT-STATUS-2026-03-03.md`
-- Governance ADR: `docs/20-program/22-adr/ADR-012-audit-convergence-gates.md`
+- Governance ADR: `docs/program/22-adr/ADR-012-audit-convergence-gates.md`
 
 Rules:
 - Source of truth for claims is the registry JSON.
@@ -37,7 +37,7 @@ Rules:
 
 - Execution spine work completed and pushed on dedicated branches:
   - `yai-law`: `feat/law-control-call-v1` (`79da14a`)
-  - `yai`: `feat/runtime-control-call-spine-v1` (`bbf11ab`)
+  - `yai`: `feat/runtime-control-call-spine-v1` (`01afdc6`)
   - `yai-sdk`: `feat/sdk-abi-control-call-v1` (`cb82630`)
   - `yai-cli`: `chore/cli-bump-sdk-control-call-v1` (`3ff0df3`)
 - SC102 audit update and evidence references are tracked in:

@@ -1,0 +1,149 @@
+{
+  "id": "infra-grammar.v0.1",
+  "version": "0.1.0",
+  "updated": "2026-03-03",
+  "owner": "governance",
+  "policy": {
+    "gate_a_green_rule": "all gate A claims must be confirmed with non-empty evidence_refs",
+    "skip_policy": "mandatory-check skip is fail"
+  },
+  "claims": [
+    {
+      "id": "C-SPEC-FIRST-PINNED",
+      "gate": "A",
+      "domain": "control-plane",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/SC102-AUDIT-STATUS-2026-03-03.md",
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-sdk-make-test.txt"
+      ],
+      "gaps": [
+        "pending merge order completion (yai-law -> yai -> yai-sdk -> yai-cli) on main branches"
+      ]
+    },
+    {
+      "id": "C-ENVELOPE-HANDSHAKE-REQUIRED",
+      "gate": "A",
+      "domain": "control-plane",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-smoke.txt",
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-mind-transport-tests.txt"
+      ],
+      "gaps": [
+        "missing integrated Gate-A qualification harness rerun after merge"
+      ]
+    },
+    {
+      "id": "C-EVIDENCE-PACK-REPRODUCIBLE",
+      "gate": "A",
+      "domain": "audit-traceability",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-make-test.txt",
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-sdk-make-test.txt",
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-mind-transport-tests.txt"
+      ],
+      "gaps": [
+        "missing formal claim-closure pack with canonical finding pointer under current docs layout"
+      ]
+    },
+    {
+      "id": "C-DOMAIN-COVERAGE-NETWORK",
+      "gate": "A",
+      "domain": "network",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-smoke.txt"
+      ],
+      "gaps": [
+        "network torture matrix evidence not attached in current branch"
+      ]
+    },
+    {
+      "id": "C-KERNEL-HARD-BOUNDARY-CORE",
+      "gate": "A",
+      "domain": "kernel-boundary",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-mind-transport-tests.txt"
+      ],
+      "gaps": [
+        "no consolidated root+kernel hard-reject evidence bundle linked in this branch"
+      ]
+    },
+    {
+      "id": "C-DOMAIN-COVERAGE-PROVIDERS",
+      "gate": "A",
+      "domain": "providers",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-make-test.txt"
+      ],
+      "gaps": [
+        "provider-specific gate evidence not mapped claim-by-claim yet"
+      ]
+    },
+    {
+      "id": "C-CONTEXT-PROPAGATION",
+      "gate": "A",
+      "domain": "providers-resource",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-smoke.txt"
+      ],
+      "gaps": [
+        "context propagation assertions not independently verified in SC102 qualification rerun"
+      ]
+    },
+    {
+      "id": "C-DOMAIN-COVERAGE-STORAGE",
+      "gate": "A",
+      "domain": "storage",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-make-test.txt"
+      ],
+      "gaps": [
+        "storage governance phase evidence bundle missing in current audit folder"
+      ]
+    },
+    {
+      "id": "C-DOMAIN-COVERAGE-RESOURCE",
+      "gate": "A",
+      "domain": "workspace-resource",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/evidence/2026-03-03/yai-cli-smoke.txt"
+      ],
+      "gaps": [
+        "workspace lifecycle claim evidence not attached as closure artifact"
+      ]
+    },
+    {
+      "id": "C-SKIP-FAIL-MANDATORY",
+      "gate": "A",
+      "domain": "audit-policy",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md",
+        "docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md"
+      ],
+      "gaps": [
+        "mandatory command family closure report not attached with explicit PASS/FAIL table"
+      ]
+    },
+    {
+      "id": "C-MIND-PROPOSER-KERNEL-ENFORCER",
+      "gate": "B",
+      "domain": "mind",
+      "status": "not_present",
+      "evidence_refs": [
+        "docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md"
+      ],
+      "gaps": [
+        "Gate B out of current SC102 Gate A closure scope"
+      ]
+    }
+  ]
+}

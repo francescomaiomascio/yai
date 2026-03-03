@@ -1,0 +1,8 @@
+# yai-cli make test
+$ make test
+[SDK] build: /home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-cli/deps/yai-sdk
+make[1]: Entering directory '/home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-cli/deps/yai-sdk'
+make[1]: Leaving directory '/home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-cli/deps/yai-sdk'
+[TEST] /home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-cli/build/tests/unit_parse_test
+[TEST] /home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-cli/build/tests/vectors_rpc_test
+--- [YAI-CLI] Tests Complete ---

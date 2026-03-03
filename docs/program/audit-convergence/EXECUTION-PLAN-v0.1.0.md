@@ -12,9 +12,9 @@ issue:
   - https://github.com/yai-labs/yai/issues/185
   - https://github.com/yai-labs/yai/issues/186
 related:
-  - docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
-  - docs/50-validation/audits/claims/infra-grammar.v0.1.json
-  - docs/20-program/22-adr/ADR-012-audit-convergence-gates.md
+  - docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
+  - docs/program/audit-convergence/claims/infra-grammar.v0.1.json
+  - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 ---
 
 # Execution Plan - Audit Convergence v0.1.0
@@ -40,7 +40,7 @@ Constraint:
 
 Execution spine implementation state:
 - `yai-law`: `feat/law-control-call-v1` (`79da14a`)
-- `yai`: `feat/runtime-control-call-spine-v1` (`bbf11ab`)
+- `yai`: `feat/runtime-control-call-spine-v1` (`01afdc6`)
 - `yai-sdk`: `feat/sdk-abi-control-call-v1` (`cb82630`)
 - `yai-cli`: `chore/cli-bump-sdk-control-call-v1` (`3ff0df3`)
 
@@ -64,7 +64,7 @@ Out of scope for v0.1.0 GREEN:
 Domains: control plane, network, providers, storage, resources/workspaces, audit pipeline.
 
 Done when all are true:
-- Core claims in `docs/50-validation/audits/claims/infra-grammar.v0.1.json` are `confirmed`.
+- Core claims in `docs/program/audit-convergence/claims/infra-grammar.v0.1.json` are `confirmed`.
 - Mandatory evidence commands for core domains have no SKIP closure.
 - MPs for core runbook phases include reproducible evidence pointers.
 
@@ -82,11 +82,11 @@ Program checkpoint policy:
 
 ## 5) Canonical Artifacts (single source chain)
 1. Claims source of truth:
-   `docs/50-validation/audits/claims/infra-grammar.v0.1.json`
+   `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
 2. Convergence matrix:
-   `docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
+   `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
 3. Governance decision (gate semantics):
-   `docs/20-program/22-adr/ADR-012-audit-convergence-gates.md`
+   `docs/program/22-adr/ADR-012-audit-convergence-gates.md`
 
 Rule:
 - Runbooks/MPs/board cards reference claim IDs from the JSON registry.
@@ -106,13 +106,13 @@ Exception handling:
 
 ### Wave 0 - Stabilize current in-flight baseline
 Primary runbook:
-- `docs/20-program/23-runbooks/contract-baseline-lock.md`
+- `docs/program/23-runbooks/contract-baseline-lock.md`
 
 Target from current execution point:
 - close phases `0.1.1` -> `0.1.4` with strict evidence.
 
 Required outputs:
-- completed MP sequence under `docs/20-program/24-milestone-packs/contract-baseline-lock/`
+- completed MP sequence under `docs/program/24-milestone-packs/contract-baseline-lock/`
 - explicit no-skip enforcement for mandatory checks
 
 Exit:
@@ -120,7 +120,7 @@ Exit:
 
 ### Wave 1 - Backbone convergence (specs + governance bindings)
 Primary runbook:
-- `docs/20-program/23-runbooks/specs-refactor-foundation.md`
+- `docs/program/23-runbooks/specs-refactor-foundation.md`
 
 Scope:
 - keep structural phases deterministic,
@@ -136,7 +136,7 @@ Exit:
 
 ### Wave 2 - Root boundary hardening (core mediation)
 Primary runbook:
-- `docs/20-program/23-runbooks/root-hardening.md`
+- `docs/program/23-runbooks/root-hardening.md`
 
 Scope:
 - envelope validation,
@@ -149,7 +149,7 @@ Exit:
 
 ### Wave 3 - Workspace lifecycle as governed effects
 Primary runbook:
-- `docs/20-program/23-runbooks/workspaces-lifecycle.md`
+- `docs/program/23-runbooks/workspaces-lifecycle.md`
 
 Scope:
 - governed create/list/destroy,
@@ -161,7 +161,7 @@ Exit:
 
 ### Wave 4 - Engine attach integration
 Primary runbook:
-- `docs/20-program/23-runbooks/engine-attach.md`
+- `docs/program/23-runbooks/engine-attach.md`
 
 Scope:
 - attach handshake path,
@@ -173,7 +173,7 @@ Exit:
 
 ### Wave 5 - Data plane governance
 Primary runbook:
-- `docs/20-program/23-runbooks/data-plane.md`
+- `docs/program/23-runbooks/data-plane.md`
 
 Scope:
 - storage contract surfaces,
@@ -185,7 +185,7 @@ Exit:
 
 ### Wave 6 - Mind integration (proposer-only)
 Primary runbook:
-- `docs/20-program/23-runbooks/mind-redis-stm.md`
+- `docs/program/23-runbooks/mind-redis-stm.md`
 
 Scope:
 - Mind proposer path only,

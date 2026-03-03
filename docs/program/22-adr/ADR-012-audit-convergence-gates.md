@@ -4,7 +4,7 @@ status: draft
 effective_date: 2026-02-21
 supersedes: []
 applies_to:
-  runbook: docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
+  runbook: docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md
   phase: governance
   anchor: "#4-two-official-gates"
 law_refs:
@@ -39,7 +39,7 @@ Enforce policy:
 - mandatory-check `SKIP` is treated as `FAIL` for phase closure.
 
 Claims are canonicalized in:
-- `docs/50-validation/audits/claims/infra-grammar.v0.1.json`
+- `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
 
 ## Rationale
 The two-gate model keeps one trajectory while avoiding false blocking:
@@ -59,14 +59,14 @@ The explicit GREEN definition prevents over-claiming and keeps delivery aligned 
 
 ## Traceability
 - Execution plan:
-  - `docs/20-program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
+  - `docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
 - Convergence matrix:
-  - `docs/20-program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
+  - `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
 - Claims registry:
-  - `docs/50-validation/audits/claims/infra-grammar.v0.1.json`
+  - `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`
 - Related ADR:
-  - `docs/20-program/22-adr/ADR-005-mind-proposer.md`
-  - `docs/20-program/22-adr/ADR-011-contract-baseline-lock.md`
+  - `docs/program/22-adr/ADR-005-mind-proposer.md`
+  - `docs/program/22-adr/ADR-011-contract-baseline-lock.md`
 
 ## Status
 Draft; proposed as governance baseline for v0.1.0 program delivery.

@@ -1,0 +1,5 @@
+# yai-sdk make test
+$ make test
+[RUN] /home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai-sdk/build/tests/sdk_smoke
+yai-sdk: server unavailable (cannot connect root socket)
+sdk_smoke: ok (abi=1 version=0.1.7 registry=yai.kernel.ws, server_off_rc=107)

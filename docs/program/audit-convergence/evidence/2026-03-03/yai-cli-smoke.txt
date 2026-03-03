@@ -1,0 +1,168 @@
+# yai-cli smoke
+$ ./dist/bin/yai help --all
+YAI commands (all)
+===============================================================================
+
+  boot-status            Boot plane status (local readiness + artifacts)
+  bundle-bundle          Bundle ops (build/seal/export/import/verify/show)
+  control-chat           Chat sessions and messages via control plane
+  control-dsar           DSAR workflow (request/status/execute)
+  control-kernel         DEPRECATED: use 'yai kernel ping' and 'yai kernel ws' (kernel authority ops)
+  control-providers      Provider lifecycle (discover/pair/attach/detach/status)
+  control-root           DEPRECATED: use 'yai root ping' (root control-plane probes)
+  control-sessions       List or kill sessions
+  control-shell          Capability-gated shell execution via control plane
+  engine-ping            Ping engine plane via root (control RPC)
+  governance-assert      Assertion ops (evaluate/record/aggregate)
+  governance-authority   Authority ops (request/evaluate/grant-deny/audit)
+  governance-baseline    Baseline ops (select/pin/hash/audit)
+  governance-claim       Claim ops (declare/scope/link-evidence/verify)
+  governance-contract    Contract ops (define/reference/test/deprecate)
+  governance-controls    Controls catalog ops (define/map/audit)
+  governance-decision    Decision ops (make/record/link/explain)
+  governance-disclosure  Disclosure ops (declare/prove-nonleak/verify)
+  governance-effect      Effect ops (attempt/apply/measure/record)
+  governance-event       Governance event ops (emit/classify/link/ingest)
+  governance-evidence    Evidence ops (collect/curate/hash/index)
+  governance-exception   Exception ops (grant/scope/expire/audit)
+  governance-identity    Identity ops (bind/resolve/attest/alias)
+  governance-invariant   Invariant ops (list/check/explain)
+  governance-policy      Policy ops (load/hash/evaluate/pin)
+  governance-reason      ReasonCode ops (assign/catalog/aggregate)
+  governance-run         Run ops (start/end/emit/validate)
+  governance-scope       Scope ops (define/match/serialize)
+  governance-wave        Wave ops (plan/execute/select/summarize)
+  inspect-events         Stream daemon events (NDJSON)
+  inspect-logs           Tail logs for a component
+  inspect-monitor        Live monitor (event stream) for a workspace
+  inspect-status         Show runtime status (pids, socket, vault readiness)
+  kernel-ping            Ping kernel plane via root (control RPC)
+  kernel-ws              Workspace lifecycle via kernel (create/destroy/reset)
+  lifecycle-down         Stop stack and cleanup runtime artifacts
+  lifecycle-restart      Restart stack for a workspace
+  lifecycle-up           Start stack: boot + engine + mind
+  memory-embed           Generate embedding vector
+  memory-graph           MindGraph operations (semantic add-node/add-edge, query uses semantic+vector+activation)
+  mind-ping              Ping mind plane via root (control RPC)
+  orch-emit              Emitter ops (emit-event/emit-decision/emit-effect/emit-metrics/flush)
+  orch-job               Job ops (schedule/run/status/cancel)
+  orch-pack              Pack ops (install/pin/list/resolve)
+  orch-plan              Plan ops (render/lock/execute/diff)
+  orch-report            Report ops (build/render/export)
+  orch-runner            Runner ops (execute/emit/checkpoint/abort)
+  orch-trial             Trial ops (run/describe/list/replay)
+  root-ping              Ping root plane (transport + handshake)
+  substrate-artifact     Artifact operations (add/inspect/link/verify/gc-mark)
+  substrate-cap          Capability ops (declare/assert/list/deny)
+  substrate-channel      Channel operations (open/write/tail/export)
+  substrate-checkpoint   Checkpoint ops (create/restore/list/prune)
+  substrate-clock        Clock operations (stamp/normalize/compare/bound)
+  substrate-codec        Codec ops (encode/decode/sniff/assert)
+  substrate-compat       Compatibility/versioning (classify/check/negotiate/deprecate)
+  substrate-diff         Diff ops (diff/summarize/classify)
+  substrate-env          Environment fingerprint (capture/hash/diff/assert)
+  substrate-error        Error ops (raise/wrap/classify/render)
+  substrate-fs           Filesystem ops (path/file/dir)
+  substrate-hash         Hash operations (compute/verify/compare/treehash)
+  substrate-index        Index operations (build/update/verify/materialize)
+  substrate-journal      Journal ops (append/rotate/verify/export)
+  substrate-key          Key operations (gen/load/fingerprint/sign/verify)
+  substrate-lock         Lock ops (acquire/release/try/assert-held)
+  substrate-manifest     Manifest operations (compose/seal/verify/diff)
+  substrate-metrics      Metric operations (emit/aggregate/rollup/diff)
+  substrate-net          Network ops (endpoint/route)
+  substrate-ns           Namespace operations (declare/list/resolve/validate)
+  substrate-patch        Patch ops (apply/verify/rollback)
+  substrate-prov         Provenance ops (record/link/query/render)
+  substrate-quota        Quota ops (set/enforce/report/diff)
+  substrate-record       Record operations (append/read/scan/filter)
+  substrate-ref          Ref operations (parse/format/resolve/dereference)
+  substrate-resource     Resource ops (measure/allocate/release/cap)
+  substrate-sandbox      Sandbox ops (create/enter/enforce/inspect)
+  substrate-schema       Schema operations (register/show/check/upgrade-map)
+
+$ ./dist/bin/yai help yai.kernel.ws
+YAI help (command)
+===============================================================================
+
+COMMAND
+-------------------------------------------------------------------------------
+  kernel-ws
+  summary: Workspace lifecycle via kernel (create/destroy/reset)
+  canonical_id: yai.kernel.ws
+
+SYNOPSIS
+-------------------------------------------------------------------------------
+  
+  
+  yai kernel-ws <action> [options]
+
+OPTIONS
+-------------------------------------------------------------------------------
+  --timeout-ms <int>           optional
+  --arming                     optional, default=false
+  --role <enum>                optional
+    values:
+      - operator
+      - system
+
+ARGUMENTS
+-------------------------------------------------------------------------------
+  action <enum>                required
+    values:
+      - create
+      - destroy
+      - reset
+  ws_id <string>               optional
+
+OUTPUTS
+-------------------------------------------------------------------------------
+  - text
+  - json
+
+SIDE EFFECTS
+-------------------------------------------------------------------------------
+  - rpc_call
+  - write_session
+  - remove_session
+
+CONTRACT HOOKS
+-------------------------------------------------------------------------------
+  - I-001
+  - I-002
+  - I-003
+  - I-006
+  - L1
+  - L2
+
+CONTRACT INVARIANTS
+-------------------------------------------------------------------------------
+  - I-001-traceability
+  - I-002-determinism
+  - I-003-governance
+  - I-006-external-effect-boundary
+
+CONTRACT BOUNDARIES
+-------------------------------------------------------------------------------
+  - L1-kernel
+  - L2-engine
+
+USES PRIMITIVES
+-------------------------------------------------------------------------------
+  - T-003
+  - T-007
+  - S-005
+  - S-006
+  - S-023
+  - T-012
+
+SEE ALSO
+-------------------------------------------------------------------------------
+  yai help
+  yai help --all
+  yai help kernel
+
+$ YAI_ROOT_SOCK=/tmp/yai-root-sock-does-not-exist.sock ./dist/bin/yai kernel ping
+yai-sdk: server unavailable (cannot connect root socket)
+yai: generic_failure: yai-sdk: server unavailable
+exit_code=107

@@ -22,7 +22,7 @@ This report records:
 
 | Repo | Branch | HEAD | Status |
 |---|---|---|---|
-| `yai` | `feat/runtime-control-call-spine-v1` | `bbf11ab` | in-flight branch pushed |
+| `yai` | `feat/runtime-control-call-spine-v1` | `01afdc6` | in-flight branch pushed |
 | `yai-law` | `feat/law-control-call-v1` | `79da14a` | in-flight branch pushed |
 | `yai-sdk` | `feat/sdk-abi-control-call-v1` | `cb82630` | in-flight branch pushed |
 | `yai-cli` | `chore/cli-bump-sdk-control-call-v1` | `3ff0df3` | in-flight branch pushed |
@@ -65,13 +65,13 @@ What is improved:
 - command execution path is no longer fragmented by ad-hoc surfaces.
 
 What is still required for Gate A closure:
-- claim-by-claim status transition in `infra-grammar.v0.1.json`,
-- explicit evidence linkage for each claim closure,
+- transition of Gate A claims from `partial` to `confirmed` in `docs/program/audit-convergence/claims/infra-grammar.v0.1.json`,
+- closure of all declared claim gaps with reproducible evidence,
 - matrix + claims parity update in same closure wave.
 
 ## 6) Recommended closure sequence
 
 1. Merge order: `yai-law` -> `yai` -> `yai-sdk` -> `yai-cli`.
 2. Re-run SC102 qualification evidence commands after merge.
-3. Update claims registry statuses with evidence references.
+3. Close claim gaps and then update statuses to `confirmed` with evidence references.
 4. Update matrix baseline from `partial` to `confirmed` only where evidence exists.
