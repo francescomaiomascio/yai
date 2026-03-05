@@ -362,6 +362,8 @@ The complete catalog (all `2800` command_id) is tracked in:
 - `docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md`
 
 This runbook stays normative on lifecycle semantics; the map file is the exhaustive command inventory source for planning waves.
+Workspace-lifecycle MPs are scoped under `docs/program/24-milestone-packs/workspaces-lifecycle/`.
+Non-WS command expansion packs are tracked under `docs/program/24-milestone-packs/command-coverage/`.
 
 ## 12. Mind integration (optional, SC103)
 

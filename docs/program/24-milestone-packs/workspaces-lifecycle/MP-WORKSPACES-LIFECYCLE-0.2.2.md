@@ -2,7 +2,7 @@
 id: MP-WORKSPACES-LIFECYCLE-0.2.2
 status: draft
 runbook: docs/program/23-runbooks/workspaces-lifecycle.md
-phase: "0.2.2 — bundle command wiring wave"
+phase: "0.2.2 — governance command wiring wave"
 owners:
   - runtime
 adrs:
@@ -13,42 +13,42 @@ adrs:
 spec_anchors:
   - yai-law/registry/commands.v1.json
   - docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md
-target_group: bundle
+target_group: governance
 target_command_count: 200
 ---
 
 # MP-WORKSPACES-LIFECYCLE-0.2.2
 
 ## Objective
-Plan and execute real runtime wiring for group `bundle` without contract drift.
+Plan and execute real runtime wiring for group `governance` without contract drift.
 
-Group mission: Bundle assembly and package contract surfaces.
+Group mission: Governance and policy decision surfaces.
 
 ## Scope (Planned)
-- Canonical target group: `bundle`
+- Canonical target group: `governance`
 - Canonical command count: `200`
-- Family distribution (top): `channel_*` (20), `index_*` (20), `manifest_*` (20), `package_*` (20), `payload_*` (20), `proof_*` (20), `release_*` (20), `signature_*` (20), `target_*` (20), `policy_*` (19)
+- Family distribution (top): `baseline_*` (21), `claim_*` (21), `decision_*` (21), `evidence_*` (21), `exception_*` (21), `policy_*` (21), `scope_*` (21), `assertion_*` (20), `controlset_*` (20), `assert_*` (1)
 - Delivery model: keep all registered commands invocable; implement selected handlers first; missing handlers remain deterministic (`nyi` equivalent).
 
 ## Representative command_id set
-- `yai.bundle.bundle`
-- `yai.bundle.channel_attach`
-- `yai.bundle.channel_audit`
-- `yai.bundle.channel_build`
-- `yai.bundle.channel_detach`
-- `yai.bundle.channel_digest`
-- `yai.bundle.channel_export`
-- `yai.bundle.channel_import`
-- `yai.bundle.channel_inspect`
-- `yai.bundle.channel_lint`
-- `yai.bundle.channel_merge`
-- `yai.bundle.channel_promote`
-- `yai.bundle.channel_publish`
-- `yai.bundle.channel_repack`
-- `yai.bundle.channel_rollback`
+- `yai.governance.assert`
+- `yai.governance.assertion_approve`
+- `yai.governance.assertion_assert`
+- `yai.governance.assertion_attest`
+- `yai.governance.assertion_audit`
+- `yai.governance.assertion_claim`
+- `yai.governance.assertion_compare`
+- `yai.governance.assertion_controls`
+- `yai.governance.assertion_deny`
+- `yai.governance.assertion_exception`
+- `yai.governance.assertion_lock`
+- `yai.governance.assertion_publish`
+- `yai.governance.assertion_reconcile`
+- `yai.governance.assertion_report`
+- `yai.governance.assertion_review`
 
 ## Definition of Done
-- [ ] Group `bundle` commands remain discoverable in CLI help.
+- [ ] Group `governance` commands remain discoverable in CLI help.
 - [ ] No `unknown command` for registered IDs in this group.
 - [ ] Selected real handlers are wired end-to-end (CLI -> SDK -> Root -> Kernel/Engine).
 - [ ] Non-implemented commands return deterministic error model (`ok/error/nyi` mapping).

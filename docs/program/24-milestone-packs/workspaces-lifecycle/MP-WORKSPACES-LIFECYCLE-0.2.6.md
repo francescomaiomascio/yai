@@ -1,8 +1,8 @@
 ---
-id: MP-WORKSPACES-LIFECYCLE-0.2.1
+id: MP-WORKSPACES-LIFECYCLE-0.2.6
 status: draft
 runbook: docs/program/23-runbooks/workspaces-lifecycle.md
-phase: "0.2.1 — control command wiring wave"
+phase: "0.2.6 — root command wiring wave"
 owners:
   - runtime
 adrs:
@@ -13,42 +13,42 @@ adrs:
 spec_anchors:
   - yai-law/registry/commands.v1.json
   - docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md
-target_group: control
+target_group: root
 target_command_count: 200
 ---
 
-# MP-WORKSPACES-LIFECYCLE-0.2.1
+# MP-WORKSPACES-LIFECYCLE-0.2.6
 
 ## Objective
-Plan and execute real runtime wiring for group `control` without contract drift.
+Plan and execute real runtime wiring for group `root` without contract drift.
 
-Group mission: Control plane authority and dispatch surfaces.
+Group mission: Root routing/authority edge surfaces.
 
 ## Scope (Planned)
-- Canonical target group: `control`
+- Canonical target group: `root`
 - Canonical command count: `200`
-- Family distribution (top): `chat_*` (21), `shell_*` (21), `authority_*` (20), `dispatch_*` (20), `policy_*` (20), `provider_*` (20), `route_*` (20), `session_*` (20), `target_*` (20), `context_*` (12)
+- Family distribution (top): `authority_*` (20), `channel_*` (20), `context_*` (20), `envelope_*` (20), `handshake_*` (20), `plane_*` (20), `relay_*` (20), `router_*` (20), `session_*` (20), `trace_*` (19)
 - Delivery model: keep all registered commands invocable; implement selected handlers first; missing handlers remain deterministic (`nyi` equivalent).
 
 ## Representative command_id set
-- `yai.control.authority_apply`
-- `yai.control.authority_audit`
-- `yai.control.authority_authorize`
-- `yai.control.authority_bind`
-- `yai.control.authority_call`
-- `yai.control.authority_check`
-- `yai.control.authority_close`
-- `yai.control.authority_forward`
-- `yai.control.authority_gate`
-- `yai.control.authority_get`
-- `yai.control.authority_list`
-- `yai.control.authority_open`
-- `yai.control.authority_rebind`
-- `yai.control.authority_relay`
-- `yai.control.authority_rotate`
+- `yai.root.authority_attach`
+- `yai.root.authority_audit`
+- `yai.root.authority_authorize`
+- `yai.root.authority_checkpoint`
+- `yai.root.authority_detach`
+- `yai.root.authority_forward`
+- `yai.root.authority_gate`
+- `yai.root.authority_guard`
+- `yai.root.authority_inspect`
+- `yai.root.authority_ping`
+- `yai.root.authority_reconcile`
+- `yai.root.authority_recover`
+- `yai.root.authority_refresh`
+- `yai.root.authority_relay`
+- `yai.root.authority_rotate`
 
 ## Definition of Done
-- [ ] Group `control` commands remain discoverable in CLI help.
+- [ ] Group `root` commands remain discoverable in CLI help.
 - [ ] No `unknown command` for registered IDs in this group.
 - [ ] Selected real handlers are wired end-to-end (CLI -> SDK -> Root -> Kernel/Engine).
 - [ ] Non-implemented commands return deterministic error model (`ok/error/nyi` mapping).

@@ -1,8 +1,8 @@
 ---
-id: MP-WORKSPACES-LIFECYCLE-0.2.1
+id: MP-WORKSPACES-LIFECYCLE-0.2.7
 status: draft
 runbook: docs/program/23-runbooks/workspaces-lifecycle.md
-phase: "0.2.1 — control command wiring wave"
+phase: "0.2.7 — verify command wiring wave"
 owners:
   - runtime
 adrs:
@@ -13,42 +13,42 @@ adrs:
 spec_anchors:
   - yai-law/registry/commands.v1.json
   - docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md
-target_group: control
+target_group: verify
 target_command_count: 200
 ---
 
-# MP-WORKSPACES-LIFECYCLE-0.2.1
+# MP-WORKSPACES-LIFECYCLE-0.2.7
 
 ## Objective
-Plan and execute real runtime wiring for group `control` without contract drift.
+Plan and execute real runtime wiring for group `verify` without contract drift.
 
-Group mission: Control plane authority and dispatch surfaces.
+Group mission: Verification, proof and evidence surfaces.
 
 ## Scope (Planned)
-- Canonical target group: `control`
+- Canonical target group: `verify`
 - Canonical command count: `200`
-- Family distribution (top): `chat_*` (21), `shell_*` (21), `authority_*` (20), `dispatch_*` (20), `policy_*` (20), `provider_*` (20), `route_*` (20), `session_*` (20), `target_*` (20), `context_*` (12)
+- Family distribution (top): `bundle_*` (20), `evidence_*` (20), `gate_*` (20), `policy_*` (20), `proof_*` (20), `report_*` (20), `suite_*` (20), `trace_*` (20), `vector_*` (20), `check_*` (18)
 - Delivery model: keep all registered commands invocable; implement selected handlers first; missing handlers remain deterministic (`nyi` equivalent).
 
 ## Representative command_id set
-- `yai.control.authority_apply`
-- `yai.control.authority_audit`
-- `yai.control.authority_authorize`
-- `yai.control.authority_bind`
-- `yai.control.authority_call`
-- `yai.control.authority_check`
-- `yai.control.authority_close`
-- `yai.control.authority_forward`
-- `yai.control.authority_gate`
-- `yai.control.authority_get`
-- `yai.control.authority_list`
-- `yai.control.authority_open`
-- `yai.control.authority_rebind`
-- `yai.control.authority_relay`
-- `yai.control.authority_rotate`
+- `yai.verify.bundle_attest`
+- `yai.verify.bundle_audit`
+- `yai.verify.bundle_check`
+- `yai.verify.bundle_compare`
+- `yai.verify.bundle_diff`
+- `yai.verify.bundle_export`
+- `yai.verify.bundle_import`
+- `yai.verify.bundle_index`
+- `yai.verify.bundle_lint`
+- `yai.verify.bundle_reconcile`
+- `yai.verify.bundle_replay`
+- `yai.verify.bundle_report`
+- `yai.verify.bundle_seal`
+- `yai.verify.bundle_status`
+- `yai.verify.bundle_summarize`
 
 ## Definition of Done
-- [ ] Group `control` commands remain discoverable in CLI help.
+- [ ] Group `verify` commands remain discoverable in CLI help.
 - [ ] No `unknown command` for registered IDs in this group.
 - [ ] Selected real handlers are wired end-to-end (CLI -> SDK -> Root -> Kernel/Engine).
 - [ ] Non-implemented commands return deterministic error model (`ok/error/nyi` mapping).
