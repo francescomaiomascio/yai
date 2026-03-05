@@ -1,8 +1,8 @@
 ---
-id: MP-WORKSPACES-LIFECYCLE-0.2.1
+id: MP-WORKSPACES-LIFECYCLE-0.2.4
 status: draft
 runbook: docs/program/23-runbooks/workspaces-lifecycle.md
-phase: "0.2.1 — control command wiring wave"
+phase: "0.2.4 — kernel command wiring wave"
 owners:
   - runtime
 adrs:
@@ -13,42 +13,42 @@ adrs:
 spec_anchors:
   - yai-law/registry/commands.v1.json
   - docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md
-target_group: control
+target_group: kernel
 target_command_count: 200
 ---
 
-# MP-WORKSPACES-LIFECYCLE-0.2.1
+# MP-WORKSPACES-LIFECYCLE-0.2.4
 
 ## Objective
-Plan and execute real runtime wiring for group `control` without contract drift.
+Plan and execute real runtime wiring for group `kernel` without contract drift.
 
-Group mission: Control plane authority and dispatch surfaces.
+Group mission: Kernel enforcement and workspace boundary surfaces.
 
 ## Scope (Planned)
-- Canonical target group: `control`
+- Canonical target group: `kernel`
 - Canonical command count: `200`
-- Family distribution (top): `chat_*` (21), `shell_*` (21), `authority_*` (20), `dispatch_*` (20), `policy_*` (20), `provider_*` (20), `route_*` (20), `session_*` (20), `target_*` (20), `context_*` (12)
+- Family distribution (top): `ws_*` (21), `boundary_*` (20), `enforce_*` (20), `mount_*` (20), `policy_*` (20), `quota_*` (20), `resource_*` (20), `route_*` (20), `session_*` (20), `audit_*` (18)
 - Delivery model: keep all registered commands invocable; implement selected handlers first; missing handlers remain deterministic (`nyi` equivalent).
 
 ## Representative command_id set
-- `yai.control.authority_apply`
-- `yai.control.authority_audit`
-- `yai.control.authority_authorize`
-- `yai.control.authority_bind`
-- `yai.control.authority_call`
-- `yai.control.authority_check`
-- `yai.control.authority_close`
-- `yai.control.authority_forward`
-- `yai.control.authority_gate`
-- `yai.control.authority_get`
-- `yai.control.authority_list`
-- `yai.control.authority_open`
-- `yai.control.authority_rebind`
-- `yai.control.authority_relay`
-- `yai.control.authority_rotate`
+- `yai.kernel.audit_apply`
+- `yai.kernel.audit_attach`
+- `yai.kernel.audit_create`
+- `yai.kernel.audit_destroy`
+- `yai.kernel.audit_detach`
+- `yai.kernel.audit_enforce`
+- `yai.kernel.audit_freeze`
+- `yai.kernel.audit_guard`
+- `yai.kernel.audit_list`
+- `yai.kernel.audit_ping`
+- `yai.kernel.audit_reconcile`
+- `yai.kernel.audit_reset`
+- `yai.kernel.audit_restore`
+- `yai.kernel.audit_snapshot`
+- `yai.kernel.audit_status`
 
 ## Definition of Done
-- [ ] Group `control` commands remain discoverable in CLI help.
+- [ ] Group `kernel` commands remain discoverable in CLI help.
 - [ ] No `unknown command` for registered IDs in this group.
 - [ ] Selected real handlers are wired end-to-end (CLI -> SDK -> Root -> Kernel/Engine).
 - [ ] Non-implemented commands return deterministic error model (`ok/error/nyi` mapping).

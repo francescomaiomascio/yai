@@ -30,9 +30,13 @@ An MP is a closure artifact for a concrete phase and should make review/audit st
 
 - `docs/program/24-milestone-packs/contract-baseline-lock/README.md`
 
-## Planned track: Workspaces lifecycle
+## Current track: Workspaces lifecycle
 
 - `docs/program/24-milestone-packs/workspaces-lifecycle/README.md`
+
+## Current track: Command coverage (non-WS)
+
+- `docs/program/24-milestone-packs/command-coverage/README.md`
 
 ## Planned track: Engine attach
 

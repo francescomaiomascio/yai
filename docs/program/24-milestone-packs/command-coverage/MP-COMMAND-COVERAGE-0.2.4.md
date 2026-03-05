@@ -1,8 +1,8 @@
 ---
-id: MP-WORKSPACES-LIFECYCLE-0.2.1
+id: MP-COMMAND-COVERAGE-0.2.4
 status: draft
-runbook: docs/program/23-runbooks/workspaces-lifecycle.md
-phase: "0.2.1 — control command wiring wave"
+runbook: N/A
+phase: "0.2.4 — orch command wiring wave"
 owners:
   - runtime
 adrs:
@@ -13,42 +13,46 @@ adrs:
 spec_anchors:
   - yai-law/registry/commands.v1.json
   - docs/program/23-runbooks/workspaces-lifecycle-command-map.v2.md
-target_group: control
+target_group: orch
 target_command_count: 200
 ---
 
-# MP-WORKSPACES-LIFECYCLE-0.2.1
+# MP-COMMAND-COVERAGE-0.2.4
+
+## Rescope Notice
+This MP was moved from `workspaces-lifecycle` to `command-coverage` because its command surface is not strictly workspace-lifecycle scoped.
+
 
 ## Objective
-Plan and execute real runtime wiring for group `control` without contract drift.
+Plan and execute real runtime wiring for group `orch` without contract drift.
 
-Group mission: Control plane authority and dispatch surfaces.
+Group mission: Orchestration plan/trial/report surfaces.
 
 ## Scope (Planned)
-- Canonical target group: `control`
+- Canonical target group: `orch`
 - Canonical command count: `200`
-- Family distribution (top): `chat_*` (21), `shell_*` (21), `authority_*` (20), `dispatch_*` (20), `policy_*` (20), `provider_*` (20), `route_*` (20), `session_*` (20), `target_*` (20), `context_*` (12)
+- Family distribution (top): `job_*` (21), `pack_*` (21), `plan_*` (21), `report_*` (21), `runner_*` (21), `trial_*` (21), `dataset_*` (20), `queue_*` (20), `result_*` (20), `campaign_*` (13)
 - Delivery model: keep all registered commands invocable; implement selected handlers first; missing handlers remain deterministic (`nyi` equivalent).
 
 ## Representative command_id set
-- `yai.control.authority_apply`
-- `yai.control.authority_audit`
-- `yai.control.authority_authorize`
-- `yai.control.authority_bind`
-- `yai.control.authority_call`
-- `yai.control.authority_check`
-- `yai.control.authority_close`
-- `yai.control.authority_forward`
-- `yai.control.authority_gate`
-- `yai.control.authority_get`
-- `yai.control.authority_list`
-- `yai.control.authority_open`
-- `yai.control.authority_rebind`
-- `yai.control.authority_relay`
-- `yai.control.authority_rotate`
+- `yai.orch.campaign_audit`
+- `yai.orch.campaign_cancel`
+- `yai.orch.campaign_export`
+- `yai.orch.campaign_import`
+- `yai.orch.campaign_list`
+- `yai.orch.campaign_plan`
+- `yai.orch.campaign_queue`
+- `yai.orch.campaign_report`
+- `yai.orch.campaign_resume`
+- `yai.orch.campaign_run`
+- `yai.orch.campaign_status`
+- `yai.orch.campaign_trace`
+- `yai.orch.campaign_verify`
+- `yai.orch.dataset_audit`
+- `yai.orch.dataset_cancel`
 
 ## Definition of Done
-- [ ] Group `control` commands remain discoverable in CLI help.
+- [ ] Group `orch` commands remain discoverable in CLI help.
 - [ ] No `unknown command` for registered IDs in this group.
 - [ ] Selected real handlers are wired end-to-end (CLI -> SDK -> Root -> Kernel/Engine).
 - [ ] Non-implemented commands return deterministic error model (`ok/error/nyi` mapping).
