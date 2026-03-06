@@ -86,6 +86,19 @@ Command inventory remains in the dedicated command-map file.
 
 ## 4) Workspace model (physical and security baseline)
 
+### 4.0 Workspace Model v2 (operational)
+Workspace model is split into two distinct layers:
+
+- runtime workspace object (kernel-owned truth)
+- current workspace binding (CLI/session ergonomics)
+
+The binding never replaces runtime truth.
+It only resolves command context with deterministic precedence:
+
+1. explicit `--ws-id`
+2. current workspace binding
+3. unresolved context -> deterministic reject for workspace-scoped commands
+
 ### 4.1 What a workspace is physically
 A workspace is a governed runtime tenant boundary represented by:
 - runtime root path: `~/.yai/run/<ws_id>/`
@@ -93,6 +106,16 @@ A workspace is a governed runtime tenant boundary represented by:
 - workspace-scoped runtime state context (including vault-backed runtime state)
 
 A workspace is not a Linux container boundary by itself.
+
+Model fields required at runtime level:
+- `ws_id`
+- `state`
+- `root_path`
+- `created_at`
+- `updated_at`
+- `exists`
+- `runtime_owner` (kernel authority)
+- `attachments` (placeholder for future session/graph/mind bindings)
 
 ### 4.2 Security provided by current workspace model
 Provided:

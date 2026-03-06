@@ -359,7 +359,12 @@ static int yai_workspace_write_manifest(
             "  \"updated_at\": %ld,\n"
             "  \"layout\": \"v2\",\n"
             "  \"root_path\": \"%s\",\n"
-            "  \"attachments\": []\n"
+            "  \"runtime_owner\": \"kernel\",\n"
+            "  \"attachments\": [],\n"
+            "  \"capabilities\": {\n"
+            "    \"workspace_scope\": true,\n"
+            "    \"attachment_ready\": true\n"
+            "  }\n"
             "}\n",
             ws_id,
             state,
@@ -547,7 +552,7 @@ int yai_session_handle_workspace_action(
         mkdir_parents(root_path, 0755) != 0)
         return -1;
 
-    if (yai_workspace_write_manifest(ws_dir, ws_id, "active", root_path, (long)now, (long)now) != 0)
+    if (yai_workspace_write_manifest(ws_dir, ws_id, "created", root_path, (long)now, (long)now) != 0)
         return -1;
 
     if (info_out)
