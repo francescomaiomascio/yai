@@ -1,72 +1,58 @@
-# YAI — Enterprise Governed Execution Platform
+# YAI (C)
 
-YAI is a governed execution platform for high-assurance AI/runtime operations with explicit authority, deterministic control surfaces, and auditable evidence.
+YAI is the systems core of the YAI platform.
 
-## Platform posture
+It brings control, execution, and cognition into one governed architecture built for explicit authority, bounded behavior, and proof under operation.
 
-YAI is not a demo runtime.
-It is the implementation and program center of a contract-governed platform stack.
+This repository contains the primary implementation of YAI: runtime foundations, execution layers, cognition subsystems, shared protocol and support surfaces, and the program artifacts that govern their evolution.
 
-Authority and dependency chain:
+## Platform position
 
-`yai-law` -> `yai-sdk` -> `yai-cli` -> `yai` -> `yai-ops`
+YAI operates inside a disciplined platform chain:
 
-## Repository role
+`yai-law` → `yai-sdk` → `yai-cli` → `yai` → `yai-ops`
 
-This repository owns:
-- Runtime implementation surfaces (Boot, Root, Kernel, Engine, Mind)
-- Program governance artifacts (RFCs, ADRs, runbooks, milestone packs, validation plans)
-- Platform integration logic constrained by pinned law contracts
+Each layer carries constraints forward.  
+Law defines them. Interfaces expose them. YAI implements them. Operations verify them.
 
-This repository does not own:
-- Cross-repo governance standards and reusable governance tooling (`yai-infra`)
-- Normative law contracts (`yai-law`)
+## Design posture
 
-## Enterprise operating principles
+- **Authority is explicit**
+- **Behavior is bounded**
+- **Execution is governable**
+- **Cognition is controlled**
+- **Evidence is first-class**
+- **Change is deliberate**
 
-- Authority-first execution
-- Deterministic gates at effect boundaries
-- Evidence and traceability as first-class artifacts
-- Pinned contract consumption with explicit upgrade discipline
-- Mind surfaces governed as part of platform architecture (scope-dependent in program phases)
-- Workspace-first runtime operations with kernel-owned workspace state
+## Scope
 
-## Program anchors
+This repository owns the governed implementation of YAI and the program artifacts required to evolve it under control.
 
-- Audit convergence matrix: `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
-- Audit convergence index: `docs/program/audit-convergence/README.md`
-- Workspaces lifecycle MP index: `docs/program/24-milestone-packs/workspaces-lifecycle/README.md`
-- Governance ADR: `docs/program/22-adr/ADR-012-audit-convergence-gates.md`
+It does not own canonical law (`yai-law`) or shared cross-repo governance tooling (`yai-infra`).
 
-## Quick start
-
-Build:
+## Build
 
 ```bash
 make build
 make dist
 ```
 
-Verify:
+## Verify
 
 ```bash
 make verify
 ```
 
-## Documentation entrypoints
+## Documentation
 
-- `docs/00-dashboard.md`
 - `docs/README.md`
 
-## Law and dependency pinning
+## Dependency discipline
 
-This repository consumes canonical law as a pinned dependency:
-- `deps/yai-law/`
+Canonical law is consumed as a pinned dependency through `deps/yai-law/`.  
+SDK alignment is tracked through `deps/yai-sdk.ref`.
 
-It also tracks SDK pin alignment:
-- `deps/yai-sdk.ref`
-
-If implementation behavior diverges from pinned law contracts, the implementation must be corrected.
+Divergence from pinned law or aligned interfaces must be corrected in implementation.
 
 ## License
 
