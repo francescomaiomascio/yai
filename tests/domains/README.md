@@ -1,14 +1,10 @@
-# Domain Test Layout
+# Legacy Domain Test Layout (Deprecated)
 
-Goal: keep tests small and component-focused before scaling.
+`tests/domains/*` is retained only as a temporary compatibility marker.
+New and migrated tests must use:
 
-Domains:
+- `tests/unit/{core,exec,brain,protocol,support}`
+- `tests/integration/{runtime_handshake,workspace_lifecycle,core_exec,core_brain}`
+- `tests/e2e`
 
-- `boot/`: bootstrap and preboot invariants
-- `kernel/`: core protocol/runtime invariants in kernel boundary
-- `root/`: control transport and root boundary behavior
-- `engine/`: engine cortex/gates/bridge behavior
-
-Shared:
-
-- place reusable helpers/fixtures under `tests/shared`
+Legacy domain buckets are scheduled for removal after the final decommission pass.
