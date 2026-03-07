@@ -69,3 +69,8 @@ Divergence from pinned law or aligned interfaces must be corrected in implementa
 ## License
 
 Apache-2.0. See `LICENSE`, `NOTICE`, and `THIRD_PARTY_NOTICES.md`.
+
+## Law compatibility declaration
+
+- Human-readable declaration: `LAW_COMPATIBILITY.md`
+- Machine-readable declaration: `law-compatibility.v1.json`
