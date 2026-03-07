@@ -24,7 +24,7 @@ Activation MUST satisfy:
 ## Public API (L3/Mind)
 `mind/include/mind_memory.h`
 
-Primary implementation: `mind/src/memory/graph/domain_activation.c`
+Primary implementation: `lib/brain/memory/graph/domain_activation.c`
 
 - `ActivationSeed { node, weight }`
 - `ActivationMethod { LocalPush, PowerIteration }`
@@ -121,7 +121,7 @@ Tables:
 Activation traces are prunable without impacting semantic graph state. Purge operations MUST only affect activation trace tables.
 
 ## Activation Traces
-`mind/src/memory/graph/domain_activation.c` (trace state for last activation run)
+`lib/brain/memory/graph/domain_activation.c` (trace state for last activation run)
 
 `ActivationTrace` fields:
 - `run_id`

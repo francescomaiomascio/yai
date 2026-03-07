@@ -2,7 +2,7 @@
 
 ## Test types
 
-- Unit/integration tests under `mind/tests_c/`
+- Unit/integration tests under `tests/unit/brain/mind_legacy_tests/` (transition path)
 - Runtime smoke checks through `make -C mind test`
 
 ## Goals
