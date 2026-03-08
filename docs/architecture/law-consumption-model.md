@@ -21,4 +21,5 @@ Runtime loaders validate layer indexes and generated summaries before resolution
 
 - `active runtime-facing`: `embedded/law`
 - `canonical source`: sibling `law` repository
+- `bridge/transitional tolerated`: optional seed payload (export opt-in only)
 - `historical/reference-only`: legacy debug/report docs

@@ -13,9 +13,9 @@
     "manifests": "manifests/"
   },
   "bridge": {
-    "legacy_enabled": true,
+    "legacy_enabled": false,
     "legacy_root": "transitional/domain-family-seed/",
-    "mode": "fallback-only"
+    "mode": "opt-in-compat-only"
   },
   "non_runtime_sections": [
     "docs/",

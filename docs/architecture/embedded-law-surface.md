@@ -7,7 +7,7 @@
 - runtime manifests (`law.manifest.json`, `runtime.entrypoints.json`, publish/compat manifests)
 - six-layer JSON payload (`classification`, `control-families`, `domain-specializations`, `overlays/*`)
 - generated runtime views (`generated/*`)
-- optional transitional bridge seed under `transitional/domain-family-seed/`
+- optional transitional seed only when explicit compatibility export is enabled
 
 ## Excludes
 
@@ -20,6 +20,7 @@
 
 Embedded is the active runtime path.
 Legacy mirror fallback is retired from active runtime and tooling paths.
+Transitional seed payload is excluded by default from embedded export.
 
 ## Not primary references
 

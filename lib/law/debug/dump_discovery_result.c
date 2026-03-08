@@ -16,7 +16,7 @@ int yai_law_dump_discovery_result(const yai_law_discovery_result_t *disc, char *
   if (disc->specialization_candidate_count > 2) s3 = disc->specialization_candidates[2];
   return yai_law_safe_snprintf(out,
                                out_cap,
-                               "family=%s specialization=%s domain=%s confidence=%.3f ambiguous=%d family_candidates=[%s,%s,%s] specialization_candidates=[%s,%s,%s] rationale=%s",
+                               "family=%s specialization=%s compat_domain_id=%s confidence=%.3f ambiguous=%d family_candidates=[%s,%s,%s] specialization_candidates=[%s,%s,%s] rationale=%s",
                                disc->family_id,
                                disc->specialization_id,
                                disc->domain_id,

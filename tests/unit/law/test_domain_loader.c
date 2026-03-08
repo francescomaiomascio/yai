@@ -21,9 +21,8 @@ int main(void) {
     return 1;
   }
 
-  if (yai_law_load_domain_manifest(&rt, "D1-digital", json, sizeof(json)) != 0) return 1;
-  if (!strstr(json, "D1-digital")) {
-    fprintf(stderr, "domain_loader: D1 transitional manifest not loaded\n");
+  if (yai_law_load_domain_manifest(&rt, "D1-digital", json, sizeof(json)) == 0) {
+    fprintf(stderr, "domain_loader: transitional seed should not be loaded by default\n");
     return 1;
   }
 

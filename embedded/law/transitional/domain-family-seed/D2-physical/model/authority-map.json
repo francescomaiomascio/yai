@@ -1,9 +1,0 @@
-{
-  "kind": "authority-map",
-  "version": "v1",
-  "domain_id": "D2-physical",
-  "required_roles": [
-    "operator",
-    "controller"
-  ]
-}

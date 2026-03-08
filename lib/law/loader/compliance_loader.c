@@ -11,7 +11,7 @@ int yai_law_load_compliance_index(const yai_law_runtime_t *rt,
     return 0;
   }
 
-  /* Bridge fallback for legacy payload shape. */
+  /* Compatibility fallback for non-primary legacy payload shape (disabled in primary runtime path). */
   if (yai_law_safe_snprintf(path, sizeof(path), "%s/compliance/index/compliance.index.json", rt->root) != 0) {
     return -1;
   }

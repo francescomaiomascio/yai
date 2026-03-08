@@ -1,10 +1,10 @@
 {
   "kind": "publish.index",
-  "version": "v3",
+  "version": "v4",
   "targets": [
     {
       "target": "runtime-embedded",
-      "profile": "runtime-consumer.v3",
+      "profile": "runtime-consumer.v4",
       "includes": [
         "classification",
         "control-families",

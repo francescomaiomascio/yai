@@ -1,8 +1,0 @@
-{
-  "kind": "domain_risk_surface",
-  "version": "v1",
-  "domain_id": "D3-biological",
-  "risks": [
-    "exfiltration"
-  ]
-}

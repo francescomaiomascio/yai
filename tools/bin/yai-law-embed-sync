@@ -18,6 +18,7 @@ else
   echo "warning: law-export-embedded missing, using local fallback" >&2
   python3 - "$LAW_ROOT" "$TARGET_ROOT" <<'PY'
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -50,7 +51,6 @@ for base in [
     "overlays/regulatory",
     "overlays/sector",
     "overlays/contextual",
-    "transitional/domain-family-seed",
 ]:
     src_root = law_root / base
     if not src_root.exists():
@@ -59,6 +59,14 @@ for base in [
         out = target / p.relative_to(law_root)
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(p, out)
+
+if os.getenv("YAI_LAW_INCLUDE_TRANSITIONAL_SEED", "0") == "1":
+    src_root = law_root / "transitional" / "domain-family-seed"
+    if src_root.exists():
+        for p in src_root.rglob("*.json"):
+            out = target / p.relative_to(law_root)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(p, out)
 
 for name in [
     "publish.index.json",

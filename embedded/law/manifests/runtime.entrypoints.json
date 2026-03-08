@@ -20,8 +20,8 @@
       },
       "legacy_bridge": {
         "seed_root": "transitional/domain-family-seed/",
-        "enabled": true,
-        "mode": "fallback-only"
+        "enabled": false,
+        "mode": "opt-in-compat-only"
       }
     }
   ]

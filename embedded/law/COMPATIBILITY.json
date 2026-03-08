@@ -2,7 +2,7 @@
   "kind": "embedded-law-compatibility",
   "version": "v2",
   "law_version": "v0.1.0",
-  "compatibility_profile": "runtime-consumer.v3",
+  "compatibility_profile": "runtime-consumer.v4",
   "compatibility_ref": "manifests/compatibility.matrix.json",
   "publish_layers_ref": "manifests/publish.layers.json"
 }

@@ -4,14 +4,13 @@
   "export_id": "law-embedded-runtime-surface",
   "law_version": "v0.1.0",
   "target": "yai-runtime-embedded",
-  "compatibility_profile": "runtime-consumer.v3",
+  "compatibility_profile": "runtime-consumer.v4",
   "export_mode": "runtime-contract",
   "included_sections": [
     "runtime-manifests",
     "six-layer-runtime-payload",
     "runtime-generated-views",
-    "compatibility-data",
-    "legacy-bridge-fallback"
+    "compatibility-data"
   ],
   "excluded_sections": [
     "archive_tmp/**",
@@ -59,15 +58,13 @@
     "overlays/sector/index/overlay-attachment-matrix.json",
     "overlays/sector/index/overlay-precedence-matrix.json",
     "overlays/sector/index/overlay-evidence-matrix.json",
-    "overlays/contextual/index/contextual.index.json",
-    "transitional/domain-family-seed/D1-digital/manifest.json",
-    "transitional/domain-family-seed/D8-scientific/manifest.json"
+    "overlays/contextual/index/contextual.index.json"
   ],
   "notes": [
     "Canonical law remains in this repository.",
     "Embedded export is a runtime contract artifact, not a repository mirror.",
     "Six-layer runtime payload is primary.",
-    "Legacy transitional seed payload remains fallback-only during bridge period."
+    "Transitional seed payload is optional and excluded from default runtime export."
   ],
   "six_layer_scope": {
     "classification": "classification/",
@@ -78,6 +75,6 @@
       "sector": "overlays/sector/",
       "contextual": "overlays/contextual/"
     },
-    "legacy_bridge": "transitional/domain-family-seed/"
+    "transitional_seed_optional": "transitional/domain-family-seed/"
   }
 }

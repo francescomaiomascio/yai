@@ -12,7 +12,8 @@
   "breakage_flags": [],
   "model": "six-layer-canonical-root",
   "bridge": {
-    "active": true,
-    "legacy_seed_root": "transitional/domain-family-seed"
+    "active": false,
+    "legacy_seed_root": "transitional/domain-family-seed",
+    "mode": "opt-in-compat-only"
   }
 }

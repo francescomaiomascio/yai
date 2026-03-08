@@ -1,9 +1,0 @@
-{
-  "kind": "authority-map",
-  "version": "v1",
-  "domain_id": "D7-cognitive-cultural",
-  "required_roles": [
-    "operator",
-    "controller"
-  ]
-}

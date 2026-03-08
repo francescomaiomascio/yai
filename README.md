@@ -20,12 +20,26 @@
 - `yai`: runtime realization
 - `ops`: official/catalog/qualification/evidence bureau
 
-## Transitional dependency note
+## Surface quick map
 
-`yai` now adopts an embedded-law-surface model:
-- canonical normativity remains in `law`
-- runtime-facing export is consumed from `embedded/law`
-- legacy mirror fallback is retired from active runtime and tooling paths
+### Primary runtime-facing surfaces
+
+- `embedded/law/`
+- `include/yai/law/`
+- `lib/law/`
+- `tools/bin/yai-law-*`
+
+### Canonical external source
+
+- sibling `../law` repository
+
+### Bridge / transitional tolerated
+
+- `embedded/law/transitional/domain-family-seed/` (bridge payload only, non-primary, do-not-extend)
+
+### Historical / reference-only
+
+- historical debug/audit reports marked as superseded in `docs/architecture/*debug-report*`
 
 Primary local commands:
 - `tools/bin/yai-law-embed-sync`

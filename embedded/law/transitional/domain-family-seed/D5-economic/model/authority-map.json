@@ -1,9 +1,0 @@
-{
-  "kind": "authority-map",
-  "version": "v1",
-  "domain_id": "D5-economic",
-  "required_roles": [
-    "operator",
-    "controller"
-  ]
-}

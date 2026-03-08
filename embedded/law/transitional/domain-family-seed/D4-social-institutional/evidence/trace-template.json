@@ -1,9 +1,0 @@
-{
-  "kind": "resolution_trace",
-  "version": "v1",
-  "template": {
-    "trace_id": "trace-<id>",
-    "inputs": {},
-    "final_effect": "review_required"
-  }
-}

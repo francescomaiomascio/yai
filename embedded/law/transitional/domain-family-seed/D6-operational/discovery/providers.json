@@ -1,8 +1,0 @@
-{
-  "kind": "provider-matches",
-  "version": "v1",
-  "domain_id": "D6-operational",
-  "providers": [
-    "provider.default"
-  ]
-}

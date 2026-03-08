@@ -2,7 +2,7 @@
   "kind": "compatibility-summary",
   "version": "v2",
   "law_version": "0.1.0",
-  "compatibility_profile": "runtime-consumer.v3",
+  "compatibility_profile": "runtime-consumer.v4",
   "compatibility_matrix": {
     "kind": "compatibility.matrix",
     "version": "v2",
@@ -17,8 +17,9 @@
     "breakage_flags": [],
     "model": "six-layer-canonical-root",
     "bridge": {
-      "active": true,
-      "legacy_seed_root": "transitional/domain-family-seed"
+      "active": false,
+      "legacy_seed_root": "transitional/domain-family-seed",
+      "mode": "opt-in-compat-only"
     }
   }
 }

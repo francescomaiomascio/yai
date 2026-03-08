@@ -28,7 +28,7 @@ Overall: convergence is real and operational, with remaining debt mostly in runt
 | `law/overlays/contextual` | active canonical | Primary contextual overlay corpus |
 | `law/manifests/*` | active canonical | Publish/export/runtime contract source |
 | `law/transitional/domain-family-seed` | bridge | Fallback payload only |
-| `law/domains` | transitional tolerated | Legacy compatibility surface |
+| `law/domains` | transitional tolerated | Legacy compatibility surface |ªª
 | `law/compliance` | transitional tolerated | Legacy compatibility surface |
 | `law/packs` | dead/reference-only | Legacy, non-primary |
 | `law/runtime` | dead/reference-only | Legacy conceptual residue |

@@ -1,16 +1,13 @@
 # Embedded Law Surface
 
-Status: `active runtime-facing`  
-Role: `runtime contract artifact`  
-Authoring: `not allowed here`
+Runtime-facing contract artifact exported from canonical `law`.
 
-This directory is a generated runtime-consumable contract surface exported from canonical `law`.
+Primary six-layer payload:
+- `classification/`
+- `control-families/`
+- `domain-specializations/`
+- `overlays/regulatory/`
+- `overlays/sector/`
+- `overlays/contextual/`
 
-- Primary runtime law path in `yai`.
-- Not a full mirror of canonical `law`.
-- Not a source-of-truth authoring surface.
-
-Bridge payload note:
-
-- `transitional/domain-family-seed/` is included only as controlled compatibility fallback.
-- It is bridge-only and non-primary.
+Bridge payload (`transitional/domain-family-seed/`) is excluded by default and enabled only via explicit compatibility flags.

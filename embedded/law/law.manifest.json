@@ -23,6 +23,5 @@
     "regulatory": "overlays/regulatory/index/regulatory.index.json",
     "sector": "overlays/sector/index/sector.index.json",
     "contextual": "overlays/contextual/index/contextual.index.json"
-  },
-  "legacy_domain_index_ref": "domains/index/domains.index.json"
+  }
 }

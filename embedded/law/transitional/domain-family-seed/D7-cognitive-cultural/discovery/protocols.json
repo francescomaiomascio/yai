@@ -1,8 +1,0 @@
-{
-  "kind": "protocol-matches",
-  "version": "v1",
-  "domain_id": "D7-cognitive-cultural",
-  "protocols": [
-    "yai.control.call.v1"
-  ]
-}

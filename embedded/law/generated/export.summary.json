@@ -8,8 +8,7 @@
     "runtime-manifests",
     "six-layer-runtime-payload",
     "runtime-generated-views",
-    "compatibility-data",
-    "legacy-bridge-fallback"
+    "compatibility-data"
   ],
   "excluded_sections": [
     "archive_tmp/**",
@@ -22,7 +21,7 @@
     "registry/**",
     "**/*.md"
   ],
-  "include_count": 30,
+  "include_count": 28,
   "layers": {
     "classification": "classification/",
     "control_families": "control-families/",
@@ -35,7 +34,7 @@
     "manifests": "manifests/"
   },
   "bridge": {
-    "legacy_enabled": true,
-    "mode": "fallback-only"
+    "legacy_enabled": false,
+    "mode": "opt-in-compat-only"
   }
 }

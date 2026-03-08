@@ -10,6 +10,12 @@ Live documentation for the runtime repository.
 - `program/` active governance/process records
 - `pointers/` cross-repo official/evidence/collateral pointers
 
+## Surface classes
+
+- `primary runtime-facing`: `architecture/`, `developer/`, `interfaces/`
+- `program/governance active`: `program/`
+- `historical/superseded`: docs explicitly marked with historical/superseded headers
+
 ## Transitional material policy
 
 Refactor/rewrite/mapping/closeout documents are quarantined under:

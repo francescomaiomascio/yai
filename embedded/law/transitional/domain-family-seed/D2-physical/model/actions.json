@@ -1,9 +1,0 @@
-{
-  "kind": "domain_action_set",
-  "version": "v1",
-  "domain_id": "D2-physical",
-  "actions": [
-    "egress",
-    "transform"
-  ]
-}
