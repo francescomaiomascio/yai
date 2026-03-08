@@ -2,12 +2,17 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$ROOT/tools/dev/resolve-law-compat.sh"
 INFRA_ROOT_DEFAULT="$(cd "$ROOT/.." && pwd)/yai-infra"
 INFRA_ROOT="${YAI_INFRA_ROOT:-$INFRA_ROOT_DEFAULT}"
 TARGET="$INFRA_ROOT/tools/bin/yai-proof-check"
+LAW_COMPAT_ROOT="$(yai_resolve_law_compat_root "$ROOT" || true)"
 
 if [[ -x "$TARGET" ]]; then
-  YAI_CORE_ROOT="$ROOT" YAI_SPECS_ROOT="$ROOT/deps/yai-law" exec "$TARGET" "$@"
+  YAI_CORE_ROOT="$ROOT" \
+  YAI_LAW_COMPAT_ROOT="${LAW_COMPAT_ROOT:-}" \
+  YAI_SPECS_ROOT="${LAW_COMPAT_ROOT:-}" \
+  exec "$TARGET" "$@"
 fi
 
 echo "Hard cutover: use yai-infra canonical tool for yai-proof-check" >&2
