@@ -1,5 +1,5 @@
 {
-  "authority_repo": "yai-law",
+  "authority_repo": "law",
   "compatibility_mode": "strong-baseline-lock",
   "supported_baselines": [
     "deps/yai-law@502e618c7d8c1dee6b172b4ce31e718777e0833f"
