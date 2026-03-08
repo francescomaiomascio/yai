@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LAW_ROOT="$ROOT/deps/law"
 if [[ ! -d "$LAW_ROOT" ]]; then
-  LAW_ROOT="$ROOT/deps/yai-law"
+  LAW_ROOT="$ROOT/deps/law"
 fi
 
 SPEC_CONTRACTS="$LAW_ROOT/contracts/vault/schema/vault_abi.json"

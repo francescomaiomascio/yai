@@ -19,9 +19,8 @@ cleanup() {
 trap cleanup EXIT
 
 "$YAI" --help >/dev/null
-"$YAI" status || true
 
-"$YAI" up >/tmp/yai_e2e_up.log 2>&1 &
+"$YAI" >/tmp/yai_e2e_up.log 2>&1 &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 50); do
@@ -36,7 +35,6 @@ if [[ ! -S "$SOCK" ]]; then
   exit 1
 fi
 
-"$YAI" status
 python3 "$REPO/tests/integration/runtime_handshake/test_handshake.py"
 
 echo "run_entrypoint_e2e: ok"

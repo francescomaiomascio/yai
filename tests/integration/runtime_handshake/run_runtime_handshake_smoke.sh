@@ -18,7 +18,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-"$YAI" up >/tmp/yai_runtime_handshake_up.log 2>&1 &
+"$YAI" >/tmp/yai_runtime_handshake_up.log 2>&1 &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 50); do

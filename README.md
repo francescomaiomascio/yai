@@ -10,9 +10,13 @@ This repository contains the primary implementation of YAI: runtime foundations,
 
 YAI operates inside a disciplined platform chain:
 
-`law` → `sdk` → `cli` → `yai` → `ops`
-Each layer carries constraints forward.  
-Law defines them. Interfaces expose them. YAI implements them. Operations verify them.
+- normative authority: `law`
+- operator/programmatic flow: `operator -> cli -> sdk -> yai`
+- operations/evidence: `ops`
+
+Law defines contracts and invariants.
+CLI and SDK consume that truth.
+YAI realizes runtime ingress and dispatch.
 
 ## Design posture
 
@@ -58,7 +62,7 @@ Repository topology is authoritative under:
 
 ## Dependency discipline
 
-Canonical law is consumed as a pinned dependency through `deps/yai-law/`.  
+Canonical law is consumed as a pinned dependency through `deps/law/`.  
 CLI/SDK integration is tracked via compatibility declarations, not local `deps/*.ref` pins.
 
 Divergence from pinned law or aligned interfaces must be corrected in implementation.

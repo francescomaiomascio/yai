@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 LAW_ROOT="$ROOT/deps/law"
 if [[ ! -d "$LAW_ROOT" ]]; then
-  LAW_ROOT="$ROOT/deps/yai-law"
+  LAW_ROOT="$ROOT/deps/law"
 fi
 OUT_ROOT="$ROOT/build/test/brain"
 OBJ_DIR="$OUT_ROOT/obj"

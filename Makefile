@@ -3,7 +3,7 @@
 # =========================================
 
 ROOT_DIR := $(abspath .)
-LAW_COMPAT_ROOT ?= $(firstword $(wildcard $(ROOT_DIR)/deps/law $(ROOT_DIR)/deps/yai-law))
+LAW_COMPAT_ROOT ?= $(ROOT_DIR)/deps/law
 
 BUILD_DIR ?= $(ROOT_DIR)/build
 BIN_DIR ?= $(BUILD_DIR)/bin

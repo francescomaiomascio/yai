@@ -16,7 +16,7 @@ echo "=== Binaries"
 echo "=== yai in PATH"
 if [[ -n "$BIN" ]]; then
   echo "OK: $(command -v yai)"
-  "$BIN" status || true
+  "$BIN" --help >/dev/null || true
 else
   echo "MISSING: yai not found in PATH"
 fi

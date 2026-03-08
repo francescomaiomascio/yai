@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Resolve compatibility material root consumed by tooling.
-# Authority remains yai-law; callers should consume exports/snapshots via this resolver.
+# Authority remains law; callers should consume exports/snapshots via this resolver.
 
 yai_resolve_law_compat_root() {
   local root="${1:-}"
@@ -22,8 +22,8 @@ yai_resolve_law_compat_root() {
     return 0
   fi
 
-  if [[ -n "$root" && -d "$root/deps/yai-law" ]]; then
-    echo "$root/deps/yai-law"
+  if [[ -n "$root" && -d "$root/deps/law" ]]; then
+    echo "$root/deps/law"
     return 0
   fi
 

@@ -3,9 +3,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT/tools/dev/resolve-law-compat.sh"
-INFRA_ROOT_DEFAULT="$(cd "$ROOT/.." && pwd)/yai-infra"
+INFRA_ROOT_DEFAULT="$(cd "$ROOT/.." && pwd)/infra"
 INFRA_ROOT="${YAI_INFRA_ROOT:-$INFRA_ROOT_DEFAULT}"
-TARGET="$INFRA_ROOT/tools/bin/yai-law-sync"
+TARGET="$INFRA_ROOT/tools/bin/law-sync"
 LAW_COMPAT_ROOT="$(yai_resolve_law_compat_root "$ROOT" || true)"
 
 if [[ -x "$TARGET" ]]; then
@@ -15,6 +15,6 @@ if [[ -x "$TARGET" ]]; then
   exec "$TARGET" "$@"
 fi
 
-echo "Hard cutover: use yai-infra canonical tool for yai-law-sync" >&2
+echo "Hard cutover: use infra canonical tool for law-sync" >&2
 echo "Missing target: $TARGET" >&2
 exit 2
