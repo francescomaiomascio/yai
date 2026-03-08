@@ -1,37 +1,32 @@
 ---
 id: ARCH-LAW-BRIDGE
 status: active
-effective_date: 2026-02-19
-revision: 1
+effective_date: 2026-03-08
+revision: 2
 owner: governance
 law_refs:
-  - deps/law/foundation/invariants/I-001-traceability.md
-  - deps/law/contracts/protocol/include/protocol.h
+  - law/manifests/law.manifest.json
+  - law/manifests/publish.layers.json
+  - embedded/law/runtime.entrypoints.json
 ---
 
 # Law Bridge
 
 ## Role
 
-Define mandatory citation and alignment rules between `yai` architecture docs and `deps/law` normative sources.
+Define mandatory citation and alignment rules between `yai` runtime architecture and canonical `law` publish/export contract.
 
 ## Rules
 
-- Every architecture document must include `law_refs` in frontmatter.
-- Architecture statements that mention protocol/roles/errors must link a concrete `deps/law/...` path.
-- Architecture docs must not duplicate normative spec text.
-- If implementation diverges from target ADR intent, document as drift with explicit remediation target.
+- Architecture docs must anchor normative claims to canonical `law` paths or embedded contract artifacts.
+- `embedded/law` is the active runtime-facing contract surface.
+- `../law` is fallback bridge only and must not be used as primary reference in new docs.
+- If implementation diverges from contract intent, record drift with remediation target.
 
 ## Citation pattern
 
-- Use repo-relative references only.
-- Prefer concrete files over generic folders.
+Prefer:
+- canonical source references (`law/...`)
+- runtime contract references (`embedded/law/...`)
 
-Examples:
-- `deps/law/foundation/invariants/I-003-governance.md`
-- `deps/law/foundation/boundaries/L1-kernel.md`
-- `deps/law/contracts/protocol/include/transport.h`
-
-## Twin-change rule
-
-If architecture claims require cross-repo behavior changes (`yai`, `cli`, `law`), track as coordinated updates through runbook/MP references.
+Avoid introducing new primary anchors under `../law/...`.

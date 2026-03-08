@@ -1,3 +1,0 @@
-# Authoring Notes
-
-Placeholder.

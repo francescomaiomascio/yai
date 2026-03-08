@@ -8,11 +8,11 @@ applies_to:
   phase: 0.1.0
   anchor: "#phase-0-1-0-protocol-guardrails"
 law_refs:
-  - deps/law/foundation/axioms/A-002-authority.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
-  - deps/law/foundation/boundaries/L1-kernel.md
-  - deps/law/foundation/boundaries/L2-engine.md
+  - ../law/foundation/axioms/A-002-authority.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/boundaries/L1-kernel.md
+  - ../law/foundation/boundaries/L2-engine.md
 ---
 # ADR-001 - Single Runtime Per Machine
 

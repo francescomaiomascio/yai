@@ -9,9 +9,9 @@ adrs:
   - docs/program/22-adr/ADR-008-connection-lifecycle.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/contracts/protocol/include/transport.h
-  - deps/law/contracts/protocol/include/auth.h
-  - deps/law/contracts/protocol/include/errors.h
+  - ../law/contracts/protocol/include/transport.h
+  - ../law/contracts/protocol/include/auth.h
+  - ../law/contracts/protocol/include/errors.h
 claims:
   - C-KERNEL-HARD-BOUNDARY-CORE
   - C-DOMAIN-COVERAGE-RESOURCE

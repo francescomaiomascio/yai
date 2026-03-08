@@ -14,6 +14,9 @@ int main(void) {
   }
 
   if (strcmp(out.decision.domain_id, "D1-digital") != 0) return 1;
+  if (strcmp(out.decision.family_id, "digital") != 0) return 1;
+  if (strcmp(out.decision.specialization_id, "network-egress") != 0) return 1;
+  if (strstr(out.trace_json, "\"family_candidates\"") == NULL) return 1;
   if (out.decision.final_effect == YAI_LAW_EFFECT_UNKNOWN) return 1;
 
   puts("integration_d1_resolution: ok");

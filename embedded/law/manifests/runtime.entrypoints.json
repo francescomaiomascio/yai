@@ -1,14 +1,28 @@
 {
   "kind": "runtime.entrypoints",
-  "version": "v1",
+  "version": "v3",
   "entrypoints": [
     {
       "entrypoint_id": "default-runtime",
       "law_manifest_ref": "manifests/law.manifest.json",
-      "domains_ref": "domains/index/domains.index.json",
-      "compliance_ref": "compliance/index/compliance.index.json",
+      "classification_ref": "classification/classification-map.json",
+      "families_ref": "control-families/index/families.index.json",
+      "specializations_ref": "domain-specializations/index/specializations.index.json",
+      "domains_ref": "domain-specializations/index/specializations.index.json",
+      "compliance_ref": "overlays/regulatory/index/regulatory.index.json",
       "resolution_order_ref": "manifests/domain-resolution-order.json",
-      "compatibility_ref": "manifests/compatibility.matrix.json"
+      "compliance_resolution_order_ref": "manifests/compliance-resolution-order.json",
+      "compatibility_ref": "manifests/compatibility.matrix.json",
+      "overlays_ref": {
+        "regulatory": "overlays/regulatory/index/regulatory.index.json",
+        "sector": "overlays/sector/index/sector.index.json",
+        "contextual": "overlays/contextual/index/contextual.index.json"
+      },
+      "legacy_bridge": {
+        "seed_root": "transitional/domain-family-seed/",
+        "enabled": true,
+        "mode": "fallback-only"
+      }
     }
   ]
 }

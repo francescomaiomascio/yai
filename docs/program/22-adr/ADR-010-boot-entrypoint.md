@@ -8,10 +8,10 @@ applies_to:
   phase: boot-baseline
   anchor: "#phase-root-boot-baseline"
 law_refs:
-  - deps/law/foundation/axioms/A-002-authority.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/boundaries/L1-kernel.md
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/foundation/axioms/A-002-authority.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/boundaries/L1-kernel.md
+  - ../law/contracts/protocol/include/transport.h
 ---
 # ADR-010 - Boot as Canonical Machine Entry
 

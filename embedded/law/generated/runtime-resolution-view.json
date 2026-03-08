@@ -1,6 +1,7 @@
 {
   "kind": "runtime-resolution-view",
-  "version": "v1",
+  "version": "v2",
+  "model": "six-layer-canonical-root",
   "domain_resolution_order": {
     "kind": "domain-resolution-order",
     "version": "v1",
@@ -23,5 +24,16 @@
       "domain-linked-compliance",
       "sector-overlays"
     ]
+  },
+  "layers": {
+    "classification": "classification/",
+    "control_families": "control-families/",
+    "domain_specializations": "domain-specializations/",
+    "overlays": {
+      "regulatory": "overlays/regulatory/",
+      "sector": "overlays/sector/",
+      "contextual": "overlays/contextual/"
+    },
+    "manifests": "manifests/"
   }
 }

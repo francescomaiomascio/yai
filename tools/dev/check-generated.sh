@@ -2,48 +2,69 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-LAW_ROOT="$ROOT/deps/law"
-if [[ ! -d "$LAW_ROOT" ]]; then
+LAW_ROOT="${YAI_LAW_ROOT:-}"
+
+if [[ -z "$LAW_ROOT" ]]; then
+  CANDIDATE="$(cd "$ROOT/.." && pwd)/law"
+  [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
+fi
+if [[ -z "$LAW_ROOT" ]]; then
+  CANDIDATE="$ROOT/embedded/law"
+  [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
+fi
+if [[ -z "$LAW_ROOT" && "${YAI_LAW_ENABLE_LEGACY_BRIDGE:-0}" == "1" && -d "$ROOT/deps/law" ]]; then
   LAW_ROOT="$ROOT/deps/law"
+  echo "warning: using legacy deps/law bridge for generated checks" >&2
+fi
+if [[ -z "$LAW_ROOT" ]]; then
+  echo "no law source found (expected ../law, embedded/law, or deps/law fallback)" >&2
+  exit 2
 fi
 
 SPEC_CONTRACTS="$LAW_ROOT/contracts/vault/schema/vault_abi.json"
 SPEC_LEGACY="$LAW_ROOT/specs/vault/schema/vault_abi.json"
 if [[ -f "$SPEC_CONTRACTS" ]]; then
   SPEC="$SPEC_CONTRACTS"
-else
+elif [[ -f "$SPEC_LEGACY" ]]; then
   SPEC="$SPEC_LEGACY"
+else
+  echo "vault ABI spec not found under $LAW_ROOT" >&2
+  exit 2
 fi
-GEN="$ROOT/tools/dev/gen-vault-abi"
 
+ACTUAL_HEADER="$LAW_ROOT/contracts/vault/include/yai_vault_abi.h"
+ACTUAL_TLA="$LAW_ROOT/formal/tla/LAW_IDS.tla"
+if [[ ! -f "$ACTUAL_HEADER" || ! -f "$ACTUAL_TLA" ]]; then
+  echo "generated targets missing under $LAW_ROOT" >&2
+  exit 2
+fi
+
+GEN="$ROOT/tools/dev/gen-vault-abi"
 TMP_DIR="$(mktemp -d)"
-cleanup() {
-  rm -rf "$TMP_DIR"
-}
+cleanup() { rm -rf "$TMP_DIR"; }
 trap cleanup EXIT
 
 "$GEN" --spec "$SPEC" --out-dir "$TMP_DIR"
 
+TMP_HEADER="$TMP_DIR/contracts/vault/include/yai_vault_abi.h"
+TMP_TLA="$TMP_DIR/formal/tla/LAW_IDS.tla"
+
 strip_generated() {
-  sed -e '/^\/\* Generated:/d' -e '/^\\\* Generated:/d'
+  sed -E '/^\/\* Generated: /d; /^\\\* Generated: /d' "$1"
 }
 
-DIFF_A=$(diff -u <(strip_generated < "$LAW_ROOT/contracts/vault/include/yai_vault_abi.h") \
-                 <(strip_generated < "$TMP_DIR${LAW_ROOT#$ROOT}/contracts/vault/include/yai_vault_abi.h") || true)
-if [[ -n "$DIFF_A" ]]; then
-  echo "ERROR: yai_vault_abi.h drift"
-  echo "$DIFF_A"
-  exit 1
-fi
+compare_file() {
+  local expected="$1"
+  local generated="$2"
+  local label="$3"
+  if ! diff -u <(strip_generated "$expected") <(strip_generated "$generated") >/dev/null; then
+    echo "drift detected in $label" >&2
+    diff -u <(strip_generated "$expected") <(strip_generated "$generated") || true
+    return 1
+  fi
+}
 
-DIFF_B=$(diff -u <(strip_generated < "$LAW_ROOT/formal/tla/LAW_IDS.tla") \
-                 <(strip_generated < "$TMP_DIR${LAW_ROOT#$ROOT}/formal/tla/LAW_IDS.tla") || true)
-if [[ -n "$DIFF_B" ]]; then
-  echo "ERROR: LAW_IDS.tla drift"
-  echo "$DIFF_B"
-  exit 1
-fi
+compare_file "$ACTUAL_HEADER" "$TMP_HEADER" "yai_vault_abi.h"
+compare_file "$ACTUAL_TLA" "$TMP_TLA" "LAW_IDS.tla"
 
-echo "OK: generated files are in sync"
-
-true
+echo "ok: generated artifacts match ($LAW_ROOT)"

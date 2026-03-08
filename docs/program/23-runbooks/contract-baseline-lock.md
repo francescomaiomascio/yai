@@ -18,11 +18,11 @@ related:
     - docs/program/22-adr/ADR-011-contract-baseline-lock.md
     - docs/program/22-adr/ADR-012-audit-convergence-gates.md
   specs:
-    - deps/law/foundation/invariants/I-001-traceability.md
-    - deps/law/foundation/invariants/I-002-determinism.md
-    - deps/law/foundation/invariants/I-003-governance.md
-    - deps/law/foundation/invariants/I-006-external-effect-boundary.md
-    - deps/law/foundation/boundaries/L1-kernel.md
+    - ../law/foundation/invariants/I-001-traceability.md
+    - ../law/foundation/invariants/I-002-determinism.md
+    - ../law/foundation/invariants/I-003-governance.md
+    - ../law/foundation/invariants/I-006-external-effect-boundary.md
+    - ../law/foundation/boundaries/L1-kernel.md
   test_plans:
     - ops/evidence/qualification/test-plans/hardfail.md
   tools:
@@ -49,13 +49,13 @@ Create the first governance runbook that locks cross-repo contract behavior acro
 
 ## 3) Inputs
 - Pin references:
-  - `yai/deps/law`
-  - `cli/deps/law`
+  - `yai/../law`
+  - `cli/../law`
 - Normative anchors:
-  - `deps/law/foundation/invariants/I-001-traceability.md`
-  - `deps/law/foundation/invariants/I-002-determinism.md`
-  - `deps/law/foundation/invariants/I-003-governance.md`
-  - `deps/law/foundation/invariants/I-006-external-effect-boundary.md`
+  - `../law/foundation/invariants/I-001-traceability.md`
+  - `../law/foundation/invariants/I-002-determinism.md`
+  - `../law/foundation/invariants/I-003-governance.md`
+  - `../law/foundation/invariants/I-006-external-effect-boundary.md`
 - Verification tooling:
   - `tools/bin/yai-check-pins`
   - `tools/bin/yai-docs-trace-check`
@@ -189,10 +189,10 @@ Closure semantics:
 - ADR refs (required unless ops-only):
   - `docs/program/22-adr/ADR-011-contract-baseline-lock.md`
 - Law refs (recommended):
-  - `deps/law/foundation/invariants/I-001-traceability.md`
-  - `deps/law/foundation/invariants/I-002-determinism.md`
-  - `deps/law/foundation/invariants/I-003-governance.md`
-  - `deps/law/foundation/invariants/I-006-external-effect-boundary.md`
+  - `../law/foundation/invariants/I-001-traceability.md`
+  - `../law/foundation/invariants/I-002-determinism.md`
+  - `../law/foundation/invariants/I-003-governance.md`
+  - `../law/foundation/invariants/I-006-external-effect-boundary.md`
 - MPs (filled as phases ship):
   - `docs/program/24-milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.0.md`
   - `docs/program/24-milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.1.md`

@@ -26,15 +26,15 @@ adr_refs:
 
 related:
   specs:
-    - deps/law/contracts/control/schema/control_plane.v1.json
-    - deps/law/contracts/control/schema/control_call.v1.json
-    - deps/law/contracts/control/schema/exec_reply.v1.json
-    - deps/law/contracts/protocol/include/transport.h
-    - deps/law/contracts/protocol/include/auth.h
-    - deps/law/contracts/protocol/include/yai_protocol_ids.h
-    - deps/law/registry/commands.v1.json
-    - deps/law/contracts/vault/include/yai_vault_abi.h
-    - deps/law/contracts/vault/schema/vault_abi.json
+    - ../law/contracts/control/schema/control_plane.v1.json
+    - ../law/contracts/control/schema/control_call.v1.json
+    - ../law/contracts/control/schema/exec_reply.v1.json
+    - ../law/contracts/protocol/include/transport.h
+    - ../law/contracts/protocol/include/auth.h
+    - ../law/contracts/protocol/include/yai_protocol_ids.h
+    - ../law/registry/commands.v1.json
+    - ../law/contracts/vault/include/yai_vault_abi.h
+    - ../law/contracts/vault/schema/vault_abi.json
   runbooks:
     - docs/program/23-runbooks/root-hardening.md
     - docs/program/23-runbooks/engine-attach.md
@@ -153,7 +153,7 @@ For high-assurance or hostile multi-tenant scenarios, workspace governance shoul
 3. Lifecycle transitions are deterministic and auditable.
 4. No direct CLI/SDK storage mutation path.
 5. Evidence is required for lifecycle actions touching effects-out.
-6. Contract authority stays pinned to `deps/law`; local semantic drift is non-compliant.
+6. Contract authority stays pinned to `../law`; local semantic drift is non-compliant.
 
 ## 6) Architecture and role boundaries
 

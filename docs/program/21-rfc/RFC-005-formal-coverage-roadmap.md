@@ -20,10 +20,10 @@ related:
   milestone_packs:
     - docs/program/24-milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md
   specs:
-    - deps/law/formal/spec_map.md
-    - deps/law/formal/tla/YAI_KERNEL.tla
-    - deps/law/formal/bindings/BINDING_PROTOCOL.md
-    - deps/law/formal/bindings/BINDING_CLI.md
+    - ../law/formal/spec_map.md
+    - ../law/formal/tla/YAI_KERNEL.tla
+    - ../law/formal/bindings/BINDING_PROTOCOL.md
+    - ../law/formal/bindings/BINDING_CLI.md
 tags:
   - formal
   - roadmap
@@ -62,12 +62,12 @@ Define a prioritized formal roadmap that starts from protocol/control criticalit
 
 ## Traceability
 
-- Spec anchors (if any): `deps/law/formal/spec_map.md`, `deps/law/formal/tla/YAI_KERNEL.tla`, `deps/law/formal/bindings/BINDING_PROTOCOL.md`, `deps/law/formal/bindings/BINDING_CLI.md`
+- Spec anchors (if any): `../law/formal/spec_map.md`, `../law/formal/tla/YAI_KERNEL.tla`, `../law/formal/bindings/BINDING_PROTOCOL.md`, `../law/formal/bindings/BINDING_CLI.md`
 - Targets ADR: `docs/program/22-adr/ADR-006-unified-rpc.md`, `docs/program/22-adr/ADR-011-contract-baseline-lock.md`
 - Downstream runbook: `docs/program/23-runbooks/root-hardening.md`
 - Downstream MP: `docs/program/24-milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`
 
 ## References
 - `docs/program/spine.md`
-- `deps/law/formal/spec_map.md`
-- `deps/law/formal/traceability.v1.json`
+- `../law/formal/spec_map.md`
+- `../law/formal/traceability.v1.json`

@@ -1,6 +1,6 @@
 {
   "kind": "compatibility.matrix",
-  "version": "v1",
+  "version": "v2",
   "law_version": "0.1.0",
   "runtime_targets": [
     {
@@ -9,5 +9,10 @@
     }
   ],
   "schema_set": "v1",
-  "breakage_flags": []
+  "breakage_flags": [],
+  "model": "six-layer-canonical-root",
+  "bridge": {
+    "active": true,
+    "legacy_seed_root": "transitional/domain-family-seed"
+  }
 }

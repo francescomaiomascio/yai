@@ -13,7 +13,10 @@ int main(void) {
   }
 
   if (strcmp(out.decision.domain_id, "D8-scientific") != 0) return 1;
+  if (strcmp(out.decision.family_id, "scientific") != 0) return 1;
+  if (strcmp(out.decision.specialization_id, "parameter-governance") != 0) return 1;
   if (strstr(out.trace_json, "D8-scientific") == NULL) return 1;
+  if (strstr(out.trace_json, "\"specialization_candidates\"") == NULL) return 1;
 
   puts("integration_d8_resolution: ok");
   return 0;

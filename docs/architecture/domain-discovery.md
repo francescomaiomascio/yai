@@ -2,35 +2,37 @@
 
 ## Runtime role
 
-`yai` uses embedded law discovery profiles to map a runtime operation to a normative domain before resolution.
+`yai` maps runtime operations to family/domain/subdomain candidates before policy resolution.
 
 ## Inputs
 
-Discovery consumes the normalized classification context:
+- action class
+- provider class
+- protocol class
+- resource class
+- workspace and authority hints
 
-- action class (`egress`, `publish`, `retrieve`, `transform`, `infer`, `actuate`)
-- provider class (for example `github`, `otel`, `s3`)
-- protocol class (for example `http`, `grpc`, `file`)
-- resource class (for example `dataset`, `artifact`, `credential`)
-- workspace hints (mode, black-box flag, parameter-lock hints)
-
-## Matching pipeline
-
-1. Build signal set from classification.
-2. Match signals against domain discovery profiles.
-3. Compute deterministic confidence score.
-4. Select best candidate domain.
-5. If ambiguous, trigger fallback resolution path.
-
-Current primary coverage is D1 (digital) and D8 (scientific).
-
-## Output
+## Discovery output
 
 Discovery emits:
+- `family_id`
+- `domain_id` compatibility id (internal bridge output)
+- specialization candidate set
+- selected specialization
+- family candidate ranking
+- confidence and rationale
 
-- resolved domain id
-- confidence score
-- match rationale
-- ambiguity/fallback marker
+This output is consumed by resolver, which composes regulatory/sector/contextual overlays over the selected domain context.
 
-This output is then consumed by the law resolver stack builder.
+## Runtime genericity pass I
+
+Discovery now routes in this order:
+1. classification signal extraction
+2. family candidate scoring/ranking
+3. specialization candidate selection within selected family
+4. compatibility `domain_id` mapping for bridge continuity
+
+Overlay-sensitive signals considered in runtime-facing paths:
+- provider trust hints (for security-supply-chain)
+- personal-data publication hints (for GDPR)
+- high-risk experiment hints (for AI Act)

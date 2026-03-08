@@ -33,15 +33,15 @@ related:
     - docs/program/22-adr/ADR-011-contract-baseline-lock.md
     - docs/program/22-adr/ADR-012-audit-convergence-gates.md
   specs:
-    - deps/law/REGISTRY.md
-    - deps/law/contracts/control/schema/control_call.v1.json
-    - deps/law/contracts/control/schema/exec_reply.v1.json
-    - deps/law/contracts/control/schema/authority.v1.json
-    - deps/law/contracts/protocol/include/transport.h
-    - deps/law/contracts/protocol/include/yai_protocol_ids.h
-    - deps/law/contracts/vault/include/yai_vault_abi.h
-    - deps/law/contracts/vault/schema/vault_abi.json
-    - deps/law/registry/commands.v1.json
+    - ../law/REGISTRY.md
+    - ../law/contracts/control/schema/control_call.v1.json
+    - ../law/contracts/control/schema/exec_reply.v1.json
+    - ../law/contracts/control/schema/authority.v1.json
+    - ../law/contracts/protocol/include/transport.h
+    - ../law/contracts/protocol/include/yai_protocol_ids.h
+    - ../law/contracts/vault/include/yai_vault_abi.h
+    - ../law/contracts/vault/schema/vault_abi.json
+    - ../law/registry/commands.v1.json
   test_plans:
     - ops/evidence/qualification/test-plans/hardfail.md
   tools:
@@ -90,7 +90,7 @@ This runbook aligns implementation sequencing, contract boundaries, and evidence
 ## 4) Non-negotiable invariants
 1. No direct client access to storage backends.
 2. All operations must be workspace-scoped and path-jail compliant.
-3. Contract authority is externalized to pinned `deps/law` artifacts.
+3. Contract authority is externalized to pinned `../law` artifacts.
 4. Deterministic error semantics must use canonical exec-reply/control schemas.
 5. Data-plane changes are not complete until evidence is published in `ops`.
 6. If checks are mandatory in a closure phase, `SKIP` is treated as `FAIL`.
@@ -140,7 +140,7 @@ Objective:
 
 Required outputs:
 - Pin check green.
-- Registry and schema references resolved to pinned `deps/law`.
+- Registry and schema references resolved to pinned `../law`.
 - No local redefinition of normative fields.
 
 Exit criteria:

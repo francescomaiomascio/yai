@@ -1,9 +1,40 @@
 {
   "kind": "publish.index",
-  "version": "v1",
+  "version": "v3",
   "targets": [
     {
-      "target": "docs",
+      "target": "runtime-embedded",
+      "profile": "runtime-consumer.v3",
+      "includes": [
+        "classification",
+        "control-families",
+        "domain-specializations",
+        "overlays/regulatory",
+        "overlays/sector",
+        "overlays/contextual",
+        "manifests"
+      ],
+      "generated": [
+        "generated/domains.index.json",
+        "generated/compliance.index.json",
+        "generated/runtime-resolution-view.json",
+        "generated/export.summary.json",
+        "generated/compatibility.summary.json"
+      ],
+      "excludes": [
+        "**/*.md",
+        "archive_tmp/**",
+        "docs/**",
+        "authority/**",
+        "foundation/**",
+        "formal/**",
+        "tools/**",
+        "contracts/**",
+        "registry/**"
+      ]
+    },
+    {
+      "target": "docs-reference",
       "includes": [
         "docs/architecture",
         "docs/authoring",
@@ -11,19 +42,10 @@
       ]
     },
     {
-      "target": "runtime-embedded",
-      "includes": [
-        "manifests",
-        "domains",
-        "compliance",
-        "grammar/schema"
-      ]
-    },
-    {
       "target": "audit-reference",
       "includes": [
-        "registry",
         "contracts",
+        "registry",
         "formal"
       ]
     }

@@ -25,10 +25,10 @@ related:
     - docs/program/22-adr/ADR-008-connection-lifecycle.md
     - docs/program/22-adr/ADR-012-audit-convergence-gates.md
   specs:
-    - deps/law/contracts/protocol/include/transport.h
-    - deps/law/contracts/protocol/include/auth.h
-    - deps/law/contracts/protocol/include/errors.h
-    - deps/law/contracts/protocol/include/yai_protocol_ids.h
+    - ../law/contracts/protocol/include/transport.h
+    - ../law/contracts/protocol/include/auth.h
+    - ../law/contracts/protocol/include/errors.h
+    - ../law/contracts/protocol/include/yai_protocol_ids.h
   test_plans:
     - ops/evidence/qualification/test-plans/hardfail.md
   tools:
@@ -62,16 +62,16 @@ Harden the Root control plane as a deterministic, auditable, envelope-only bound
 
 ## 2) Preconditions
 
-- [x] `deps/law` protocol headers are present and treated as source-of-truth.
+- [x] `../law` protocol headers are present and treated as source-of-truth.
 - [x] Kernel boots and accepts control connections.
 - [x] A baseline end-to-end ping command is already green.
 
 ## 3) Inputs
 
 - Protocol anchors:
-  - `deps/law/contracts/protocol/include/transport.h`
-  - `deps/law/contracts/protocol/include/auth.h`
-  - `deps/law/contracts/protocol/include/errors.h`
+  - `../law/contracts/protocol/include/transport.h`
+  - `../law/contracts/protocol/include/auth.h`
+  - `../law/contracts/protocol/include/errors.h`
 - Tooling:
   - `tools/bin/yai-verify`
   - `tools/bin/yai-gate`
@@ -103,7 +103,7 @@ Mandatory closure policy:
 
 ### Hard prerequisites (must be true before starting)
 
-- `deps/law` headers are present and treated as source-of-truth
+- `../law` headers are present and treated as source-of-truth
 - Kernel can boot and accept control connections
 - A baseline "ping" command exists end-to-end (CLI → Root → Kernel → response)
 
@@ -184,10 +184,10 @@ Each phase must compile, run, and be verifiable before moving on.
 
 READ FIRST:
 
-- `deps/law/contracts/protocol/include/transport.h`
-- `deps/law/contracts/protocol/include/yai_protocol_ids.h`
-- `deps/law/contracts/protocol/include/errors.h`
-- `deps/law/contracts/protocol/include/auth.h`
+- `../law/contracts/protocol/include/transport.h`
+- `../law/contracts/protocol/include/yai_protocol_ids.h`
+- `../law/contracts/protocol/include/errors.h`
+- `../law/contracts/protocol/include/auth.h`
 
 CODE (likely):
 
@@ -258,7 +258,7 @@ Kernel side used for comparison:
 
 Specs:
 
-- `deps/law/contracts/protocol/include/transport.h`
+- `../law/contracts/protocol/include/transport.h`
 
 #### Rules
 
@@ -330,8 +330,8 @@ Protocol negative tests (at least):
 
 Specs:
 
-- `deps/law/contracts/protocol/include/auth.h`
-- `deps/law/contracts/protocol/include/roles.h` (if present)
+- `../law/contracts/protocol/include/auth.h`
+- `../law/contracts/protocol/include/roles.h` (if present)
 
 Root:
 
@@ -388,7 +388,7 @@ Minimum expectation:
 
 Specs (single source of truth):
 
-- `deps/law/contracts/protocol/include/transport.h` (static inline validator)
+- `../law/contracts/protocol/include/transport.h` (static inline validator)
 
 Consumers:
 
@@ -434,7 +434,7 @@ Consumers:
 
 Specs:
 
-- `deps/law/contracts/protocol/include/transport.h`
+- `../law/contracts/protocol/include/transport.h`
 
 #### Rules
 
@@ -598,9 +598,9 @@ If a phase causes regressions:
   - `docs/program/22-adr/ADR-006-unified-rpc.md`
   - `docs/program/22-adr/ADR-008-connection-lifecycle.md`
 - Law/spec refs:
-  - `deps/law/contracts/protocol/include/transport.h`
-  - `deps/law/contracts/protocol/include/auth.h`
-  - `deps/law/contracts/protocol/include/errors.h`
+  - `../law/contracts/protocol/include/transport.h`
+  - `../law/contracts/protocol/include/auth.h`
+  - `../law/contracts/protocol/include/errors.h`
 - MPs:
   - `docs/program/24-milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
   - `docs/program/24-milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`

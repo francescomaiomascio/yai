@@ -8,10 +8,10 @@ applies_to:
   phase: 0.1.1
   anchor: "#phase-0-1-1-byte-perfect-router"
 law_refs:
-  - deps/law/foundation/axioms/A-002-authority.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/boundaries/L1-kernel.md
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/foundation/axioms/A-002-authority.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/boundaries/L1-kernel.md
+  - ../law/contracts/protocol/include/transport.h
 ---
 # ADR-002 - Root Control Plane as Canonical Entry Point
 

@@ -1,34 +1,28 @@
 # Embedded Law Surface
 
-`embedded/law/` is the runtime-facing law export inside `yai`.
-
-## Purpose
-
-Provide a reduced, versioned, validated law surface for runtime consumption without mirroring the full law repository.
+`embedded/law/` is a generated runtime contract artifact derived from canonical `law` export manifests.
 
 ## Contains
 
-- `VERSION`
-- `COMPATIBILITY.json`
-- `law.manifest.json`
-- `runtime.entrypoints.json`
-- `domains/index/*`
-- `domains/D*/...` runtime-facing domain packs
-- `compliance/index/*`
-- `compliance/*` runtime-facing compliance packs
-- `manifests/*` export/runtime manifests
-- `generated/*` summaries and runtime-resolution view
+- runtime manifests (`law.manifest.json`, `runtime.entrypoints.json`, publish/compat manifests)
+- six-layer JSON payload (`classification`, `control-families`, `domain-specializations`, `overlays/*`)
+- generated runtime views (`generated/*`)
+- optional transitional bridge seed under `transitional/domain-family-seed/`
 
-## Does not contain
+## Excludes
 
-- full law docs/authoring narratives
-- complete authority/foundation/formal corpus
-- refactor archives
-- non-runtime-facing internal law tooling
+- broad editorial docs
+- authoring prose
+- formal/tooling internals
+- full canonical repository narrative
 
-## Lifecycle
+## Policy
 
-- source of truth: `law`
-- generation boundary: `law/manifests/embedded-export.manifest.json`
-- sync command: `tools/bin/yai-law-embed-sync`
-- local validation command: `tools/bin/yai-law-compat-check`
+Embedded is the active runtime path.
+`deps/law` is transitional compatibility only.
+Legacy bridge fallback is disabled by default and must be explicitly enabled.
+
+## Not primary references
+
+Historical docs and legacy mirror material must not be used as primary runtime contract reference.
+Primary contract checks must resolve against `embedded/law`.

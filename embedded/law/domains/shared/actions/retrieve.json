@@ -1,6 +1,0 @@
-{
-  "kind": "domain_action_set",
-  "version": "v1",
-  "id": "retrieve",
-  "description": "Shared action primitive: retrieve"
-}

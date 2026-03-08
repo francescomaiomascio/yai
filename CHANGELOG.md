@@ -21,7 +21,7 @@ and this project adheres to Semantic Versioning.
 - dependency policy: removed `deps/cli.ref` and `deps/sdk.ref`; CLI/SDK alignment is now compatibility-declared instead of structurally pinned in `yai`.
 - core: make workspace id validation portable in C11 by removing `strnlen` dependency in `root/include/ws_id.h`.
 
-- Aligned dependency and docs/tooling naming from `yai-specs` to `law` in `yai` (canonical `deps/law`, compatibility alias, sync wrappers, governance suite pinned to `gov-suite-v0.1.0`).
+- Aligned dependency and docs/tooling naming from `yai-specs` to `law` in `yai` (canonical `../law` source, `embedded/law` runtime surface, `deps/law` legacy bridge fallback, sync wrappers, governance suite pinned to `gov-suite-v0.1.0`).
 - Consolidated Mind governance/docs paths after mind-integration cutover and aligned architecture component metadata for validation gates.
 - Closed Wave0 strict pin blocker by aligning `yai` + `cli` to `yai-specs@30d04d0`, updating `deps/cli.ref`, and refreshing closure evidence/MP snapshots.
 - Hardening wave 1: removed non-core local Python test/cache artifacts from `tools/python/yai_tools` (tracked in infra#17).

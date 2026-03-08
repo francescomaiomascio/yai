@@ -11,9 +11,17 @@
 ## What to inspect first
 
 1. Classification context values.
-2. Discovery winner + confidence.
-3. Applied/skipped rules in trace output.
-4. Final effect mapping and rationale.
+2. Discovery family candidates + selected family + confidence.
+3. Specialization candidates + selected specialization.
+4. Applied/skipped rules in trace output.
+5. Overlay/compliance attachments in the stack.
+6. Final effect mapping and rationale.
+
+Trace payload now exposes `routing_mode`, `family_candidates`, and `specialization_candidates` for faster diagnosis of early routing decisions.
+For second-half resolver debugging, inspect:
+- `regulatory_overlay_count`, `sector_overlay_count`, `contextual_overlay_count`
+- `authority_contributor_count`, `evidence_contributor_count`
+- `authority_profile`, `evidence_profile`, `precedence_trace`
 
 ## Quick validation
 
@@ -23,4 +31,4 @@ Use the law-native suites:
 make test-law
 ```
 
-This executes unit coverage for loader/discovery/resolution and integration smoke for D1/D8/cross-domain behavior.
+This executes unit coverage for loader/discovery/resolution and integration smoke for digital/economic/scientific paths, including overlay-driven cases.

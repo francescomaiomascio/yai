@@ -12,6 +12,17 @@ int yai_law_effective_stack_finalize(yai_law_effective_stack_t *stack);
 int yai_law_map_policy_to_effect(yai_law_effect_t in_effect, yai_law_effect_t *out_effect);
 int yai_law_decision_to_audit_blob(const yai_law_decision_t *decision, char *out, size_t out_cap);
 
+static void append_requirement(char arr[][64], int *count, int cap, const char *id) {
+  int i;
+  if (!arr || !count || !id || id[0] == '\0') return;
+  for (i = 0; i < *count; ++i) {
+    if (strcmp(arr[i], id) == 0) return;
+  }
+  if (*count >= cap) return;
+  (void)yai_law_safe_snprintf(arr[*count], sizeof(arr[0]), "%s", id);
+  (*count)++;
+}
+
 int yai_law_resolve_control_call(const char *ws_id,
                                  const char *payload,
                                  const char *trace_id,
@@ -57,12 +68,38 @@ int yai_law_resolve_control_call(const char *ws_id,
 
   (void)yai_law_safe_snprintf(out->decision.decision_id, sizeof(out->decision.decision_id), "dec-%ld", (long)time(NULL));
   (void)yai_law_safe_snprintf(out->decision.domain_id, sizeof(out->decision.domain_id), "%s", discovery.domain_id);
+  (void)yai_law_safe_snprintf(out->decision.family_id, sizeof(out->decision.family_id), "%s", discovery.family_id);
+  (void)yai_law_safe_snprintf(out->decision.specialization_id, sizeof(out->decision.specialization_id), "%s", discovery.specialization_id);
   out->decision.final_effect = final_effect;
   (void)yai_law_safe_snprintf(out->decision.rationale, sizeof(out->decision.rationale), "%s", rationale[0] ? rationale : discovery.rationale);
 
-  (void)yai_law_safe_snprintf(out->decision.evidence_requirements[0], sizeof(out->decision.evidence_requirements[0]), "%s", "resolution_trace");
-  (void)yai_law_safe_snprintf(out->decision.evidence_requirements[1], sizeof(out->decision.evidence_requirements[1]), "%s", "decision_record");
-  out->decision.evidence_requirement_count = 2;
+  out->decision.evidence_requirement_count = 0;
+  append_requirement(out->decision.evidence_requirements,
+                     &out->decision.evidence_requirement_count,
+                     8,
+                     "resolution_trace");
+  append_requirement(out->decision.evidence_requirements,
+                     &out->decision.evidence_requirement_count,
+                     8,
+                     "decision_record");
+  for (int i = 0; i < out->decision.stack.evidence_contributor_count; ++i) {
+    append_requirement(out->decision.evidence_requirements,
+                       &out->decision.evidence_requirement_count,
+                       8,
+                       out->decision.stack.evidence_contributors[i]);
+  }
+
+  out->decision.authority_requirement_count = 0;
+  append_requirement(out->decision.authority_requirements,
+                     &out->decision.authority_requirement_count,
+                     8,
+                     "baseline_authority");
+  for (int i = 0; i < out->decision.stack.authority_contributor_count; ++i) {
+    append_requirement(out->decision.authority_requirements,
+                       &out->decision.authority_requirement_count,
+                       8,
+                       out->decision.stack.authority_contributors[i]);
+  }
 
   if (yai_law_decision_to_evidence(&out->decision,
                                    (trace_id && trace_id[0]) ? trace_id : "trace-missing",

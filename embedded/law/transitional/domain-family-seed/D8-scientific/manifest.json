@@ -1,0 +1,32 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "domain_name": "Scientific Reproducibility and Parameter Control",
+  "family": "scientific",
+  "status": "active",
+  "discovery_ref": "domains/D8-scientific/discovery/signals.json",
+  "model_ref": "domains/D8-scientific/model/actions.json",
+  "policy_refs": [
+    "domains/D8-scientific/policy/baseline.json",
+    "domains/D8-scientific/policy/deny.json",
+    "domains/D8-scientific/policy/quarantine.json",
+    "domains/D8-scientific/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D8-scientific/evidence/requirements.json",
+  "compliance_links": [
+    "ai-act",
+    "retention-governance"
+  ],
+  "ops_pack_refs": [
+    "D8-scientific/reproducibility-parameter-lock-v1"
+  ],
+  "trial_refs": [
+    "RT-0.1-001-D8-PARAMS-LOCK"
+  ],
+  "internal_id": "D8-scientific",
+  "family_id": "D8",
+  "canonical_name": "scientific.core",
+  "display_name": "Scientific Reproducibility and Parameter Control",
+  "slug": "D8-scientific"
+}

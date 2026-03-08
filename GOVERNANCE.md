@@ -4,7 +4,7 @@
 
 This document governs the `yai` runtime implementation repository.
 
-- Normative contracts: `deps/law/`
+- Normative contracts: `law` (canonical) and `embedded/law` (runtime contract surface)
 - Runtime implementation: `boot/`, `root/`, `kernel/`, `engine/`, `runtime/`, `mind/`
 
 If implementation and contracts diverge, implementation must be corrected.

@@ -1,0 +1,35 @@
+{
+  "kind": "domain_specialization_manifest",
+  "version": "v2",
+  "specialization_id": "experiment-configuration",
+  "canonical_name": "scientific.experiment-configuration",
+  "family_canonical_name": "scientific",
+  "status": "active",
+  "subdomain_taxonomy_ref": "domain-specializations/index/subdomain-taxonomy.json",
+  "scenario_classes_ref": "domain-specializations/index/scenario-classes.json",
+  "overlay_relevance": {
+    "regulatory": [
+      "ai-act",
+      "gdpr-eu",
+      "retention-governance",
+      "security-supply-chain"
+    ],
+    "sector": [
+      "sector.healthcare",
+      "sector.finance"
+    ],
+    "contextual": [
+      "organization",
+      "workspace",
+      "session"
+    ]
+  },
+  "authority_profile": {
+    "default_scope": "controller",
+    "human_oversight_required": true
+  },
+  "evidence_profile": {
+    "requires_parameter_trace": true,
+    "retention_hint": "extended"
+  }
+}

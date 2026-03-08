@@ -6,7 +6,7 @@ phase: index
 adrs:
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/contracts/protocol/include/transport.h
 issues:
   - "191"
 ---

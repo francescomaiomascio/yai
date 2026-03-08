@@ -10,9 +10,9 @@ adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/contracts/control/schema/control_plane.v1.json
-  - deps/law/contracts/protocol/include/auth.h
-  - deps/law/contracts/vault/include/yai_vault_abi.h
+  - ../law/contracts/control/schema/control_plane.v1.json
+  - ../law/contracts/protocol/include/auth.h
+  - ../law/contracts/vault/include/yai_vault_abi.h
 issues:
   - "N/A: workspace-lifecycle track index"
 ---

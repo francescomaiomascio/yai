@@ -1,6 +1,0 @@
-{
-  "kind": "domain_risk_surface",
-  "version": "v1",
-  "id": "privacy-breach",
-  "description": "Shared risk primitive: privacy-breach"
-}

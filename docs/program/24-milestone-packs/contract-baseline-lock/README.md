@@ -6,7 +6,7 @@ phase: index
 adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
 spec_anchors:
-  - deps/law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-001-traceability.md
 issues:
   - "N/A: track index document"
 ---

@@ -1,4 +1,4 @@
-# Interface specs (protocol / control / engine / providers / graph / vault)
+# Interface Specs (protocol / control / overlays)
 
-See:
-- deps/law/contracts/
+Canonical source: `law/manifests/*`, `law/classification/*`, `law/control-families/*`, `law/domain-specializations/*`, `law/overlays/*`.
+Runtime contract artifact: `embedded/law/*`.

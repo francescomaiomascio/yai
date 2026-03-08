@@ -1,33 +1,32 @@
 # Law Consumption Model
 
-## Canonical separation
+## Contract boundary
 
-- `law` is the canonical normative source and remains an independent repository.
-- `yai` is a runtime consumer and must not depend on full live traversal of the law repo tree.
+- Canonical normative source: `law` repository.
+- Runtime contract artifact: `embedded/law/`.
+- Legacy bridge: `deps/law/` fallback-only.
 
-## Consumption boundary
+## Active six-layer consumption
 
-`yai` consumes exported runtime-facing material from `embedded/law/`.
-This surface is generated from law export manifests and includes only runtime-consumable sections.
+`yai` consumes embedded payloads by layer:
+- `classification/`
+- `control-families/`
+- `domain-specializations/`
+- `overlays/regulatory/`
+- `overlays/sector/`
+- `overlays/contextual/`
 
-Primary consumed sections:
-- law/runtime manifests
-- domains (runtime-facing shape)
-- compliance packs (runtime-facing shape)
-- generated indexes and compatibility summaries
+Runtime loaders validate layer indexes and generated summaries before resolution.
 
-Excluded by design:
-- full authority/foundation prose
-- historical/refactor archives
-- non-runtime-facing formal/tooling material
+## Bridge policy
 
-## Transitional fallback
+`deps/law` remains allowed only when embedded contract payload is unavailable.
+It is not the primary path and must not be expanded.
+Fallback bridge loading is disabled by default and requires `YAI_LAW_ENABLE_LEGACY_BRIDGE=1`.
 
-`deps/law/` is retained as a transition bridge.
-It is not the target model and must not grow as a primary normative dependency surface.
+## Surface classes
 
-## Operational flow
-
-1. Sync embedded law from canonical `law` via `tools/bin/yai-law-embed-sync`.
-2. Validate local embedded compatibility with `tools/bin/yai-law-compat-check`.
-3. Runtime law consumer reads `embedded/law` as primary ingress.
+- `active runtime-facing`: `embedded/law`
+- `canonical source`: sibling `law` repository
+- `bridge`: `deps/law` (explicit opt-in only)
+- `historical/reference-only`: legacy debug/report docs

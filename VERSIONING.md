@@ -12,7 +12,7 @@ This policy applies to:
 - release tooling and verification gates used to build/ship runtime artifacts
 - repository governance files that affect delivery guarantees (e.g., release checks)
 
-Normative contracts are defined in `deps/law` and are not superseded by implementation.
+Normative contracts are defined in `law` and are not superseded by implementation.
 
 ## Version Scheme
 
@@ -28,12 +28,12 @@ Pre-1.0 note: while in `0.x`, incompatible changes may still occur, but they mus
 
 Every release must explicitly declare the contract baseline used during verification:
 
-- pinned `deps/law` commit (and tag if available)
+- pinned `law` commit (and tag if available)
 
 Release notes must include:
 
 - `yai` version
-- pinned `deps/law` commit/tag
+- pinned `law` commit/tag
 - a concise compatibility impact summary
 - any required operator actions (if applicable)
 

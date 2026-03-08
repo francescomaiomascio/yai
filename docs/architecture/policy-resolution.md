@@ -2,36 +2,47 @@
 
 ## Resolution order
 
-`yai` resolves normative decisions from embedded law with this order:
+`yai` resolves normative decisions from embedded law using:
 
-1. foundation baseline
-2. domain policy pack
-3. applicable compliance layers
-4. overlays (currently minimal hook)
+1. operational classification
+2. family selection
+3. specialization selection
+4. foundation baseline
+5. domain specialization policy pack
+6. regulatory overlays
+7. sector overlays
+8. contextual overlays (when present)
+9. authority contributor aggregation
+10. evidence contributor aggregation
+11. precedence + final effect mapping
 
-## Resolver responsibilities
+## Compositional expectations
 
-The resolver:
+Overlays are active normative layers (not metadata):
+- they can restrict or deny
+- they can force review/escalation
+- they can raise authority scope burden
+- they can harden evidence/retention/provenance obligations
 
-- loads manifests and resolution-order files
-- composes effective normative stack
-- applies precedence rules
-- handles conflicts and fallback
-- computes final runtime effect
+## Overlay-driven examples
 
-## Runtime effects
+- `payment.authorize` + `sector.finance` + `retention-governance` -> review/escalation + evidence hardening
+- `github.publish.personal-data` + `gdpr-eu` -> review/deny path depending on lawful-basis context
+- `experiment.run.high-risk` + `ai-act` -> high-risk review + oversight-oriented rationale
+- provider trust downgrade + `security-supply-chain` -> review/quarantine shift
 
-Resolved effects are runtime-facing and finite:
+## Runtime effect output
 
-- `allow`
-- `deny`
-- `quarantine`
-- `review_required`
-- `degrade`
-- `require_justification`
+Resolver outputs:
+- resolved family/domain/subdomain context
+- family candidates and selected specialization context in trace payload
+- overlay attachment split by class: `regulatory`, `sector`, `contextual`
+- applied rules and precedence notes
+- final effect (`allow|deny|quarantine|review_required|degrade|require_justification`)
+- aggregated evidence obligations (with additive overlay contributors)
+- authority requirement summary (baseline + overlay uplifts)
+- contributor-aware profiles (`authority_profile`, `evidence_profile`)
 
 ## Determinism
 
-Resolution is deterministic for the same input context and embedded law version.
-
-Outputs include both effect and rationale so enforcement receives policy plus traceability.
+Resolution is deterministic for same input + same embedded law version.

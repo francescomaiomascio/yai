@@ -1,10 +1,9 @@
-# 10 Platform
+# Platform Docs Status
 
-Platform-level technical model.
+Status: `mixed (active architecture + historical anchors)`  
+Primary runtime contract references remain under:
 
-Contents:
-- Architecture index: `docs/10-platform/architecture/README.md`
-- Runtime model index: `docs/10-platform/runtime-model/README.md`
-- Mind component: `docs/10-platform/architecture/components/mind.md`
-- Mind overview: `docs/10-platform/architecture/components/mind-overview.md`
-- Mind boundaries: `docs/10-platform/architecture/components/mind-boundaries.md`
+- `docs/architecture/`
+- `embedded/law/`
+
+Use platform docs as implementation context, not as canonical normative source.

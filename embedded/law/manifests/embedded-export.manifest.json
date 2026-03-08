@@ -1,25 +1,28 @@
 {
   "kind": "embedded-export.manifest",
-  "version": "v1",
+  "version": "v4",
   "export_id": "law-embedded-runtime-surface",
   "law_version": "v0.1.0",
   "target": "yai-runtime-embedded",
-  "compatibility_profile": "runtime-consumer.v1",
+  "compatibility_profile": "runtime-consumer.v3",
+  "export_mode": "runtime-contract",
   "included_sections": [
-    "manifests-runtime-facing",
-    "domains-runtime-facing",
-    "compliance-runtime-facing",
-    "generated-indexes"
+    "runtime-manifests",
+    "six-layer-runtime-payload",
+    "runtime-generated-views",
+    "compatibility-data",
+    "legacy-bridge-fallback"
   ],
   "excluded_sections": [
-    "archive_tmp",
-    "docs/architecture",
-    "docs/authoring",
-    "docs/reports",
-    "authority",
-    "foundation",
-    "formal",
-    "tools"
+    "archive_tmp/**",
+    "docs/**",
+    "authority/**",
+    "foundation/**",
+    "formal/**",
+    "tools/**",
+    "contracts/**",
+    "registry/**",
+    "**/*.md"
   ],
   "required_generated_outputs": [
     "generated/domains.index.json",
@@ -28,24 +31,6 @@
     "generated/export.summary.json",
     "generated/compatibility.summary.json"
   ],
-  "domain_scope": [
-    "D1-digital",
-    "D2-physical",
-    "D3-biological",
-    "D4-social-institutional",
-    "D5-economic",
-    "D6-operational",
-    "D7-cognitive-cultural",
-    "D8-scientific",
-    "D9-environmental-climatological"
-  ],
-  "compliance_scope": [
-    "gdpr-eu",
-    "ai-act",
-    "security-supply-chain",
-    "retention-governance",
-    "sector-overlays"
-  ],
   "includes": [
     "manifests/law.manifest.json",
     "manifests/runtime.entrypoints.json",
@@ -53,20 +38,46 @@
     "manifests/compliance-resolution-order.json",
     "manifests/compatibility.matrix.json",
     "manifests/publish.index.json",
-    "domains/index/domains.index.json",
-    "domains/index/domain-families.json",
-    "domains/index/discovery-matrix.json",
-    "domains/index/action-taxonomy.json",
-    "domains/index/asset-taxonomy.json",
-    "domains/index/risk-taxonomy.json",
-    "compliance/index/compliance.index.json",
-    "compliance/index/applicability.matrix.json",
-    "compliance/index/domain-crosswalk.json",
-    "compliance/index/authority-crosswalk.json"
+    "manifests/publish.layers.json",
+    "classification/classification-map.json",
+    "classification/action-taxonomy.json",
+    "classification/asset-taxonomy.json",
+    "classification/risk-taxonomy.json",
+    "classification/signal-taxonomy.json",
+    "control-families/index/families.index.json",
+    "control-families/index/family-naming-registry.json",
+    "control-families/index/family-hierarchy.json",
+    "domain-specializations/index/specializations.index.json",
+    "domain-specializations/index/specialization-taxonomy.json",
+    "domain-specializations/index/subdomain-taxonomy.json",
+    "domain-specializations/index/scenario-classes.json",
+    "overlays/regulatory/index/regulatory.index.json",
+    "overlays/regulatory/index/overlay-attachment-matrix.json",
+    "overlays/regulatory/index/overlay-precedence-matrix.json",
+    "overlays/regulatory/index/overlay-evidence-matrix.json",
+    "overlays/sector/index/sector.index.json",
+    "overlays/sector/index/overlay-attachment-matrix.json",
+    "overlays/sector/index/overlay-precedence-matrix.json",
+    "overlays/sector/index/overlay-evidence-matrix.json",
+    "overlays/contextual/index/contextual.index.json",
+    "transitional/domain-family-seed/D1-digital/manifest.json",
+    "transitional/domain-family-seed/D8-scientific/manifest.json"
   ],
   "notes": [
     "Canonical law remains in this repository.",
-    "Embedded export is a reduced runtime-facing surface for yai.",
-    "Export surface is not a full mirror of law repository content."
-  ]
+    "Embedded export is a runtime contract artifact, not a repository mirror.",
+    "Six-layer runtime payload is primary.",
+    "Legacy transitional seed payload remains fallback-only during bridge period."
+  ],
+  "six_layer_scope": {
+    "classification": "classification/",
+    "control_families": "control-families/",
+    "domain_specializations": "domain-specializations/",
+    "overlays": {
+      "regulatory": "overlays/regulatory/",
+      "sector": "overlays/sector/",
+      "contextual": "overlays/contextual/"
+    },
+    "legacy_bridge": "transitional/domain-family-seed/"
+  }
 }

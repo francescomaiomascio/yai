@@ -1,8 +1,8 @@
 # Interfaces
 
-This folder is a thin map to the normative interface definitions shipped in this repository at:
-- deps/law/contracts/
-- deps/law/contracts/
-- deps/law/formal/
+Status: `active for interface context; non-canonical for normative source`
 
-Rule: do not duplicate schemas here.
+Interfaces consume law contracts through the embedded runtime surface in `embedded/law`.
+The canonical normative source remains the separate `law` repository.
+
+Legacy references under `deps/law` are transitional compatibility anchors and must not be expanded.

@@ -6,10 +6,10 @@ phase: "0.1.0 — Pin Baseline Freeze"
 adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
 spec_anchors:
-  - deps/law/foundation/invariants/I-001-traceability.md
-  - deps/law/foundation/invariants/I-002-determinism.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
 issues:
   - "https://github.com/yai-labs/yai/issues/125"
 issue_reason: "Phase tracked by governance runbook issue #125."
@@ -39,8 +39,8 @@ Contract Delta:
 - Logging: pin-check execution evidence must be recorded.
 
 Repo Split:
-- `yai`: align `deps/law` ref to audited baseline.
-- `cli`: align `deps/law` ref to the same audited baseline.
+- `yai`: align `../law` ref to audited baseline.
+- `cli`: align `../law` ref to the same audited baseline.
 
 Evidence Plan (minimum):
 - Positive cases:
@@ -56,7 +56,7 @@ Compatibility Classification:
 - Upgrade path: existing conformant clients remain valid.
 
 Definition of Done:
-- [x] `yai` and `cli` point to the same `deps/law` baseline commit.
+- [x] `yai` and `cli` point to the same `../law` baseline commit.
 - [x] Pin check evidence is attached and reviewable.
 - [x] No contract drift is introduced by this phase.
 - [x] Phase closure references ADR-011 and runbook anchor.

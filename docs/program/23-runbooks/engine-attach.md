@@ -28,14 +28,14 @@ related:
     - docs/program/22-adr/ADR-008-connection-lifecycle.md
     - docs/program/22-adr/ADR-006-unified-rpc.md
   specs:
-    - deps/law/contracts/protocol/include/transport.h
-    - deps/law/contracts/protocol/include/yai_protocol_ids.h
-    - deps/law/contracts/control/schema/exec_reply.v1.json
-    - deps/law/contracts/control/schema/authority.v1.json
-    - deps/law/registry/commands.v1.json
-    - deps/law/runtime/engine/README.md
-    - deps/law/contracts/vault/include/yai_vault_abi.h
-    - deps/law/contracts/vault/schema/vault_abi.json
+    - ../law/contracts/protocol/include/transport.h
+    - ../law/contracts/protocol/include/yai_protocol_ids.h
+    - ../law/contracts/control/schema/exec_reply.v1.json
+    - ../law/contracts/control/schema/authority.v1.json
+    - ../law/registry/commands.v1.json
+    - ../law/runtime/engine/README.md
+    - ../law/contracts/vault/include/yai_vault_abi.h
+    - ../law/contracts/vault/schema/vault_abi.json
   runbooks:
     - docs/program/23-runbooks/root-hardening.md
     - docs/program/23-runbooks/workspaces-lifecycle.md

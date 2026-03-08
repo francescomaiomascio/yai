@@ -28,4 +28,4 @@ Runtime wrappers kept in this repo:
 Notes:
 - Wrappers are infra-first.
 - `yai-changelog-check` keeps a CI fallback to local validator when `infra` is not checked out by the runner.
-- Law consumption model is now embedded-surface-first (`embedded/law`) with legacy bridge fallback (`deps/law`).
+- Law consumption model is now embedded-surface-first (`embedded/law`) with legacy bridge fallback (`deps/law`) only when `YAI_LAW_ENABLE_LEGACY_BRIDGE=1`.

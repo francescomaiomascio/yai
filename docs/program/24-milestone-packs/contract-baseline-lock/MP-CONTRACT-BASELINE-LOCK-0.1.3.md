@@ -7,9 +7,9 @@ adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/foundation/invariants/I-002-determinism.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
 claims:
   - C-AUTHORITY-SURFACE-RUNTIME
   - C-EVIDENCE-PACK-REPRODUCIBLE

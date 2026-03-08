@@ -7,9 +7,9 @@ adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/foundation/invariants/I-001-traceability.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/boundaries/L1-kernel.md
+  - ../law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/boundaries/L1-kernel.md
 claims:
   - C-EVIDENCE-PACK-REPRODUCIBLE
   - C-SPEC-FIRST-PINNED

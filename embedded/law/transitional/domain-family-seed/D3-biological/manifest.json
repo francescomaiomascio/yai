@@ -1,0 +1,23 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D3-biological",
+  "domain_name": "D3-biological",
+  "family": "biological",
+  "status": "active",
+  "discovery_ref": "domains/D3-biological/discovery/signals.json",
+  "model_ref": "domains/D3-biological/model/actions.json",
+  "policy_refs": [
+    "domains/D3-biological/policy/baseline.json",
+    "domains/D3-biological/policy/deny.json",
+    "domains/D3-biological/policy/quarantine.json",
+    "domains/D3-biological/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D3-biological/evidence/requirements.json",
+  "compliance_links": [],
+  "internal_id": "D3-biological",
+  "family_id": "D3",
+  "canonical_name": "biological.core",
+  "display_name": "D3-biological",
+  "slug": "D3-biological"
+}

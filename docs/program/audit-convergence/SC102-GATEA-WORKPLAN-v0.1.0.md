@@ -11,7 +11,7 @@ issue:
   - https://github.com/yai-labs/yai/issues/186
 related:
   - docs/30-catalog/scenarios/SC-102.md
-  - docs/30-catalog/domains/packs/D1-digital/egress-v1/pack.meta.json
+  - docs/30-catalog/domains/packs/D1-digital/egress-v1/pack.meta.json (legacy internal pack id; canonical family/specialization: digital/network-egress)
   - ops/evidence/qualification/QT-0.1-001-SC102/README.md
   - ops/evidence/validation/audits/claims/infra-grammar.v0.1.json
   - docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md
@@ -21,19 +21,19 @@ related:
 
 This is the operational workplan to move Gate A from partial to green using:
 - scenario: `SC-102`
-- first domain pack: `D1-digital/egress-v1`
+- first qualification fixture pack: `digital/network-egress` (legacy internal id: `D1-digital/egress-v1`)
 - qualification gate: `QT-0.1-001-SC102`
 
 ## 1) Fixed Scope
 
 In scope:
 - Core gate only (A-core)
-- one pack first (`D1-digital/egress-v1`)
+- one pack first (`digital/network-egress`, legacy internal id `D1-digital/egress-v1`)
 - claim closure with reproducible evidence
 
 Out of scope:
 - SC-103 and Mind integration (Gate B)
-- cross-domain D2..D9 execution (planned after D1 green)
+- cross-family execution beyond digital (planned after first digital green)
 
 ## 2) Entry Checklist
 
@@ -51,7 +51,7 @@ Out of scope:
 1. Issue `#184` - QT harness execution hardening:
    - replace placeholders with deterministic run flow,
    - produce expected evidence layout per run.
-2. Dry-run SC-102 D1 once:
+2. Dry-run SC-102 digital/network-egress once:
    - capture failures by grammar step.
 3. Iterate until run passes:
    - forbidden effect blocked,
@@ -63,7 +63,7 @@ Out of scope:
 5. Issue `#185` - claim closure:
    - update claim statuses only with evidence references,
    - align matrix baseline and findings.
-6. Issue `#186` - define D2..D9 rollout wave:
+6. Issue `#186` - define next control-family rollout wave:
    - no execution yet, only ordered plan and acceptance.
    - output file: `docs/30-catalog/domains/packs/SC102-DOMAIN-ROLLOUT-WAVES-v0.1.0.md`.
 
@@ -71,13 +71,13 @@ Out of scope:
 
 - SKIP on mandatory checks is FAIL.
 - No claim can move to `confirmed` without evidence path.
-- No scope expansion to SC-103 before D1 Gate A is green.
+- No scope expansion to SC-103 before digital/network-egress Gate A is green.
 
-## 5) Exit Criteria (Gate A for D1)
+## 5) Exit Criteria (Gate A for digital/network-egress)
 
 All conditions must be true:
-- `QT-0.1-001-SC102` passes on D1 for 3 coherent runs.
+- `QT-0.1-001-SC102` passes on digital/network-egress for 3 coherent runs.
 - forbidden effect success rate is zero.
 - evidence completeness is 100%.
-- Gate A core claims impacted by D1 path are `confirmed`.
+- Gate A core claims impacted by the digital/network-egress path are `confirmed`.
 - matrix reflects the same status as claims registry.

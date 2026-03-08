@@ -8,11 +8,11 @@ applies_to:
   phase: 0.1.0
   anchor: "#phase-0-1-0-workspace-layout"
 law_refs:
-  - deps/law/foundation/invariants/I-001-traceability.md
-  - deps/law/foundation/invariants/I-002-determinism.md
-  - deps/law/foundation/boundaries/L1-kernel.md
-  - deps/law/contracts/protocol/include/session.h
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/boundaries/L1-kernel.md
+  - ../law/contracts/protocol/include/session.h
+  - ../law/contracts/protocol/include/transport.h
 ---
 # ADR-007 - Workspace Isolation Model
 

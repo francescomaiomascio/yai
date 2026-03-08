@@ -7,8 +7,8 @@ adrs:
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/SPEC_MAP.md
-  - deps/law/REGISTRY.md
+  - ../law/SPEC_MAP.md
+  - ../law/REGISTRY.md
 claims:
   - C-AUTHORITY-SURFACE-RUNTIME
   - C-EVIDENCE-PACK-REPRODUCIBLE

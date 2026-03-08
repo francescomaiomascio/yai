@@ -23,21 +23,20 @@ required = [
     "COMPATIBILITY.json",
     "law.manifest.json",
     "runtime.entrypoints.json",
-    "domains/index/domains.index.json",
-    "domains/index/domain-families.json",
-    "domains/index/discovery-matrix.json",
-    "domains/index/action-taxonomy.json",
-    "domains/index/asset-taxonomy.json",
-    "domains/index/risk-taxonomy.json",
-    "compliance/index/compliance.index.json",
-    "compliance/index/applicability.matrix.json",
-    "compliance/index/domain-crosswalk.json",
-    "compliance/index/authority-crosswalk.json",
+    "classification/classification-map.json",
+    "control-families/index/families.index.json",
+    "domain-specializations/index/specializations.index.json",
+    "overlays/regulatory/index/regulatory.index.json",
+    "overlays/sector/index/sector.index.json",
+    "overlays/contextual/index/contextual.index.json",
     "manifests/publish.index.json",
+    "manifests/publish.layers.json",
     "manifests/compatibility.matrix.json",
     "manifests/domain-resolution-order.json",
     "manifests/compliance-resolution-order.json",
     "manifests/embedded-export.manifest.json",
+    "generated/domains.index.json",
+    "generated/compliance.index.json",
     "generated/runtime-resolution-view.json",
     "generated/export.summary.json",
     "generated/compatibility.summary.json",
@@ -49,26 +48,26 @@ for rel in required:
     if not p.exists():
         errors.append(f"missing: {rel}")
 
-for rel in [r for r in required if r.endswith('.json') and (embed / r).exists()]:
+for rel in [r for r in required if r.endswith(".json") and (embed / r).exists()]:
     try:
         json.loads((embed / rel).read_text())
     except Exception as exc:
         errors.append(f"invalid json: {rel} ({exc})")
 
-# Ensure D1/D8 presence in embedded domains
-for d in ["D1-digital", "D8-scientific"]:
-    if not (embed / "domains" / d / "manifest.json").exists():
-        errors.append(f"missing canonical embedded domain: {d}")
+# Optional bridge check (fallback only)
+bridge = embed / "transitional" / "domain-family-seed"
+if bridge.exists():
+    for d in ["D1-digital", "D8-scientific"]:
+        if not (bridge / d / "manifest.json").exists():
+            errors.append(f"missing bridge seed domain: {d}")
 
-# Check top-level compatibility alignment
 compat_file = root / "law-compatibility.v1.json"
 if compat_file.exists() and (embed / "VERSION").exists():
     compat = json.loads(compat_file.read_text())
     embed_version = (embed / "VERSION").read_text().strip()
-    if compat.get("embedded_law_version") and compat.get("embedded_law_version") != embed_version:
-        errors.append(
-            f"embedded version mismatch: law-compatibility.v1.json={compat.get('embedded_law_version')} embedded/VERSION={embed_version}"
-        )
+    expected = compat.get("embedded_law_version")
+    if expected and expected != embed_version:
+        errors.append(f"embedded version mismatch: expected {expected} got {embed_version}")
 
 if errors:
     print("embedded law compatibility: FAIL")

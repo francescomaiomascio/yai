@@ -19,10 +19,10 @@ related:
     - docs/program/22-adr/ADR-011-contract-baseline-lock.md
     - docs/program/22-adr/ADR-012-audit-convergence-gates.md
   specs:
-    - deps/law/SPEC_MAP.md
-    - deps/law/REGISTRY.md
-    - deps/law/VERSIONING.md
-    - deps/law/COMPATIBILITY.md
+    - ../law/SPEC_MAP.md
+    - ../law/REGISTRY.md
+    - ../law/VERSIONING.md
+    - ../law/COMPATIBILITY.md
   test_plans: []
   tools:
     - tools/bin/yai-docs-trace-check
@@ -70,7 +70,7 @@ A *closure artifact* for a phase: what changed, proof evidence, links to issues/
 ## 2) Preconditions (hard rules)
 - [x] `RB-CONTRACT-BASELINE-LOCK` has been executed and stabilized (ADR-011 baseline available).
 - [x] Cross-repo pin governance is active and runnable (e.g. `tools/bin/yai-check-pins` in the consumer).
-- [x] No direct development is performed inside consumer vendored specs trees (e.g. `yai/deps/law`).
+- [x] No direct development is performed inside consumer vendored specs trees (e.g. `yai/../law`).
 - [x] Any change in `law` that affects consumers is coordinated via pins/tags and verified in consumers.
 
 ---
@@ -509,7 +509,7 @@ make verify
 ## 11) References
 
 - ADR: `docs/program/22-adr/ADR-011-contract-baseline-lock.md`
-- Specs: `deps/law/SPEC_MAP.md`, `deps/law/REGISTRY.md`
+- Specs: `../law/SPEC_MAP.md`, `../law/REGISTRY.md`
 - Planned MPs: `docs/program/24-milestone-packs/specs-refactor-foundation/*`
 
 

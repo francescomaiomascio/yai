@@ -1,0 +1,23 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D5-economic",
+  "domain_name": "D5-economic",
+  "family": "economic",
+  "status": "active",
+  "discovery_ref": "domains/D5-economic/discovery/signals.json",
+  "model_ref": "domains/D5-economic/model/actions.json",
+  "policy_refs": [
+    "domains/D5-economic/policy/baseline.json",
+    "domains/D5-economic/policy/deny.json",
+    "domains/D5-economic/policy/quarantine.json",
+    "domains/D5-economic/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D5-economic/evidence/requirements.json",
+  "compliance_links": [],
+  "internal_id": "D5-economic",
+  "family_id": "D5",
+  "canonical_name": "economic.core",
+  "display_name": "D5-economic",
+  "slug": "D5-economic"
+}

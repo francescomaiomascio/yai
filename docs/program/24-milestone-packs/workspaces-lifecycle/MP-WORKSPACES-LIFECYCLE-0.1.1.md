@@ -8,8 +8,8 @@ adrs:
   - docs/program/22-adr/ADR-008-connection-lifecycle.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 spec_anchors:
-  - deps/law/contracts/protocol/include/auth.h
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/contracts/protocol/include/auth.h
+  - ../law/contracts/protocol/include/transport.h
 claims:
   - C-DOMAIN-COVERAGE-RESOURCE
   - C-CONTEXT-PROPAGATION

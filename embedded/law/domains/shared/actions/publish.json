@@ -1,6 +1,0 @@
-{
-  "kind": "domain_action_set",
-  "version": "v1",
-  "id": "publish",
-  "description": "Shared action primitive: publish"
-}

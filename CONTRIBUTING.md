@@ -7,7 +7,7 @@ This document defines contribution standards for the `yai` runtime repository.
 ## Scope and Sources of Truth
 
 - Runtime implementation lives in this repository (`boot/`, `root/`, `kernel/`, `engine/`, `runtime/`, `mind/`).
-- Canonical normative contracts live in `deps/law/` (pinned and verified by governance/CI).
+- Canonical normative contracts live in `law` (canonical) and `embedded/law` (runtime contract surface) (pinned and verified by governance/CI).
 - Documentation under `docs/` is operational guidance; contracts remain normative.
 
 ## Prerequisites

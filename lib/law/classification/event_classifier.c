@@ -29,6 +29,9 @@ int yai_law_classify_event(const char *ws_id,
     if (strstr(payload, "curl")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "curl");
     else if (strstr(payload, "otel")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "otel.export");
     else if (strstr(payload, "s3")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "s3.put_object");
+    else if (strstr(payload, "payment")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "payment.authorize");
+    else if (strstr(payload, "transfer")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "transfer.authorize");
+    else if (strstr(payload, "settlement")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "settlement.finalize");
     else if (strstr(payload, "github")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "github.issues.comment.create");
     else if (strstr(payload, "experiment")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "experiment.run");
     else (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "unknown");

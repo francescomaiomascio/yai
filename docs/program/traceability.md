@@ -6,7 +6,7 @@ It maps proposal and decision artifacts to contract anchors and delivery evidenc
 ## How to use this map
 - Add a row when a new Proposal, ADR, or Runbook is introduced.
 - Keep links as repo-relative paths.
-- Anchor every row to real `deps/law` paths.
+- Anchor every row to real `../law` paths.
 
 ## Proposal -> ADR -> Runbook -> MP map
 
@@ -34,4 +34,4 @@ It maps proposal and decision artifacts to contract anchors and delivery evidenc
 
 Notes:
 - Keep this map synchronized whenever proposal scope or ADR targets change.
-- Do not invent new anchors: always anchor to `deps/law` paths.
+- Do not invent new anchors: always anchor to `../law` paths.

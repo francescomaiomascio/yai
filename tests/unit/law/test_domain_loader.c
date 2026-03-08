@@ -9,10 +9,21 @@ int main(void) {
   char json[4096] = {0};
 
   if (yai_law_load_runtime(&rt, err, sizeof(err)) != 0) return 1;
-  if (yai_law_load_domain_manifest(&rt, "D1-digital", json, sizeof(json)) != 0) return 1;
+  if (yai_law_load_domain_manifest(&rt, "digital", json, sizeof(json)) != 0) return 1;
+  if (!strstr(json, "\"canonical_name\": \"digital\"")) {
+    fprintf(stderr, "domain_loader: digital family manifest not loaded\n");
+    return 1;
+  }
 
+  if (yai_law_load_domain_manifest(&rt, "payments", json, sizeof(json)) != 0) return 1;
+  if (!strstr(json, "\"specialization_id\": \"payments\"")) {
+    fprintf(stderr, "domain_loader: payments specialization manifest not loaded\n");
+    return 1;
+  }
+
+  if (yai_law_load_domain_manifest(&rt, "D1-digital", json, sizeof(json)) != 0) return 1;
   if (!strstr(json, "D1-digital")) {
-    fprintf(stderr, "domain_loader: D1 manifest not loaded\n");
+    fprintf(stderr, "domain_loader: D1 transitional manifest not loaded\n");
     return 1;
   }
 

@@ -5,19 +5,49 @@ int yai_law_build_trace_json(const yai_law_classification_ctx_t *ctx,
                              const yai_law_decision_t *decision,
                              char *out,
                              size_t out_cap) {
+  const char *f1 = "";
+  const char *f2 = "";
+  const char *f3 = "";
+  const char *s1 = "";
+  const char *s2 = "";
+  const char *s3 = "";
+  const char *r0 = "";
+  const char *sec0 = "";
+  const char *ctx0 = "";
   if (!ctx || !disc || !decision || !out || out_cap == 0) return -1;
+  if (disc->family_candidate_count > 0) f1 = disc->family_candidates[0];
+  if (disc->family_candidate_count > 1) f2 = disc->family_candidates[1];
+  if (disc->family_candidate_count > 2) f3 = disc->family_candidates[2];
+  if (disc->specialization_candidate_count > 0) s1 = disc->specialization_candidates[0];
+  if (disc->specialization_candidate_count > 1) s2 = disc->specialization_candidates[1];
+  if (disc->specialization_candidate_count > 2) s3 = disc->specialization_candidates[2];
+  if (decision->stack.regulatory_overlay_count > 0) r0 = decision->stack.regulatory_overlays[0];
+  if (decision->stack.sector_overlay_count > 0) sec0 = decision->stack.sector_overlays[0];
+  if (decision->stack.contextual_overlay_count > 0) ctx0 = decision->stack.contextual_overlays[0];
   return yai_law_safe_snprintf(
       out,
       out_cap,
-      "{\"type\":\"yai.law.resolution_trace.v1\",\"action\":\"%s\",\"provider\":\"%s\",\"resource\":\"%s\",\"protocol\":\"%s\",\"matched_domain\":\"%s\",\"confidence\":%.3f,\"ambiguous\":%s,\"final_effect\":\"%s\",\"rationale\":\"%s\",\"precedence_trace\":\"%s\"}",
+      "{\"type\":\"yai.law.resolution_trace.v1\",\"routing_mode\":\"family-specialization\",\"action\":\"%s\",\"provider\":\"%s\",\"resource\":\"%s\",\"protocol\":\"%s\",\"matched_domain\":\"%s\",\"matched_family\":\"%s\",\"matched_specialization\":\"%s\",\"family_candidates\":[\"%s\",\"%s\",\"%s\"],\"specialization_candidates\":[\"%s\",\"%s\",\"%s\"],\"confidence\":%.3f,\"ambiguous\":%s,\"regulatory_overlay_count\":%d,\"sector_overlay_count\":%d,\"contextual_overlay_count\":%d,\"regulatory_overlay_head\":\"%s\",\"sector_overlay_head\":\"%s\",\"contextual_overlay_head\":\"%s\",\"authority_contributor_count\":%d,\"evidence_contributor_count\":%d,\"final_effect\":\"%s\",\"rationale\":\"%s\",\"precedence_trace\":\"%s\",\"authority_profile\":\"%s\",\"evidence_profile\":\"%s\"}",
       ctx->action,
       ctx->provider,
       ctx->resource,
       ctx->protocol,
       disc->domain_id,
+      disc->family_id,
+      disc->specialization_id,
+      f1, f2, f3,
+      s1, s2, s3,
       disc->confidence,
       disc->ambiguous ? "true" : "false",
+      decision->stack.regulatory_overlay_count,
+      decision->stack.sector_overlay_count,
+      decision->stack.contextual_overlay_count,
+      r0, sec0, ctx0,
+      decision->stack.authority_contributor_count,
+      decision->stack.evidence_contributor_count,
       yai_law_effect_name(decision->final_effect),
       decision->rationale,
-      decision->stack.precedence_trace);
+      decision->stack.precedence_trace,
+      decision->stack.authority_profile,
+      decision->stack.evidence_profile);
 }

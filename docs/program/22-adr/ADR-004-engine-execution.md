@@ -8,10 +8,10 @@ applies_to:
   phase: v4
   anchor: "#phase-engine-attach-v4"
 law_refs:
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
-  - deps/law/foundation/boundaries/L2-engine.md
-  - deps/law/contracts/protocol/include/protocol.h
-  - deps/law/contracts/protocol/include/transport.h
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/boundaries/L2-engine.md
+  - ../law/contracts/protocol/include/protocol.h
+  - ../law/contracts/protocol/include/transport.h
 ---
 # ADR-004 - Engine as Execution Plane (L2)
 

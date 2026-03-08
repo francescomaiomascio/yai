@@ -1,16 +1,13 @@
-# 20 Program
+# Program Docs Status
 
-Program-level delivery, governance execution rules, and audit convergence.
+Status: `historical + governance tracking`  
+Primary reference class: `non-runtime-primary`
 
-Indexes:
-- RFC index: `docs/program/21-rfc/README.md`
-- ADR index: `docs/program/22-adr/README.md`
-- Program spine: `docs/program/spine.md`
-- Program traceability: `docs/program/traceability.md`
-- Runbooks index: `docs/program/23-runbooks/README.md`
-- Milestone packs index: `docs/program/24-milestone-packs/README.md`
-- Templates index: `docs/program/25-templates/README.md`
-- Policies index: `docs/program/26-policies/README.md`
-- Security index: `docs/program/27-security/README.md`
-- Audit convergence: `docs/program/audit-convergence/`
-- Migration notes: `docs/program/migration/`
+Program/RFC/ADR/runbook content in this tree is useful for delivery traceability, but it is not the primary runtime contract source.
+
+Primary runtime/canonical references are:
+
+- `docs/architecture/law-consumption-model.md`
+- `docs/architecture/embedded-law-surface.md`
+- `docs/architecture/law-runtime-convergence-audit.md`
+- canonical repo `../law` (for normative source of truth)

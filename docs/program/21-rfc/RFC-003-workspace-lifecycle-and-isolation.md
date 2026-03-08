@@ -22,10 +22,10 @@ related:
     - docs/program/23-runbooks/engine-attach.md
   milestone_packs: []
   specs:
-    - deps/law/foundation/boundaries/L1-kernel.md
-    - deps/law/contracts/protocol/include/session.h
-    - deps/law/foundation/invariants/I-002-determinism.md
-    - deps/law/foundation/invariants/I-006-external-effect-boundary.md
+    - ../law/foundation/boundaries/L1-kernel.md
+    - ../law/contracts/protocol/include/session.h
+    - ../law/foundation/invariants/I-002-determinism.md
+    - ../law/foundation/invariants/I-006-external-effect-boundary.md
 tags:
   - workspace
   - isolation
@@ -64,7 +64,7 @@ Define one lifecycle proposal that aligns isolation guarantees with Kernel bound
 
 ## Traceability
 
-- Spec anchors (if any): `deps/law/foundation/boundaries/L1-kernel.md`, `deps/law/contracts/protocol/include/session.h`, `deps/law/foundation/invariants/I-002-determinism.md`, `deps/law/foundation/invariants/I-006-external-effect-boundary.md`
+- Spec anchors (if any): `../law/foundation/boundaries/L1-kernel.md`, `../law/contracts/protocol/include/session.h`, `../law/foundation/invariants/I-002-determinism.md`, `../law/foundation/invariants/I-006-external-effect-boundary.md`
 - Targets ADR: `docs/program/22-adr/ADR-007-workspace-isolation.md`, `docs/program/22-adr/ADR-008-connection-lifecycle.md`, `docs/program/22-adr/ADR-009-engine-attachment.md`, `docs/program/22-adr/ADR-010-boot-entrypoint.md`
 - Downstream runbook: `docs/program/23-runbooks/workspaces-lifecycle.md`
 

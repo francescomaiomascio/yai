@@ -1,3 +1,0 @@
-# Purge Guidance
-
-Placeholder guidance.

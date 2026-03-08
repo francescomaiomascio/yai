@@ -8,11 +8,11 @@ applies_to:
   phase: governance
   anchor: "#4-two-official-gates"
 law_refs:
-  - deps/law/foundation/invariants/I-001-traceability.md
-  - deps/law/foundation/invariants/I-002-determinism.md
-  - deps/law/foundation/invariants/I-003-governance.md
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
-  - deps/law/foundation/boundaries/L1-kernel.md
+  - ../law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/boundaries/L1-kernel.md
 ---
 
 # ADR-012 - Audit Convergence Gates for v0.1.0

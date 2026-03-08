@@ -8,10 +8,10 @@ applies_to:
   phase: v5.3
   anchor: "#phase-mind-proposer"
 law_refs:
-  - deps/law/foundation/invariants/I-002-determinism.md
-  - deps/law/foundation/invariants/I-004-cognitive-reconfiguration.md
-  - deps/law/foundation/invariants/I-006-external-effect-boundary.md
-  - deps/law/foundation/boundaries/L3-mind.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/invariants/I-004-cognitive-reconfiguration.md
+  - ../law/foundation/invariants/I-006-external-effect-boundary.md
+  - ../law/foundation/boundaries/L3-mind.md
 ---
 # ADR-005 - Mind as Workspace-Scoped Proposer (L3)
 

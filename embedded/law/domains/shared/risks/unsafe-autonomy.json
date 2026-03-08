@@ -1,6 +1,0 @@
-{
-  "kind": "domain_risk_surface",
-  "version": "v1",
-  "id": "unsafe-autonomy",
-  "description": "Shared risk primitive: unsafe-autonomy"
-}

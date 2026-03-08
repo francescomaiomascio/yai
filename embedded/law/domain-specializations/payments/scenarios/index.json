@@ -1,0 +1,10 @@
+{
+  "kind": "scenario_classes",
+  "version": "v1",
+  "specialization_id": "payments",
+  "scenario_classes": [
+    "payments.default",
+    "payments.high_impact",
+    "payments.overlay_finance"
+  ]
+}

@@ -1,60 +1,231 @@
 {
-  "kind": "domains.index",
-  "version": "v1",
-  "domains": [
+  "kind": "embedded.domains.index",
+  "version": "v2",
+  "families": [
     {
-      "domain_id": "D1-digital",
+      "family_id": "D1",
+      "canonical_name": "digital",
+      "manifest_ref": "control-families/digital/manifest.json",
+      "status": "active-wave-1-pillar",
+      "maturity": "structured"
+    },
+    {
+      "family_id": "D2",
+      "canonical_name": "physical",
+      "manifest_ref": "control-families/physical/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    },
+    {
+      "family_id": "D3",
+      "canonical_name": "biological",
+      "manifest_ref": "control-families/biological/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    },
+    {
+      "family_id": "D4",
+      "canonical_name": "social-institutional",
+      "manifest_ref": "control-families/social-institutional/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    },
+    {
+      "family_id": "D5",
+      "canonical_name": "economic",
+      "manifest_ref": "control-families/economic/manifest.json",
+      "status": "active-wave-1",
+      "maturity": "dense",
+      "lead_vertical": "true"
+    },
+    {
+      "family_id": "D6",
+      "canonical_name": "operational",
+      "manifest_ref": "control-families/operational/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    },
+    {
+      "family_id": "D7",
+      "canonical_name": "cognitive-cultural",
+      "manifest_ref": "control-families/cognitive-cultural/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    },
+    {
+      "family_id": "D8",
+      "canonical_name": "scientific",
+      "manifest_ref": "control-families/scientific/manifest.json",
+      "status": "active-wave-1-pillar",
+      "maturity": "structured"
+    },
+    {
+      "family_id": "D9",
+      "canonical_name": "environmental-climatological",
+      "manifest_ref": "control-families/environmental-climatological/manifest.json",
+      "status": "active",
+      "maturity": "seed"
+    }
+  ],
+  "specializations": [
+    {
+      "specialization_id": "network-egress",
+      "canonical_name": "digital.network-egress",
       "family": "digital",
-      "manifest_ref": "domains/D1-digital/manifest.json",
-      "status": "active"
+      "manifest_ref": "domain-specializations/network-egress/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
     },
     {
-      "domain_id": "D2-physical",
-      "family": "physical",
-      "manifest_ref": "domains/D2-physical/manifest.json",
-      "status": "active"
+      "specialization_id": "remote-publication",
+      "canonical_name": "digital.remote-publication",
+      "family": "digital",
+      "manifest_ref": "domain-specializations/remote-publication/manifest.json",
+      "status": "active-planned"
     },
     {
-      "domain_id": "D3-biological",
-      "family": "biological",
-      "manifest_ref": "domains/D3-biological/manifest.json",
-      "status": "active"
+      "specialization_id": "external-commentary",
+      "canonical_name": "digital.external-commentary",
+      "family": "digital",
+      "manifest_ref": "domain-specializations/external-commentary/manifest.json",
+      "status": "active-planned"
     },
     {
-      "domain_id": "D4-social-institutional",
-      "family": "social-institutional",
-      "manifest_ref": "domains/D4-social-institutional/manifest.json",
-      "status": "active"
+      "specialization_id": "artifact-distribution",
+      "canonical_name": "digital.artifact-distribution",
+      "family": "digital",
+      "manifest_ref": "domain-specializations/artifact-distribution/manifest.json",
+      "status": "active-planned"
     },
     {
-      "domain_id": "D5-economic",
+      "specialization_id": "remote-retrieval",
+      "canonical_name": "digital.remote-retrieval",
+      "family": "digital",
+      "manifest_ref": "domain-specializations/remote-retrieval/manifest.json",
+      "status": "active-planned"
+    },
+    {
+      "specialization_id": "digital-sink-control",
+      "canonical_name": "digital.digital-sink-control",
+      "family": "digital",
+      "manifest_ref": "domain-specializations/digital-sink-control/manifest.json",
+      "status": "active-planned"
+    },
+    {
+      "specialization_id": "payments",
+      "canonical_name": "economic.payments",
       "family": "economic",
-      "manifest_ref": "domains/D5-economic/manifest.json",
-      "status": "active"
+      "manifest_ref": "domain-specializations/payments/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
     },
     {
-      "domain_id": "D6-operational",
-      "family": "operational",
-      "manifest_ref": "domains/D6-operational/manifest.json",
-      "status": "active"
+      "specialization_id": "transfers",
+      "canonical_name": "economic.transfers",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/transfers/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
     },
     {
-      "domain_id": "D7-cognitive-cultural",
-      "family": "cognitive-cultural",
-      "manifest_ref": "domains/D7-cognitive-cultural/manifest.json",
-      "status": "active"
+      "specialization_id": "settlements",
+      "canonical_name": "economic.settlements",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/settlements/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
     },
     {
-      "domain_id": "D8-scientific",
+      "specialization_id": "treasury",
+      "canonical_name": "economic.treasury",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/treasury/manifest.json",
+      "status": "active-seed",
+      "verticalization_wave": "wave-1-seed"
+    },
+    {
+      "specialization_id": "invoicing",
+      "canonical_name": "economic.invoicing",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/invoicing/manifest.json",
+      "status": "draft-seed",
+      "verticalization_wave": "wave-1-seed"
+    },
+    {
+      "specialization_id": "accounting-integrity",
+      "canonical_name": "economic.accounting-integrity",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/accounting-integrity/manifest.json",
+      "status": "active-seed",
+      "verticalization_wave": "wave-1-seed"
+    },
+    {
+      "specialization_id": "pricing-and-quoting",
+      "canonical_name": "economic.pricing-and-quoting",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/pricing-and-quoting/manifest.json",
+      "status": "draft-seed",
+      "verticalization_wave": "wave-1-seed"
+    },
+    {
+      "specialization_id": "credit-exposure",
+      "canonical_name": "economic.credit-exposure",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/credit-exposure/manifest.json",
+      "status": "active-seed",
+      "verticalization_wave": "wave-1-seed"
+    },
+    {
+      "specialization_id": "fraud-risk-controls",
+      "canonical_name": "economic.fraud-risk-controls",
+      "family": "economic",
+      "manifest_ref": "domain-specializations/fraud-risk-controls/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
+    },
+    {
+      "specialization_id": "experiment-configuration",
+      "canonical_name": "scientific.experiment-configuration",
       "family": "scientific",
-      "manifest_ref": "domains/D8-scientific/manifest.json",
-      "status": "active"
+      "manifest_ref": "domain-specializations/experiment-configuration/manifest.json",
+      "status": "active-planned"
     },
     {
-      "domain_id": "D9-environmental-climatological",
-      "family": "environmental-climatological",
-      "manifest_ref": "domains/D9-environmental-climatological/manifest.json",
-      "status": "active"
+      "specialization_id": "parameter-governance",
+      "canonical_name": "scientific.parameter-governance",
+      "family": "scientific",
+      "manifest_ref": "domain-specializations/parameter-governance/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
+    },
+    {
+      "specialization_id": "reproducibility-control",
+      "canonical_name": "scientific.reproducibility-control",
+      "family": "scientific",
+      "manifest_ref": "domain-specializations/reproducibility-control/manifest.json",
+      "status": "active",
+      "verticalization_wave": "wave-1"
+    },
+    {
+      "specialization_id": "black-box-evaluation",
+      "canonical_name": "scientific.black-box-evaluation",
+      "family": "scientific",
+      "manifest_ref": "domain-specializations/black-box-evaluation/manifest.json",
+      "status": "active-planned"
+    },
+    {
+      "specialization_id": "dataset-integrity",
+      "canonical_name": "scientific.dataset-integrity",
+      "family": "scientific",
+      "manifest_ref": "domain-specializations/dataset-integrity/manifest.json",
+      "status": "active-planned"
+    },
+    {
+      "specialization_id": "result-publication-control",
+      "canonical_name": "scientific.result-publication-control",
+      "family": "scientific",
+      "manifest_ref": "domain-specializations/result-publication-control/manifest.json",
+      "status": "active-planned"
     }
   ]
 }

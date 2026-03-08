@@ -1,42 +1,41 @@
 {
   "kind": "embedded-export-summary",
-  "version": "v1",
-  "source": "/Users/francescomaiomascio/Developer/YAI/law",
-  "target": "/Users/francescomaiomascio/Developer/YAI/yai/embedded/law",
+  "version": "v2",
+  "export_id": "law-embedded-runtime-surface",
+  "law_version": "v0.1.0",
+  "export_mode": "runtime-contract",
   "included_sections": [
-    "manifests-runtime-facing",
-    "domains-runtime-facing",
-    "compliance-runtime-facing",
-    "generated-indexes"
+    "runtime-manifests",
+    "six-layer-runtime-payload",
+    "runtime-generated-views",
+    "compatibility-data",
+    "legacy-bridge-fallback"
   ],
   "excluded_sections": [
-    "archive_tmp",
-    "docs/architecture",
-    "docs/authoring",
-    "docs/reports",
-    "authority",
-    "foundation",
-    "formal",
-    "tools"
+    "archive_tmp/**",
+    "docs/**",
+    "authority/**",
+    "foundation/**",
+    "formal/**",
+    "tools/**",
+    "contracts/**",
+    "registry/**",
+    "**/*.md"
   ],
-  "includes": [
-    "manifests/law.manifest.json",
-    "manifests/runtime.entrypoints.json",
-    "manifests/domain-resolution-order.json",
-    "manifests/compliance-resolution-order.json",
-    "manifests/compatibility.matrix.json",
-    "manifests/publish.index.json",
-    "domains/index/domains.index.json",
-    "domains/index/domain-families.json",
-    "domains/index/discovery-matrix.json",
-    "domains/index/action-taxonomy.json",
-    "domains/index/asset-taxonomy.json",
-    "domains/index/risk-taxonomy.json",
-    "compliance/index/compliance.index.json",
-    "compliance/index/applicability.matrix.json",
-    "compliance/index/domain-crosswalk.json",
-    "compliance/index/authority-crosswalk.json"
-  ],
-  "domain_count": 9,
-  "compliance_count": 4
+  "include_count": 30,
+  "layers": {
+    "classification": "classification/",
+    "control_families": "control-families/",
+    "domain_specializations": "domain-specializations/",
+    "overlays": {
+      "regulatory": "overlays/regulatory/",
+      "sector": "overlays/sector/",
+      "contextual": "overlays/contextual/"
+    },
+    "manifests": "manifests/"
+  },
+  "bridge": {
+    "legacy_enabled": true,
+    "mode": "fallback-only"
+  }
 }

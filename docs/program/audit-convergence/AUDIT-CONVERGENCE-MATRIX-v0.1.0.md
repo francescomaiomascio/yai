@@ -57,10 +57,10 @@ Use claim-based metrics only:
 
 Do not report synthetic percentages disconnected from claim status.
 
-## 5) Gate A D1 Progress Snapshot (2026-02-24)
-- Qualification harness (`QT-0.1-001-SC102`) executed for `D1-digital/egress-v1` with `baseline-deny`.
+## 5) Gate A Digital Progress Snapshot (2026-02-24)
+- Qualification harness (`QT-0.1-001-SC102`) executed for `digital/network-egress` (legacy internal pack id: `D1-digital/egress-v1`) with `baseline-deny`.
 - Run command:
   - `cd ops/evidence/qualification/QT-0.1-001-SC102`
-  - `DOMAIN_PACK_ID=D1-digital/egress-v1 BASELINE_ID=baseline-deny ./run/run-three.sh`
+  - `DOMAIN_PACK_ID=D1-digital/egress-v1 BASELINE_ID=baseline-deny ./run/run-three.sh` (legacy fixture id retained for harness compatibility)
 - Result: `3/3 PASS` (simulation harness) with indexed evidence per run.
 - Canonical finding: `ops/evidence/validation/audits/findings/FINDING-001-sc102-d1-harness-runset.md`

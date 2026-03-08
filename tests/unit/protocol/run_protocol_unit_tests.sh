@@ -3,7 +3,19 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 OUT_DIR="$ROOT/build/test/unit_protocol"
-LAW_COMPAT_ROOT="${LAW_COMPAT_ROOT:-$ROOT/deps/law}"
+LAW_COMPAT_ROOT="${LAW_COMPAT_ROOT:-}"
+if [[ -z "$LAW_COMPAT_ROOT" ]]; then
+  CANDIDATE="$(cd "$ROOT/.." && pwd)/law"
+  [[ -d "$CANDIDATE" ]] && LAW_COMPAT_ROOT="$CANDIDATE"
+fi
+if [[ -z "$LAW_COMPAT_ROOT" && -d "$ROOT/deps/law" ]]; then
+  LAW_COMPAT_ROOT="$ROOT/deps/law"
+fi
+if [[ -z "$LAW_COMPAT_ROOT" ]]; then
+  echo "LAW_COMPAT_ROOT not found (expected ../law or deps/law fallback)" >&2
+  exit 2
+fi
+
 mkdir -p "$OUT_DIR"
 
 cc -Wall -Wextra -std=c11 -O2 \

@@ -1,4 +1,4 @@
-# Formal / traceability
+# Formal / Traceability
 
-See:
-- deps/law/formal/
+Canonical formal source remains in `law/formal/`.
+Runtime consumers do not traverse formal corpus directly; they consume exported compatibility and generated runtime summaries.
