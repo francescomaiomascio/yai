@@ -16,6 +16,7 @@ and this project adheres to Semantic Versioning.
 
 ### Changed
 
+- runtime-law cutover: retired `deps/law` submodule bridge from active runtime and tooling paths; `yai` now resolves law runtime contract from `embedded/law` only.
 - kernel: implemented real `yai.kernel.ws` runtime actions (`create|reset|destroy`) on `control.call`, creating/removing workspace layout under `~/.yai/run/{workspace_id}/` with manifest generation.
 - core: split command dispatch surfaces into dedicated `core/commands` modules for kernel, root, and engine to keep runtime core paths focused on process/session orchestration.
 - dependency policy: removed `deps/cli.ref` and `deps/sdk.ref`; CLI/SDK alignment is now compatibility-declared instead of structurally pinned in `yai`.

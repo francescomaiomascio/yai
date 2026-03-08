@@ -54,7 +54,7 @@ for rel in [r for r in required if r.endswith(".json") and (embed / r).exists()]
     except Exception as exc:
         errors.append(f"invalid json: {rel} ({exc})")
 
-# Optional bridge check (fallback only)
+# Transitional seed consistency check
 bridge = embed / "transitional" / "domain-family-seed"
 if bridge.exists():
     for d in ["D1-digital", "D8-scientific"]:

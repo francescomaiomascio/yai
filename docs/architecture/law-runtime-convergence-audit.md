@@ -1,5 +1,8 @@
 # Law Runtime Convergence Audit
 
+> Historical report (pre-cutover snapshot).  
+> Current state: `deps/law` bridge retired; active runtime path is `embedded/law` only.
+
 Date: 2026-03-08  
 Scope: `law` + `yai` (cross-repo convergence, contract integrity, runtime path, tests, docs/tooling)
 
@@ -35,7 +38,7 @@ Overall: convergence is real and operational, with remaining debt mostly in runt
 | `yai/tools/bin/yai-law-compat-check` | active runtime-facing | Contract verification gate |
 | `yai/tools/bin/yai-law-embed-sync` | active runtime-facing | Embedded sync path |
 | `yai/tools/dev/resolve-law-embed.sh` | active runtime-facing | Embedded root resolver |
-| `yai/deps/law` | bridge | Disabled by default; legacy fallback only |
+| `yai/deps/law` | historical/removed | retired from active runtime and tooling paths |
 | `yai/docs/architecture/runtime-law-integration-debug-report.md` | dead/reference-only | Historical report; intentionally legacy narrative |
 
 ## Canonical Runtime Path Verdict

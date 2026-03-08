@@ -6,6 +6,8 @@
 > - `docs/architecture/law-runtime-convergence-audit.md`
 >
 > Use this file as historical analysis only, not as primary runtime reference.
+>
+> Post-cutover update: `deps/law` is retired from active runtime and tooling paths.
 
 Date: 2026-03-08
 Scope: first law-native integration pass in `yai`
