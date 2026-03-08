@@ -1,13 +1,17 @@
 {
   "authority_repo": "law",
-  "compatibility_mode": "strong-baseline-lock",
-  "supported_baselines": [
-    "deps/law@502e618c7d8c1dee6b172b4ce31e718777e0833f"
+  "compatibility_mode": "embedded-surface-primary",
+  "embedded_law_path": "embedded/law",
+  "embedded_law_version": "0.1.0",
+  "legacy_fallback_path": "deps/law",
+  "supported_embedded_versions": [
+    "0.1.0"
   ],
-  "tested_baseline": "deps/law@502e618c7d8c1dee6b172b4ce31e718777e0833f",
+  "tested_embedded_version": "0.1.0",
   "notes": [
     "yai is the integration/runtime authority.",
-    "law baseline is locked in deps/law.",
-    "baseline updates require explicit review."
+    "canonical law remains in sibling repository law.",
+    "runtime-facing law is consumed from embedded/law export surface.",
+    "deps/law is transition-only fallback until full runtime consumer cutover."
   ]
 }

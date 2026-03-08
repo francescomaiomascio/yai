@@ -1,0 +1,14 @@
+{
+  "kind": "discovery_profile",
+  "version": "v1",
+  "domain_id": "D4-social-institutional",
+  "signals": [
+    {
+      "signal_type": "domain_hint",
+      "source": "command",
+      "match_mode": "contains",
+      "value": "d4-social-institutional",
+      "weight": 0.8
+    }
+  ]
+}

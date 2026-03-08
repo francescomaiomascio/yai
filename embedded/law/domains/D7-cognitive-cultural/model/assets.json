@@ -1,0 +1,9 @@
+{
+  "kind": "domain_asset_set",
+  "version": "v1",
+  "domain_id": "D7-cognitive-cultural",
+  "assets": [
+    "data",
+    "artifact"
+  ]
+}

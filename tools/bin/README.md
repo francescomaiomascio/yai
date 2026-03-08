@@ -10,7 +10,9 @@ Behavior:
 - If canonical target is missing, wrapper exits with `2` and prints missing path.
 
 Runtime wrappers kept in this repo:
-- `law-sync`
+- `yai-law-embed-sync`
+- `yai-law-compat-check`
+- `law-sync` (legacy alias)
 - `yai-specs-sync` (deprecated alias)
 - `yai-version`
 - `yai-bundle`
@@ -26,3 +28,4 @@ Runtime wrappers kept in this repo:
 Notes:
 - Wrappers are infra-first.
 - `yai-changelog-check` keeps a CI fallback to local validator when `infra` is not checked out by the runner.
+- Law consumption model is now embedded-surface-first (`embedded/law`) with legacy bridge fallback (`deps/law`).

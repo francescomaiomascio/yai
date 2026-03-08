@@ -1,0 +1,31 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "domain_name": "Digital Operations and Egress Control",
+  "family": "digital",
+  "status": "active",
+  "discovery_ref": "domains/D1-digital/discovery/signals.json",
+  "model_ref": "domains/D1-digital/model/actions.json",
+  "policy_refs": [
+    "domains/D1-digital/policy/baseline.json",
+    "domains/D1-digital/policy/deny.json",
+    "domains/D1-digital/policy/quarantine.json",
+    "domains/D1-digital/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D1-digital/evidence/requirements.json",
+  "compliance_links": [
+    "gdpr-eu",
+    "retention-governance",
+    "security-supply-chain"
+  ],
+  "ops_pack_refs": [
+    "D1-digital/egress-v1"
+  ],
+  "trial_refs": [
+    "RT-0.1-001-D1-EGRESS-CURL",
+    "RT-0.1-002-D1-EGRESS-OTEL",
+    "RT-0.1-003-D1-EGRESS-S3",
+    "RT-0.1-004-D1-GITHUB-ISSUE-COMMENT"
+  ]
+}

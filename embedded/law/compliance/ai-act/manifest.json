@@ -1,0 +1,20 @@
+{
+  "kind": "compliance_manifest",
+  "version": "v1",
+  "compliance_id": "ai-act",
+  "name": "EU AI Act",
+  "applies_to_domains": [
+    "D1-digital",
+    "D8-scientific"
+  ],
+  "policy_refs": [
+    "compliance/ai-act/policy/prohibited-use.json",
+    "compliance/ai-act/policy/high-risk-review.json",
+    "compliance/ai-act/policy/human-oversight.json",
+    "compliance/ai-act/policy/evidence-obligations.json"
+  ],
+  "mapping_refs": [
+    "compliance/ai-act/mappings/domains.json"
+  ],
+  "overlay_refs": []
+}

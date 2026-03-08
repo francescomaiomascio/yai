@@ -1,0 +1,16 @@
+{
+  "kind": "evidence_requirement",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "evidence_type": "decision_record",
+  "required_fields": [
+    "trace_id",
+    "domain_id",
+    "final_effect"
+  ],
+  "severity": "high",
+  "retention_hint": "policy-defined",
+  "trace_links": [
+    "resolution_trace"
+  ]
+}

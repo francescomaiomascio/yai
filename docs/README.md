@@ -1,29 +1,24 @@
-# YAI Documentation — Platform and Program Entrypoint
+# yai docs
 
-This directory is the primary documentation entrypoint for the YAI platform implementation repository.
+Live documentation for the runtime repository.
 
-## Start here
+## Primary live paths
 
-- Platform architecture and runtime model: `docs/platform/`
-- Developer guides and workflows: `docs/developer/`
-- Interface pointers to pinned law contracts: `docs/interfaces/`
-- Program governance (ADR/RFC/runbooks/MP): `docs/program/`
-- Cross-repo pointers and supporting references: `docs/pointers/`
+- `architecture/` runtime architecture and law-native consumption
+- `developer/` implementation and debugging guides
+- `interfaces/` integration-facing references
+- `program/` active governance/process records
+- `pointers/` cross-repo official/evidence/collateral pointers
 
-## Program-critical anchors
+## Transitional material policy
 
-- Audit convergence: `docs/program/audit-convergence/`
-- Workspaces lifecycle packs: `docs/program/24-milestone-packs/workspaces-lifecycle/`
-- Audit-convergence governance ADR: `docs/program/22-adr/ADR-012-audit-convergence-gates.md`
+Refactor/rewrite/mapping/closeout documents are quarantined under:
+- `../archive_tmp/`
 
-## Cross-repo alignment notes
+Those files are historical/transitional and not architecture authority.
 
-- Normative contract authority is pinned from `deps/law/`.
-- Operational evidence bundles and field collateral are maintained in `ops`.
-- CLI and SDK command/control surfaces are maintained in `cli` and `sdk`.
-- Cross-repo docs/surface governance policy is defined in `deps/law/docs/pointers/DOCS_ARCHITECTURE.pointer.md`.
+## Cross-repo model
 
-## Interpretation rule
-
-Docs in this repository are implementation/program-facing.
-Normative contract disputes are resolved against pinned `law` artifacts.
+- `law`: canonical normative source
+- `yai`: runtime consumer/realization
+- `ops`: official qualification/evidence/publication bureau

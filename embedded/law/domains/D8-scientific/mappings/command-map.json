@@ -1,0 +1,20 @@
+{
+  "kind": "command-map",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "map": {
+    "experiment.run": {
+      "action": "run-experiment",
+      "trial_ref": "RT-0.1-001-D8-PARAMS-LOCK"
+    },
+    "params.set": {
+      "action": "parameter-set"
+    },
+    "params.modify": {
+      "action": "parameter-modify"
+    },
+    "result.publish": {
+      "action": "publish"
+    }
+  }
+}

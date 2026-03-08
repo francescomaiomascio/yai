@@ -1,0 +1,10 @@
+{
+  "kind": "evidence_requirement",
+  "version": "v1",
+  "domain_id": "D2-physical",
+  "required": [
+    "trace_id",
+    "decision_id",
+    "rule_id"
+  ]
+}

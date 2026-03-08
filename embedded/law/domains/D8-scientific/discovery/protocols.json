@@ -1,0 +1,22 @@
+{
+  "kind": "protocol-matches",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "protocols": [
+    {
+      "id": "control",
+      "risk_bias": "high",
+      "notes": "Controls parameter mutation and run execution"
+    },
+    {
+      "id": "api",
+      "risk_bias": "medium",
+      "notes": "Remote trigger for experiment runs"
+    },
+    {
+      "id": "file",
+      "risk_bias": "medium",
+      "notes": "Local/remote artifacts must keep provenance bindings"
+    }
+  ]
+}

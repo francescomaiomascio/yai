@@ -1,0 +1,8 @@
+{
+  "kind": "provider-matches",
+  "version": "v1",
+  "domain_id": "D9-environmental-climatological",
+  "providers": [
+    "provider.default"
+  ]
+}

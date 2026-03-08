@@ -1,0 +1,27 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D1-digital.quarantine",
+  "domain_id": "D1-digital",
+  "pack_type": "quarantine",
+  "rules": [
+    {
+      "rule_id": "D1-digital.quarantine.ambiguous-authority",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "egress",
+          "publish"
+        ]
+      },
+      "conditions": [
+        {
+          "authority": "ambiguous"
+        }
+      ],
+      "effect": "quarantine",
+      "priority": 900
+    }
+  ],
+  "default_effect": "quarantine"
+}

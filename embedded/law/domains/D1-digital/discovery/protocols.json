@@ -1,0 +1,22 @@
+{
+  "kind": "protocol-matches",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "protocols": [
+    {
+      "id": "http",
+      "risk_bias": "high",
+      "notes": "External egress by default requires explicit allowlist authority"
+    },
+    {
+      "id": "https",
+      "risk_bias": "high",
+      "notes": "TLS channel does not bypass egress contract requirements"
+    },
+    {
+      "id": "grpc",
+      "risk_bias": "medium",
+      "notes": "Telemetry/export traffic with structured metadata"
+    }
+  ]
+}

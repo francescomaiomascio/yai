@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+LAW_ROOT_DEFAULT="$(cd "$ROOT/.." && pwd)/law"
+LAW_ROOT="${YAI_LAW_ROOT:-$LAW_ROOT_DEFAULT}"
+TARGET_ROOT="${YAI_LAW_EMBED_ROOT:-$ROOT/embedded/law}"
+
+if [[ ! -d "$LAW_ROOT" ]]; then
+  echo "law root not found: $LAW_ROOT" >&2
+  exit 2
+fi
+
+if [[ ! -f "$LAW_ROOT/manifests/embedded-export.manifest.json" ]]; then
+  echo "missing export boundary: $LAW_ROOT/manifests/embedded-export.manifest.json" >&2
+  exit 2
+fi
+
+python3 - "$LAW_ROOT" "$TARGET_ROOT" <<'PY'
+import json
+import shutil
+import sys
+from pathlib import Path
+
+law_root = Path(sys.argv[1]).resolve()
+target = Path(sys.argv[2]).resolve()
+
+manifest = json.loads((law_root / "manifests/embedded-export.manifest.json").read_text())
+includes = manifest.get("includes", [])
+
+# Fresh embedded surface for deterministic sync.
+if target.exists():
+    shutil.rmtree(target)
+
+target.mkdir(parents=True, exist_ok=True)
+
+# Root runtime-facing files.
+shutil.copy2(law_root / "VERSION", target / "VERSION")
+shutil.copy2(law_root / "manifests/law.manifest.json", target / "law.manifest.json")
+shutil.copy2(law_root / "manifests/runtime.entrypoints.json", target / "runtime.entrypoints.json")
+
+# Copy core sections declared by export boundary.
+for rel in includes:
+    src = law_root / rel
+    dst = target / rel
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+
+# Copy runtime-facing domain and compliance payloads.
+for rel in ["domains", "compliance"]:
+    src = law_root / rel
+    dst = target / rel
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+
+# Copy embedded-facing manifests pack.
+manifests_src = law_root / "manifests"
+manifests_dst = target / "manifests"
+manifests_dst.mkdir(parents=True, exist_ok=True)
+for name in [
+    "publish.index.json",
+    "compatibility.matrix.json",
+    "domain-resolution-order.json",
+    "compliance-resolution-order.json",
+    "embedded-export.manifest.json",
+]:
+    shutil.copy2(manifests_src / name, manifests_dst / name)
+
+# Derived compatibility/runtime views.
+compat = json.loads((law_root / "manifests/compatibility.matrix.json").read_text())
+resolution_domain = json.loads((law_root / "manifests/domain-resolution-order.json").read_text())
+resolution_comp = json.loads((law_root / "manifests/compliance-resolution-order.json").read_text())
+domains_idx = json.loads((law_root / "domains/index/domains.index.json").read_text())
+compliance_idx = json.loads((law_root / "compliance/index/compliance.index.json").read_text())
+
+generated = target / "generated"
+generated.mkdir(parents=True, exist_ok=True)
+(generated / "domains.index.json").write_text(json.dumps(domains_idx, indent=2) + "\n")
+(generated / "compliance.index.json").write_text(json.dumps(compliance_idx, indent=2) + "\n")
+(generated / "runtime-resolution-view.json").write_text(
+    json.dumps(
+        {
+            "kind": "runtime-resolution-view",
+            "version": "v1",
+            "domain_resolution_order": resolution_domain,
+            "compliance_resolution_order": resolution_comp,
+        },
+        indent=2,
+    )
+    + "\n"
+)
+(generated / "compatibility.summary.json").write_text(
+    json.dumps(
+        {
+            "kind": "compatibility-summary",
+            "version": "v1",
+            "law_version": (law_root / "VERSION").read_text().strip(),
+            "compatibility_matrix": compat,
+        },
+        indent=2,
+    )
+    + "\n"
+)
+(generated / "export.summary.json").write_text(
+    json.dumps(
+        {
+            "kind": "embedded-export-summary",
+            "version": "v1",
+            "source": str(law_root),
+            "target": str(target),
+            "included_sections": manifest.get("included_sections", []),
+            "excluded_sections": manifest.get("excluded_sections", []),
+            "includes": includes,
+            "domain_count": len(domains_idx.get("domains", [])),
+            "compliance_count": len(compliance_idx.get("compliance", [])),
+        },
+        indent=2,
+    )
+    + "\n"
+)
+
+(target / "COMPATIBILITY.json").write_text(
+    json.dumps(
+        {
+            "kind": "embedded-law-compatibility",
+            "version": "v1",
+            "law_version": (law_root / "VERSION").read_text().strip(),
+            "compatibility_ref": "manifests/compatibility.matrix.json",
+            "runtime_entrypoints_ref": "runtime.entrypoints.json",
+            "notes": [
+                "embedded surface is derived from canonical law export boundary",
+                "deps/law remains transitional fallback only",
+            ],
+        },
+        indent=2,
+    )
+    + "\n"
+)
+
+(target / "README.md").write_text(
+    "# Embedded Law Surface\n\n"
+    "Runtime-facing exported surface derived from canonical `law`.\n"
+    "This directory is generated and consumed by `yai`; do not author policy source here.\n",
+    encoding="utf-8",
+)
+
+print(f"embedded law synced: {target}")
+PY

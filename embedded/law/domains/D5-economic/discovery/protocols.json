@@ -1,0 +1,8 @@
+{
+  "kind": "protocol-matches",
+  "version": "v1",
+  "domain_id": "D5-economic",
+  "protocols": [
+    "yai.control.call.v1"
+  ]
+}

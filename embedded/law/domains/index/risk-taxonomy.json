@@ -1,0 +1,11 @@
+{
+  "kind": "risk-taxonomy",
+  "version": "v1",
+  "risks": [
+    "exfiltration",
+    "privacy-breach",
+    "provenance-loss",
+    "unauthorized-actuation",
+    "unsafe-autonomy"
+  ]
+}

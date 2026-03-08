@@ -1,0 +1,72 @@
+{
+  "kind": "embedded-export.manifest",
+  "version": "v1",
+  "export_id": "law-embedded-runtime-surface",
+  "law_version": "v0.1.0",
+  "target": "yai-runtime-embedded",
+  "compatibility_profile": "runtime-consumer.v1",
+  "included_sections": [
+    "manifests-runtime-facing",
+    "domains-runtime-facing",
+    "compliance-runtime-facing",
+    "generated-indexes"
+  ],
+  "excluded_sections": [
+    "archive_tmp",
+    "docs/architecture",
+    "docs/authoring",
+    "docs/reports",
+    "authority",
+    "foundation",
+    "formal",
+    "tools"
+  ],
+  "required_generated_outputs": [
+    "generated/domains.index.json",
+    "generated/compliance.index.json",
+    "generated/runtime-resolution-view.json",
+    "generated/export.summary.json",
+    "generated/compatibility.summary.json"
+  ],
+  "domain_scope": [
+    "D1-digital",
+    "D2-physical",
+    "D3-biological",
+    "D4-social-institutional",
+    "D5-economic",
+    "D6-operational",
+    "D7-cognitive-cultural",
+    "D8-scientific",
+    "D9-environmental-climatological"
+  ],
+  "compliance_scope": [
+    "gdpr-eu",
+    "ai-act",
+    "security-supply-chain",
+    "retention-governance",
+    "sector-overlays"
+  ],
+  "includes": [
+    "manifests/law.manifest.json",
+    "manifests/runtime.entrypoints.json",
+    "manifests/domain-resolution-order.json",
+    "manifests/compliance-resolution-order.json",
+    "manifests/compatibility.matrix.json",
+    "manifests/publish.index.json",
+    "domains/index/domains.index.json",
+    "domains/index/domain-families.json",
+    "domains/index/discovery-matrix.json",
+    "domains/index/action-taxonomy.json",
+    "domains/index/asset-taxonomy.json",
+    "domains/index/risk-taxonomy.json",
+    "compliance/index/compliance.index.json",
+    "compliance/index/applicability.matrix.json",
+    "compliance/index/domain-crosswalk.json",
+    "compliance/index/authority-crosswalk.json"
+  ],
+  "notes": [
+    "Canonical law remains in this repository.",
+    "Embedded export is a reduced runtime-facing surface for yai.",
+    "Export surface is not a full mirror of law repository content."
+  ]
+}

@@ -1,0 +1,38 @@
+#include "../internal.h"
+
+#include <string.h>
+
+int yai_law_classify_event(const char *ws_id,
+                           const char *payload,
+                           yai_law_classification_ctx_t *out) {
+  if (!out || !payload) return -1;
+  memset(out, 0, sizeof(*out));
+
+  if (ws_id && ws_id[0]) {
+    (void)yai_law_safe_snprintf(out->ws_id, sizeof(out->ws_id), "%s", ws_id);
+  }
+
+  if (yai_law_classify_action(payload, out->action, sizeof(out->action)) != 0) return -1;
+  if (yai_law_classify_provider(payload, out->provider, sizeof(out->provider)) != 0) return -1;
+  if (yai_law_classify_resource(payload, out->resource, sizeof(out->resource)) != 0) return -1;
+  if (yai_law_classify_protocol(payload, out->protocol, sizeof(out->protocol)) != 0) return -1;
+  if (yai_law_extract_workspace_context(payload,
+                                        out->workspace_mode,
+                                        sizeof(out->workspace_mode),
+                                        &out->black_box_mode,
+                                        &out->has_params_hash,
+                                        &out->has_authority_contract) != 0) {
+    return -1;
+  }
+
+  if (yai_law_json_extract_string(payload, "command", out->command, sizeof(out->command)) != 0) {
+    if (strstr(payload, "curl")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "curl");
+    else if (strstr(payload, "otel")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "otel.export");
+    else if (strstr(payload, "s3")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "s3.put_object");
+    else if (strstr(payload, "github")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "github.issues.comment.create");
+    else if (strstr(payload, "experiment")) (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "experiment.run");
+    else (void)yai_law_safe_snprintf(out->command, sizeof(out->command), "%s", "unknown");
+  }
+
+  return 0;
+}

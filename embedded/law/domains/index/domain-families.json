@@ -1,0 +1,15 @@
+{
+  "kind": "domain-families",
+  "version": "v1",
+  "families": [
+    "biological",
+    "cognitive-cultural",
+    "digital",
+    "economic",
+    "environmental-climatological",
+    "operational",
+    "physical",
+    "scientific",
+    "social-institutional"
+  ]
+}

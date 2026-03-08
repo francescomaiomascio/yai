@@ -1,0 +1,8 @@
+{
+  "kind": "provider-matches",
+  "version": "v1",
+  "domain_id": "D2-physical",
+  "providers": [
+    "provider.default"
+  ]
+}

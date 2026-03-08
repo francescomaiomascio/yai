@@ -1,0 +1,8 @@
+{
+  "kind": "resource-matches",
+  "version": "v1",
+  "domain_id": "D3-biological",
+  "resources": [
+    "workspace"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "provider-matches",
+  "version": "v1",
+  "domain_id": "D3-biological",
+  "providers": [
+    "provider.default"
+  ]
+}

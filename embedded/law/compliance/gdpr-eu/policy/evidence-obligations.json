@@ -1,0 +1,16 @@
+{
+  "kind": "evidence_requirement",
+  "version": "v1",
+  "evidence_type": "gdpr-audit",
+  "required_fields": [
+    "trace_id",
+    "decision_id",
+    "legal_basis",
+    "purpose"
+  ],
+  "severity": "high",
+  "retention_hint": "regulatory",
+  "trace_links": [
+    "resolution_trace"
+  ]
+}

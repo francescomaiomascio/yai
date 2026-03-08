@@ -1,0 +1,27 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D8-scientific.quarantine",
+  "domain_id": "D8-scientific",
+  "pack_type": "quarantine",
+  "rules": [
+    {
+      "rule_id": "D8-scientific.quarantine.ambiguous-experiment-context",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "run-experiment",
+          "publish"
+        ]
+      },
+      "conditions": [
+        {
+          "context_flag": "ambiguous_dataset_binding"
+        }
+      ],
+      "effect": "quarantine",
+      "priority": 900
+    }
+  ],
+  "default_effect": "quarantine"
+}

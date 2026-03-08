@@ -1,0 +1,30 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D1-digital.review",
+  "domain_id": "D1-digital",
+  "pack_type": "review",
+  "rules": [
+    {
+      "rule_id": "D1-digital.review.github-comment",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "publish"
+        ]
+      },
+      "conditions": [
+        {
+          "provider": "github-api"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 700,
+      "evidence_requirements": [
+        "decision_record",
+        "resolution_trace"
+      ]
+    }
+  ],
+  "default_effect": "review_required"
+}

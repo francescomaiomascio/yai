@@ -1,0 +1,27 @@
+{
+  "kind": "runtime-resolution-view",
+  "version": "v1",
+  "domain_resolution_order": {
+    "kind": "domain-resolution-order",
+    "version": "v1",
+    "order": [
+      "foundation",
+      "domain-family",
+      "domain-specific",
+      "domain-policy-precedence"
+    ]
+  },
+  "compliance_resolution_order": {
+    "kind": "compliance-resolution-order",
+    "version": "v1",
+    "always_on": [
+      "retention-governance",
+      "security-supply-chain"
+    ],
+    "order": [
+      "global-compliance",
+      "domain-linked-compliance",
+      "sector-overlays"
+    ]
+  }
+}

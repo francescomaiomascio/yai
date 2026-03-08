@@ -1,0 +1,8 @@
+{
+  "kind": "domain_risk_surface",
+  "version": "v1",
+  "domain_id": "D9-environmental-climatological",
+  "risks": [
+    "exfiltration"
+  ]
+}

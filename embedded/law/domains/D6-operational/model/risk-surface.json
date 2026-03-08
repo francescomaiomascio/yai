@@ -1,0 +1,8 @@
+{
+  "kind": "domain_risk_surface",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "risks": [
+    "exfiltration"
+  ]
+}

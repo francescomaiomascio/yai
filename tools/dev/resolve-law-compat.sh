@@ -22,8 +22,8 @@ yai_resolve_law_compat_root() {
     return 0
   fi
 
-  if [[ -n "$root" && -d "$root/deps/law" ]]; then
-    echo "$root/deps/law"
+  if [[ -n "$root" && -d "$root/embedded/law" ]]; then
+    echo "$root/embedded/law"
     return 0
   fi
 

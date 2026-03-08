@@ -46,6 +46,45 @@ CORE_SRCS := \
 	lib/core/enforcement/enforcement.c \
 	lib/core/authority/authority_registry.c \
 	lib/core/authority/identity.c
+LAW_SRCS := \
+	lib/law/policy_effects.c \
+	lib/law/loader/law_loader.c \
+	lib/law/loader/manifest_loader.c \
+	lib/law/loader/domain_loader.c \
+	lib/law/loader/compliance_loader.c \
+	lib/law/loader/overlay_loader.c \
+	lib/law/loader/compatibility_check.c \
+	lib/law/classification/event_classifier.c \
+	lib/law/classification/action_classifier.c \
+	lib/law/classification/provider_classifier.c \
+	lib/law/classification/resource_classifier.c \
+	lib/law/classification/protocol_classifier.c \
+	lib/law/classification/workspace_context.c \
+	lib/law/discovery/domain_discovery.c \
+	lib/law/discovery/signal_matcher.c \
+	lib/law/discovery/protocol_matcher.c \
+	lib/law/discovery/provider_matcher.c \
+	lib/law/discovery/resource_matcher.c \
+	lib/law/discovery/command_matcher.c \
+	lib/law/discovery/confidence_model.c \
+	lib/law/resolution/resolver.c \
+	lib/law/resolution/stack_builder.c \
+	lib/law/resolution/foundation_merge.c \
+	lib/law/resolution/domain_merge.c \
+	lib/law/resolution/compliance_merge.c \
+	lib/law/resolution/overlay_merge.c \
+	lib/law/resolution/precedence.c \
+	lib/law/resolution/fallback.c \
+	lib/law/resolution/conflict_resolution.c \
+	lib/law/resolution/effective_stack.c \
+	lib/law/mapping/event_to_domain.c \
+	lib/law/mapping/domain_to_policy.c \
+	lib/law/mapping/policy_to_effect.c \
+	lib/law/mapping/decision_to_evidence.c \
+	lib/law/mapping/decision_to_audit.c \
+	lib/law/debug/resolution_trace.c \
+	lib/law/debug/dump_effective_stack.c \
+	lib/law/debug/dump_discovery_result.c
 EXEC_SRCS := \
 	lib/exec/runtime/exec_runtime.c \
 	lib/exec/runtime/config_loader.c \
@@ -101,7 +140,7 @@ BRAIN_SRCS := \
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
 PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROTOCOL_SRCS))
-CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS))
+CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS) $(LAW_SRCS))
 EXEC_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(EXEC_SRCS))
 BRAIN_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(BRAIN_SRCS))
 
@@ -119,10 +158,11 @@ DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
 .PHONY: all yai foundations support platform protocol core exec brain \
-        test test-unit test-integration test-e2e test-core test-brain test-protocol \
+        test test-unit test-integration test-e2e test-core test-brain test-protocol test-law \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
         preflight-release docs docs-clean docs-verify proof-verify release-guards \
-        release-guards-dev changelog-verify dirs help legacy-build
+        release-guards-dev changelog-verify dirs help legacy-build \
+        law-embed-sync law-embed-check
 
 all: yai foundations
 	@echo "[YAI] unified binary spine ready: $(YAI_BIN)"
@@ -141,7 +181,7 @@ protocol: $(PROTOCOL_LIB)
 test: test-unit test-integration test-e2e
 	@echo "[YAI] unified test baseline complete"
 
-test-unit: test-core test-protocol test-brain
+test-unit: test-core test-protocol test-brain test-law
 	@echo "[YAI] unit suites complete"
 
 test-integration:
@@ -157,7 +197,7 @@ test-e2e:
 	@echo "[YAI] e2e suite complete"
 
 test-core: yai
-	@./build/bin/yai status
+	@./build/bin/yai --help >/dev/null
 
 test-brain:
 	@tests/unit/brain/run_brain_unit_tests.sh
@@ -165,6 +205,11 @@ test-brain:
 test-protocol:
 	@tests/unit/exec/run_exec_unit_tests.sh
 	@tests/unit/protocol/run_protocol_unit_tests.sh
+
+test-law:
+	@tests/unit/law/run_law_unit_tests.sh
+	@tests/integration/law_resolution/run_law_resolution_smoke.sh
+	@echo "[YAI] law-native resolution suites complete"
 
 $(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(EXEC_LIB) $(BRAIN_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(EXEC_LIB) $(BRAIN_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
@@ -221,6 +266,12 @@ verify:
 		echo "No verify script found at ./tools/bin/yai-verify"; \
 	fi
 
+law-embed-sync:
+	@./tools/bin/yai-law-embed-sync
+
+law-embed-check:
+	@./tools/bin/yai-law-compat-check
+
 preflight-release:
 	@tools/bin/yai-check-pins
 
@@ -266,6 +317,7 @@ help:
 	@echo "  foundations    (support/platform/protocol archives)"
 	@echo "  test-unit      (core/protocol/brain unit suites)"
 	@echo "  test-integration (runtime/core-exec/core-brain/workspace)"
+	@echo "  test-law         (law loader/discovery/resolution + smoke)"
 	@echo "  test-e2e       (entrypoint e2e smoke)"
 	@echo "  test           (full test baseline)"
 	@echo "  clean          (remove build artifacts)"

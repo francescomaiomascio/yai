@@ -1,0 +1,19 @@
+{
+  "kind": "resource-map",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "map": {
+    "dataset": {
+      "resource_class": "dataset",
+      "risk": "provenance-loss"
+    },
+    "experiment_config": {
+      "resource_class": "experiment_config",
+      "risk": "reproducibility-break"
+    },
+    "result_artifact": {
+      "resource_class": "result_artifact",
+      "risk": "provenance-loss"
+    }
+  }
+}

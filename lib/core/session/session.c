@@ -4,6 +4,8 @@
 #include "yai_session_internal.h"
 #include <yai/api/runtime.h>
 #include <yai/core/workspace.h>
+#include <yai/law/resolver.h>
+#include <yai/law/policy_effects.h>
 
 #include <transport.h>
 #include <protocol.h>
@@ -274,7 +276,13 @@ int yai_session_handle_control_call(
     const char *payload,
     const yai_session_t *s)
 {
-    char data[256];
+    yai_law_resolution_output_t law_out;
+    char data[2048];
+    char err[256];
+    const char *status = "ok";
+    const char *code = "OK";
+    const char *reason = "accepted";
+    const char *effect_name = "unknown";
 
     if (!env || !s)
         return -1;
@@ -293,11 +301,80 @@ int yai_session_handle_control_call(
         return -1;
     }
 
+    memset(&law_out, 0, sizeof(law_out));
+    memset(err, 0, sizeof(err));
+
+    if (yai_law_resolve_control_call(s->ws.ws_id,
+                                     payload,
+                                     env->trace_id,
+                                     &law_out,
+                                     err,
+                                     sizeof(err)) != 0)
+    {
+        yai_session_send_exec_reply(
+            client_fd,
+            env,
+            "error",
+            "INTERNAL_ERROR",
+            (err[0] ? err : "law_resolution_failed"),
+            "yai.runtime.control_call",
+            "runtime",
+            NULL);
+        return -1;
+    }
+
+    effect_name = yai_law_effect_name(law_out.decision.final_effect);
+
+    if (law_out.decision.final_effect == YAI_LAW_EFFECT_DENY ||
+        law_out.decision.final_effect == YAI_LAW_EFFECT_QUARANTINE)
+    {
+        status = "error";
+        code = "POLICY_BLOCK";
+        reason = effect_name;
+    }
+    else if (law_out.decision.final_effect == YAI_LAW_EFFECT_REVIEW_REQUIRED)
+    {
+        status = "ok";
+        code = "REVIEW_REQUIRED";
+        reason = effect_name;
+    }
+
     if (snprintf(data,
                  sizeof(data),
-                 "{\"ws_id\":\"%s\",\"session_id\":%u}",
+                 "{"
+                 "\"ws_id\":\"%s\","
+                 "\"session_id\":%u,"
+                 "\"decision\":{"
+                   "\"decision_id\":\"%s\","
+                   "\"domain_id\":\"%s\","
+                   "\"effect\":\"%s\","
+                   "\"rationale\":\"%s\""
+                 "},"
+                 "\"evidence\":{"
+                   "\"trace_id\":\"%s\","
+                   "\"decision_id\":\"%s\","
+                   "\"domain_id\":\"%s\","
+                   "\"final_effect\":\"%s\","
+                   "\"provider\":\"%s\","
+                   "\"resource\":\"%s\","
+                   "\"authority_context\":\"%s\""
+                 "},"
+                 "\"resolution_trace\":%s"
+                 "}",
                  s->ws.ws_id,
-                 s->session_id) <= 0)
+                 s->session_id,
+                 law_out.decision.decision_id,
+                 law_out.decision.domain_id,
+                 effect_name,
+                 law_out.decision.rationale,
+                 law_out.evidence.trace_id,
+                 law_out.evidence.decision_id,
+                 law_out.evidence.domain_id,
+                 law_out.evidence.final_effect,
+                 law_out.evidence.provider,
+                 law_out.evidence.resource,
+                 law_out.evidence.authority_context,
+                 law_out.trace_json[0] ? law_out.trace_json : "{}") <= 0)
     {
         yai_session_send_exec_reply(
             client_fd,
@@ -314,9 +391,9 @@ int yai_session_handle_control_call(
     yai_session_send_exec_reply(
         client_fd,
         env,
-        "ok",
-        "OK",
-        "accepted",
+        status,
+        code,
+        reason,
         "yai.runtime.control_call",
         "runtime",
         data);

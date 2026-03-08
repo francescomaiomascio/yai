@@ -1,0 +1,16 @@
+{
+  "kind": "policy_exception",
+  "version": "v1",
+  "exceptions": [
+    {
+      "exception_id": "D1-digital.exception.allowlisted-contract",
+      "applies_to": [
+        "D1-digital.baseline.egress-review"
+      ],
+      "reason": "allowlisted destination under active egress contract",
+      "authority_required": "controller",
+      "expiry": "policy_defined",
+      "evidence_obligation": "record_contract_reference"
+    }
+  ]
+}

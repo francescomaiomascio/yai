@@ -1,0 +1,10 @@
+{
+  "kind": "evidence_requirement",
+  "version": "v1",
+  "domain_id": "D5-economic",
+  "required": [
+    "trace_id",
+    "decision_id",
+    "rule_id"
+  ]
+}

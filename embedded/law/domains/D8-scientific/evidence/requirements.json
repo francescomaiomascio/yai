@@ -1,0 +1,21 @@
+{
+  "kind": "evidence_requirement",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "evidence_type": "decision_record",
+  "required_fields": [
+    "trace_id",
+    "decision_id",
+    "domain_id",
+    "final_effect",
+    "rule_ids",
+    "params_hash",
+    "dataset_ref",
+    "authority_context"
+  ],
+  "severity": "critical",
+  "retention_hint": "policy-defined",
+  "trace_links": [
+    "resolution_trace"
+  ]
+}

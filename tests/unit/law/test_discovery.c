@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+#include <yai/law/classifier.h>
+#include <yai/law/discovery.h>
+
+int main(void) {
+  yai_law_classification_ctx_t ctx;
+  yai_law_discovery_result_t res;
+
+  if (yai_law_classify_event("ws", "{\"command\":\"curl\",\"resource\":\"endpoint\"}", &ctx) != 0) return 1;
+  if (yai_law_discover_domain(&ctx, &res) != 0) return 1;
+  if (strcmp(res.domain_id, "D1-digital") != 0) return 1;
+
+  if (yai_law_classify_event("ws", "{\"command\":\"experiment.run\",\"params_hash\":\"abc\",\"dataset\":\"d1\"}", &ctx) != 0) return 1;
+  if (yai_law_discover_domain(&ctx, &res) != 0) return 1;
+  if (strcmp(res.domain_id, "D8-scientific") != 0) return 1;
+
+  puts("discovery: ok");
+  return 0;
+}

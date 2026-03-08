@@ -1,0 +1,60 @@
+{
+  "kind": "domains.index",
+  "version": "v1",
+  "domains": [
+    {
+      "domain_id": "D1-digital",
+      "family": "digital",
+      "manifest_ref": "domains/D1-digital/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D2-physical",
+      "family": "physical",
+      "manifest_ref": "domains/D2-physical/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D3-biological",
+      "family": "biological",
+      "manifest_ref": "domains/D3-biological/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D4-social-institutional",
+      "family": "social-institutional",
+      "manifest_ref": "domains/D4-social-institutional/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D5-economic",
+      "family": "economic",
+      "manifest_ref": "domains/D5-economic/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D6-operational",
+      "family": "operational",
+      "manifest_ref": "domains/D6-operational/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D7-cognitive-cultural",
+      "family": "cognitive-cultural",
+      "manifest_ref": "domains/D7-cognitive-cultural/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D8-scientific",
+      "family": "scientific",
+      "manifest_ref": "domains/D8-scientific/manifest.json",
+      "status": "active"
+    },
+    {
+      "domain_id": "D9-environmental-climatological",
+      "family": "environmental-climatological",
+      "manifest_ref": "domains/D9-environmental-climatological/manifest.json",
+      "status": "active"
+    }
+  ]
+}

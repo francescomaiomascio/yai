@@ -1,77 +1,42 @@
-# YAI (C)
+# yai
 
-YAI is the systems core of the YAI platform.
+`yai` is the runtime implementation repository and the primary runtime consumer of platform law.
 
-It brings control, execution, and cognition into one governed architecture built for explicit authority, bounded behavior, and proof under operation.
+## What this repository is
 
-This repository contains the primary implementation of YAI: runtime foundations, execution layers, cognition subsystems, shared protocol and support surfaces, and the program artifacts that govern their evolution.
+- runtime host and internal runtime modules (`core`, `exec`, `brain`)
+- controlled ingress/dispatch and runtime enforcement realization
+- consumer of canonical law from `law`
 
-## Platform position
+## What this repository is not
 
-YAI operates inside a disciplined platform chain:
+- not the normative source of law
+- not the ops bureau for official qualification/collateral material
+- not the dataplane/db/query implementation scope for this tranche
 
-- normative authority: `law`
-- operator/programmatic flow: `operator -> cli -> sdk -> yai`
-- operations/evidence: `ops`
+## Cross-repo role
 
-Law defines contracts and invariants.
-CLI and SDK consume that truth.
-YAI realizes runtime ingress and dispatch.
+- `law`: canonical normative authority
+- `yai`: runtime realization
+- `ops`: official/catalog/qualification/evidence bureau
 
-## Design posture
+## Transitional dependency note
 
-- **Authority is explicit**
-- **Behavior is bounded**
-- **Execution is governable**
-- **Cognition is controlled**
-- **Evidence is first-class**
-- **Change is deliberate**
+`yai` now adopts an embedded-law-surface model:
+- canonical normativity remains in `law`
+- runtime-facing export is consumed from `embedded/law`
+- `deps/law` remains only as a legacy transition bridge/fallback
 
-## Scope
+Primary local commands:
+- `tools/bin/yai-law-embed-sync`
+- `tools/bin/yai-law-compat-check`
 
-This repository owns the governed implementation of YAI and the program artifacts required to evolve it under control.
+## Scope note
 
-It does not own canonical law (`law`) or shared cross-repo governance tooling (`infra`).
+Transitional refactor and mapping documents are quarantined under:
+- `archive_tmp/`
 
-## Build
-
-```bash
-make yai
-make dist
-```
-
-## Test/Verify
-
-```bash
-make test
-make verify
-```
-
-Primary runtime entrypoints:
-- `build/bin/yai`
-
-Repository topology is authoritative under:
-- `cmd/`
-- `include/yai/`
-- `lib/`
-- `tests/`
-
-## Documentation
+## Start here
 
 - `docs/README.md`
-
-## Dependency discipline
-
-Canonical law is consumed as a pinned dependency through `deps/law/`.  
-CLI/SDK integration is tracked via compatibility declarations, not local `deps/*.ref` pins.
-
-Divergence from pinned law or aligned interfaces must be corrected in implementation.
-
-## License
-
-Apache-2.0. See `LICENSE`, `NOTICE`, and `THIRD_PARTY_NOTICES.md`.
-
-## Law compatibility declaration
-
-- Human-readable declaration: `LAW_COMPATIBILITY.md`
-- Machine-readable declaration: `law-compatibility.v1.json`
+- `docs/architecture/repository-scope.md`

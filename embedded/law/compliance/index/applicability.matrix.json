@@ -1,0 +1,20 @@
+{
+  "kind": "applicability.matrix",
+  "version": "v1",
+  "rules": [
+    {
+      "compliance_id": "gdpr-eu",
+      "domains": [
+        "D1-digital",
+        "D8-scientific"
+      ]
+    },
+    {
+      "compliance_id": "ai-act",
+      "domains": [
+        "D1-digital",
+        "D8-scientific"
+      ]
+    }
+  ]
+}

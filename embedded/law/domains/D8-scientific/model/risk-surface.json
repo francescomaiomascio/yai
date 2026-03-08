@@ -1,0 +1,23 @@
+{
+  "kind": "domain_risk_surface",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "risks": [
+    {
+      "risk_id": "unsafe-experimental-drift",
+      "severity": "high"
+    },
+    {
+      "risk_id": "reproducibility-break",
+      "severity": "critical"
+    },
+    {
+      "risk_id": "provenance-loss",
+      "severity": "high"
+    },
+    {
+      "risk_id": "unauthorized-parameter-mutation",
+      "severity": "critical"
+    }
+  ]
+}

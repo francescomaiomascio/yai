@@ -1,0 +1,31 @@
+{
+  "kind": "publish.index",
+  "version": "v1",
+  "targets": [
+    {
+      "target": "docs",
+      "includes": [
+        "docs/architecture",
+        "docs/authoring",
+        "docs/references"
+      ]
+    },
+    {
+      "target": "runtime-embedded",
+      "includes": [
+        "manifests",
+        "domains",
+        "compliance",
+        "grammar/schema"
+      ]
+    },
+    {
+      "target": "audit-reference",
+      "includes": [
+        "registry",
+        "contracts",
+        "formal"
+      ]
+    }
+  ]
+}

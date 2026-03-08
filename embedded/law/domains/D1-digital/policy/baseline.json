@@ -1,0 +1,42 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D1-digital.baseline",
+  "domain_id": "D1-digital",
+  "pack_type": "baseline",
+  "rules": [
+    {
+      "rule_id": "D1-digital.baseline.egress-review",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "egress",
+          "publish"
+        ]
+      },
+      "conditions": [
+        {
+          "condition_id": "external-target",
+          "resource": "external_endpoint"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 300,
+      "exceptions": [
+        "D1-digital.exception.allowlisted-contract"
+      ]
+    }
+  ],
+  "precedence": [
+    "deny",
+    "quarantine",
+    "review_required",
+    "allow"
+  ],
+  "default_effect": "review_required",
+  "compatible_compliance": [
+    "gdpr-eu",
+    "retention-governance",
+    "security-supply-chain"
+  ]
+}

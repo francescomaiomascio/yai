@@ -1,0 +1,27 @@
+{
+  "kind": "provider-matches",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "providers": [
+    {
+      "provider_id": "curl",
+      "class": "network-client",
+      "default_action": "egress"
+    },
+    {
+      "provider_id": "otel-exporter",
+      "class": "telemetry-exporter",
+      "default_action": "publish"
+    },
+    {
+      "provider_id": "aws-s3",
+      "class": "object-storage",
+      "default_action": "publish"
+    },
+    {
+      "provider_id": "github-api",
+      "class": "remote-collaboration",
+      "default_action": "publish"
+    }
+  ]
+}

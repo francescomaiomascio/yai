@@ -1,0 +1,21 @@
+{
+  "kind": "resolution_trace",
+  "version": "v1",
+  "template": {
+    "trace_id": "trace-<id>",
+    "inputs": {
+      "provider_id": "<provider>",
+      "command_id": "<command>",
+      "resource_class": "<resource>",
+      "authority_context": "<authority-context>"
+    },
+    "matched_domain": "D1-digital",
+    "matched_compliance": [
+      "gdpr-eu",
+      "retention-governance",
+      "security-supply-chain"
+    ],
+    "rules_applied": [],
+    "final_effect": "review_required"
+  }
+}

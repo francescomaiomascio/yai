@@ -1,0 +1,25 @@
+{
+  "kind": "authority-map",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "required_roles": [
+    "operator",
+    "controller"
+  ],
+  "action_authority": {
+    "egress": [
+      "controller"
+    ],
+    "publish": [
+      "controller"
+    ],
+    "retrieve": [
+      "operator",
+      "controller"
+    ],
+    "transform": [
+      "operator",
+      "controller"
+    ]
+  }
+}

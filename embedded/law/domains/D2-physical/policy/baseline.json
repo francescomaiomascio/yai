@@ -1,0 +1,31 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D2-physical.baseline",
+  "domain_id": "D2-physical",
+  "pack_type": "baseline",
+  "rules": [
+    {
+      "rule_id": "D2-physical.baseline.allow",
+      "status": "active",
+      "conditions": [
+        {
+          "action": "egress"
+        }
+      ],
+      "effect": "allow",
+      "priority": 100
+    }
+  ],
+  "precedence": [
+    "deny",
+    "quarantine",
+    "review_required",
+    "allow"
+  ],
+  "default_effect": "review_required",
+  "compatible_compliance": [
+    "gdpr-eu",
+    "ai-act"
+  ]
+}

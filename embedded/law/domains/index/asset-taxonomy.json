@@ -1,0 +1,11 @@
+{
+  "kind": "asset-taxonomy",
+  "version": "v1",
+  "assets": [
+    "artifact",
+    "credential",
+    "data",
+    "infrastructure",
+    "model"
+  ]
+}

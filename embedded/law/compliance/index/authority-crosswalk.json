@@ -1,0 +1,21 @@
+{
+  "kind": "authority-crosswalk",
+  "version": "v1",
+  "crosswalk": [
+    {
+      "compliance_id": "gdpr-eu",
+      "roles": [
+        "operator",
+        "auditor"
+      ]
+    },
+    {
+      "compliance_id": "ai-act",
+      "roles": [
+        "operator",
+        "controller",
+        "auditor"
+      ]
+    }
+  ]
+}

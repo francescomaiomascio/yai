@@ -1,0 +1,23 @@
+{
+  "kind": "resource-matches",
+  "version": "v1",
+  "domain_id": "D8-scientific",
+  "resources": [
+    {
+      "resource_class": "experiment_config",
+      "interpret_as": "reproducibility-anchor"
+    },
+    {
+      "resource_class": "dataset",
+      "interpret_as": "scientific-input"
+    },
+    {
+      "resource_class": "model",
+      "interpret_as": "scientific-artifact"
+    },
+    {
+      "resource_class": "result_artifact",
+      "interpret_as": "publication-target"
+    }
+  ]
+}

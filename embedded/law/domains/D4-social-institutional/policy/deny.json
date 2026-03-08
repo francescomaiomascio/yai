@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D4-social-institutional.deny",
+  "domain_id": "D4-social-institutional",
+  "pack_type": "deny",
+  "rules": [
+    {
+      "rule_id": "D4-social-institutional.deny.highrisk",
+      "status": "active",
+      "conditions": [
+        {
+          "resource": "restricted"
+        }
+      ],
+      "effect": "deny",
+      "priority": 1000
+    }
+  ],
+  "default_effect": "deny"
+}

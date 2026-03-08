@@ -1,0 +1,12 @@
+{
+  "kind": "action-taxonomy",
+  "version": "v1",
+  "actions": [
+    "actuate",
+    "egress",
+    "infer",
+    "publish",
+    "retrieve",
+    "transform"
+  ]
+}

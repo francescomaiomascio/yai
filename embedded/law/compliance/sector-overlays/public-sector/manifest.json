@@ -1,0 +1,8 @@
+{
+  "kind": "compliance_overlay",
+  "version": "v1",
+  "overlay_id": "sector.public-sector",
+  "base_compliance_id": "gdpr-eu",
+  "sector": "public-sector",
+  "rules": []
+}

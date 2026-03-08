@@ -1,0 +1,24 @@
+{
+  "kind": "compliance_manifest",
+  "version": "v1",
+  "compliance_id": "retention-governance",
+  "name": "retention-governance",
+  "applies_to_domains": [
+    "D1-digital",
+    "D2-physical",
+    "D3-biological",
+    "D4-social-institutional",
+    "D5-economic",
+    "D6-operational",
+    "D7-cognitive-cultural",
+    "D8-scientific",
+    "D9-environmental-climatological"
+  ],
+  "policy_refs": [
+    "compliance/retention-governance/policy/baseline.json"
+  ],
+  "mapping_refs": [
+    "compliance/retention-governance/mappings/domains.json"
+  ],
+  "overlay_refs": []
+}

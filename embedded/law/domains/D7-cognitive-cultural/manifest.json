@@ -1,0 +1,18 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D7-cognitive-cultural",
+  "domain_name": "D7-cognitive-cultural",
+  "family": "cognitive-cultural",
+  "status": "active",
+  "discovery_ref": "domains/D7-cognitive-cultural/discovery/signals.json",
+  "model_ref": "domains/D7-cognitive-cultural/model/actions.json",
+  "policy_refs": [
+    "domains/D7-cognitive-cultural/policy/baseline.json",
+    "domains/D7-cognitive-cultural/policy/deny.json",
+    "domains/D7-cognitive-cultural/policy/quarantine.json",
+    "domains/D7-cognitive-cultural/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D7-cognitive-cultural/evidence/requirements.json",
+  "compliance_links": []
+}

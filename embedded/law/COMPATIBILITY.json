@@ -1,0 +1,11 @@
+{
+  "kind": "embedded-law-compatibility",
+  "version": "v1",
+  "law_version": "0.1.0",
+  "compatibility_ref": "manifests/compatibility.matrix.json",
+  "runtime_entrypoints_ref": "runtime.entrypoints.json",
+  "notes": [
+    "embedded surface is derived from canonical law export boundary",
+    "deps/law remains transitional fallback only"
+  ]
+}

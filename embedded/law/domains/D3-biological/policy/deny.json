@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D3-biological.deny",
+  "domain_id": "D3-biological",
+  "pack_type": "deny",
+  "rules": [
+    {
+      "rule_id": "D3-biological.deny.highrisk",
+      "status": "active",
+      "conditions": [
+        {
+          "resource": "restricted"
+        }
+      ],
+      "effect": "deny",
+      "priority": 1000
+    }
+  ],
+  "default_effect": "deny"
+}

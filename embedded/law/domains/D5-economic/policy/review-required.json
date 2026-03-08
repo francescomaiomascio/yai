@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D5-economic.review",
+  "domain_id": "D5-economic",
+  "pack_type": "review",
+  "rules": [
+    {
+      "rule_id": "D5-economic.review.default",
+      "status": "active",
+      "conditions": [
+        {
+          "action": "publish"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 700
+    }
+  ],
+  "default_effect": "review_required"
+}

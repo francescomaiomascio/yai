@@ -1,0 +1,8 @@
+{
+  "kind": "protocol-matches",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "protocols": [
+    "yai.control.call.v1"
+  ]
+}

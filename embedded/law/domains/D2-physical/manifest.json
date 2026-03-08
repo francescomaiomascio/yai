@@ -1,0 +1,18 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D2-physical",
+  "domain_name": "D2-physical",
+  "family": "physical",
+  "status": "active",
+  "discovery_ref": "domains/D2-physical/discovery/signals.json",
+  "model_ref": "domains/D2-physical/model/actions.json",
+  "policy_refs": [
+    "domains/D2-physical/policy/baseline.json",
+    "domains/D2-physical/policy/deny.json",
+    "domains/D2-physical/policy/quarantine.json",
+    "domains/D2-physical/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D2-physical/evidence/requirements.json",
+  "compliance_links": []
+}

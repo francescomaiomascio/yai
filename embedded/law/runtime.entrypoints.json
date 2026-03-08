@@ -1,0 +1,14 @@
+{
+  "kind": "runtime.entrypoints",
+  "version": "v1",
+  "entrypoints": [
+    {
+      "entrypoint_id": "default-runtime",
+      "law_manifest_ref": "manifests/law.manifest.json",
+      "domains_ref": "domains/index/domains.index.json",
+      "compliance_ref": "compliance/index/compliance.index.json",
+      "resolution_order_ref": "manifests/domain-resolution-order.json",
+      "compatibility_ref": "manifests/compatibility.matrix.json"
+    }
+  ]
+}

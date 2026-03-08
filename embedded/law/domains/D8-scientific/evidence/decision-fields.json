@@ -1,0 +1,15 @@
+{
+  "kind": "decision-fields",
+  "version": "v1",
+  "fields": [
+    "trace_id",
+    "decision_id",
+    "domain_id",
+    "rule_ids",
+    "final_effect",
+    "params_hash",
+    "dataset_ref",
+    "authority_context",
+    "compliance_layers"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "kind": "discovery_profile",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "signals": [
+    {
+      "signal_type": "domain_hint",
+      "source": "command",
+      "match_mode": "contains",
+      "value": "d6-operational",
+      "weight": 0.8
+    }
+  ]
+}

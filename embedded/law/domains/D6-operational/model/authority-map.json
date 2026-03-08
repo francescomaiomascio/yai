@@ -1,0 +1,9 @@
+{
+  "kind": "authority-map",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "required_roles": [
+    "operator",
+    "controller"
+  ]
+}

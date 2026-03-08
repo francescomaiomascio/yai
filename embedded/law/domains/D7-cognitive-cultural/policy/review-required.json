@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D7-cognitive-cultural.review",
+  "domain_id": "D7-cognitive-cultural",
+  "pack_type": "review",
+  "rules": [
+    {
+      "rule_id": "D7-cognitive-cultural.review.default",
+      "status": "active",
+      "conditions": [
+        {
+          "action": "publish"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 700
+    }
+  ],
+  "default_effect": "review_required"
+}

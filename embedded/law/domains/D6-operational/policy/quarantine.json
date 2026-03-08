@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D6-operational.quarantine",
+  "domain_id": "D6-operational",
+  "pack_type": "quarantine",
+  "rules": [
+    {
+      "rule_id": "D6-operational.quarantine.ambiguous",
+      "status": "active",
+      "conditions": [
+        {
+          "authority": "unknown"
+        }
+      ],
+      "effect": "quarantine",
+      "priority": 900
+    }
+  ],
+  "default_effect": "quarantine"
+}

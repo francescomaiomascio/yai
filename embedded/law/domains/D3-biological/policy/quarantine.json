@@ -1,0 +1,21 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D3-biological.quarantine",
+  "domain_id": "D3-biological",
+  "pack_type": "quarantine",
+  "rules": [
+    {
+      "rule_id": "D3-biological.quarantine.ambiguous",
+      "status": "active",
+      "conditions": [
+        {
+          "authority": "unknown"
+        }
+      ],
+      "effect": "quarantine",
+      "priority": 900
+    }
+  ],
+  "default_effect": "quarantine"
+}

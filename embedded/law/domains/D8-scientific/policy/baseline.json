@@ -1,0 +1,58 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D8-scientific.baseline",
+  "domain_id": "D8-scientific",
+  "pack_type": "baseline",
+  "rules": [
+    {
+      "rule_id": "D8-scientific.baseline.lock-required",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "run-experiment",
+          "parameter-modify"
+        ]
+      },
+      "conditions": [
+        {
+          "condition_id": "missing-params-hash",
+          "context_flag": "params_hash_absent"
+        }
+      ],
+      "effect": "deny",
+      "priority": 1050,
+      "evidence_requirements": [
+        "decision_record",
+        "resolution_trace"
+      ]
+    },
+    {
+      "rule_id": "D8-scientific.baseline.review-black-box",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "run-experiment"
+        ]
+      },
+      "conditions": [
+        {
+          "context_flag": "black_box_mode"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 600
+    }
+  ],
+  "precedence": [
+    "deny",
+    "quarantine",
+    "review_required",
+    "allow"
+  ],
+  "default_effect": "review_required",
+  "compatible_compliance": [
+    "ai-act",
+    "retention-governance"
+  ]
+}

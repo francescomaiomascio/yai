@@ -1,0 +1,23 @@
+{
+  "kind": "provider-map",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "map": {
+    "curl": {
+      "action": "egress",
+      "risk": "exfiltration"
+    },
+    "otel-exporter": {
+      "action": "publish",
+      "risk": "external-disclosure"
+    },
+    "aws-s3": {
+      "action": "publish",
+      "risk": "unauthorized-publication"
+    },
+    "github-api": {
+      "action": "publish",
+      "risk": "unauthorized-publication"
+    }
+  }
+}

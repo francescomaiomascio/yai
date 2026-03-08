@@ -1,0 +1,23 @@
+{
+  "kind": "command-map",
+  "version": "v1",
+  "domain_id": "D1-digital",
+  "map": {
+    "curl": {
+      "action": "egress",
+      "trial_ref": "RT-0.1-001-D1-EGRESS-CURL"
+    },
+    "otel.export": {
+      "action": "publish",
+      "trial_ref": "RT-0.1-002-D1-EGRESS-OTEL"
+    },
+    "s3.put_object": {
+      "action": "publish",
+      "trial_ref": "RT-0.1-003-D1-EGRESS-S3"
+    },
+    "github.issues.comment.create": {
+      "action": "publish",
+      "trial_ref": "RT-0.1-004-D1-GITHUB-ISSUE-COMMENT"
+    }
+  }
+}

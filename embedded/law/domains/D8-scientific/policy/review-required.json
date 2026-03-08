@@ -1,0 +1,26 @@
+{
+  "kind": "domain_policy_pack",
+  "version": "v1",
+  "pack_id": "D8-scientific.review",
+  "domain_id": "D8-scientific",
+  "pack_type": "review",
+  "rules": [
+    {
+      "rule_id": "D8-scientific.review.parameter-lock-override",
+      "status": "active",
+      "scope": {
+        "actions": [
+          "run-experiment"
+        ]
+      },
+      "conditions": [
+        {
+          "context_flag": "temporary_override_requested"
+        }
+      ],
+      "effect": "review_required",
+      "priority": 700
+    }
+  ],
+  "default_effect": "review_required"
+}

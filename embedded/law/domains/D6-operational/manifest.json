@@ -1,0 +1,18 @@
+{
+  "kind": "domain_manifest",
+  "version": "v1",
+  "domain_id": "D6-operational",
+  "domain_name": "D6-operational",
+  "family": "operational",
+  "status": "active",
+  "discovery_ref": "domains/D6-operational/discovery/signals.json",
+  "model_ref": "domains/D6-operational/model/actions.json",
+  "policy_refs": [
+    "domains/D6-operational/policy/baseline.json",
+    "domains/D6-operational/policy/deny.json",
+    "domains/D6-operational/policy/quarantine.json",
+    "domains/D6-operational/policy/review-required.json"
+  ],
+  "evidence_ref": "domains/D6-operational/evidence/requirements.json",
+  "compliance_links": []
+}
