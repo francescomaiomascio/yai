@@ -10,7 +10,7 @@ This repository contains the primary implementation of YAI: runtime foundations,
 
 YAI operates inside a disciplined platform chain:
 
-`yai-law` → `yai-sdk` → `yai-cli` → `yai` → `yai-ops`
+`law` → `sdk` → `cli` → `yai` → `ops`
 
 Each layer carries constraints forward.  
 Law defines them. Interfaces expose them. YAI implements them. Operations verify them.
@@ -28,7 +28,7 @@ Law defines them. Interfaces expose them. YAI implements them. Operations verify
 
 This repository owns the governed implementation of YAI and the program artifacts required to evolve it under control.
 
-It does not own canonical law (`yai-law`) or shared cross-repo governance tooling (`yai-infra`).
+It does not own canonical law (`law`) or shared cross-repo governance tooling (`infra`).
 
 ## Build
 
@@ -62,7 +62,7 @@ Repository topology is authoritative under:
 ## Dependency discipline
 
 Canonical law is consumed as a pinned dependency through `deps/yai-law/`.  
-SDK alignment is tracked through `deps/yai-sdk.ref`.
+CLI/SDK integration is tracked via compatibility declarations, not local `deps/*.ref` pins.
 
 Divergence from pinned law or aligned interfaces must be corrected in implementation.
 

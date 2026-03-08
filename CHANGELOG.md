@@ -18,7 +18,7 @@ and this project adheres to Semantic Versioning.
 
 - kernel: implemented real `yai.kernel.ws` runtime actions (`create|reset|destroy`) on `control.call`, creating/removing workspace layout under `~/.yai/run/{workspace_id}/` with manifest generation.
 - core: split command dispatch surfaces into dedicated `core/commands` modules for kernel, root, and engine to keep runtime core paths focused on process/session orchestration.
-- release: align `deps/yai-law` and `deps/yai-cli.ref` to yai-law/yai-cli main heads for strict pin gates.
+- dependency policy: removed `deps/yai-cli.ref` and `deps/yai-sdk.ref`; CLI/SDK alignment is now compatibility-declared instead of structurally pinned in `yai`.
 - core: make workspace id validation portable in C11 by removing `strnlen` dependency in `root/include/ws_id.h`.
 
 - Aligned dependency and docs/tooling naming from `yai-specs` to `yai-law` in `yai` (canonical `deps/yai-law`, compatibility alias, sync wrappers, governance suite pinned to `gov-suite-v0.1.0`).
