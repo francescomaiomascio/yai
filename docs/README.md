@@ -35,6 +35,9 @@ Those files are historical/transitional and not architecture authority.
 - `architecture/workspace-session-binding.md`
 - `architecture/workspace-inspect-surfaces.md`
 - `architecture/workspace-normative-execution-flow.md`
+- `architecture/workspace-validation-matrix.md`
+- `architecture/workspace-transitional-residue.md`
+- `architecture/workspace-closeout-ws6.md`
 - `developer/workspace-inspect-model.md`
 - `developer/workspace-prompt-context.md`
 - `developer/workspace-policy-inspection.md`

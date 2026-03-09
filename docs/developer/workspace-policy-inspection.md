@@ -9,7 +9,7 @@ WS-3 introduces inspectability primitives so developers can query workspace stat
 3. `yai.workspace.status`
 4. `yai.workspace.domain_get`
 5. Optional: `yai.workspace.domain_set` (declared context)
-6. Execute runtime control call
+6. Execute runtime action (`yai.workspace.run <action> [tokens...]`)
 7. `yai.workspace.policy_effective`
 8. `yai.workspace.debug_resolution`
 9. `yai.workspace.inspect`

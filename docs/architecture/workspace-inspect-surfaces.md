@@ -12,12 +12,14 @@ Surfaces:
 - `yai.workspace.inspect`
 - `yai.workspace.domain.get`
 - `yai.workspace.domain.set`
+- `yai.workspace.run`
 - `yai.workspace.policy.effective`
 - `yai.workspace.debug.resolution`
 
 Canonical IDs for registry/CLI are:
 - `yai.workspace.domain_get`
 - `yai.workspace.domain_set`
+- `yai.workspace.run`
 - `yai.workspace.policy_effective`
 - `yai.workspace.debug_resolution`
 

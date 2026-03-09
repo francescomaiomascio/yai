@@ -192,6 +192,7 @@ test-integration:
 	@tests/integration/workspace_lifecycle/workspace_session_binding_contract_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_inspect_surfaces_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_real_flow_v1.sh
+	@tests/integration/workspace_lifecycle/workspace_negative_paths_v1.sh
 	@tests/integration/runtime_handshake/run_runtime_handshake_smoke.sh
 	@echo "[YAI] integration suites complete"
 

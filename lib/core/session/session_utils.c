@@ -1278,6 +1278,14 @@ int yai_session_set_workspace_declared_context(const char *family,
     else
         snprintf(resolved_family, sizeof(resolved_family), "%s", info.declared_control_family);
 
+    /* Deterministic error precedence: explicit family validity is checked before specialization matching. */
+    if (family && family[0] && !yai_embedded_family_exists(resolved_family))
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "family_not_found");
+        return -1;
+    }
+
     if (specialization && specialization[0])
     {
         char inferred_family[96] = {0};
