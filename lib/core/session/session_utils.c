@@ -1014,9 +1014,34 @@ static int yai_workspace_has_effective_context(const yai_workspace_runtime_info_
 static int yai_embedded_law_path(char *out, size_t out_cap, const char *rel)
 {
     const char *root = getenv("YAI_LAW_EMBED_ROOT");
-    const char *base = (root && root[0]) ? root : "embedded/law";
+    const char *base = NULL;
+    const char *candidates[] = {"embedded/law", "../yai/embedded/law", "../../yai/embedded/law"};
+    int i;
+    FILE *probe = NULL;
     if (!out || out_cap == 0)
         return -1;
+    if (root && root[0])
+    {
+        base = root;
+    }
+    else
+    {
+        for (i = 0; i < (int)(sizeof(candidates) / sizeof(candidates[0])); i++)
+        {
+            char p[MAX_PATH_LEN];
+            if (snprintf(p, sizeof(p), "%s/classification/classification-map.json", candidates[i]) <= 0)
+                continue;
+            probe = fopen(p, "rb");
+            if (probe)
+            {
+                fclose(probe);
+                base = candidates[i];
+                break;
+            }
+        }
+    }
+    if (!base)
+        base = "embedded/law";
     if (snprintf(out, out_cap, "%s/%s", base, rel ? rel : "") <= 0)
         return -1;
     return 0;

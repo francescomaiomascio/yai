@@ -68,11 +68,15 @@ int yai_law_json_contains(const char *json, const char *needle) {
 
 static int yai_law_resolve_root(char *out, size_t out_cap) {
   const char *env = getenv("YAI_LAW_EMBED_ROOT");
+  const char *candidates[] = {"embedded/law", "../yai/embedded/law", "../../yai/embedded/law"};
+  size_t i;
   if (env && env[0] && yai_law_path_exists(env)) {
     return yai_law_safe_snprintf(out, out_cap, "%s", env);
   }
-  if (yai_law_path_exists("embedded/law")) {
-    return yai_law_safe_snprintf(out, out_cap, "%s", "embedded/law");
+  for (i = 0; i < sizeof(candidates) / sizeof(candidates[0]); i++) {
+    if (yai_law_path_exists(candidates[i])) {
+      return yai_law_safe_snprintf(out, out_cap, "%s", candidates[i]);
+    }
   }
   return -1;
 }
