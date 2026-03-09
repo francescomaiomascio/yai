@@ -351,6 +351,8 @@ int yai_session_handle_control_call(
     const char *code = "OK";
     const char *reason = "accepted";
     const char *effect_name = "unknown";
+    const char *runtime_ws_id = NULL;
+    int workspace_run_macro = 0;
 
     if (!env || !s)
         return -1;
@@ -641,6 +643,7 @@ int yai_session_handle_control_call(
         if (strcmp(command_id, "yai.workspace.run") == 0)
         {
             /* Execution macro: keep workspace-aware command semantics but resolve through runtime law path. */
+            workspace_run_macro = 1;
             snprintf(command_id, sizeof(command_id), "%s", "yai.runtime.ping");
         }
     }
@@ -648,8 +651,31 @@ int yai_session_handle_control_call(
     memset(&law_out, 0, sizeof(law_out));
     memset(err, 0, sizeof(err));
     law_payload[0] = '\0';
+    runtime_ws_id = s->ws.ws_id;
 
-    if (yai_session_read_workspace_info(s->ws.ws_id, &ws_info) == 0 && ws_info.exists) {
+    if (workspace_run_macro)
+    {
+        int cur = yai_session_resolve_current_workspace(&ws_info,
+                                                        binding_status,
+                                                        sizeof(binding_status),
+                                                        binding_err,
+                                                        sizeof(binding_err));
+        if (cur != 0 || strcmp(binding_status, "active") != 0)
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "error",
+                                        "BAD_ARGS",
+                                        "workspace_not_active",
+                                        "yai.workspace.run",
+                                        "runtime",
+                                        NULL);
+            return -1;
+        }
+        runtime_ws_id = ws_info.ws_id;
+    }
+
+    if (yai_session_read_workspace_info(runtime_ws_id, &ws_info) == 0 && ws_info.exists) {
         if (yai_session_build_workspace_enriched_payload(payload, &ws_info, law_payload, sizeof(law_payload)) != 0) {
             (void)snprintf(law_payload, sizeof(law_payload), "%s", payload);
         }
@@ -657,7 +683,7 @@ int yai_session_handle_control_call(
         (void)snprintf(law_payload, sizeof(law_payload), "%s", payload);
     }
 
-    if (yai_law_resolve_control_call(s->ws.ws_id,
+    if (yai_law_resolve_control_call(runtime_ws_id,
                                      law_payload,
                                      env->trace_id,
                                      &law_out,
@@ -678,7 +704,7 @@ int yai_session_handle_control_call(
 
     effect_name = yai_law_effect_name(law_out.decision.final_effect);
 
-    (void)yai_session_record_resolution_snapshot(s->ws.ws_id, &law_out, err, sizeof(err));
+    (void)yai_session_record_resolution_snapshot(runtime_ws_id, &law_out, err, sizeof(err));
 
     if (law_out.decision.final_effect == YAI_LAW_EFFECT_DENY ||
         law_out.decision.final_effect == YAI_LAW_EFFECT_QUARANTINE)
@@ -716,7 +742,7 @@ int yai_session_handle_control_call(
                  "},"
                  "\"resolution_trace\":%s"
                  "}",
-                 s->ws.ws_id,
+                 runtime_ws_id,
                  s->session_id,
                  law_out.decision.decision_id,
                  law_out.decision.domain_id,
