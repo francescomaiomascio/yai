@@ -7,6 +7,7 @@ WS-6 closes the initial workspace refoundation cycle.
 - canonical command path is consistent across `law -> yai -> cli`
 - workspace command set is stable (`current/status/inspect/domain/policy/debug/run`)
 - first real workspace-driven scenario is implemented (`economic/payments`)
+- `workspace.run` resolves using active workspace binding and persists post-action summaries
 - negative-path coverage exists for domain validation and binding states
 - runbooks/docs now describe one coherent operator flow
 

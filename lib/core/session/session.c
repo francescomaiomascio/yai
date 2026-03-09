@@ -352,6 +352,7 @@ int yai_session_handle_control_call(
     const char *reason = "accepted";
     const char *effect_name = "unknown";
     const char *runtime_ws_id = NULL;
+    char runtime_ws_id_buf[MAX_WS_ID_LEN];
     int workspace_run_macro = 0;
 
     if (!env || !s)
@@ -651,7 +652,9 @@ int yai_session_handle_control_call(
     memset(&law_out, 0, sizeof(law_out));
     memset(err, 0, sizeof(err));
     law_payload[0] = '\0';
-    runtime_ws_id = s->ws.ws_id;
+    runtime_ws_id_buf[0] = '\0';
+    snprintf(runtime_ws_id_buf, sizeof(runtime_ws_id_buf), "%s", s->ws.ws_id);
+    runtime_ws_id = runtime_ws_id_buf;
 
     if (workspace_run_macro)
     {
@@ -672,7 +675,8 @@ int yai_session_handle_control_call(
                                         NULL);
             return -1;
         }
-        runtime_ws_id = ws_info.ws_id;
+        snprintf(runtime_ws_id_buf, sizeof(runtime_ws_id_buf), "%s", ws_info.ws_id);
+        runtime_ws_id = runtime_ws_id_buf;
     }
 
     if (yai_session_read_workspace_info(runtime_ws_id, &ws_info) == 0 && ws_info.exists) {
