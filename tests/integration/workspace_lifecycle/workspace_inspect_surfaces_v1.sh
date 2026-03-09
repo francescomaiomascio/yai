@@ -133,8 +133,24 @@ assert r["status"] == "ok"
 assert r["data"]["identity"]["workspace_id"] == WS
 assert "normative" in r["data"]
 assert "security" in r["data"]
+assert "governance" in r["data"]
 assert r["data"]["security"]["level_declared"] in ("logical", "scoped", "isolated", "sandboxed")
 assert r["data"]["security"]["capabilities"]["sandbox_ready"] is True
+
+# policy attach/detach semantic baseline
+r = call("system", "yai.workspace.policy_attach", ["customer.default.org-workspace-contextual-review"])
+assert r["status"] == "ok"
+assert r["data"]["action"] == "attach"
+assert "customer.default.org-workspace-contextual-review" in r["data"]["policy_attachments"]
+
+r = call("system", "yai.workspace.policy_effective")
+assert r["status"] == "ok"
+assert "customer.default.org-workspace-contextual-review" in r["data"]["policy_attachments"]
+assert r["data"]["policy_attachment_count"] >= 1
+
+r = call("system", "yai.workspace.policy_detach", ["customer.default.org-workspace-contextual-review"])
+assert r["status"] == "ok"
+assert r["data"]["action"] == "detach"
 
 # domain set/get valid
 r = call("system", "yai.workspace.domain_set", ["--family", "economic", "--specialization", "payments"])

@@ -106,6 +106,8 @@ typedef struct {
   double inferred_confidence;
   char effective_stack_ref[192];
   char effective_overlays_ref[192];
+  char policy_attachments_csv[512];
+  int policy_attachment_count;
   char last_effect_summary[192];
   char last_authority_summary[192];
   char last_evidence_summary[192];

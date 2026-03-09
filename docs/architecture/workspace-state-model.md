@@ -46,3 +46,25 @@ Schema:
 
 The manifest is canonical for workspace runtime state and architecture metadata.
 
+
+
+### Governance attachment state
+
+- attached governance objects
+- attachment validity/activation in effective stack
+
+### Last governed event state
+
+- last event ref
+- last flow stage
+- last business specialization
+- last enforcement specialization
+
+### Operational outcome state
+
+- last effect/authority/evidence
+- review state
+- operational summary
+
+
+See also: `docs/architecture/workspace-flow-state-model.md`.

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.law.agent_governance_action.v1",
+  "title": "Agent Governance Action Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action_id",
+    "action_type",
+    "target_object_id",
+    "proposal_mode",
+    "requires_confirmation",
+    "source_refs",
+    "status"
+  ],
+  "properties": {
+    "action_id": { "type": "string", "minLength": 3 },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "propose_parse",
+        "propose_normalize",
+        "propose_build_candidate",
+        "propose_review_submit",
+        "request_review_approval",
+        "request_dry_run",
+        "request_apply_attach",
+        "request_apply_detach"
+      ]
+    },
+    "target_object_id": { "type": "string", "minLength": 3 },
+    "workspace_target": { "type": ["string", "null"] },
+    "proposal_mode": {
+      "type": "string",
+      "enum": ["assistive", "proposal_only", "request_transition"]
+    },
+    "requested_transition": { "type": ["string", "null"] },
+    "explanation": { "type": "string" },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "confidence_hint": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "requires_confirmation": { "type": "boolean" },
+    "allowed_by_policy": { "type": "boolean" },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted_for_review", "blocked", "executed"]
+    }
+  }
+}

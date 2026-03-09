@@ -54,6 +54,31 @@ Source shape: `yai_workspace_inspect_v1_t` (`include/yai/core/workspace.h`).
 - `debug_mode`
 - `last_resolution_trace_ref`
 
+### Event surface
+
+- `event_id`
+- `flow_stage`
+- `declared_scenario_specialization`
+- `business_specialization`
+- `enforcement_specialization`
+- `external_effect_boundary`
+
+### Operational state
+
+- `binding_state`
+- `attached_governance_objects`
+- `active_effective_stack`
+- `last_event_ref`
+- `last_flow_stage`
+- `last_business_specialization`
+- `last_enforcement_specialization`
+- `last_effect`
+- `last_authority`
+- `last_evidence`
+- `last_trace_ref`
+- `review_state`
+- `operational_summary`
+
 ### Summary
 
 - `last_resolution_summary`
@@ -98,3 +123,7 @@ Workspace inspect model aligns with runtime law flow:
 6. effective decision
 
 Workspace stores declared/inferred/effective checkpoints so resolution output remains inspectable outside raw traces.
+Event-surface checkpoints preserve business semantics separately from enforcement specialization.
+
+
+See `docs/architecture/workspace-flow-state-model.md` for the canonical operational model.

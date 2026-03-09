@@ -62,3 +62,9 @@ yai ws inspect
 - digital family/specialization are visible in run output
 - digital summaries are visible in policy/debug/inspect
 - publication/distribution semantics move between deny/quarantine/review based on sink and authority context
+- event surface keeps both business and enforcement semantics:
+  - `declared_scenario_specialization` (for example `remote-publication`)
+  - `business_specialization` (scenario meaning)
+  - `enforcement_specialization` (technical gate, often `network-egress`)
+
+See: `docs/architecture/workspace-event-surface-model.md`.

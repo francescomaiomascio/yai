@@ -10,6 +10,8 @@
   ],
   "domain_index_ref": "domain-specializations/index/specializations.index.json",
   "compliance_index_ref": "overlays/regulatory/index/regulatory.index.json",
+  "customer_policy_pack_index_ref": "manifests/customer-policy-packs.index.json",
+  "governance_attachability_constraints_ref": "manifests/governance-attachability.constraints.v1.json",
   "resolution_entrypoints_ref": "manifests/runtime.entrypoints.json",
   "export_targets": [
     "runtime-embedded",

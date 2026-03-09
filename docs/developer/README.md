@@ -13,4 +13,12 @@ Workspace runtime model:
 - `docs/developer/workspace-inspect-model.md`
 - `docs/developer/workspace-prompt-context.md`
 - `docs/developer/workspace-policy-inspection.md`
+- `docs/developer/workspace-governance-apply-walkthrough.md`
 - `docs/developer/workspace-first-real-scenario.md`
+
+Pre-pilot closeout pack:
+- `docs/developer/pre-pilot-governed-workspace-baseline.md`
+- `docs/developer/governed-flow-vertical-slice.md`
+- `docs/developer/runbooks/pre-pilot-governed-flow-runbook.md`
+- `docs/developer/runbooks/pre-pilot-expected-outputs.md`
+- `docs/developer/checklists/pre-pilot-readiness-checklist.md`

@@ -10,6 +10,8 @@
       "specializations_ref": "domain-specializations/index/specializations.index.json",
       "domains_ref": "domain-specializations/index/specializations.index.json",
       "compliance_ref": "overlays/regulatory/index/regulatory.index.json",
+      "customer_policy_pack_index_ref": "manifests/customer-policy-packs.index.json",
+      "governance_attachability_constraints_ref": "manifests/governance-attachability.constraints.v1.json",
       "resolution_order_ref": "manifests/domain-resolution-order.json",
       "compliance_resolution_order_ref": "manifests/compliance-resolution-order.json",
       "compatibility_ref": "manifests/compatibility.matrix.json",

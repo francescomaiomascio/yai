@@ -401,6 +401,14 @@ int yai_session_handle_control_call(
     char dig_publication[128];
     char dig_retrieval[128];
     char dig_distribution[128];
+    char evt_declared[96];
+    char evt_business[96];
+    char evt_enforcement[96];
+    char evt_stage[48];
+    char evt_id[224];
+    char op_summary[192];
+    const char *review_state = "unresolved";
+    int evt_external = 0;
     const char *runtime_ws_id = NULL;
     char runtime_ws_id_buf[MAX_WS_ID_LEN];
     int workspace_run_macro = 0;
@@ -462,6 +470,10 @@ int yai_session_handle_control_call(
         else if (strstr(payload, "yai.workspace.domain.set")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.domain.set");
         else if (strstr(payload, "yai.workspace.policy_effective")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy_effective");
         else if (strstr(payload, "yai.workspace.policy.effective")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy.effective");
+        else if (strstr(payload, "yai.workspace.policy_attach")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy_attach");
+        else if (strstr(payload, "yai.workspace.policy.attach")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy.attach");
+        else if (strstr(payload, "yai.workspace.policy_detach")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy_detach");
+        else if (strstr(payload, "yai.workspace.policy.detach")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.policy.detach");
         else if (strstr(payload, "yai.workspace.debug_resolution")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.debug_resolution");
         else if (strstr(payload, "yai.workspace.debug.resolution")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.debug.resolution");
         else if (strstr(payload, "yai.workspace.prompt_context")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.prompt_context");
@@ -762,6 +774,101 @@ int yai_session_handle_control_call(
             return 0;
         }
 
+        if (strcmp(command_id, "yai.workspace.policy.attach") == 0 ||
+            strcmp(command_id, "yai.workspace.policy_attach") == 0)
+        {
+            if (yai_session_workspace_policy_attachment_update(action_arg[0] ? action_arg : NULL,
+                                                               1,
+                                                               data,
+                                                               sizeof(data),
+                                                               err,
+                                                               sizeof(err)) != 0)
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "BAD_ARGS",
+                                            err[0] ? err : "workspace_policy_attach_failed",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+            yai_session_send_exec_reply(client_fd, env, "ok", "OK", "workspace_policy_attached", command_id, "runtime", data);
+            return 0;
+        }
+
+        if (strcmp(command_id, "yai.workspace.policy.activate") == 0 ||
+            strcmp(command_id, "yai.workspace.policy_activate") == 0)
+        {
+            if (yai_session_workspace_policy_attachment_update(action_arg[0] ? action_arg : NULL,
+                                                               2,
+                                                               data,
+                                                               sizeof(data),
+                                                               err,
+                                                               sizeof(err)) != 0)
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "BAD_ARGS",
+                                            err[0] ? err : "workspace_policy_activate_failed",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+            yai_session_send_exec_reply(client_fd, env, "ok", "OK", "workspace_policy_activated", command_id, "runtime", data);
+            return 0;
+        }
+
+        if (strcmp(command_id, "yai.workspace.policy.detach") == 0 ||
+            strcmp(command_id, "yai.workspace.policy_detach") == 0)
+        {
+            if (yai_session_workspace_policy_attachment_update(action_arg[0] ? action_arg : NULL,
+                                                               0,
+                                                               data,
+                                                               sizeof(data),
+                                                               err,
+                                                               sizeof(err)) != 0)
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "BAD_ARGS",
+                                            err[0] ? err : "workspace_policy_detach_failed",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+            yai_session_send_exec_reply(client_fd, env, "ok", "OK", "workspace_policy_detached", command_id, "runtime", data);
+            return 0;
+        }
+
+        if (strcmp(command_id, "yai.workspace.policy.dry_run") == 0 ||
+            strcmp(command_id, "yai.workspace.policy_dry_run") == 0)
+        {
+            if (yai_session_workspace_policy_apply_dry_run(action_arg[0] ? action_arg : NULL,
+                                                           data,
+                                                           sizeof(data),
+                                                           err,
+                                                           sizeof(err)) != 0)
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "BAD_ARGS",
+                                            err[0] ? err : "workspace_policy_dry_run_failed",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+            yai_session_send_exec_reply(client_fd, env, "ok", "OK", "workspace_policy_dry_run", command_id, "runtime", data);
+            return 0;
+        }
+
         if (strcmp(command_id, "yai.workspace.debug.resolution") == 0 ||
             strcmp(command_id, "yai.workspace.debug_resolution") == 0)
         {
@@ -868,6 +975,33 @@ int yai_session_handle_control_call(
     effect_name = yai_law_effect_name(law_out.decision.final_effect);
 
     (void)yai_session_record_resolution_snapshot(runtime_ws_id, &law_out, err, sizeof(err));
+    snprintf(ws_info.inferred_family, sizeof(ws_info.inferred_family), "%s", law_out.decision.family_id);
+    snprintf(ws_info.inferred_specialization, sizeof(ws_info.inferred_specialization), "%s", law_out.decision.specialization_id);
+    snprintf(ws_info.last_effect_summary, sizeof(ws_info.last_effect_summary), "%s", effect_name);
+    snprintf(ws_info.last_resolution_trace_ref, sizeof(ws_info.last_resolution_trace_ref), "%s", law_out.evidence.trace_id);
+    yai_session_workspace_event_semantics(&ws_info,
+                                          evt_declared,
+                                          sizeof(evt_declared),
+                                          evt_business,
+                                          sizeof(evt_business),
+                                          evt_enforcement,
+                                          sizeof(evt_enforcement),
+                                          evt_stage,
+                                          sizeof(evt_stage),
+                                          &evt_external);
+    snprintf(evt_id, sizeof(evt_id), "%s%s",
+             law_out.evidence.trace_id[0] ? "evt-" : "none",
+             law_out.evidence.trace_id[0] ? law_out.evidence.trace_id : "");
+    if (strcmp(effect_name, "review_required") == 0) review_state = "pending_review";
+    else if (strcmp(effect_name, "quarantine") == 0) review_state = "quarantined";
+    else if (strcmp(effect_name, "deny") == 0) review_state = "blocked";
+    else if (strcmp(effect_name, "allow") == 0) review_state = "clear";
+    (void)snprintf(op_summary,
+                   sizeof(op_summary),
+                   "%s/%s => %s",
+                   evt_stage[0] ? evt_stage : "unknown",
+                   evt_business[0] ? evt_business : "not_resolved",
+                   effect_name);
     sci_parameter[0] = '\0';
     sci_repro[0] = '\0';
     sci_dataset[0] = '\0';
@@ -1000,6 +1134,29 @@ int yai_session_handle_control_call(
                    "\"attach_descriptor_ref\":\"%s\","
                    "\"execution_profile_ref\":\"%s\""
                  "},"
+                 "\"event_surface\":{"
+                   "\"event_id\":\"%s\","
+                   "\"flow_stage\":\"%s\","
+                   "\"declared_scenario_specialization\":\"%s\","
+                   "\"business_specialization\":\"%s\","
+                   "\"enforcement_specialization\":\"%s\","
+                   "\"external_effect_boundary\":%s"
+                 "},"
+                 "\"operational_state\":{"
+                   "\"binding_state\":\"active\","
+                   "\"attached_governance_objects\":\"%s\","
+                   "\"active_effective_stack\":\"%s\","
+                   "\"last_event_ref\":\"%s\","
+                   "\"last_flow_stage\":\"%s\","
+                   "\"last_business_specialization\":\"%s\","
+                   "\"last_enforcement_specialization\":\"%s\","
+                   "\"last_effect\":\"%s\","
+                   "\"last_authority\":\"%s\","
+                   "\"last_evidence\":\"%s\","
+                   "\"last_trace_ref\":\"%s\","
+                   "\"review_state\":\"%s\","
+                   "\"operational_summary\":\"%s\""
+                 "},"
                  "\"scientific\":{"
                    "\"parameter_governance_summary\":\"%s\","
                    "\"reproducibility_summary\":\"%s\","
@@ -1037,6 +1194,24 @@ int yai_session_handle_control_call(
                  ws_info.execution_unsupported_scopes[0] ? ws_info.execution_unsupported_scopes : "none",
                  ws_info.attach_descriptor_ref,
                  ws_info.execution_profile_ref,
+                 evt_id,
+                 evt_stage,
+                 evt_declared,
+                 evt_business,
+                 evt_enforcement,
+                 evt_external ? "true" : "false",
+                 ws_info.policy_attachments_csv,
+                 law_out.decision.stack.stack_id,
+                 evt_id,
+                 evt_stage,
+                 evt_business,
+                 evt_enforcement,
+                 effect_name,
+                 law_out.decision.stack.authority_profile,
+                 law_out.decision.stack.evidence_profile,
+                 law_out.evidence.trace_id,
+                 review_state,
+                 op_summary,
                  sci_parameter[0] ? sci_parameter : "not scientific context",
                  sci_repro[0] ? sci_repro : "not scientific context",
                  sci_dataset[0] ? sci_dataset : "not scientific context",

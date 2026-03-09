@@ -31,7 +31,9 @@ A workspace state has these dimensions:
 4. `declared normative context`
 5. `inferred normative context`
 6. `effective normative state`
-7. `isolation/debug runtime flags`
+7. `event surface state`
+8. `operational flow state`
+9. `isolation/debug runtime flags`
 
 ## Canonical state model
 
@@ -43,6 +45,8 @@ Implemented in `include/yai/core/workspace.h` via:
 - `yai_workspace_declared_context_t`
 - `yai_workspace_inferred_context_t`
 - `yai_workspace_effective_state_t`
+- `yai_workspace_event_surface_t`
+- `yai_workspace_operational_state_t`
 - `yai_workspace_runtime_flags_t`
 - `yai_workspace_manifest_v1_t`
 - `yai_workspace_inspect_v1_t`
@@ -106,3 +110,8 @@ Architecture refoundation extensions (6/8):
 - `docs/architecture/workspace-runtime-binding-model.md`
 - `docs/architecture/workspace-shell-binding-model.md`
 - `docs/architecture/workspace-boundary-model.md`
+
+
+Flow/state readability extension:
+
+- `docs/architecture/workspace-flow-state-model.md`

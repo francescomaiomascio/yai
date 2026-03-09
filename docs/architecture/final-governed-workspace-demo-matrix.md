@@ -39,6 +39,7 @@ No scenario should rely on CLI-side runtime policy logic duplication.
 | M14-H3 | HOSTILE | Cross-workspace boundary check baseline | hostile baseline script | no accidental cross-workspace leakage |
 | M14-C1 | SURFACE | Inspect/status/policy/debug consistency | workspace surface scripts | declared/inferred/effective + evidence coherent |
 | M14-C2 | SURFACE | Prompt token semantics | prompt token script | token reflects active binding only |
+| M14-VS1 | VERTICAL_SLICE | Cross-repo governed flow slice (digital outbound with explicit policy attachment) | vertical slice script + inspect/policy/debug | explicit attachment + readable event/operational state + trace/evidence coherence |
 
 ## Automated Packs
 
@@ -53,6 +54,8 @@ No scenario should rely on CLI-side runtime policy logic duplication.
   - `tests/integration/workspace_lifecycle/workspace_hostile_path_baseline_v1.sh`
   - `tests/integration/workspace_lifecycle/workspace_isolation_guards_v1.sh`
   - `tests/integration/workspace_lifecycle/workspace_negative_paths_v1.sh`
+- Vertical slice:
+  - `tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh`
 
 ## Current Honest Limitations
 

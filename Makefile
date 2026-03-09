@@ -195,6 +195,9 @@ test-integration:
 	@tests/integration/workspace_lifecycle/workspace_real_flow_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_scientific_flow_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_digital_flow_v1.sh
+	@tests/integration/workspace_lifecycle/workspace_event_surface_semantics_v1.sh
+	@tests/integration/workspace_lifecycle/workspace_flow_state_readability_v1.sh
+	@tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_negative_paths_v1.sh
 	@tests/integration/runtime_handshake/run_runtime_handshake_smoke.sh
 	@echo "[YAI] integration suites complete"
@@ -337,3 +340,8 @@ help:
 	@echo "  clean          (remove build artifacts)"
 	@echo "  dist, dist-all, bundle"
 	@echo "  verify, docs, docs-verify, proof-verify, release-guards, changelog-verify"
+
+
+test-vertical-slice:
+	@tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh
+	@echo "[YAI] governed vertical slice complete"

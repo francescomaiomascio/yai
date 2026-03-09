@@ -9,10 +9,13 @@ WS-3 introduces inspectability primitives so developers can query workspace stat
 3. `yai.workspace.status`
 4. `yai.workspace.domain_get`
 5. Optional: `yai.workspace.domain_set` (declared context)
-6. Execute runtime action (`yai.workspace.run <action> [tokens...]`)
-7. `yai.workspace.policy_effective`
-8. `yai.workspace.debug_resolution`
-9. `yai.workspace.inspect`
+6. Optional: `yai.workspace.policy_dry_run` (eligibility/compatibility preview)
+7. Optional: `yai.workspace.policy_attach` (explicit governable object attachment)
+8. Optional: `yai.workspace.policy_activate` (explicit activation)
+9. Execute runtime action (`yai.workspace.run <action> [tokens...]`)
+10. `yai.workspace.policy_effective`
+11. `yai.workspace.debug_resolution`
+12. `yai.workspace.inspect`
 
 ## What Is Reliable in This Phase
 
@@ -39,8 +42,17 @@ Not finalized yet:
 
 Use `workspace.debug_resolution` to see the latest compact resolution rationale inputs:
 - declared/inferred context
+- event surface (`declared_scenario_specialization`, `business_specialization`, `enforcement_specialization`, `flow_stage`)
 - effective stack references
 - effect summary
 - trace reference
 
 Use `workspace.inspect` for full workspace-level state inspection.
+
+
+Operational-state checks during inspection:
+
+- verify `attached_governance_objects` against expected attachments
+- verify `last_event_ref` and `last_flow_stage`
+- verify `last_business_specialization` vs `last_enforcement_specialization`
+- verify `review_state` and `operational_summary`

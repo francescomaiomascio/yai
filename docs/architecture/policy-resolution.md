@@ -48,6 +48,12 @@ Workspace model integration:
 - inferred context is updated from real classification/discovery outcomes
 - effective summaries are persisted as workspace inspectable state
 - workspace execution path (`yai ws run ...`) resolves through the same law-driven stack and updates workspace summaries
+- event surface is derived and persisted with:
+  - `declared_scenario_specialization`
+  - `business_specialization`
+  - `enforcement_specialization`
+  - `flow_stage`
+  - `external_effect_boundary`
 
 ## Determinism
 
@@ -59,3 +65,6 @@ Workspace-facing inspection endpoints now expose this state:
 - `yai.workspace.policy.effective`: effective family/specialization + stack/overlay/effect summaries
 - `yai.workspace.debug.resolution`: compact declared/inferred/effective debug summary
 - `yai.workspace.inspect`: full workspace-level snapshot including last resolution summary
+- all three now include `event_surface` to avoid semantic collapse of business intent into technical enforcement gates
+
+Reference: `docs/architecture/workspace-event-surface-model.md`.

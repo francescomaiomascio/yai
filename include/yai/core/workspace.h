@@ -98,6 +98,31 @@ typedef struct {
 } yai_workspace_effective_state_t;
 
 typedef struct {
+  char event_id[YAI_WS_REF_MAX + 1u];
+  char flow_stage[YAI_WS_CTX_NAME_MAX + 1u];
+  char declared_scenario_specialization[YAI_WS_CTX_NAME_MAX + 1u];
+  char business_specialization[YAI_WS_CTX_NAME_MAX + 1u];
+  char enforcement_specialization[YAI_WS_CTX_NAME_MAX + 1u];
+  int external_effect_boundary;
+} yai_workspace_event_surface_t;
+
+typedef struct {
+  char binding_state[YAI_WS_CTX_NAME_MAX + 1u];
+  char attached_governance_objects[YAI_WS_REF_MAX + 1u];
+  char active_effective_stack[YAI_WS_REF_MAX + 1u];
+  char last_event_ref[YAI_WS_REF_MAX + 1u];
+  char last_flow_stage[YAI_WS_CTX_NAME_MAX + 1u];
+  char last_business_specialization[YAI_WS_CTX_NAME_MAX + 1u];
+  char last_enforcement_specialization[YAI_WS_CTX_NAME_MAX + 1u];
+  char last_effect[YAI_WS_REF_MAX + 1u];
+  char last_authority[YAI_WS_REF_MAX + 1u];
+  char last_evidence[YAI_WS_REF_MAX + 1u];
+  char last_trace_ref[YAI_WS_REF_MAX + 1u];
+  char review_state[YAI_WS_CTX_NAME_MAX + 1u];
+  char operational_summary[YAI_WS_REF_MAX + 1u];
+} yai_workspace_operational_state_t;
+
+typedef struct {
   yai_workspace_isolation_mode_t isolation_mode;
   int debug_mode;
   char last_resolution_trace_ref[YAI_WS_REF_MAX + 1u];
@@ -110,6 +135,8 @@ typedef struct {
   yai_workspace_declared_context_t declared;
   yai_workspace_inferred_context_t inferred;
   yai_workspace_effective_state_t effective;
+  yai_workspace_event_surface_t event_surface;
+  yai_workspace_operational_state_t operational;
   yai_workspace_runtime_flags_t runtime;
 } yai_workspace_manifest_v1_t;
 
@@ -120,6 +147,8 @@ typedef struct {
   yai_workspace_declared_context_t declared;
   yai_workspace_inferred_context_t inferred;
   yai_workspace_effective_state_t effective;
+  yai_workspace_event_surface_t event_surface;
+  yai_workspace_operational_state_t operational;
   yai_workspace_runtime_flags_t runtime;
   char last_resolution_summary[YAI_WS_REF_MAX + 1u];
 } yai_workspace_inspect_v1_t;

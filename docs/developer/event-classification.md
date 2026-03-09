@@ -33,3 +33,21 @@ Classifier remains side-effect free and does not apply policy decisions directly
 Runtime genericity note:
 - classifier output feeds family ranking and specialization candidate selection.
 - direct pilot-id jumps are intentionally reduced in favor of family/specialization routing.
+
+## Event surface contract (workspace)
+
+Classifier/discovery output is mapped into workspace event-surface fields:
+
+- declared scenario specialization
+- business specialization
+- enforcement specialization
+- flow stage
+
+This mapping is consumed by:
+
+- `yai.workspace.run` response
+- `yai.workspace.policy.effective`
+- `yai.workspace.debug.resolution`
+- `yai.workspace.inspect`
+
+Design goal: preserve business scenario semantics even when enforcement specialization is a generic technical gate (for example `network-egress`).

@@ -21,7 +21,7 @@
     "registry/**",
     "**/*.md"
   ],
-  "include_count": 28,
+  "include_count": 41,
   "layers": {
     "classification": "classification/",
     "control_families": "control-families/",

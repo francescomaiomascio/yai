@@ -43,10 +43,31 @@ int yai_session_set_workspace_declared_context(const char *family,
                                                size_t err_cap);
 int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap);
 int yai_session_build_workspace_debug_resolution_json(char *out, size_t out_cap);
+int yai_session_workspace_policy_attachment_update(const char *object_id,
+                                                   int attach_mode,
+                                                   char *out_json,
+                                                   size_t out_cap,
+                                                   char *err,
+                                                   size_t err_cap);
+int yai_session_workspace_policy_apply_dry_run(const char *object_id,
+                                               char *out_json,
+                                               size_t out_cap,
+                                               char *err,
+                                               size_t err_cap);
 int yai_session_record_resolution_snapshot(const char *ws_id,
                                           const yai_law_resolution_output_t *law_out,
                                           char *err,
                                           size_t err_cap);
+void yai_session_workspace_event_semantics(const yai_workspace_runtime_info_t *info,
+                                           char *declared_scenario_spec,
+                                           size_t declared_cap,
+                                           char *business_spec,
+                                           size_t business_cap,
+                                           char *enforcement_spec,
+                                           size_t enforcement_cap,
+                                           char *flow_stage,
+                                           size_t flow_cap,
+                                           int *external_boundary);
 int yai_session_enforce_workspace_scope(const char *target_ws_id,
                                         char *err,
                                         size_t err_cap);

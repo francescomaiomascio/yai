@@ -4,9 +4,11 @@
 #include "yai_session_internal.h"
 #include <yai/core/workspace.h>
 #include <yai/law/policy_effects.h>
+#include "cJSON.h"
 
 #include <dirent.h>
 #include <errno.h>
+#include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,10 +17,365 @@
 #include <time.h>
 #include <unistd.h>
 
-#define YAI_WS_JSON_IO_CAP 32768
+#define YAI_WS_JSON_IO_CAP 262144
 
 #define YAI_MANAGED_BEGIN "# BEGIN YAI MANAGED SHELL INTEGRATION"
 #define YAI_MANAGED_END   "# END YAI MANAGED SHELL INTEGRATION"
+#define YAI_POLICY_ATTACHMENTS_MAX 16
+
+static int yai_embedded_law_path(char *out, size_t out_cap, const char *rel);
+static int yai_read_text(const char *path, char *out, size_t out_cap);
+
+typedef struct {
+    int found;
+    char id[192];
+    char kind[96];
+    char status[48];
+    char review_state[48];
+    int runtime_consumable;
+    int experimental;
+    int deprecated;
+    char attachment_modes_csv[192];
+    char precedence_class[192];
+    char workspace_targets_csv[256];
+    char family_targets_csv[192];
+    char specialization_targets_csv[192];
+    char manifest_ref[MAX_PATH_LEN];
+} yai_governable_object_meta_t;
+
+static int yai_policy_attachment_id_valid(const char *id)
+{
+    size_t i;
+    if (!id || !id[0]) return 0;
+    if (strlen(id) > 160u) return 0;
+    for (i = 0; id[i]; i++)
+    {
+        const unsigned char c = (unsigned char)id[i];
+        if (!(isalnum(c) || c == '.' || c == '-' || c == '_' || c == '/'))
+            return 0;
+    }
+    return 1;
+}
+
+static int yai_policy_attachment_csv_count(const char *csv)
+{
+    int count = 0;
+    char buf[sizeof(((yai_workspace_runtime_info_t *)0)->policy_attachments_csv)];
+    char *tok;
+    char *save = NULL;
+    if (!csv || !csv[0]) return 0;
+    snprintf(buf, sizeof(buf), "%s", csv);
+    tok = strtok_r(buf, ",", &save);
+    while (tok)
+    {
+        if (tok[0]) count++;
+        tok = strtok_r(NULL, ",", &save);
+    }
+    return count;
+}
+
+static int yai_policy_attachment_csv_contains(const char *csv, const char *id)
+{
+    char buf[sizeof(((yai_workspace_runtime_info_t *)0)->policy_attachments_csv)];
+    char *tok;
+    char *save = NULL;
+    if (!csv || !csv[0] || !id || !id[0]) return 0;
+    snprintf(buf, sizeof(buf), "%s", csv);
+    tok = strtok_r(buf, ",", &save);
+    while (tok)
+    {
+        if (strcmp(tok, id) == 0) return 1;
+        tok = strtok_r(NULL, ",", &save);
+    }
+    return 0;
+}
+
+static int yai_policy_attachment_csv_add(char *csv, size_t csv_cap, const char *id)
+{
+    size_t len;
+    if (!csv || csv_cap == 0 || !id || !id[0]) return -1;
+    if (yai_policy_attachment_csv_contains(csv, id)) return 0;
+    if (csv[0])
+    {
+        len = strlen(csv);
+        if (len + 1 + strlen(id) + 1 >= csv_cap) return -1;
+        csv[len] = ',';
+        csv[len + 1] = '\0';
+    }
+    if (strlen(csv) + strlen(id) + 1 >= csv_cap) return -1;
+    strcat(csv, id);
+    return 0;
+}
+
+static int yai_policy_attachment_csv_remove(char *csv, size_t csv_cap, const char *id)
+{
+    char src[sizeof(((yai_workspace_runtime_info_t *)0)->policy_attachments_csv)];
+    char out[sizeof(((yai_workspace_runtime_info_t *)0)->policy_attachments_csv)];
+    char *tok;
+    char *save = NULL;
+    int removed = 0;
+    if (!csv || csv_cap == 0 || !id || !id[0]) return -1;
+    if (!csv[0]) return 0;
+    snprintf(src, sizeof(src), "%s", csv);
+    out[0] = '\0';
+    tok = strtok_r(src, ",", &save);
+    while (tok)
+    {
+        if (strcmp(tok, id) == 0)
+        {
+            removed = 1;
+        }
+        else if (tok[0])
+        {
+            if (out[0]) strncat(out, ",", sizeof(out) - strlen(out) - 1);
+            strncat(out, tok, sizeof(out) - strlen(out) - 1);
+        }
+        tok = strtok_r(NULL, ",", &save);
+    }
+    snprintf(csv, csv_cap, "%s", out);
+    return removed ? 0 : 1;
+}
+
+static void yai_governable_meta_defaults(yai_governable_object_meta_t *meta)
+{
+    if (!meta) return;
+    memset(meta, 0, sizeof(*meta));
+    snprintf(meta->kind, sizeof(meta->kind), "%s", "unknown");
+    snprintf(meta->status, sizeof(meta->status), "%s", "unknown");
+    snprintf(meta->review_state, sizeof(meta->review_state), "%s", "unknown");
+    meta->runtime_consumable = 1;
+}
+
+static void yai_json_array_to_csv(cJSON *arr, char *out, size_t out_cap)
+{
+    int i;
+    int n;
+    if (!out || out_cap == 0) return;
+    out[0] = '\0';
+    if (!cJSON_IsArray(arr)) return;
+    for (i = 0; i < cJSON_GetArraySize(arr); i++)
+    {
+        cJSON *it = cJSON_GetArrayItem(arr, i);
+        const char *s;
+        if (!cJSON_IsString(it) || !it->valuestring || !it->valuestring[0]) continue;
+        s = it->valuestring;
+        if (out[0]) strncat(out, ",", out_cap - strlen(out) - 1u);
+        strncat(out, s, out_cap - strlen(out) - 1u);
+    }
+    n = (int)strlen(out);
+    if (n < 0) out[0] = '\0';
+}
+
+static int yai_embedded_governable_object_lookup(const char *object_id, yai_governable_object_meta_t *meta)
+{
+    char path[MAX_PATH_LEN];
+    char json[YAI_WS_JSON_IO_CAP];
+    cJSON *doc = NULL;
+    cJSON *objects = NULL;
+    int i;
+    int found = 0;
+    yai_governable_meta_defaults(meta);
+    if (!object_id || !object_id[0]) return 0;
+    if (meta) snprintf(meta->id, sizeof(meta->id), "%s", object_id);
+    if (yai_embedded_law_path(path, sizeof(path), "registry/governable-objects.v1.json") != 0)
+        return 0;
+    if (yai_read_text(path, json, sizeof(json)) != 0)
+        return 0;
+
+    doc = cJSON_Parse(json);
+    if (!doc) return 0;
+    objects = cJSON_GetObjectItemCaseSensitive(doc, "objects");
+    if (!cJSON_IsArray(objects))
+    {
+        cJSON_Delete(doc);
+        return 0;
+    }
+
+    for (i = 0; i < cJSON_GetArraySize(objects); i++)
+    {
+        cJSON *obj = cJSON_GetArrayItem(objects, i);
+        cJSON *id = cJSON_GetObjectItemCaseSensitive(obj, "id");
+        cJSON *kind = cJSON_GetObjectItemCaseSensitive(obj, "kind");
+        cJSON *status = cJSON_GetObjectItemCaseSensitive(obj, "status");
+        cJSON *review = cJSON_GetObjectItemCaseSensitive(obj, "review_state");
+        cJSON *runtime = cJSON_GetObjectItemCaseSensitive(obj, "runtime_consumable");
+        cJSON *experimental = cJSON_GetObjectItemCaseSensitive(obj, "experimental");
+        cJSON *deprecated = cJSON_GetObjectItemCaseSensitive(obj, "deprecated");
+        cJSON *modes = cJSON_GetObjectItemCaseSensitive(obj, "attachment_modes");
+        cJSON *precedence = cJSON_GetObjectItemCaseSensitive(obj, "precedence_class");
+        cJSON *scope = cJSON_GetObjectItemCaseSensitive(obj, "scope_targets");
+        cJSON *manifest_ref = cJSON_GetObjectItemCaseSensitive(obj, "manifest_ref");
+        if (!cJSON_IsString(id) || !id->valuestring) continue;
+        if (strcmp(id->valuestring, object_id) != 0) continue;
+        found = 1;
+        if (meta)
+        {
+            if (cJSON_IsString(kind) && kind->valuestring)
+                snprintf(meta->kind, sizeof(meta->kind), "%s", kind->valuestring);
+            if (cJSON_IsString(status) && status->valuestring)
+                snprintf(meta->status, sizeof(meta->status), "%s", status->valuestring);
+            if (cJSON_IsString(review) && review->valuestring)
+                snprintf(meta->review_state, sizeof(meta->review_state), "%s", review->valuestring);
+            if (cJSON_IsBool(runtime))
+                meta->runtime_consumable = cJSON_IsTrue(runtime) ? 1 : 0;
+            if (cJSON_IsBool(experimental))
+                meta->experimental = cJSON_IsTrue(experimental) ? 1 : 0;
+            if (cJSON_IsBool(deprecated))
+                meta->deprecated = cJSON_IsTrue(deprecated) ? 1 : 0;
+            yai_json_array_to_csv(modes, meta->attachment_modes_csv, sizeof(meta->attachment_modes_csv));
+            if (cJSON_IsString(precedence) && precedence->valuestring)
+                snprintf(meta->precedence_class, sizeof(meta->precedence_class), "%s", precedence->valuestring);
+            if (cJSON_IsObject(scope))
+            {
+                yai_json_array_to_csv(cJSON_GetObjectItemCaseSensitive(scope, "workspace_ids"),
+                                      meta->workspace_targets_csv,
+                                      sizeof(meta->workspace_targets_csv));
+                yai_json_array_to_csv(cJSON_GetObjectItemCaseSensitive(scope, "family_targets"),
+                                      meta->family_targets_csv,
+                                      sizeof(meta->family_targets_csv));
+                yai_json_array_to_csv(cJSON_GetObjectItemCaseSensitive(scope, "specialization_targets"),
+                                      meta->specialization_targets_csv,
+                                      sizeof(meta->specialization_targets_csv));
+            }
+            if (cJSON_IsString(manifest_ref) && manifest_ref->valuestring)
+                snprintf(meta->manifest_ref, sizeof(meta->manifest_ref), "%s", manifest_ref->valuestring);
+            meta->found = 1;
+        }
+        break;
+    }
+
+    cJSON_Delete(doc);
+    return found;
+}
+
+static int yai_csv_has_token(const char *csv, const char *token)
+{
+    return yai_policy_attachment_csv_contains(csv, token);
+}
+
+static int yai_target_match(const char *target_csv, const char *value)
+{
+    if (!target_csv || !target_csv[0]) return 1;
+    if (!value || !value[0]) return 0;
+    return yai_csv_has_token(target_csv, value);
+}
+
+static void yai_workspace_policy_effective_context(const yai_workspace_runtime_info_t *info,
+                                                   char *family,
+                                                   size_t family_cap,
+                                                   char *specialization,
+                                                   size_t specialization_cap)
+{
+    const char *f;
+    const char *s;
+    f = info->inferred_family[0] ? info->inferred_family : info->declared_control_family;
+    s = info->inferred_specialization[0] ? info->inferred_specialization : info->declared_specialization;
+    snprintf(family, family_cap, "%s", f && f[0] ? f : "unset");
+    snprintf(specialization, specialization_cap, "%s", s && s[0] ? s : "unset");
+}
+
+static const char *yai_workspace_attachment_state_for_meta(const yai_governable_object_meta_t *meta, int is_attached)
+{
+    if (!meta) return is_attached ? "attached_active" : "attached_inactive";
+    if (strcmp(meta->status, "candidate") == 0) return "candidate_only";
+    if (strcmp(meta->status, "approved") == 0 && !is_attached) return "approved_not_attached";
+    if (is_attached) return "attached_active";
+    return "attached_inactive";
+}
+
+static int yai_workspace_policy_evaluate(const yai_workspace_runtime_info_t *info,
+                                         const yai_governable_object_meta_t *meta,
+                                         char *eligibility_result,
+                                         size_t eligibility_cap,
+                                         char *compatibility_result,
+                                         size_t compatibility_cap,
+                                         char *conflict_summary,
+                                         size_t conflict_cap,
+                                         char *warnings,
+                                         size_t warnings_cap,
+                                         int *blocking)
+{
+    char family[96];
+    char specialization[96];
+    int blocker = 0;
+    int warn = 0;
+    if (!info || !meta) return -1;
+    if (eligibility_result && eligibility_cap) snprintf(eligibility_result, eligibility_cap, "%s", "eligible");
+    if (compatibility_result && compatibility_cap) snprintf(compatibility_result, compatibility_cap, "%s", "dry_run_passed");
+    if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "none");
+    if (warnings && warnings_cap) warnings[0] = '\0';
+    yai_workspace_policy_effective_context(info, family, sizeof(family), specialization, sizeof(specialization));
+
+    if (!yai_target_match(meta->workspace_targets_csv, info->ws_id))
+    {
+        blocker = 1;
+        if (eligibility_result && eligibility_cap) snprintf(eligibility_result, eligibility_cap, "%s", "ineligible");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "workspace_target_mismatch");
+    }
+    if (!blocker && !yai_target_match(meta->family_targets_csv, family))
+    {
+        blocker = 1;
+        if (eligibility_result && eligibility_cap) snprintf(eligibility_result, eligibility_cap, "%s", "ineligible");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "family_target_mismatch");
+    }
+    if (!blocker && !yai_target_match(meta->specialization_targets_csv, specialization))
+    {
+        blocker = 1;
+        if (eligibility_result && eligibility_cap) snprintf(eligibility_result, eligibility_cap, "%s", "ineligible");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "specialization_target_mismatch");
+    }
+    if (!blocker &&
+        meta->attachment_modes_csv[0] &&
+        !(yai_csv_has_token(meta->attachment_modes_csv, "workspace_attach") ||
+          yai_csv_has_token(meta->attachment_modes_csv, "workspace-attach")))
+    {
+        blocker = 1;
+        if (compatibility_result && compatibility_cap) snprintf(compatibility_result, compatibility_cap, "%s", "conflict_blocking");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "workspace_attach_not_allowed");
+    }
+    if (!blocker && (!meta->runtime_consumable || meta->deprecated))
+    {
+        blocker = 1;
+        if (compatibility_result && compatibility_cap) snprintf(compatibility_result, compatibility_cap, "%s", "conflict_blocking");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "object_not_runtime_consumable");
+    }
+    if (!blocker &&
+        strcmp(meta->kind, "enterprise_custom_governance_object") == 0 &&
+        strcmp(meta->status, "approved") != 0 &&
+        strcmp(meta->status, "applied") != 0 &&
+        strcmp(meta->status, "active") != 0)
+    {
+        blocker = 1;
+        if (compatibility_result && compatibility_cap) snprintf(compatibility_result, compatibility_cap, "%s", "conflict_blocking");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "enterprise_object_not_attachable_status");
+    }
+    if (!blocker &&
+        strcmp(meta->kind, "enterprise_custom_governance_object") == 0 &&
+        strcmp(meta->review_state, "approved") != 0)
+    {
+        blocker = 1;
+        if (compatibility_result && compatibility_cap) snprintf(compatibility_result, compatibility_cap, "%s", "conflict_blocking");
+        if (conflict_summary && conflict_cap) snprintf(conflict_summary, conflict_cap, "%s", "enterprise_object_not_review_approved");
+    }
+    if (meta->experimental)
+    {
+        warn = 1;
+        if (warnings && warnings_cap) snprintf(warnings, warnings_cap, "%s", "experimental_object");
+    }
+    if (strcmp(meta->review_state, "in_review") == 0)
+    {
+        warn = 1;
+        if (warnings && warnings_cap)
+        {
+            if (warnings[0]) strncat(warnings, ",", warnings_cap - strlen(warnings) - 1u);
+            strncat(warnings, "review_in_progress", warnings_cap - strlen(warnings) - 1u);
+        }
+    }
+    if (!blocker && warn && compatibility_result && compatibility_cap)
+        snprintf(compatibility_result, compatibility_cap, "%s", "eligible_with_warnings");
+    if (blocking) *blocking = blocker;
+    return 0;
+}
 
 static const char *yai_get_home(void)
 {
@@ -190,6 +547,90 @@ static void yai_workspace_build_digital_summaries(const yai_workspace_runtime_in
     } else {
         (void)snprintf(distribution_control, distribution_cap, "%s", "artifact distribution not primary in last resolution");
     }
+}
+
+void yai_session_workspace_event_semantics(const yai_workspace_runtime_info_t *info,
+                                           char *declared_scenario_spec,
+                                           size_t declared_cap,
+                                           char *business_spec,
+                                           size_t business_cap,
+                                           char *enforcement_spec,
+                                           size_t enforcement_cap,
+                                           char *flow_stage,
+                                           size_t flow_cap,
+                                           int *external_boundary)
+{
+    const char *declared = "";
+    const char *inferred = "";
+    const char *business = "";
+    const char *enforcement = "";
+    const char *stage = "unknown";
+    int boundary = 0;
+
+    if (!info) return;
+    declared = info->declared_specialization[0] ? info->declared_specialization : "";
+    inferred = info->inferred_specialization[0] ? info->inferred_specialization : "";
+    enforcement = inferred[0] ? inferred : declared;
+
+    if (declared[0] && inferred[0] &&
+        strcmp(inferred, "network-egress") == 0 &&
+        strcmp(declared, "network-egress") != 0)
+        business = declared;
+    else
+        business = inferred[0] ? inferred : declared;
+
+    if (strcmp(business, "remote-retrieval") == 0) stage = "retrieve";
+    else if (strcmp(business, "experiment-configuration") == 0) stage = "ingress";
+    else if (strcmp(business, "parameter-governance") == 0) stage = "transform";
+    else if (strcmp(business, "black-box-evaluation") == 0) stage = "transform";
+    else if (strcmp(business, "result-publication-control") == 0) stage = "publish";
+    else if (strcmp(business, "remote-publication") == 0) stage = "publish";
+    else if (strcmp(business, "external-commentary") == 0) stage = "publish";
+    else if (strcmp(business, "artifact-distribution") == 0) stage = "distribute";
+    else if (strcmp(business, "digital-sink-control") == 0) stage = "egress";
+    else if (strcmp(enforcement, "network-egress") == 0) stage = "egress";
+    else if (strcmp(info->last_effect_summary, "review_required") == 0) stage = "approve";
+    else if (strcmp(info->last_effect_summary, "allow") == 0) stage = "actuate";
+
+    if (strcmp(enforcement, "network-egress") == 0 ||
+        strcmp(business, "remote-retrieval") == 0 ||
+        strcmp(business, "remote-publication") == 0 ||
+        strcmp(business, "external-commentary") == 0 ||
+        strcmp(business, "artifact-distribution") == 0 ||
+        strcmp(business, "digital-sink-control") == 0 ||
+        strcmp(business, "result-publication-control") == 0)
+        boundary = 1;
+
+    if (declared_scenario_spec && declared_cap) snprintf(declared_scenario_spec, declared_cap, "%s", declared[0] ? declared : "unset");
+    if (business_spec && business_cap) snprintf(business_spec, business_cap, "%s", business[0] ? business : "not_resolved");
+    if (enforcement_spec && enforcement_cap) snprintf(enforcement_spec, enforcement_cap, "%s", enforcement[0] ? enforcement : "not_resolved");
+    if (flow_stage && flow_cap) snprintf(flow_stage, flow_cap, "%s", stage);
+    if (external_boundary) *external_boundary = boundary;
+}
+
+static const char *yai_workspace_review_state_from_effect(const char *effect)
+{
+    if (!effect || !effect[0]) return "unresolved";
+    if (strcmp(effect, "review_required") == 0) return "pending_review";
+    if (strcmp(effect, "quarantine") == 0) return "quarantined";
+    if (strcmp(effect, "deny") == 0) return "blocked";
+    if (strcmp(effect, "allow") == 0) return "clear";
+    return "unresolved";
+}
+
+static void yai_workspace_operational_summary(const char *flow_stage,
+                                              const char *business_spec,
+                                              const char *effect,
+                                              char *out,
+                                              size_t out_cap)
+{
+    if (!out || out_cap == 0) return;
+    (void)snprintf(out,
+                   out_cap,
+                   "%s/%s => %s",
+                   flow_stage && flow_stage[0] ? flow_stage : "unknown",
+                   business_spec && business_spec[0] ? business_spec : "not_resolved",
+                   effect && effect[0] ? effect : "not_resolved");
 }
 
 static void trim_trailing_slashes(char *path);
@@ -1212,13 +1653,61 @@ static int yai_workspace_write_manifest_path(
             info->declared_control_family, info->declared_specialization, info->declared_context_source[0] ? info->declared_context_source : "unset");
     fprintf(f, "  \"inferred_context\": {\"last_inferred_family\": \"%s\", \"last_inferred_specialization\": \"%s\", \"last_inference_confidence\": %.3f},\n",
             info->inferred_family, info->inferred_specialization, info->inferred_confidence);
-    fprintf(f, "  \"effective_state\": {\"effective_stack_ref\": \"%s\", \"effective_overlays_ref\": \"%s\", \"last_effect_summary\": \"%s\", \"last_authority_summary\": \"%s\", \"last_evidence_summary\": \"%s\"},\n",
-            info->effective_stack_ref, info->effective_overlays_ref, info->last_effect_summary, info->last_authority_summary, info->last_evidence_summary);
+    {
+        char evt_declared[96];
+        char evt_business[96];
+        char evt_enforcement[96];
+        char evt_stage[48];
+        char op_summary[192];
+        const char *review_state;
+        int evt_external = 0;
+        yai_session_workspace_event_semantics(info,
+                                              evt_declared, sizeof(evt_declared),
+                                              evt_business, sizeof(evt_business),
+                                              evt_enforcement, sizeof(evt_enforcement),
+                                              evt_stage, sizeof(evt_stage),
+                                              &evt_external);
+        review_state = yai_workspace_review_state_from_effect(info->last_effect_summary);
+        yai_workspace_operational_summary(evt_stage, evt_business, info->last_effect_summary, op_summary, sizeof(op_summary));
+        fprintf(f, "  \"effective_state\": {\"effective_stack_ref\": \"%s\", \"effective_overlays_ref\": \"%s\", \"policy_attachments\": \"%s\", \"last_effect_summary\": \"%s\", \"last_authority_summary\": \"%s\", \"last_evidence_summary\": \"%s\", \"last_event_ref\": \"%s\", \"business_specialization\": \"%s\", \"enforcement_specialization\": \"%s\", \"flow_stage\": \"%s\", \"external_effect_boundary\": %s, \"review_state\": \"%s\", \"operational_summary\": \"%s\"},\n",
+                info->effective_stack_ref,
+                info->effective_overlays_ref,
+                info->policy_attachments_csv,
+                info->last_effect_summary,
+                info->last_authority_summary,
+                info->last_evidence_summary,
+                info->last_resolution_trace_ref,
+                evt_business,
+                evt_enforcement,
+                evt_stage,
+                evt_external ? "true" : "false",
+                review_state,
+                op_summary);
+    }
     fprintf(f, "  \"runtime\": {\"isolation_mode\": \"%s\", \"debug_mode\": %s, \"last_resolution_trace_ref\": \"%s\"},\n",
             info->isolation_mode[0] ? info->isolation_mode : "process", info->debug_mode ? "true" : "false", info->last_resolution_trace_ref);
     fprintf(f, "  \"inspect\": {\"last_resolution_summary\": \"%s\"},\n", info->last_resolution_summary);
     fprintf(f, "  \"runtime_owner\": \"yai\",\n");
-    fprintf(f, "  \"attachments\": [],\n");
+    fprintf(f, "  \"attachments\": [");
+    if (info->policy_attachments_csv[0])
+    {
+        char refs[sizeof(info->policy_attachments_csv)];
+        char *tok;
+        char *save = NULL;
+        int first = 1;
+        snprintf(refs, sizeof(refs), "%s", info->policy_attachments_csv);
+        tok = strtok_r(refs, ",", &save);
+        while (tok)
+        {
+            if (tok[0])
+            {
+                fprintf(f, "%s{\"kind\":\"policy_object\",\"id\":\"%s\",\"active\":true}", first ? "" : ",", tok);
+                first = 0;
+            }
+            tok = strtok_r(NULL, ",", &save);
+        }
+    }
+    fprintf(f, "],\n");
     fprintf(f, "  \"capabilities\": {\"workspace_scope\": true, \"attachment_ready\": true}\n");
     fprintf(f, "}\n");
     fclose(f);
@@ -1238,8 +1727,27 @@ static int yai_workspace_write_manifest_ws_id(const char *ws_id, const yai_works
 static int yai_workspace_write_containment_surfaces(const yai_workspace_runtime_info_t *info)
 {
     FILE *f;
+    char evt_declared[96];
+    char evt_business[96];
+    char evt_enforcement[96];
+    char evt_stage[48];
+    char evt_id[224];
+    char op_summary[192];
+    const char *review_state;
+    int evt_external = 0;
     if (!info || !info->ws_id[0])
         return -1;
+    yai_session_workspace_event_semantics(info,
+                                          evt_declared, sizeof(evt_declared),
+                                          evt_business, sizeof(evt_business),
+                                          evt_enforcement, sizeof(evt_enforcement),
+                                          evt_stage, sizeof(evt_stage),
+                                          &evt_external);
+    snprintf(evt_id, sizeof(evt_id), "%s%s",
+             info->last_resolution_trace_ref[0] ? "evt-" : "none",
+             info->last_resolution_trace_ref[0] ? info->last_resolution_trace_ref : "");
+    review_state = yai_workspace_review_state_from_effect(info->last_effect_summary);
+    yai_workspace_operational_summary(evt_stage, evt_business, info->last_effect_summary, op_summary, sizeof(op_summary));
 
     f = fopen(info->state_surface_path, "w");
     if (!f)
@@ -1251,6 +1759,9 @@ static int yai_workspace_write_containment_surfaces(const yai_workspace_runtime_
             "  \"declared\": {\"family\": \"%s\", \"specialization\": \"%s\", \"source\": \"%s\"},\n"
             "  \"inferred\": {\"family\": \"%s\", \"specialization\": \"%s\", \"confidence\": %.3f},\n"
             "  \"effective\": {\"stack_ref\": \"%s\", \"overlays_ref\": \"%s\", \"effect\": \"%s\", \"authority\": \"%s\", \"evidence\": \"%s\"},\n"
+            "  \"governance\": {\"policy_attachments\": \"%s\", \"policy_attachment_count\": %d},\n"
+            "  \"event_surface\": {\"event_id\": \"%s\", \"flow_stage\": \"%s\", \"declared_scenario_specialization\": \"%s\", \"business_specialization\": \"%s\", \"enforcement_specialization\": \"%s\", \"external_effect_boundary\": %s},\n"
+            "  \"operational_state\": {\"last_event_ref\": \"%s\", \"last_flow_stage\": \"%s\", \"last_business_specialization\": \"%s\", \"last_enforcement_specialization\": \"%s\", \"last_effect\": \"%s\", \"last_authority\": \"%s\", \"last_evidence\": \"%s\", \"last_trace_ref\": \"%s\", \"review_state\": \"%s\", \"operational_summary\": \"%s\"},\n"
             "  \"inspect\": {\"last_summary\": \"%s\", \"last_trace_ref\": \"%s\"},\n"
             "  \"refs\": {\"trace_index\": \"%s\", \"artifact_index\": \"%s\", \"runtime_state\": \"%s\"}\n"
             "}\n",
@@ -1266,6 +1777,24 @@ static int yai_workspace_write_containment_surfaces(const yai_workspace_runtime_
             info->last_effect_summary,
             info->last_authority_summary,
             info->last_evidence_summary,
+            info->policy_attachments_csv,
+            info->policy_attachment_count,
+            evt_id,
+            evt_stage,
+            evt_declared,
+            evt_business,
+            evt_enforcement,
+            evt_external ? "true" : "false",
+            evt_id,
+            evt_stage,
+            evt_business,
+            evt_enforcement,
+            info->last_effect_summary,
+            info->last_authority_summary,
+            info->last_evidence_summary,
+            info->last_resolution_trace_ref,
+            review_state,
+            op_summary,
             info->last_resolution_summary,
             info->last_resolution_trace_ref,
             info->traces_index_path,
@@ -1499,6 +2028,8 @@ int yai_session_read_workspace_info(const char *ws_id, yai_workspace_runtime_inf
     (void)yai_session_extract_json_double(buf, "last_inference_confidence", &out->inferred_confidence);
     (void)yai_session_extract_json_string(buf, "effective_stack_ref", out->effective_stack_ref, sizeof(out->effective_stack_ref));
     (void)yai_session_extract_json_string(buf, "effective_overlays_ref", out->effective_overlays_ref, sizeof(out->effective_overlays_ref));
+    (void)yai_session_extract_json_string(buf, "policy_attachments", out->policy_attachments_csv, sizeof(out->policy_attachments_csv));
+    out->policy_attachment_count = yai_policy_attachment_csv_count(out->policy_attachments_csv);
     (void)yai_session_extract_json_string(buf, "last_effect_summary", out->last_effect_summary, sizeof(out->last_effect_summary));
     (void)yai_session_extract_json_string(buf, "last_authority_summary", out->last_authority_summary, sizeof(out->last_authority_summary));
     (void)yai_session_extract_json_string(buf, "last_evidence_summary", out->last_evidence_summary, sizeof(out->last_evidence_summary));
@@ -2294,6 +2825,14 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
     char dig_publication[192];
     char dig_retrieval[192];
     char dig_distribution[192];
+    char evt_declared[96];
+    char evt_business[96];
+    char evt_enforcement[96];
+    char evt_stage[48];
+    char evt_id[224];
+    char op_summary[192];
+    const char *review_state;
+    int evt_external;
     int rc;
     int n;
     if (!out || out_cap == 0)
@@ -2301,6 +2840,14 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
     rc = yai_session_resolve_current_workspace(&info, status, sizeof(status), err, sizeof(err));
     if (rc != 0 || strcmp(status, "active") != 0)
     {
+        (void)snprintf(evt_declared, sizeof(evt_declared), "%s", "unset");
+        (void)snprintf(evt_business, sizeof(evt_business), "%s", "not_resolved");
+        (void)snprintf(evt_enforcement, sizeof(evt_enforcement), "%s", "not_resolved");
+        (void)snprintf(evt_stage, sizeof(evt_stage), "%s", "unknown");
+        (void)snprintf(evt_id, sizeof(evt_id), "%s", "none");
+        evt_external = 0;
+        (void)snprintf(op_summary, sizeof(op_summary), "%s", "unknown/not_resolved => not_resolved");
+        review_state = "unresolved";
         (void)snprintf(sci_experiment, sizeof(sci_experiment), "%s", "not available");
         (void)snprintf(sci_parameter, sizeof(sci_parameter), "%s", "not available");
         (void)snprintf(sci_repro, sizeof(sci_repro), "%s", "not available");
@@ -2327,6 +2874,9 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                      "\"normative\":{\"declared\":{\"family\":\"\",\"specialization\":\"\",\"source\":\"unset\"},"
                      "\"inferred\":{\"family\":\"\",\"specialization\":\"\",\"confidence\":0.000},"
                      "\"effective\":{\"stack_ref\":\"\",\"overlays_ref\":\"\",\"effect_summary\":\"\",\"authority_summary\":\"\",\"evidence_summary\":\"\"}},"
+                     "\"event_surface\":{\"event_id\":\"%s\",\"flow_stage\":\"%s\",\"declared_scenario_specialization\":\"%s\",\"business_specialization\":\"%s\",\"enforcement_specialization\":\"%s\",\"external_effect_boundary\":%s},"
+                     "\"operational_state\":{\"binding_state\":\"%s\",\"attached_governance_objects\":\"\",\"active_effective_stack\":\"\",\"last_event_ref\":\"%s\",\"last_flow_stage\":\"%s\",\"last_business_specialization\":\"%s\",\"last_enforcement_specialization\":\"%s\",\"last_effect\":\"not_resolved\",\"last_authority\":\"not_available\",\"last_evidence\":\"not_available\",\"last_trace_ref\":\"\",\"review_state\":\"%s\",\"operational_summary\":\"%s\"},"
+                     "\"governance\":{\"policy_attachments\":\"\",\"policy_attachment_count\":0},"
                      "\"scientific\":{\"experiment_context_summary\":\"%s\",\"parameter_governance_summary\":\"%s\",\"reproducibility_summary\":\"%s\",\"dataset_integrity_summary\":\"%s\",\"publication_control_summary\":\"%s\"},"
                      "\"digital\":{\"outbound_context_summary\":\"%s\",\"sink_target_summary\":\"%s\",\"publication_control_summary\":\"%s\",\"retrieval_control_summary\":\"%s\",\"distribution_control_summary\":\"%s\"},"
                      "\"inspect\":{\"last_resolution_summary\":\"\",\"last_resolution_trace_ref\":\"\"},"
@@ -2334,6 +2884,19 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                      "}",
                      status[0] ? status : "invalid",
                      status[0] ? status : "invalid",
+                     evt_id,
+                     evt_stage,
+                     evt_declared,
+                     evt_business,
+                     evt_enforcement,
+                     evt_external ? "true" : "false",
+                     status[0] ? status : "invalid",
+                     evt_id,
+                     evt_stage,
+                     evt_business,
+                     evt_enforcement,
+                     review_state,
+                     op_summary,
                      sci_experiment,
                      sci_parameter,
                      sci_repro,
@@ -2370,6 +2933,21 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                                           sizeof(dig_retrieval),
                                           dig_distribution,
                                           sizeof(dig_distribution));
+    yai_session_workspace_event_semantics(&info,
+                                          evt_declared,
+                                          sizeof(evt_declared),
+                                          evt_business,
+                                          sizeof(evt_business),
+                                          evt_enforcement,
+                                          sizeof(evt_enforcement),
+                                          evt_stage,
+                                          sizeof(evt_stage),
+                                          &evt_external);
+    snprintf(evt_id, sizeof(evt_id), "%s%s",
+             info.last_resolution_trace_ref[0] ? "evt-" : "none",
+             info.last_resolution_trace_ref[0] ? info.last_resolution_trace_ref : "");
+    review_state = yai_workspace_review_state_from_effect(info.last_effect_summary);
+    yai_workspace_operational_summary(evt_stage, evt_business, info.last_effect_summary, op_summary, sizeof(op_summary));
 
     n = snprintf(out,
                  out_cap,
@@ -2387,6 +2965,9 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                  "\"normative\":{\"declared\":{\"family\":\"%s\",\"specialization\":\"%s\",\"source\":\"%s\"},"
                  "\"inferred\":{\"family\":\"%s\",\"specialization\":\"%s\",\"confidence\":%.3f},"
                  "\"effective\":{\"stack_ref\":\"%s\",\"overlays_ref\":\"%s\",\"effect_summary\":\"%s\",\"authority_summary\":\"%s\",\"evidence_summary\":\"%s\"}},"
+                 "\"event_surface\":{\"event_id\":\"%s\",\"flow_stage\":\"%s\",\"declared_scenario_specialization\":\"%s\",\"business_specialization\":\"%s\",\"enforcement_specialization\":\"%s\",\"external_effect_boundary\":%s},"
+                 "\"operational_state\":{\"binding_state\":\"active\",\"attached_governance_objects\":\"%s\",\"active_effective_stack\":\"%s\",\"last_event_ref\":\"%s\",\"last_flow_stage\":\"%s\",\"last_business_specialization\":\"%s\",\"last_enforcement_specialization\":\"%s\",\"last_effect\":\"%s\",\"last_authority\":\"%s\",\"last_evidence\":\"%s\",\"last_trace_ref\":\"%s\",\"review_state\":\"%s\",\"operational_summary\":\"%s\"},"
+                 "\"governance\":{\"policy_attachments\":\"%s\",\"policy_attachment_count\":%d},"
                  "\"scientific\":{\"experiment_context_summary\":\"%s\",\"parameter_governance_summary\":\"%s\",\"reproducibility_summary\":\"%s\",\"dataset_integrity_summary\":\"%s\",\"publication_control_summary\":\"%s\"},"
                  "\"digital\":{\"outbound_context_summary\":\"%s\",\"sink_target_summary\":\"%s\",\"publication_control_summary\":\"%s\",\"retrieval_control_summary\":\"%s\",\"distribution_control_summary\":\"%s\"},"
                  "\"inspect\":{\"last_resolution_summary\":\"%s\",\"last_resolution_trace_ref\":\"%s\"}"
@@ -2458,6 +3039,26 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                  info.last_effect_summary,
                  info.last_authority_summary,
                  info.last_evidence_summary,
+                 evt_id,
+                 evt_stage,
+                 evt_declared,
+                 evt_business,
+                 evt_enforcement,
+                 evt_external ? "true" : "false",
+                 info.policy_attachments_csv,
+                 info.effective_stack_ref,
+                 evt_id,
+                 evt_stage,
+                 evt_business,
+                 evt_enforcement,
+                 info.last_effect_summary,
+                 info.last_authority_summary,
+                 info.last_evidence_summary,
+                 info.last_resolution_trace_ref,
+                 review_state,
+                 op_summary,
+                 info.policy_attachments_csv,
+                 info.policy_attachment_count,
                  sci_experiment,
                  sci_parameter,
                  sci_repro,
@@ -2630,6 +3231,303 @@ int yai_session_set_workspace_declared_context(const char *family,
     return 0;
 }
 
+int yai_session_workspace_policy_attachment_update(const char *object_id,
+                                                   int attach_mode,
+                                                   char *out_json,
+                                                   size_t out_cap,
+                                                   char *err,
+                                                   size_t err_cap)
+{
+    yai_workspace_runtime_info_t info;
+    yai_governable_object_meta_t meta;
+    char status[24];
+    char bind_err[96];
+    char eligibility[64];
+    char compatibility[64];
+    char conflicts[160];
+    char warnings[160];
+    const char *attachment_state = "attached_inactive";
+    const char *action = "attach";
+    int blocking = 0;
+    int already_attached = 0;
+    int n;
+    int op_rc;
+
+    if (err && err_cap > 0) err[0] = '\0';
+    if (!object_id || !object_id[0])
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "object_id_required");
+        return -1;
+    }
+    if (!yai_policy_attachment_id_valid(object_id))
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "invalid_object_id");
+        return -1;
+    }
+    yai_governable_meta_defaults(&meta);
+    if (!yai_embedded_governable_object_lookup(object_id, &meta))
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "governable_object_not_found");
+        return -1;
+    }
+    if (yai_session_resolve_current_workspace(&info, status, sizeof(status), bind_err, sizeof(bind_err)) != 0 ||
+        strcmp(status, "active") != 0)
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", bind_err[0] ? bind_err : "workspace_not_active");
+        return -1;
+    }
+
+    already_attached = yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id);
+    if (attach_mode == 1)
+    {
+        action = "attach";
+        if (yai_workspace_policy_evaluate(&info,
+                                          &meta,
+                                          eligibility,
+                                          sizeof(eligibility),
+                                          compatibility,
+                                          sizeof(compatibility),
+                                          conflicts,
+                                          sizeof(conflicts),
+                                          warnings,
+                                          sizeof(warnings),
+                                          &blocking) != 0)
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "policy_evaluation_failed");
+            return -1;
+        }
+        if (blocking)
+        {
+            if (err && err_cap > 0)
+                snprintf(err, err_cap, "%s", conflicts[0] ? conflicts : "conflict_blocking");
+            return -1;
+        }
+        if (!yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id) &&
+            yai_policy_attachment_csv_count(info.policy_attachments_csv) >= YAI_POLICY_ATTACHMENTS_MAX)
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "attachment_limit_reached");
+            return -1;
+        }
+        op_rc = yai_policy_attachment_csv_add(info.policy_attachments_csv,
+                                              sizeof(info.policy_attachments_csv),
+                                              object_id);
+        if (op_rc != 0)
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "attachment_add_failed");
+            return -1;
+        }
+    }
+    else if (attach_mode == 2)
+    {
+        action = "activate";
+        if (!yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id))
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "attachment_not_found");
+            return -1;
+        }
+        snprintf(eligibility, sizeof(eligibility), "%s", "eligible");
+        snprintf(compatibility, sizeof(compatibility), "%s", "dry_run_passed");
+        snprintf(conflicts, sizeof(conflicts), "%s", "none");
+        warnings[0] = '\0';
+    }
+    else
+    {
+        action = "detach";
+        op_rc = yai_policy_attachment_csv_remove(info.policy_attachments_csv,
+                                                 sizeof(info.policy_attachments_csv),
+                                                 object_id);
+        if (op_rc == 1)
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "attachment_not_found");
+            return -1;
+        }
+        if (op_rc != 0)
+        {
+            if (err && err_cap > 0) snprintf(err, err_cap, "%s", "attachment_remove_failed");
+            return -1;
+        }
+    }
+
+    info.policy_attachment_count = yai_policy_attachment_csv_count(info.policy_attachments_csv);
+    attachment_state = yai_workspace_attachment_state_for_meta(&meta,
+                                                               yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id));
+    info.updated_at = (long)time(NULL);
+    if (yai_workspace_write_manifest_ws_id(info.ws_id, &info) != 0)
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "manifest_write_failed");
+        return -1;
+    }
+    if (yai_workspace_write_containment_surfaces(&info) != 0)
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "containment_write_failed");
+        return -1;
+    }
+
+    if (out_json && out_cap > 0)
+    {
+        if (attach_mode == 0)
+        {
+            snprintf(eligibility, sizeof(eligibility), "%s", "eligible");
+            snprintf(compatibility, sizeof(compatibility), "%s", "dry_run_passed");
+            snprintf(conflicts, sizeof(conflicts), "%s", "none");
+            warnings[0] = '\0';
+        }
+        n = snprintf(out_json,
+                     out_cap,
+                     "{"
+                     "\"type\":\"yai.workspace.policy.attachment.v1\","
+                     "\"workspace_id\":\"%s\","
+                     "\"binding_status\":\"active\","
+                     "\"action\":\"%s\","
+                     "\"object_id\":\"%s\","
+                     "\"kind\":\"%s\","
+                     "\"status\":\"%s\","
+                     "\"review_state\":\"%s\","
+                     "\"eligibility_result\":\"%s\","
+                     "\"compatibility_result\":\"%s\","
+                     "\"conflict_summary\":\"%s\","
+                     "\"warnings\":\"%s\","
+                     "\"attachment_state\":\"%s\","
+                     "\"activation_state\":\"%s\","
+                     "\"already_attached\":%s,"
+                     "\"attachment_valid\":true,"
+                     "\"policy_attachments\":\"%s\","
+                     "\"policy_attachment_count\":%d"
+                     "}",
+                     info.ws_id,
+                     action,
+                     object_id,
+                     meta.kind,
+                     meta.status,
+                     meta.review_state,
+                     eligibility,
+                     compatibility,
+                     conflicts,
+                     warnings,
+                     attachment_state,
+                     yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id) ? "active" : "inactive",
+                     already_attached ? "true" : "false",
+                     info.policy_attachments_csv,
+                     info.policy_attachment_count);
+        return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
+    }
+    return 0;
+}
+
+int yai_session_workspace_policy_apply_dry_run(const char *object_id,
+                                               char *out_json,
+                                               size_t out_cap,
+                                               char *err,
+                                               size_t err_cap)
+{
+    yai_workspace_runtime_info_t info;
+    yai_governable_object_meta_t meta;
+    char status[24];
+    char bind_err[96];
+    char eligibility[64];
+    char compatibility[64];
+    char conflicts[160];
+    char warnings[160];
+    char effective_family[96];
+    char effective_specialization[96];
+    int blocking = 0;
+    int n;
+
+    if (err && err_cap > 0) err[0] = '\0';
+    if (!object_id || !object_id[0])
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "object_id_required");
+        return -1;
+    }
+    if (!yai_policy_attachment_id_valid(object_id))
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "invalid_object_id");
+        return -1;
+    }
+    yai_governable_meta_defaults(&meta);
+    if (!yai_embedded_governable_object_lookup(object_id, &meta))
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "governable_object_not_found");
+        return -1;
+    }
+    if (yai_session_resolve_current_workspace(&info, status, sizeof(status), bind_err, sizeof(bind_err)) != 0 ||
+        strcmp(status, "active") != 0)
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", bind_err[0] ? bind_err : "workspace_not_active");
+        return -1;
+    }
+
+    if (yai_workspace_policy_evaluate(&info,
+                                      &meta,
+                                      eligibility,
+                                      sizeof(eligibility),
+                                      compatibility,
+                                      sizeof(compatibility),
+                                      conflicts,
+                                      sizeof(conflicts),
+                                      warnings,
+                                      sizeof(warnings),
+                                      &blocking) != 0)
+    {
+        if (err && err_cap > 0) snprintf(err, err_cap, "%s", "policy_evaluation_failed");
+        return -1;
+    }
+    yai_workspace_policy_effective_context(&info,
+                                           effective_family,
+                                           sizeof(effective_family),
+                                           effective_specialization,
+                                           sizeof(effective_specialization));
+
+    if (out_json && out_cap > 0)
+    {
+        n = snprintf(out_json,
+                     out_cap,
+                     "{"
+                     "\"type\":\"yai.workspace.policy.apply.dry_run.v1\","
+                     "\"workspace_id\":\"%s\","
+                     "\"object_id\":\"%s\","
+                     "\"kind\":\"%s\","
+                     "\"status\":\"%s\","
+                     "\"review_state\":\"%s\","
+                     "\"workspace_family\":\"%s\","
+                     "\"workspace_specialization\":\"%s\","
+                     "\"target_workspace_ids\":\"%s\","
+                     "\"target_family\":\"%s\","
+                     "\"target_specialization\":\"%s\","
+                     "\"precedence_class\":\"%s\","
+                     "\"attachment_modes\":\"%s\","
+                     "\"eligibility_result\":\"%s\","
+                     "\"compatibility_result\":\"%s\","
+                     "\"conflict_summary\":\"%s\","
+                     "\"warnings\":\"%s\","
+                     "\"ready_for_attach\":%s,"
+                     "\"activation_state\":\"%s\","
+                     "\"effective_stack_ref\":\"%s\""
+                     "}",
+                     info.ws_id,
+                     object_id,
+                     meta.kind,
+                     meta.status,
+                     meta.review_state,
+                     effective_family,
+                     effective_specialization,
+                     meta.workspace_targets_csv,
+                     meta.family_targets_csv,
+                     meta.specialization_targets_csv,
+                     meta.precedence_class,
+                     meta.attachment_modes_csv,
+                     eligibility,
+                     compatibility,
+                     conflicts,
+                     warnings,
+                     blocking ? "false" : "true",
+                     yai_policy_attachment_csv_contains(info.policy_attachments_csv, object_id) ? "active" : "inactive",
+                     info.effective_stack_ref);
+        return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
+    }
+    return 0;
+}
+
 int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap)
 {
     yai_workspace_runtime_info_t info;
@@ -2645,6 +3543,14 @@ int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap)
     char dig_publication[192];
     char dig_retrieval[192];
     char dig_distribution[192];
+    char evt_declared[96];
+    char evt_business[96];
+    char evt_enforcement[96];
+    char evt_stage[48];
+    char evt_id[224];
+    char op_summary[192];
+    const char *review_state;
+    int evt_external;
     int n;
     if (!out || out_cap == 0)
         return -1;
@@ -2678,6 +3584,21 @@ int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap)
                                           sizeof(dig_retrieval),
                                           dig_distribution,
                                           sizeof(dig_distribution));
+    yai_session_workspace_event_semantics(&info,
+                                          evt_declared,
+                                          sizeof(evt_declared),
+                                          evt_business,
+                                          sizeof(evt_business),
+                                          evt_enforcement,
+                                          sizeof(evt_enforcement),
+                                          evt_stage,
+                                          sizeof(evt_stage),
+                                          &evt_external);
+    snprintf(evt_id, sizeof(evt_id), "%s%s",
+             info.last_resolution_trace_ref[0] ? "evt-" : "none",
+             info.last_resolution_trace_ref[0] ? info.last_resolution_trace_ref : "");
+    review_state = yai_workspace_review_state_from_effect(info.last_effect_summary);
+    yai_workspace_operational_summary(evt_stage, evt_business, info.last_effect_summary, op_summary, sizeof(op_summary));
     n = snprintf(out,
                  out_cap,
                  "{"
@@ -2697,8 +3618,12 @@ int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap)
                  "\"artifacts_index_ref\":\"%s\","
                  "\"family_effective\":\"%s\","
                  "\"specialization_effective\":\"%s\","
+                 "\"event_surface\":{\"event_id\":\"%s\",\"flow_stage\":\"%s\",\"declared_scenario_specialization\":\"%s\",\"business_specialization\":\"%s\",\"enforcement_specialization\":\"%s\",\"external_effect_boundary\":%s},"
+                 "\"operational_state\":{\"binding_state\":\"active\",\"attached_governance_objects\":\"%s\",\"active_effective_stack\":\"%s\",\"last_event_ref\":\"%s\",\"last_flow_stage\":\"%s\",\"last_business_specialization\":\"%s\",\"last_enforcement_specialization\":\"%s\",\"last_effect\":\"%s\",\"last_authority\":\"%s\",\"last_evidence\":\"%s\",\"last_trace_ref\":\"%s\",\"review_state\":\"%s\",\"operational_summary\":\"%s\"},"
                  "\"effective_stack_ref\":\"%s\","
                  "\"effective_overlays_ref\":\"%s\","
+                 "\"policy_attachments\":\"%s\","
+                 "\"policy_attachment_count\":%d,"
                  "\"precedence\":\"specialization+overlays\","
                  "\"effect_summary\":\"%s\","
                  "\"authority_summary\":\"%s\","
@@ -2721,8 +3646,28 @@ int yai_session_build_workspace_policy_effective_json(char *out, size_t out_cap)
                  info.artifacts_index_path,
                  info.inferred_family[0] ? info.inferred_family : info.declared_control_family,
                  info.inferred_specialization[0] ? info.inferred_specialization : info.declared_specialization,
+                 evt_id,
+                 evt_stage,
+                 evt_declared,
+                 evt_business,
+                 evt_enforcement,
+                 evt_external ? "true" : "false",
+                 info.policy_attachments_csv,
+                 info.effective_stack_ref,
+                 evt_id,
+                 evt_stage,
+                 evt_business,
+                 evt_enforcement,
+                 info.last_effect_summary,
+                 info.last_authority_summary,
+                 info.last_evidence_summary,
+                 info.last_resolution_trace_ref,
+                 review_state,
+                 op_summary,
                  info.effective_stack_ref,
                  info.effective_overlays_ref,
+                 info.policy_attachments_csv,
+                 info.policy_attachment_count,
                  info.last_effect_summary,
                  info.last_authority_summary,
                  info.last_evidence_summary,
@@ -2754,6 +3699,14 @@ int yai_session_build_workspace_debug_resolution_json(char *out, size_t out_cap)
     char dig_publication[192];
     char dig_retrieval[192];
     char dig_distribution[192];
+    char evt_declared[96];
+    char evt_business[96];
+    char evt_enforcement[96];
+    char evt_stage[48];
+    char evt_id[224];
+    char op_summary[192];
+    const char *review_state;
+    int evt_external;
     int n;
     const char *context_source;
     if (!out || out_cap == 0)
@@ -2789,6 +3742,21 @@ int yai_session_build_workspace_debug_resolution_json(char *out, size_t out_cap)
                                           sizeof(dig_retrieval),
                                           dig_distribution,
                                           sizeof(dig_distribution));
+    yai_session_workspace_event_semantics(&info,
+                                          evt_declared,
+                                          sizeof(evt_declared),
+                                          evt_business,
+                                          sizeof(evt_business),
+                                          evt_enforcement,
+                                          sizeof(evt_enforcement),
+                                          evt_stage,
+                                          sizeof(evt_stage),
+                                          &evt_external);
+    snprintf(evt_id, sizeof(evt_id), "%s%s",
+             info.last_resolution_trace_ref[0] ? "evt-" : "none",
+             info.last_resolution_trace_ref[0] ? info.last_resolution_trace_ref : "");
+    review_state = yai_workspace_review_state_from_effect(info.last_effect_summary);
+    yai_workspace_operational_summary(evt_stage, evt_business, info.last_effect_summary, op_summary, sizeof(op_summary));
     n = snprintf(out,
                  out_cap,
                  "{"
@@ -2808,6 +3776,8 @@ int yai_session_build_workspace_debug_resolution_json(char *out, size_t out_cap)
                  "\"context_source\":\"%s\","
                  "\"declared\":{\"family\":\"%s\",\"specialization\":\"%s\"},"
                  "\"inferred\":{\"family\":\"%s\",\"specialization\":\"%s\",\"confidence\":%.3f},"
+                 "\"event_surface\":{\"event_id\":\"%s\",\"flow_stage\":\"%s\",\"declared_scenario_specialization\":\"%s\",\"business_specialization\":\"%s\",\"enforcement_specialization\":\"%s\",\"external_effect_boundary\":%s},"
+                 "\"operational_state\":{\"binding_state\":\"active\",\"attached_governance_objects\":\"%s\",\"active_effective_stack\":\"%s\",\"last_event_ref\":\"%s\",\"last_flow_stage\":\"%s\",\"last_business_specialization\":\"%s\",\"last_enforcement_specialization\":\"%s\",\"last_effect\":\"%s\",\"last_authority\":\"%s\",\"last_evidence\":\"%s\",\"last_trace_ref\":\"%s\",\"review_state\":\"%s\",\"operational_summary\":\"%s\"},"
                  "\"effective\":{\"stack_ref\":\"%s\",\"overlays_ref\":\"%s\"},"
                  "\"precedence_outcome\":\"%s\","
                  "\"effect_outcome\":\"%s\","
@@ -2834,6 +3804,24 @@ int yai_session_build_workspace_debug_resolution_json(char *out, size_t out_cap)
                  info.inferred_family,
                  info.inferred_specialization,
                  info.inferred_confidence,
+                 evt_id,
+                 evt_stage,
+                 evt_declared,
+                 evt_business,
+                 evt_enforcement,
+                 evt_external ? "true" : "false",
+                 info.policy_attachments_csv,
+                 info.effective_stack_ref,
+                 evt_id,
+                 evt_stage,
+                 evt_business,
+                 evt_enforcement,
+                 info.last_effect_summary,
+                 info.last_authority_summary,
+                 info.last_evidence_summary,
+                 info.last_resolution_trace_ref,
+                 review_state,
+                 op_summary,
                  info.effective_stack_ref,
                  info.effective_overlays_ref,
                  "specialization+overlays",

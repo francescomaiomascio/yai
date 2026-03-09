@@ -25,3 +25,16 @@ Current handoff point:
 - non-blocking effects remain `ok` with rationale attached.
 
 This keeps enforcement decisions driven by resolved law output instead of ad-hoc local policy branches.
+
+## Event surface preservation
+
+Enforcement is no longer the only semantic shown to operators.
+Workspace surfaces preserve three parallel fields:
+
+- declared scenario specialization
+- business specialization
+- enforcement specialization
+
+When enforcement falls back to `network-egress`, event surfaces still preserve business scenario identity for inspect/debug/effective views.
+
+Reference: `docs/architecture/workspace-event-surface-model.md`.

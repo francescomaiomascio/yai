@@ -1,0 +1,90 @@
+{
+  "kind": "governance-attachability-constraints",
+  "version": "v1",
+  "binding_model": "workspace-first",
+  "constraints": {
+    "allowed_by_kind": {
+      "compliance_module": [
+        "stack",
+        "policy-composition"
+      ],
+      "overlay": [
+        "overlay-stack",
+        "policy-composition"
+      ],
+      "customer_policy_pack": [
+        "workspace-attach",
+        "runtime-entrypoint"
+      ],
+      "enterprise_custom_governance_object": [
+        "workspace_attach",
+        "organization_default",
+        "runtime_entrypoint"
+      ],
+      "specialization_policy_pack": [
+        "domain-set",
+        "policy-resolution-anchor"
+      ],
+      "template_object": [
+        "none"
+      ]
+    },
+    "runtime_consumable_by_kind": {
+      "compliance_module": true,
+      "overlay": true,
+      "customer_policy_pack": true,
+      "enterprise_custom_governance_object": true,
+      "specialization_policy_pack": true,
+      "template_object": false
+    },
+    "cli_discoverable_by_kind": {
+      "compliance_module": true,
+      "overlay": true,
+      "customer_policy_pack": true,
+      "enterprise_custom_governance_object": true,
+      "specialization_policy_pack": true,
+      "template_object": false
+    },
+    "precedence_classes": {
+      "compliance_module": [
+        "compliance-layer"
+      ],
+      "overlay": [
+        "overlay-regulatory",
+        "overlay-sector",
+        "overlay-contextual"
+      ],
+      "customer_policy_pack": [
+        "specialization+compliance+overlays+customer-pack",
+        "specialization+contextual-overlays+customer-pack"
+      ],
+      "enterprise_custom_governance_object": [
+        "specialization+compliance+overlays+customer-pack+enterprise-object",
+        "specialization+contextual-overlays+customer-pack+enterprise-object"
+      ],
+      "specialization_policy_pack": [
+        "specialization-baseline"
+      ],
+      "template_object": [
+        "non-operational-template"
+      ]
+    },
+    "workspace_apply_states": [
+      "candidate_only",
+      "approved_not_attached",
+      "attached_inactive",
+      "attached_active",
+      "attach_rejected",
+      "detached",
+      "superseded"
+    ],
+    "workspace_compatibility_results": [
+      "eligible",
+      "eligible_with_warnings",
+      "ineligible",
+      "dry_run_passed",
+      "dry_run_failed",
+      "conflict_blocking"
+    ]
+  }
+}
