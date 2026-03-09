@@ -60,164 +60,216 @@ tags:
 # RB-DATA-PLANE - Data Plane Program (rev3)
 
 ## 1) Purpose
-Define the enterprise baseline for YAI Data Plane delivery across the current platform stack:
+Refound the canonical Data Plane model for the current system state.
 
-`law -> sdk -> cli -> yai -> ops` (with `infra` as governance/tooling factory).
+This tranche is not about "adding databases". It defines the model that all
+backend work must follow:
+- storage classes,
+- ownership boundaries,
+- authoritative write/read paths,
+- non-bypass rules,
+- role model for backend families.
 
-This runbook aligns implementation sequencing, contract boundaries, and evidence closure for storage and stateful runtime operations.
+Canonical delivery path remains:
+`cli -> sdk -> yai` (with `law` as normative source and `ops` as evidence sink).
 
-## 2) Snapshot (as of 2026-03-09)
-- Runtime topology in `yai`: Root -> Kernel -> Engine, Mind surfaces optional/planned by scope.
-- Workspace-first operation is active and remains the containment boundary.
-- Vault contract is pinned from `law` and consumed by runtime/SDK/CLI.
-- Audit convergence program is active; Data Plane remains partially closed in matrix status.
-- Existing rev1/rev2 content is superseded by this rev3 program mapping.
+## 2) DP-1 Positioning
 
-## 3) Scope
+### What DP-1 is
+- Canonical model refoundation.
+- Program framing reset from legacy topology language to current runtime reality.
+- Storage-class and ownership normalization across `core`, `exec`, `brain`.
 
-### In scope
-- Workspace-scoped storage layout and manifest discipline.
-- Kernel authority store lifecycle and deterministic path governance.
-- Engine event/data persistence surfaces governed by kernel authority.
-- CLI/SDK data commands routed only through Root/Kernel governance.
-- Evidence and qualification outputs required for phase closure.
+### What DP-1 is not
+- No heavy backend cutover yet.
+- No "winner takes all" backend choice.
+- No query-first/cockpit-first implementation.
 
-### Out of scope
-- Multi-node/distributed data-plane orchestration.
-- Cross-workspace federated queries.
-- Production-grade HA/replication design.
-- Mind-dependent data features as mandatory closure condition.
+## 3) Legacy Framing Declassed
+Legacy root/kernel/engine labels are retained for historical traceability, but
+they are no longer the dominant conceptual frame for Data Plane design.
 
-## 4) Non-negotiable invariants
-1. No direct client access to storage backends.
-2. All operations must be workspace-scoped and path-jail compliant.
-3. Contract authority is externalized to pinned `../law` artifacts.
-4. Deterministic error semantics must use canonical exec-reply/control schemas.
-5. Data-plane changes are not complete until evidence is published in `ops`.
-6. If checks are mandatory in a closure phase, `SKIP` is treated as `FAIL`.
+`mind-redis-stm.md` is explicitly declassed from "DP center" to a backend- and
+component-specific runbook:
+- Redis is a candidate backend for a storage class, not the Data Plane model.
+- Brain is one major DP owner/consumer, not the whole DP.
 
-## 5) Responsibility model (current repo structure)
-- `law`: normative contracts, schemas, registries, ABI surfaces.
-- `sdk`: contract-constrained API surface for governed data operations.
-- `cli`: operator command surface only (no storage bypass).
-- `yai`: runtime implementation (Root/Kernel/Engine behavior and enforcement).
-- `ops`: evidence bundles, qualification reports, official closure artifacts.
-- `infra`: shared governance checks, docs/tooling policy, reusable automation.
+## 4) Canonical Storage Classes
 
-## 6) Canonical control and data flow
+DP-1 formalizes these classes as canonical system vocabulary:
 
-### Control path (mandatory)
-`CLI/SDK -> Root -> Kernel -> Engine/Store -> Kernel -> Root -> CLI/SDK`
+1. Workspace Operational State
+2. Authority State
+3. Governance/Compliance Object State
+4. Review/Approval/Apply State
+5. Event Log
+6. Resolution/Evidence Log
+7. Artifact Metadata
+8. Brain Graph Memory
+9. Transient Cognition / STM
 
-### Data-plane authority rule
-- Kernel is the authority plane for workspace isolation and privileged data ops.
-- Engine executes data operations only after governed dispatch.
-- Vault state is runtime operational state, not a bypass channel around governance.
+These classes are the basis for DP-2..DP-9 and must not be merged prematurely.
 
-## 7) Workspace storage baseline
+## 5) Ownership Model (by Runtime Layer)
 
-Workspace root:
+### `core` owns
+- workspace operational state,
+- authority state,
+- runtime attachment/apply state anchoring.
 
-```text
-~/.yai/run/<ws_id>/
-├── manifest.json
-├── authority/
-├── events/
-├── engine/
-└── logs/
-```
+Anchors:
+- `lib/core/workspace/*`
+- `lib/core/authority/*`
+- `lib/core/session/*`
 
-Baseline rules:
-- `manifest.json` is mandatory and versioned.
-- Authority and event storage must be created/validated by governed runtime flows.
-- Layout creation and migration are idempotent.
-- All paths must resolve under workspace root with canonical path-jail helpers.
+### `exec` owns
+- execution-time event production,
+- storage mediation gates,
+- sink-facing runtime writes under governance.
 
-## 8) Program mapping (DP block, 9 deliveries)
+Anchors:
+- `lib/exec/runtime/*`
+- `lib/exec/gates/storage_gate.c`
 
-This block is the canonical program map for the next data-plane wave. It is
-intentionally high-level, sequential, and cross-repo readable.
+### `law-facing governance lifecycle` owns
+- governance/compliance object state semantics,
+- review/approval/apply lifecycle constraints,
+- evidence/audit mapping semantics.
+
+Anchors:
+- `lib/law/mapping/decision_to_evidence.c`
+- `lib/law/mapping/decision_to_audit.c`
+
+### `brain` owns
+- graph memory persistence semantics,
+- transient cognition state semantics.
+
+Anchors:
+- `lib/brain/memory/*`
+- `lib/brain/memory/graph/*`
+
+### `DP substrate` owns
+- persistence invariants,
+- sink contracts,
+- topology discipline,
+- backend role enforcement.
+
+## 6) Non-Bypass Rules (authoritative)
+
+1. CLI/SDK never write storage backends directly.
+2. Workspace/authority/apply state cannot be mutated outside canonical runtime paths.
+3. Governance lifecycle state cannot be bypassed by sink writes.
+4. Event/evidence logs are sink contracts, not debug-file side channels.
+5. Transient cognition is not authoritative persistent truth.
+6. Graph hot cache cannot replace graph truth persistence.
+7. Any backend integration must preserve deterministic reply semantics.
+
+## 7) Backend Role Model (not backend dogma)
+
+### KV / embedded authority backend role
+Candidate role: workspace operational + authority + apply/lifecycle essentials.
+Candidate technologies: LMDB-class stores.
+
+### Tabular / query-oriented backend role
+Candidate role: event/evidence/resolution logs and operator-readable summaries.
+Candidate technologies: DuckDB-class stores.
+
+### Graph persistence backend role
+Candidate role: semantic/episodic persistent graph state.
+
+### Transient memory backend role
+Candidate role: STM/hot activation cache/degraded-tolerant cognition sets.
+Candidate technologies: Redis-class stores.
+
+No backend is "the Data Plane". Backend choice follows class ownership and sink
+contracts, not the reverse.
+
+## 8) Sink-First Strategy (program rule)
+
+Execution order is mandatory:
+1. storage classes,
+2. topology/layout,
+3. sink contracts,
+4. write paths,
+5. persistence implementation,
+6. reader/query surfaces,
+7. richer workspace↔graph↔workflow semantics.
+
+This block is intentionally sink-first, not query-first.
+
+## 9) Scope Control (what this block does not do yet)
+
+Out of scope for initial DP block:
+- distributed federation/replication/HA,
+- cross-workspace rich federated queries,
+- distributed graph fabric,
+- full workflow persistence,
+- advanced policy analytics fabric,
+- full cockpit data fabric.
+
+## 10) Program Mapping (DP block in 9 deliveries)
 
 ### DP-1 — Refoundation of the Canonical Data Plane Model
-Objective:
-- Define canonical data-plane model, boundaries, and invariants.
-Outputs:
-- Refounded architecture model, terminology, and interfaces baseline.
+Canonical model, terminology, boundaries, ownership, non-bypass baseline.
 
 ### DP-2 — Canonical Storage Classes and Backend Role Model
-Objective:
-- Define storage classes and ownership boundaries (runtime/kernel/engine).
-Outputs:
-- Backend role matrix and class-to-responsibility mapping.
+Class-by-class role matrix, backend role binding, non-overlap contracts.
 
 ### DP-3 — Canonical Storage Topology and Persistence Layout
-Objective:
-- Formalize persistence layout and workspace-scoped topology.
-Outputs:
-- Stable on-disk topology model and deterministic layout contract.
+Persistence topology, layout contract, migration-safe path model.
 
 ### DP-4 — Event and Evidence Sink Hardening
-Objective:
-- Harden event/evidence sinks with deterministic write/read guarantees.
-Outputs:
-- Sink controls, retention hooks, failure semantics, and verification lanes.
+Append/read contracts, retention hooks, deterministic failure semantics.
 
 ### DP-5 — Governance and Compliance Persistence Integration
-Objective:
-- Persist governance/compliance state with canonical linkage to law/runtime.
-Outputs:
-- Governed persistence surfaces and compatibility constraints.
+Persistent model for governance/compliance/lifecycle state with law alignment.
 
 ### DP-6 — Authority and Artifact Metadata Store Integration
-Objective:
-- Integrate authority state and artifact metadata stores under kernel control.
-Outputs:
-- Deterministic authority/artifact metadata persistence contract.
+Authority and artifact metadata persistence under runtime ownership boundaries.
 
 ### DP-7 — Brain Graph Sink and Transient Cognition Backend
-Objective:
-- Introduce bounded graph sink/transient cognition backend without scope creep.
-Outputs:
-- Controlled graph sink model and transient backend interfaces.
+Graph truth vs transient cognition separation, sink contract integration.
 
 ### DP-8 — CLI/SDK Data Surfaces and Operator Query Model
-Objective:
-- Expose operator/programmatic data surfaces aligned with runtime governance.
-Outputs:
-- CLI/SDK query model, response semantics, and usage guidance.
+Operator/programmatic data surfaces over canonical sinks (no backend bypass).
 
 ### DP-9 — Verification, Qualification and Pre-Pilot Data Closure
-Objective:
-- Close the block with reproducible verification and qualification evidence.
-Outputs:
-- Cross-repo verification pack, qualification matrix, and pre-pilot closure.
+Cross-repo verification, qualification evidence, pre-pilot closure package.
 
-## 9) Immediate start scope (DP-1 now)
+## 11) Immediate DP-1 Exit Criteria
 
-DP-1 starts immediately with these non-negotiable targets:
-- canonical data-plane model document as single source of truth,
-- explicit scope boundaries (in/out) for this DP block,
-- invariants and terminology normalization across `law`, `yai`, `sdk`, `cli`,
-- baseline verification hooks to prevent model drift before DP-2.
+DP-1 is complete when:
+1. canonical storage classes are explicit and stable,
+2. ownership model is explicit per class,
+3. non-bypass rules are explicit and testable,
+4. backend role model is explicit without hard lock-in,
+5. sink-first sequence is explicit and accepted,
+6. DP-1..DP-9 program map is stable and published.
 
-## 10) Verification matrix
+## 12) Verification Matrix (DP baseline)
 
-Mandatory verification lanes per phase:
-- Build and baseline runtime checks.
-- Contract and pin checks.
-- Workspace isolation and path-jail tests.
-- Data command integration tests (CLI and SDK).
-- Failure-mode checks: malformed payload, unauthorized op, storage unavailable, quota/authority constraints.
+Mandatory lanes:
+- model/doc consistency checks,
+- pin/contract checks against `law`,
+- workspace scope and path-jail checks,
+- deterministic error semantics checks,
+- cross-link integrity for program/runbook references.
 
-Evidence minimums:
+Evidence minimum:
 - command outputs,
 - logs,
 - verification reports,
 - traceability pointers to runbook phase and claim IDs.
 
-## 11) Failure modes and controls
-- Cross-tenant leakage risk:
-  - Control: path-jail + workspace identity checks at kernel boundary.
+## 13) Failure Modes and Controls
+- Cross-tenant leakage:
+  - control: workspace boundary + path-jail enforcement.
+- Contract drift:
+  - control: pin checks + contract anchor verification.
+- Backend-role drift:
+  - control: class-role matrix checks and review gates.
+- File-first regression:
+  - control: sink contract enforcement and lifecycle gating.
 - Contract drift risk:
   - Control: pin checks + registry/schema anchor validation.
 - Runtime/backend mismatch risk:

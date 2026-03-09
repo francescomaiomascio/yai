@@ -27,6 +27,9 @@ A good runbook must be deterministic:
 - `docs/program/23-runbooks/workspaces-lifecycle.md`
 - `docs/program/23-runbooks/engine-attach.md`
 - `docs/program/23-runbooks/data-plane.md`
+- `docs/program/23-runbooks/workspace-data-sinks.md`
+- `docs/program/23-runbooks/evidence-and-event-persistence.md`
+- `docs/program/23-runbooks/brain-memory-and-graph-sinks.md`
 - `docs/program/23-runbooks/mind-redis-stm.md`
 - `docs/program/23-runbooks/kernel-sovereignty.md`
 - `docs/program/23-runbooks/operations.md`
