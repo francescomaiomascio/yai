@@ -49,9 +49,9 @@ out="$("$TOKEN")"
 [[ "$out" == "◉ $ALIAS" ]] || { echo "workspace_prompt_token_v1: FAIL (unexpected token '$out')"; exit 1; }
 [[ "$out" != ws:* ]] || { echo "workspace_prompt_token_v1: FAIL (token must not use ws: prefix)"; exit 1; }
 
-# 3) stale binding (missing manifest) -> no token
+# 3) stale-like binding (missing manifest) still shows session binding token
 rm -f "$MANIFEST"
 out="$("$TOKEN")"
-[[ -z "$out" ]] || { echo "workspace_prompt_token_v1: FAIL (expected empty on stale binding)"; exit 1; }
+[[ "$out" == "◉ $ALIAS" ]] || { echo "workspace_prompt_token_v1: FAIL (expected token on active binding without manifest)"; exit 1; }
 
 echo "workspace_prompt_token_v1: ok"

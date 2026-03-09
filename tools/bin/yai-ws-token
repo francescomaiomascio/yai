@@ -49,9 +49,5 @@ ws_alias = str(payload.get("workspace_alias", "")).strip() or ws_id
 if not ws_id or not re.fullmatch(r"[A-Za-z0-9._-]+", ws_id):
     sys.exit(0)
 
-manifest = pathlib.Path.home() / ".yai" / "run" / ws_id / "manifest.json"
-if not manifest.exists():
-    sys.exit(0)
-
 print(f"{icon} {ws_alias}")
 PY

@@ -67,13 +67,12 @@ Primary fields:
 zsh:
 
 ```sh
-yai_ws_token() {
-  local t
-  t="$("/Users/francescomaiomascio/Developer/YAI/yai/tools/bin/yai-ws-token")"
-  [[ -n "$t" ]] && printf " %s" "$t"
-}
+# Session-only (recommended, non-invasive)
+source /path/to/yai/tools/dev/yai-prompt.zsh
+yai_prompt_enable
 
-PROMPT='%~ $(git branch --show-current 2>/dev/null)$(yai_ws_token) %# '
+# Disable in current shell:
+yai_prompt_disable
 ```
 
 bash:
@@ -87,6 +86,17 @@ yai_ws_token() {
 
 PS1='\w $(git branch --show-current 2>/dev/null)$(yai_ws_token) \$ '
 ```
+
+## Workspace root path
+
+To inspect the active workspace root path:
+
+```sh
+cd /Users/francescomaiomascio/Developer/YAI/cli
+./dist/bin/yai ws inspect
+```
+
+Look at the `Root` / `workspace_root` field.
 
 ## Next step readiness
 

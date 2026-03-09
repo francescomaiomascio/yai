@@ -1130,7 +1130,13 @@ int yai_session_build_prompt_context_json(char *out, size_t out_cap)
 
 static int yai_workspace_binding_validity(const char *binding_status)
 {
-    return (binding_status && strcmp(binding_status, "active") == 0) ? 1 : 0;
+    if (!binding_status)
+        return 0;
+    if (strcmp(binding_status, "active") == 0)
+        return 1;
+    if (strcmp(binding_status, "no_active") == 0)
+        return 1;
+    return 0;
 }
 
 static int yai_workspace_has_declared_context(const yai_workspace_runtime_info_t *info)
@@ -1325,11 +1331,24 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
     if (!out || out_cap == 0)
         return -1;
     rc = yai_session_resolve_current_workspace(&info, status, sizeof(status), err, sizeof(err));
-    if (rc != 0)
+    if (rc != 0 || strcmp(status, "active") != 0)
     {
         n = snprintf(out,
                      out_cap,
-                     "{\"type\":\"yai.workspace.inspect.v1\",\"binding_status\":\"%s\",\"reason\":\"%s\"}",
+                     "{"
+                     "\"type\":\"yai.workspace.inspect.v1\","
+                     "\"binding_status\":\"%s\","
+                     "\"identity\":{\"workspace_id\":\"\",\"workspace_alias\":\"\",\"root_path\":\"\",\"state\":\"\"},"
+                     "\"root_model\":{\"workspace_store_root\":\"\",\"runtime_state_root\":\"\",\"metadata_root\":\"\",\"root_anchor_mode\":\"\"},"
+                     "\"shell\":{\"cwd\":\"\",\"cwd_relation\":\"workspace_root_unset\"},"
+                     "\"session\":{\"session_binding\":\"%s\",\"runtime_attached\":false,\"control_plane_attached\":false,\"isolation_mode\":\"process\",\"debug_mode\":false},"
+                     "\"normative\":{\"declared\":{\"family\":\"\",\"specialization\":\"\",\"source\":\"unset\"},"
+                     "\"inferred\":{\"family\":\"\",\"specialization\":\"\",\"confidence\":0.000},"
+                     "\"effective\":{\"stack_ref\":\"\",\"overlays_ref\":\"\",\"effect_summary\":\"\",\"authority_summary\":\"\",\"evidence_summary\":\"\"}},"
+                     "\"inspect\":{\"last_resolution_summary\":\"\",\"last_resolution_trace_ref\":\"\"},"
+                     "\"reason\":\"%s\""
+                     "}",
+                     status[0] ? status : "invalid",
                      status[0] ? status : "invalid",
                      err[0] ? err : "binding_error");
         return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
