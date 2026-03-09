@@ -89,6 +89,9 @@ Data Plane is not a backend choice. Data Plane is the persistent substrate for
 DP storage classes and owner mapping are defined in:
 - `docs/program/23-runbooks/data-plane-storage-classes.md`
 
+DP storage topology and persistence layout are defined in:
+- `docs/program/23-runbooks/data-plane-storage-topology.md`
+
 Runtime anchors used by this program:
 - `lib/core/workspace/*`
 - `lib/core/authority/*`
@@ -180,6 +183,7 @@ Evidence minimum:
 - `docs/program/audit-convergence/EXECUTION-PLAN-v0.1.0.md`
 - `docs/program/audit-convergence/AUDIT-CONVERGENCE-MATRIX-v0.1.0.md`
 - `docs/program/23-runbooks/data-plane-storage-classes.md`
+- `docs/program/23-runbooks/data-plane-storage-topology.md`
 - `docs/program/23-runbooks/workspace-data-sinks.md`
 - `docs/program/23-runbooks/evidence-and-event-persistence.md`
 - `docs/program/23-runbooks/brain-memory-and-graph-sinks.md`

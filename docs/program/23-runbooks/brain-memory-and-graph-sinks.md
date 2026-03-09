@@ -20,3 +20,6 @@ This runbook clarifies Brain relation to Data Plane without making Brain the DP 
 3. Backend technology choices are role-bound, not model-defining.
 
 DP-7 delivers full integration.
+
+Topology and store boundary baseline for brain/transient sinks is defined in:
+- `docs/program/23-runbooks/data-plane-storage-topology.md`

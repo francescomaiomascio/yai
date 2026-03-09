@@ -21,4 +21,6 @@ This runbook complements DP-1 with workspace-focused sink boundaries.
 3. Path-jail and identity checks before sink writes.
 4. Deterministic status and reason in runtime replies.
 
-Detailed backend mapping is deferred to DP-2 and DP-3.
+Detailed backend mapping and topology placement are deferred to DP-2 and DP-3:
+- `docs/program/23-runbooks/data-plane-storage-classes.md`
+- `docs/program/23-runbooks/data-plane-storage-topology.md`
