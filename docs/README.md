@@ -29,6 +29,11 @@ Those files are historical/transitional and not architecture authority.
 - `yai`: runtime consumer/realization
 - `ops`: official qualification/evidence/publication bureau
 
+## Cross-repo terminology contract
+
+- `architecture/cross-repo-naming-and-terminology-contract.md`
+- `program/reports/cross-repo-terminology-impact-matrix.md`
+
 ## Workspace references
 
 - `architecture/workspace-model.md`

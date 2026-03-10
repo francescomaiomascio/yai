@@ -65,17 +65,18 @@ tags:
 Define the canonical, governed persistence program for YAI.
 
 Data Plane is not a backend choice. Data Plane is the persistent substrate for
-`core`, `exec`, `brain`, and governance lifecycle surfaces.
+`core`, `exec`, `data`, `graph`, `knowledge`, and governance lifecycle surfaces.
 
 ## 2) Program framing
 
 ### Dominant model
 - `cli -> sdk -> yai` is canonical operator path.
-- Inside `yai`, responsibilities are stratified in `core`, `exec`, `brain`.
+- Inside `yai`, responsibilities are stratified in `core`, `exec`, `data`,
+  `graph`, `knowledge`.
 - `law` remains normative source; `ops` remains closure evidence sink.
 
 ### Declassed legacy center
-- `mind-redis-stm.md` is component/backend-specific guidance, not DP center.
+- `mind-redis-stm.md` is historical component/backend guidance, not DP center.
 - Redis is a candidate backend role for transient cognition, not DP identity.
 
 ## 3) Non-negotiable invariants
@@ -100,8 +101,8 @@ Runtime anchors used by this program:
 - `lib/exec/gates/storage_gate.c`
 - `lib/law/mapping/decision_to_evidence.c`
 - `lib/law/mapping/decision_to_audit.c`
-- `lib/brain/memory/*`
-- `lib/brain/memory/graph/*`
+- `lib/knowledge/memory/*`
+- `lib/graph/*`
 - `data/global/knowledge.db`
 
 ## 5) Sink-first execution strategy
@@ -204,7 +205,7 @@ Evidence minimum:
 - `docs/program/23-runbooks/evidence-and-event-persistence.md`
 - `docs/program/23-runbooks/governance-and-compliance-persistence.md`
 - `docs/program/23-runbooks/authority-and-artifact-persistence.md`
-- `docs/program/23-runbooks/brain-memory-and-graph-sinks.md`
+- `docs/program/23-runbooks/brain-memory-and-graph-sinks.md` (historical alias note)
 - `docs/program/23-runbooks/data-surfaces-and-operator-query-model.md`
 - `docs/program/23-runbooks/data-plane-qualification-and-closure.md`
 - `docs/program/23-runbooks/enforcement-to-record-persistence.md`

@@ -15,9 +15,11 @@ This runbook defines the baseline runtime-mediated read surfaces for graph truth
 - Generic entrypoint: `yai.workspace.query <family>` with `graph.*` families.
 
 ## Source model
-- Primary source: persistent graph truth (`brain/graph/index.v1.json`, nodes/edges NDJSON).
+- Primary source: persistent graph truth (`runtime/graph/index.v1.json`,
+  nodes/edges NDJSON).
 - Runtime still returns DB-first read metadata (`mode=db_first`, `filesystem_primary=false`).
-- Transient cognition remains non-authoritative and is exposed only as support metadata in `graph.summary`.
+- Transient knowledge state remains non-authoritative and is exposed only as
+  support metadata in `graph.summary`.
 
 ## Result shapes
 - `summary_card`: graph, governance, artifact, authority, evidence.

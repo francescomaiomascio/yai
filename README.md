@@ -45,6 +45,12 @@ Primary local commands:
 - `tools/bin/yai-law-embed-sync`
 - `tools/bin/yai-law-compat-check`
 
+## Cross-repo terminology contract
+
+Canonical vocabulary for `yai` + `law` + `sdk` + `cli` lives in:
+- `docs/architecture/cross-repo-naming-and-terminology-contract.md`
+- `docs/program/reports/cross-repo-terminology-impact-matrix.md`
+
 ## Scope note
 
 Transitional refactor and mapping documents are quarantined under:
