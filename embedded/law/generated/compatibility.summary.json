@@ -2,7 +2,7 @@
   "kind": "compatibility-summary",
   "version": "v2",
   "law_version": "0.1.0",
-  "compatibility_profile": "runtime-consumer.v4",
+  "compatibility_profile": "runtime-consumer.v5",
   "compatibility_matrix": {
     "kind": "compatibility.matrix",
     "version": "v2",

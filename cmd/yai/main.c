@@ -49,11 +49,37 @@ static int yai_runtime_path_from_rel(const char *rel, char *out, size_t out_cap)
 
 static int yai_runtime_socket_path(char *out, size_t out_cap)
 {
-  return yai_runtime_path_from_rel(YAI_RUNTIME_INGRESS_SOCKET_REL, out, out_cap);
+  return yai_runtime_ingress_path(out, (uint32_t)out_cap);
 }
 
 static int yai_runtime_pidfile_path(char *out, size_t out_cap)
 {
+  char socket_path[256] = {0};
+  char *slash = NULL;
+  const char *override = getenv(YAI_RUNTIME_PIDFILE_ENV);
+
+  if (override && override[0])
+  {
+    if (snprintf(out, out_cap, "%s", override) >= (int)out_cap)
+    {
+      return -1;
+    }
+    return 0;
+  }
+
+  if (yai_runtime_socket_path(socket_path, sizeof(socket_path)) == 0)
+  {
+    slash = strrchr(socket_path, '/');
+    if (slash && slash != socket_path)
+    {
+      *slash = '\0';
+      if (snprintf(out, out_cap, "%s/runtime.pid", socket_path) < (int)out_cap)
+      {
+        return 0;
+      }
+    }
+  }
+
   return yai_runtime_path_from_rel(YAI_RUNTIME_PIDFILE_REL, out, out_cap);
 }
 
@@ -154,10 +180,13 @@ static int yai_runtime_serve_loop(const char *socket_path)
   if (listener_fd < 0)
   {
     fprintf(stderr, "yai: failed to open ingress socket (%s)\n", socket_path);
+    fprintf(stderr, "yai: hint: set %s to a writable UDS path (e.g. /tmp/yai-control.sock)\n",
+            YAI_RUNTIME_INGRESS_ENV);
     return 1;
   }
 
   printf("yai: service ingress listening on %s\n", socket_path);
+  puts("yai: service is live; press Ctrl+C to stop");
 
   while (!g_runtime_stop)
   {
@@ -364,7 +393,6 @@ static int yai_run_runtime(void)
     pidfile_written = 1;
   }
 
-  puts("yai: service is live; press Ctrl+C to stop");
   rc = yai_runtime_serve_loop(socket_path);
 
   if (pidfile_written)

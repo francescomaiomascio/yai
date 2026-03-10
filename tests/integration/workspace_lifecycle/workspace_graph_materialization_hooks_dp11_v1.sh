@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
+SOCK="$HOME/.yai/run/control.sock"
 WS="ws_graph_materialization_dp11_v1"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
@@ -12,7 +12,7 @@ if [[ ! -x "$YAI" ]]; then
 fi
 make -C "$REPO" law-embed-sync >/dev/null
 
-"$YAI" down >/dev/null 2>&1 || true
+env -u YAI_RUNTIME_INGRESS "$YAI" down >/dev/null 2>&1 || true
 rm -f "$SOCK" >/dev/null 2>&1 || true
 rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 rm -rf "$HOME/.yai/run/$WS" >/dev/null 2>&1 || true
@@ -22,11 +22,11 @@ cleanup() {
     kill "$RUNTIME_PID" >/dev/null 2>&1 || true
     wait "$RUNTIME_PID" >/dev/null 2>&1 || true
   fi
-  "$YAI" down --force >/dev/null 2>&1 || true
+  env -u YAI_RUNTIME_INGRESS "$YAI" down --force >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
-(cd "$REPO" && "$YAI" >/tmp/yai_workspace_graph_materialization_dp11.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_graph_materialization_dp11.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
@@ -133,10 +133,12 @@ edge_before = len(load_ndjson(graph_edges_log))
 for command_id in ("yai.workspace.inspect", "yai.workspace.policy_effective", "yai.workspace.debug_resolution"):
     out = call("system", command_id)
     assert out["status"] == "ok", out
-    bp = out["data"].get("brain_persistence")
-    assert isinstance(bp, dict), (command_id, out)
-    assert bp.get("graph_truth_authoritative") is True, (command_id, bp)
-    assert bp.get("transient_authoritative") is False, (command_id, bp)
+    gp = out["data"].get("graph_persistence")
+    kp = out["data"].get("knowledge_transient_persistence")
+    assert isinstance(gp, dict), (command_id, out)
+    assert isinstance(kp, dict), (command_id, out)
+    assert gp.get("graph_truth_authoritative") is True, (command_id, gp)
+    assert kp.get("transient_authoritative") is False, (command_id, kp)
 node_after = len(load_ndjson(graph_nodes_log))
 edge_after = len(load_ndjson(graph_edges_log))
 assert node_before == node_after, (node_before, node_after)

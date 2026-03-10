@@ -17,7 +17,7 @@ Workspace runtime model:
 - `docs/developer/event-evidence-sink-walkthrough.md`
 - `docs/developer/governance-persistence-walkthrough.md`
 - `docs/developer/authority-artifact-persistence-walkthrough.md`
-- `docs/developer/brain-graph-and-transient-cognition-walkthrough.md`
+- `docs/developer/brain-graph-and-transient-cognition-walkthrough.md` (legacy filename; canonical content is graph + transient knowledge split)
 - `docs/developer/operator-query-walkthrough.md`
 - `docs/developer/enforcement-record-closure-walkthrough.md`
 - `docs/developer/runtime-record-to-graph-walkthrough.md`

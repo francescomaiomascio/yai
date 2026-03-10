@@ -23,6 +23,8 @@ int yai_session_handle_workspace_action(
     const char *action,
     const char *root_path_opt,
     const char *security_level_opt,
+    char *err,
+    size_t err_cap,
     yai_workspace_runtime_info_t *info_out);
 int yai_session_set_active_workspace(const char *ws_id, char *err, size_t err_cap);
 int yai_session_clear_active_workspace(void);

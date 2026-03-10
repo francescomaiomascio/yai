@@ -31,6 +31,8 @@ A good runbook must be deterministic:
 - `docs/program/23-runbooks/authority-and-artifact-persistence.md`
 - `docs/program/23-runbooks/brain-memory-and-graph-sinks.md`
 - `docs/program/23-runbooks/data-surfaces-and-operator-query-model.md`
+- `docs/program/23-runbooks/workspace-command-taxonomy-refoundation.md`
+- `docs/program/23-runbooks/workspace-runtime-command-mapping-and-canonicalization.md`
 - `docs/program/23-runbooks/data-plane-qualification-and-closure.md`
 - `docs/program/23-runbooks/enforcement-to-record-persistence.md`
 - `docs/program/23-runbooks/graph-materialization-from-runtime-records.md`

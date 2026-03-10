@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
+SOCK="$HOME/.yai/run/control.sock"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 if [[ ! -x "$YAI" ]]; then
@@ -13,14 +13,14 @@ make -C "$REPO" law-embed-sync >/dev/null
 
 start_runtime() {
   local mode="${1:-normal}"
-  "$YAI" down >/dev/null 2>&1 || true
+  env -u YAI_RUNTIME_INGRESS "$YAI" down >/dev/null 2>&1 || true
   rm -f "$SOCK" >/dev/null 2>&1 || true
   rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 
   if [[ "$mode" == "partial" ]]; then
     (cd "$REPO" && YAI_ENFORCEMENT_RECORD_FORCE_PARTIAL=1 "$YAI" >/tmp/yai_workspace_dbfirst_dp12_partial.log 2>&1) &
   else
-    (cd "$REPO" && "$YAI" >/tmp/yai_workspace_dbfirst_dp12.log 2>&1) &
+    (cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_dbfirst_dp12.log 2>&1) &
   fi
   RUNTIME_PID=$!
 
@@ -36,7 +36,7 @@ stop_runtime() {
     kill "$RUNTIME_PID" >/dev/null 2>&1 || true
     wait "$RUNTIME_PID" >/dev/null 2>&1 || true
   fi
-  "$YAI" down --force >/dev/null 2>&1 || true
+  env -u YAI_RUNTIME_INGRESS "$YAI" down --force >/dev/null 2>&1 || true
   RUNTIME_PID=""
 }
 

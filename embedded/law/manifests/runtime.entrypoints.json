@@ -1,6 +1,6 @@
 {
   "kind": "runtime.entrypoints",
-  "version": "v3",
+  "version": "v4",
   "entrypoints": [
     {
       "entrypoint_id": "default-runtime",
@@ -24,7 +24,40 @@
         "seed_root": "transitional/domain-family-seed/",
         "enabled": false,
         "mode": "opt-in-compat-only"
-      }
+      },
+      "entry_surface_model": "unified-runtime-family-gated",
+      "attachability_model": "workspace-bound-governance-attachability",
+      "workspace_binding_required": true,
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "disallowed_subsystem_targets": [
+        "brain",
+        "mind"
+      ]
     }
-  ]
+  ],
+  "runtime_contract": {
+    "topology_target": "unified-runtime-v1",
+    "binding_model": "workspace-first",
+    "canonical_runtime_families": [
+      "core",
+      "exec",
+      "data",
+      "graph",
+      "knowledge",
+      "law",
+      "platform",
+      "protocol",
+      "support"
+    ],
+    "legacy_subsystem_aliases": {
+      "brain": "deprecated-non-canonical",
+      "mind": "deprecated-non-canonical"
+    }
+  }
 }

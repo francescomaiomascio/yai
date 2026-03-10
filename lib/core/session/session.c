@@ -513,26 +513,62 @@ int yai_session_handle_control_call(
             strcmp(command_id, "yai.workspace.reset") == 0 ||
             strcmp(command_id, "yai.workspace.destroy") == 0)
         {
+            const char *action_target_ws = action_ws_id[0] ? action_ws_id : (action_arg[0] ? action_arg : NULL);
             const char *action = "create";
             if (strcmp(command_id, "yai.workspace.reset") == 0) action = "reset";
             if (strcmp(command_id, "yai.workspace.destroy") == 0) action = "destroy";
 
-            if (yai_session_handle_workspace_action(target_ws,
+            if (!action_target_ws || !action_target_ws[0] || !yai_ws_id_is_valid(action_target_ws))
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "BAD_ARGS",
+                                            "workspace_id_required",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+
+            if (yai_session_handle_workspace_action(action_target_ws,
                                                     action,
                                                     root_path[0] ? root_path : NULL,
                                                     security_level[0] ? security_level : NULL,
+                                                    err,
+                                                    sizeof(err),
                                                     &ws_info) != 0)
             {
                 yai_session_send_exec_reply(client_fd,
                                             env,
                                             "error",
                                             "BAD_ARGS",
-                                            "workspace_action_failed",
+                                            err[0] ? err : "workspace_action_failed",
                                             command_id,
                                             "runtime",
                                             NULL);
                 return -1;
             }
+
+            /* Re-read authoritative manifest state to avoid replying with transient/uninitialized fields. */
+            if (yai_session_read_workspace_info(action_target_ws, &ws_info) != 0 || !ws_info.exists)
+            {
+                yai_session_send_exec_reply(client_fd,
+                                            env,
+                                            "error",
+                                            "INTERNAL_ERROR",
+                                            "workspace_manifest_reload_failed",
+                                            command_id,
+                                            "runtime",
+                                            NULL);
+                return -1;
+            }
+            if (!ws_info.ws_id[0])
+                snprintf(ws_info.ws_id, sizeof(ws_info.ws_id), "%s", action_target_ws);
+            if (!ws_info.workspace_alias[0] || !yai_ws_id_is_valid(ws_info.workspace_alias))
+                snprintf(ws_info.workspace_alias, sizeof(ws_info.workspace_alias), "%s", ws_info.ws_id);
+            if (!ws_info.state[0])
+                snprintf(ws_info.state, sizeof(ws_info.state), "%s", "created");
 
             if (snprintf(data,
                          sizeof(data),

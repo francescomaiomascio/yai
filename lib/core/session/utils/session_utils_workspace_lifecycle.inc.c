@@ -604,11 +604,148 @@ int yai_session_build_workspace_list_json(char *out, size_t out_cap, int *count_
     return 0;
 }
 
+static int yai_workspace_require_path_exists(const char *path,
+                                             const char *reason,
+                                             char *err,
+                                             size_t err_cap)
+{
+    if (!path || !path[0] || yai_session_path_exists(path) == 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", reason ? reason : "workspace_path_missing");
+        return -1;
+    }
+    return 0;
+}
+
+static int yai_workspace_verify_bound_postconditions(const char *ws_id,
+                                                     const yai_workspace_runtime_info_t *info,
+                                                     char *err,
+                                                     size_t err_cap)
+{
+    const yai_runtime_capability_state_t *caps;
+    const char *store_root;
+    char store_ws_root[MAX_PATH_LEN];
+    char store_data[MAX_PATH_LEN];
+    char store_graph[MAX_PATH_LEN];
+    char store_knowledge[MAX_PATH_LEN];
+    char store_transient[MAX_PATH_LEN];
+
+    if (err && err_cap > 0)
+        err[0] = '\0';
+    if (!ws_id || !ws_id[0] || !info)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_invalid_input");
+        return -1;
+    }
+
+    if (!info->exists)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_manifest_missing");
+        return -1;
+    }
+    if (!info->namespace_valid)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_namespace_invalid");
+        return -1;
+    }
+    if (!info->containment_ready)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_containment_missing");
+        return -1;
+    }
+    if (!info->runtime_attached || !info->control_plane_attached)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_runtime_attachment_missing");
+        return -1;
+    }
+
+    if (yai_workspace_require_path_exists(info->state_surface_path,
+                                          "workspace_postcondition_state_surface_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(info->runtime_surface_path,
+                                          "workspace_postcondition_runtime_surface_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(info->binding_state_path,
+                                          "workspace_postcondition_binding_surface_missing",
+                                          err,
+                                          err_cap) != 0)
+    {
+        return -1;
+    }
+
+    store_root = yai_data_store_binding_root();
+    if (!store_root || !store_root[0])
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_store_binding_uninitialized");
+        return -1;
+    }
+    if (snprintf(store_ws_root, sizeof(store_ws_root), "%s/%s", store_root, ws_id) <= 0 ||
+        snprintf(store_data, sizeof(store_data), "%s/data", store_ws_root) <= 0 ||
+        snprintf(store_graph, sizeof(store_graph), "%s/graph", store_ws_root) <= 0 ||
+        snprintf(store_knowledge, sizeof(store_knowledge), "%s/knowledge", store_ws_root) <= 0 ||
+        snprintf(store_transient, sizeof(store_transient), "%s/transient", store_ws_root) <= 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_store_path_format_failed");
+        return -1;
+    }
+    if (yai_workspace_require_path_exists(store_ws_root,
+                                          "workspace_postcondition_store_workspace_root_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(store_data,
+                                          "workspace_postcondition_data_root_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(store_graph,
+                                          "workspace_postcondition_graph_root_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(store_knowledge,
+                                          "workspace_postcondition_knowledge_root_missing",
+                                          err,
+                                          err_cap) != 0 ||
+        yai_workspace_require_path_exists(store_transient,
+                                          "workspace_postcondition_transient_root_missing",
+                                          err,
+                                          err_cap) != 0)
+    {
+        return -1;
+    }
+
+    if (yai_runtime_capabilities_is_ready() == 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_runtime_not_ready");
+        return -1;
+    }
+
+    caps = yai_runtime_capabilities_state();
+    if (!caps || !caps->workspace_id[0] || strcmp(caps->workspace_id, ws_id) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_postcondition_runtime_workspace_mismatch");
+        return -1;
+    }
+    return 0;
+}
+
 int yai_session_handle_workspace_action(
     const char *ws_id,
     const char *action,
     const char *root_path_opt,
     const char *security_level_opt,
+    char *err,
+    size_t err_cap,
     yai_workspace_runtime_info_t *info_out)
 {
     const char *home = yai_get_home();
@@ -632,10 +769,20 @@ int yai_session_handle_workspace_action(
     yai_workspace_runtime_info_t info;
     time_t now = time(NULL);
 
+    if (err && err_cap > 0)
+        err[0] = '\0';
     if (!home || !ws_id || !action)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_action_invalid_args");
         return -1;
+    }
     if (!yai_ws_id_is_valid(ws_id))
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_id_invalid");
         return -1;
+    }
 
     if (snprintf(yai_dir, sizeof(yai_dir), "%s/.yai", home) <= 0 ||
         snprintf(run_dir, sizeof(run_dir), "%s/.yai/run", home) <= 0 ||
@@ -672,7 +819,11 @@ int yai_session_handle_workspace_action(
     }
 
     if (strcmp(action, "create") != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_action_unsupported");
         return -2;
+    }
 
     if (yai_workspace_resolve_root_path(ws_id,
                                         root_path_opt,
@@ -680,7 +831,11 @@ int yai_session_handle_workspace_action(
                                         sizeof(root_anchor_mode),
                                         root_path,
                                         sizeof(root_path)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_root_resolution_failed");
         return -1;
+    }
 
     if (mkdir_if_missing(yai_dir, 0755) != 0 ||
         mkdir_if_missing(run_dir, 0755) != 0 ||
@@ -696,7 +851,11 @@ int yai_session_handle_workspace_action(
         mkdir_if_missing(runtime_dir, 0755) != 0 ||
         mkdir_if_missing(governance_dir, 0755) != 0 ||
         mkdir_parents(root_path, 0755) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_runtime_roots_init_failed");
         return -1;
+    }
 
     memset(&info, 0, sizeof(info));
     snprintf(info.ws_id, sizeof(info.ws_id), "%s", ws_id);
@@ -708,19 +867,39 @@ int yai_session_handle_workspace_action(
     if (security_level_opt && security_level_opt[0])
     {
         if (!yai_workspace_security_level_is_valid(security_level_opt))
+        {
+            if (err && err_cap > 0)
+                snprintf(err, err_cap, "%s", "workspace_security_level_invalid");
             return -1;
+        }
         snprintf(info.security_level_declared, sizeof(info.security_level_declared), "%s", security_level_opt);
     }
     snprintf(info.root_path, sizeof(info.root_path), "%s", root_path);
     snprintf(info.root_anchor_mode, sizeof(info.root_anchor_mode), "%s", root_anchor_mode[0] ? root_anchor_mode : "managed_default_root");
     if (yai_workspace_store_root_path(info.workspace_store_root, sizeof(info.workspace_store_root)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_store_root_resolution_failed");
         return -1;
+    }
     if (yai_workspace_runtime_state_root_path(ws_id, info.runtime_state_root, sizeof(info.runtime_state_root)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_runtime_state_root_resolution_failed");
         return -1;
+    }
     if (yai_workspace_metadata_root_path(ws_id, info.metadata_root, sizeof(info.metadata_root)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_metadata_root_resolution_failed");
         return -1;
+    }
     if (yai_workspace_containment_surface_paths(&info) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_containment_path_resolution_failed");
         return -1;
+    }
     snprintf(info.isolation_mode, sizeof(info.isolation_mode), "%s", "process");
     info.created_at = (long)now;
     info.updated_at = (long)now;
@@ -732,23 +911,65 @@ int yai_session_handle_workspace_action(
     yai_workspace_security_recompute_effective(&info);
 
     if (snprintf(manifest_path, sizeof(manifest_path), "%s/manifest.json", ws_dir) <= 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_manifest_path_format_failed");
         return -1;
+    }
     if (yai_workspace_write_manifest_path(manifest_path, &info) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_manifest_write_failed");
         return -1;
+    }
     if (yai_workspace_write_containment_surfaces(&info) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_containment_write_failed");
         return -1;
+    }
 
     /* Workspace-first foundation: create performs real capability binding bootstrap. */
     if (yai_workspace_recover_runtime_capabilities(ws_id, bind_err, sizeof(bind_err)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", bind_err[0] ? bind_err : "workspace_capability_binding_failed");
         return -1;
+    }
+    if (yai_data_store_init_workspace(ws_id, bind_err, sizeof(bind_err)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", bind_err[0] ? bind_err : "workspace_store_init_failed");
+        return -1;
+    }
 
     info.runtime_attached = 1;
     info.control_plane_attached = 1;
     info.last_attached_at = (long)time(NULL);
     if (yai_workspace_write_manifest_path(manifest_path, &info) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_manifest_update_failed");
         return -1;
+    }
     if (yai_workspace_write_containment_surfaces(&info) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_containment_update_failed");
         return -1;
+    }
+    if (yai_session_read_workspace_info(ws_id, &info) != 0 || !info.exists)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", "workspace_manifest_reload_failed");
+        return -1;
+    }
+    if (yai_workspace_verify_bound_postconditions(ws_id, &info, bind_err, sizeof(bind_err)) != 0)
+    {
+        if (err && err_cap > 0)
+            snprintf(err, err_cap, "%s", bind_err[0] ? bind_err : "workspace_postcondition_failed");
+        return -1;
+    }
 
     if (info_out)
     {
@@ -791,6 +1012,11 @@ int yai_session_set_active_workspace(const char *ws_id, char *err, size_t err_ca
         why = bind_err[0] ? bind_err : "workspace_capability_binding_failed";
         goto fail;
     }
+    if (yai_data_store_init_workspace(ws_id, bind_err, sizeof(bind_err)) != 0)
+    {
+        why = bind_err[0] ? bind_err : "workspace_store_init_failed";
+        goto fail;
+    }
 
     snprintf(info.session_binding, sizeof(info.session_binding), "%s", ws_id);
     info.runtime_attached = 1;
@@ -806,6 +1032,16 @@ int yai_session_set_active_workspace(const char *ws_id, char *err, size_t err_ca
     if (yai_workspace_write_containment_surfaces(&info) != 0)
     {
         why = "containment_write_failed";
+        goto fail;
+    }
+    if (yai_session_read_workspace_info(ws_id, &info) != 0 || !info.exists)
+    {
+        why = "workspace_manifest_reload_failed";
+        goto fail;
+    }
+    if (yai_workspace_verify_bound_postconditions(ws_id, &info, bind_err, sizeof(bind_err)) != 0)
+    {
+        why = bind_err[0] ? bind_err : "workspace_postcondition_failed";
         goto fail;
     }
 

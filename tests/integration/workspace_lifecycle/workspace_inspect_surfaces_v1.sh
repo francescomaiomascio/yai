@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
+SOCK="$HOME/.yai/run/control.sock"
 WS="ws_inspect_v1"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
@@ -11,7 +11,7 @@ if [[ ! -x "$YAI" ]]; then
   make -C "$REPO" yai >/dev/null
 fi
 
-"$YAI" down >/dev/null 2>&1 || true
+env -u YAI_RUNTIME_INGRESS "$YAI" down >/dev/null 2>&1 || true
 rm -f "$SOCK" >/dev/null 2>&1 || true
 rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 
@@ -24,7 +24,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-(cd "$REPO" && "$YAI" >/tmp/yai_workspace_inspect_runtime.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_inspect_runtime.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 50); do

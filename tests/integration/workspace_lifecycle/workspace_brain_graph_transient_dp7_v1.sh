@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
+SOCK="$HOME/.yai/run/control.sock"
 WS="ws_brain_graph_transient_dp7_v1"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
@@ -12,7 +12,7 @@ if [[ ! -x "$YAI" ]]; then
 fi
 make -C "$REPO" law-embed-sync >/dev/null
 
-"$YAI" down >/dev/null 2>&1 || true
+env -u YAI_RUNTIME_INGRESS "$YAI" down >/dev/null 2>&1 || true
 rm -f "$SOCK" >/dev/null 2>&1 || true
 rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 rm -rf "$HOME/.yai/run/$WS" >/dev/null 2>&1 || true
@@ -22,11 +22,11 @@ cleanup() {
     kill "$RUNTIME_PID" >/dev/null 2>&1 || true
     wait "$RUNTIME_PID" >/dev/null 2>&1 || true
   fi
-  "$YAI" down --force >/dev/null 2>&1 || true
+  env -u YAI_RUNTIME_INGRESS "$YAI" down --force >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
-(cd "$REPO" && "$YAI" >/tmp/yai_workspace_brain_graph_transient_dp7.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_brain_graph_transient_dp7.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
@@ -125,14 +125,16 @@ assert r["status"] in ("ok", "error"), r
 for command_id in ("yai.workspace.inspect", "yai.workspace.policy_effective", "yai.workspace.debug_resolution"):
     out = call("system", command_id)
     assert out["status"] == "ok", out
-    bp = out["data"].get("brain_persistence")
-    assert isinstance(bp, dict), (command_id, out)
-    assert bp.get("last_graph_node_ref", "").startswith("bgn-"), (command_id, bp)
-    assert bp.get("last_graph_edge_ref", "").startswith("bge-"), (command_id, bp)
-    assert bp.get("last_transient_state_ref", "").startswith("btc-"), (command_id, bp)
-    assert bp.get("last_transient_working_set_ref", "").startswith("bws-"), (command_id, bp)
-    assert bp.get("graph_truth_authoritative") is True, (command_id, bp)
-    assert bp.get("transient_authoritative") is False, (command_id, bp)
+    gp = out["data"].get("graph_persistence")
+    kp = out["data"].get("knowledge_transient_persistence")
+    assert isinstance(gp, dict), (command_id, out)
+    assert isinstance(kp, dict), (command_id, out)
+    assert gp.get("last_graph_node_ref", "").startswith("bgn-"), (command_id, gp)
+    assert gp.get("last_graph_edge_ref", "").startswith("bge-"), (command_id, gp)
+    assert gp.get("graph_truth_authoritative") is True, (command_id, gp)
+    assert kp.get("last_transient_state_ref", "").startswith("btc-"), (command_id, kp)
+    assert kp.get("last_transient_working_set_ref", "").startswith("bws-"), (command_id, kp)
+    assert kp.get("transient_authoritative") is False, (command_id, kp)
 
 base = os.path.join(HOME, ".yai", "run", WS, "runtime")
 graph_nodes_log = os.path.join(base, "graph", "persistent-nodes.v1.ndjson")

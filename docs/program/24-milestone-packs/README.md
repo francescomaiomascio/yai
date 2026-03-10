@@ -61,6 +61,17 @@ An MP is a closure artifact for a concrete phase and should make review/audit st
 - `docs/program/24-milestone-packs/data-plane/README.md`
 - `docs/program/24-milestone-packs/data-plane/DP-CLOSEOUT-v0.1.0.md`
 
+## Current track: Unified runtime closeout
+
+- Canonical entrypoint: `docs/program/audit-convergence/UNIFIED-RUNTIME-CLOSEOUT-INDEX-v0.1.0.md`
+- Program closeout statement: `docs/program/24-milestone-packs/unified-runtime-closeout/CL-1-UNIFIED-RUNTIME-ECOSYSTEM-CLOSEOUT.md`
+
+## Current track: Workspace verticalization closeout
+
+- Matrix: `docs/program/audit-convergence/WORKSPACE-VERTICALIZATION-ECOSYSTEM-VERIFICATION-MATRIX-v0.1.0.md`
+- Manual pack: `docs/program/audit-convergence/WORKSPACE-VERTICALIZATION-MANUAL-TEST-COMMAND-PACK-v0.1.0.md`
+- Program closeout statement: `docs/program/24-milestone-packs/workspace-verticalization-closeout/WSV-6-WORKSPACE-SURFACE-CLOSEOUT.md`
+
 ## Template
 
 - `docs/program/25-templates/milestone-packs/MP-000-template.md`

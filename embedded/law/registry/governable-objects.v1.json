@@ -30,7 +30,17 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "data"
     },
     {
       "id": "compliance.gdpr-eu",
@@ -59,7 +69,17 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "data"
     },
     {
       "id": "compliance.retention-governance",
@@ -85,7 +105,17 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "data"
     },
     {
       "id": "compliance.security-supply-chain",
@@ -115,7 +145,17 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "data"
     },
     {
       "id": "customer.default.org-workspace-contextual-review",
@@ -165,7 +205,20 @@
       "dependencies": [
         "manifests/runtime.entrypoints.json#default-runtime"
       ],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "customer.ecohmedia.digital-outbound.gdpr-retention",
@@ -215,7 +268,20 @@
       "dependencies": [
         "manifests/runtime.entrypoints.json#default-runtime"
       ],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "enterprise.default.workspace.research-sandbox",
@@ -267,7 +333,20 @@
         "domain-specializations/scientific/result-publication-control/policy-pack.json",
         "manifests/runtime.entrypoints.json#default-runtime"
       ],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "enterprise.ecohmedia.digital-outbound.review-gate",
@@ -318,7 +397,20 @@
         "domain-specializations/digital/remote-publication/policy-pack.json",
         "manifests/runtime.entrypoints.json#default-runtime"
       ],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.ai-act",
@@ -349,7 +441,18 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.context.experimental",
@@ -375,7 +478,18 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.context.organization",
@@ -401,7 +515,18 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.context.session",
@@ -427,7 +552,18 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.context.workspace",
@@ -453,7 +589,18 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.gdpr-eu",
@@ -490,7 +637,18 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.retention-governance",
@@ -516,7 +674,18 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.sector.finance",
@@ -557,7 +726,18 @@
         "overlay.sector.healthcare",
         "overlay.sector.manufacturing",
         "overlay.sector.public-sector"
-      ]
+      ],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.sector.healthcare",
@@ -595,7 +775,18 @@
         "overlay.sector.finance",
         "overlay.sector.manufacturing",
         "overlay.sector.public-sector"
-      ]
+      ],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.sector.manufacturing",
@@ -625,7 +816,18 @@
         "overlay.sector.finance",
         "overlay.sector.healthcare",
         "overlay.sector.public-sector"
-      ]
+      ],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.sector.public-sector",
@@ -663,7 +865,18 @@
         "overlay.sector.finance",
         "overlay.sector.healthcare",
         "overlay.sector.manufacturing"
-      ]
+      ],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "overlay.security-supply-chain",
@@ -694,7 +907,18 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "runtime_binding_model": "global-baseline",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.accounting-integrity",
@@ -724,7 +948,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.artifact-distribution",
@@ -754,7 +991,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.black-box-evaluation",
@@ -784,7 +1034,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.credit-exposure",
@@ -814,7 +1077,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.dataset-integrity",
@@ -844,7 +1120,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.digital-sink-control",
@@ -874,7 +1163,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.experiment-configuration",
@@ -904,7 +1206,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.external-commentary",
@@ -934,7 +1249,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.fraud-risk-controls",
@@ -964,7 +1292,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.invoicing",
@@ -994,7 +1335,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.network-egress",
@@ -1024,7 +1378,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.parameter-governance",
@@ -1054,7 +1421,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.payments",
@@ -1084,7 +1464,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.pricing-and-quoting",
@@ -1114,7 +1507,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.remote-publication",
@@ -1144,7 +1550,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.remote-retrieval",
@@ -1174,7 +1593,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.reproducibility-control",
@@ -1204,7 +1636,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.result-publication-control",
@@ -1234,7 +1679,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.settlements",
@@ -1264,7 +1722,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.transfers",
@@ -1294,7 +1765,20 @@
       "experimental": false,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "specialization.treasury",
@@ -1324,7 +1808,20 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "runtime_binding_model": "workspace-first",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "exec",
+      "knowledge_support_family": "knowledge",
+      "graph_family_owner": "graph",
+      "data_family_owner": "data"
     },
     {
       "id": "template.manifests.customer-policy-packs.profiles.authority-profile.template.v1.json",
@@ -1349,7 +1846,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     },
     {
       "id": "template.manifests.customer-policy-packs.profiles.evidence-profile.template.v1.json",
@@ -1374,7 +1880,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     },
     {
       "id": "template.manifests.customer-policy-packs.templates.customer-policy-pack.template.v1.json",
@@ -1399,7 +1914,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     },
     {
       "id": "template.manifests.enterprise-custom-governance.templates.enterprise-custom-governance.template.v1.json",
@@ -1424,7 +1948,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     },
     {
       "id": "template.overlays.organization.templates.organization-overlay.template.v1.json",
@@ -1449,7 +1982,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     },
     {
       "id": "template.overlays.workspace.templates.workspace-overlay.template.v1.json",
@@ -1474,7 +2016,16 @@
       "experimental": true,
       "deprecated": false,
       "dependencies": [],
-      "conflicts_with": []
+      "conflicts_with": [],
+      "runtime_family_targets": [
+        "law"
+      ],
+      "runtime_binding_model": "authoring-only",
+      "topology_target": "unified-runtime-v1",
+      "execution_family_owner": "core",
+      "knowledge_support_family": "none",
+      "graph_family_owner": "none",
+      "data_family_owner": "none"
     }
   ]
 }

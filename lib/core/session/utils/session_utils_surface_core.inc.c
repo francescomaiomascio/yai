@@ -704,7 +704,6 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                  "\"authority_artifact_persistence\":{\"last_authority_ref\":\"%s\",\"last_authority_resolution_ref\":\"%s\",\"last_artifact_ref\":\"%s\",\"last_artifact_linkage_ref\":\"%s\",\"authority_store_ref\":\"%s\",\"artifact_store_ref\":\"%s\"},"
                  "\"graph_persistence\":{\"last_graph_node_ref\":\"%s\",\"last_graph_edge_ref\":\"%s\",\"graph_store_ref\":\"%s\",\"graph_truth_authoritative\":true},"
                  "\"knowledge_transient_persistence\":{\"last_transient_state_ref\":\"%s\",\"last_transient_working_set_ref\":\"%s\",\"transient_store_ref\":\"%s\",\"transient_authoritative\":false},"
-                 "\"brain_persistence\":{\"last_graph_node_ref\":\"%s\",\"last_graph_edge_ref\":\"%s\",\"last_transient_state_ref\":\"%s\",\"last_transient_working_set_ref\":\"%s\",\"graph_store_ref\":\"%s\",\"transient_store_ref\":\"%s\",\"graph_truth_authoritative\":true,\"transient_authoritative\":false},"
                  "\"runtime_capabilities\":%s,"
                  "\"enforcement_record_set\":{\"last_outcome_ref\":\"%s\",\"last_linkage_ref\":\"%s\",\"materialization_status\":\"%s\",\"missing_fields\":\"%s\",\"outcome_store_ref\":\"%s\",\"linkage_store_ref\":\"%s\"},"
                  "\"read_path\":{\"mode\":\"db_first\",\"primary_source\":\"%s\",\"db_first_ready\":%s,\"fallback_active\":%s,\"fallback_reason\":\"%s\",\"filesystem_primary\":false},"
@@ -830,12 +829,6 @@ int yai_session_build_workspace_inspect_json(char *out, size_t out_cap)
                  brain_graph_store_ref,
                  brain_transient_state_ref,
                  brain_transient_working_set_ref,
-                 brain_transient_store_ref,
-                 brain_graph_node_ref,
-                 brain_graph_edge_ref,
-                 brain_transient_state_ref,
-                 brain_transient_working_set_ref,
-                 brain_graph_store_ref,
                  brain_transient_store_ref,
                  runtime_caps,
                  enforce_last_outcome_ref,

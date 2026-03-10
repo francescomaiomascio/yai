@@ -1,6 +1,6 @@
 {
   "kind": "governance-attachability-constraints",
-  "version": "v1",
+  "version": "v2",
   "binding_model": "workspace-first",
   "constraints": {
     "allowed_by_kind": {
@@ -85,6 +85,81 @@
       "dry_run_passed",
       "dry_run_failed",
       "conflict_blocking"
-    ]
-  }
+    ],
+    "disallowed_subsystem_targets": [
+      "brain",
+      "mind"
+    ],
+    "canonical_attachment_modes": [
+      "stack",
+      "policy-composition",
+      "overlay-stack",
+      "workspace-attach",
+      "runtime-entrypoint",
+      "domain-set",
+      "policy-resolution-anchor",
+      "organization-default",
+      "none"
+    ],
+    "attachment_mode_aliases": {
+      "workspace_attach": "workspace-attach",
+      "runtime_entrypoint": "runtime-entrypoint",
+      "organization_default": "organization-default"
+    },
+    "runtime_family_targets_by_kind": {
+      "compliance_module": [
+        "core",
+        "data"
+      ],
+      "overlay": [
+        "core",
+        "data",
+        "graph"
+      ],
+      "customer_policy_pack": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "enterprise_custom_governance_object": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "specialization_policy_pack": [
+        "core",
+        "exec",
+        "data",
+        "graph",
+        "knowledge"
+      ],
+      "template_object": [
+        "law"
+      ]
+    },
+    "workspace_binding_required_by_kind": {
+      "compliance_module": false,
+      "overlay": false,
+      "customer_policy_pack": true,
+      "enterprise_custom_governance_object": true,
+      "specialization_policy_pack": true,
+      "template_object": false
+    }
+  },
+  "topology_target": "unified-runtime-v1",
+  "canonical_runtime_families": [
+    "core",
+    "exec",
+    "data",
+    "graph",
+    "knowledge",
+    "law",
+    "platform",
+    "protocol",
+    "support"
+  ]
 }

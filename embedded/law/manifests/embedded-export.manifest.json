@@ -1,10 +1,10 @@
 {
   "kind": "embedded-export.manifest",
-  "version": "v4",
+  "version": "v5",
   "export_id": "law-embedded-runtime-surface",
   "law_version": "v0.1.0",
   "target": "yai-runtime-embedded",
-  "compatibility_profile": "runtime-consumer.v4",
+  "compatibility_profile": "runtime-consumer.v5",
   "export_mode": "runtime-contract",
   "included_sections": [
     "runtime-manifests",
@@ -71,13 +71,17 @@
     "overlays/sector/index/overlay-attachment-matrix.json",
     "overlays/sector/index/overlay-precedence-matrix.json",
     "overlays/sector/index/overlay-evidence-matrix.json",
-    "overlays/contextual/index/contextual.index.json"
+    "overlays/contextual/index/contextual.index.json",
+    "grammar/schema/runtime_entrypoint.v1.schema.json",
+    "registry/schema/governable_objects.v1.schema.json",
+    "registry/schema/primitives.v1.schema.json"
   ],
   "notes": [
     "Canonical law remains in this repository.",
     "Embedded export is a runtime contract artifact, not a repository mirror.",
     "Six-layer runtime payload is primary.",
-    "Transitional seed payload is optional and excluded from default runtime export."
+    "Transitional seed payload is optional and excluded from default runtime export.",
+    "Runtime entry and attachability contracts target unified-runtime-v1 (workspace-first, no brain/mind canonical subsystem)."
   ],
   "six_layer_scope": {
     "classification": "classification/",

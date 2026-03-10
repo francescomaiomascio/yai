@@ -22,3 +22,6 @@ typedef enum yai_runtime_mode
 
 /* Optional absolute override for runtime ingress resolution. */
 #define YAI_RUNTIME_INGRESS_ENV "YAI_RUNTIME_INGRESS"
+
+/* Optional absolute override for runtime pidfile resolution. */
+#define YAI_RUNTIME_PIDFILE_ENV "YAI_RUNTIME_PIDFILE"

@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
+SOCK="$HOME/.yai/run/control.sock"
 WS="ws_authority_artifact_dp6_v1"
 OBJ="enterprise.ecohmedia.digital-outbound.review-gate"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
@@ -13,7 +13,7 @@ if [[ ! -x "$YAI" ]]; then
 fi
 make -C "$REPO" law-embed-sync >/dev/null
 
-"$YAI" down >/dev/null 2>&1 || true
+env -u YAI_RUNTIME_INGRESS "$YAI" down >/dev/null 2>&1 || true
 rm -f "$SOCK" >/dev/null 2>&1 || true
 rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 rm -rf "$HOME/.yai/run/$WS" >/dev/null 2>&1 || true
@@ -23,11 +23,11 @@ cleanup() {
     kill "$RUNTIME_PID" >/dev/null 2>&1 || true
     wait "$RUNTIME_PID" >/dev/null 2>&1 || true
   fi
-  "$YAI" down --force >/dev/null 2>&1 || true
+  env -u YAI_RUNTIME_INGRESS "$YAI" down --force >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
-(cd "$REPO" && "$YAI" >/tmp/yai_workspace_authority_artifact_dp6.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_authority_artifact_dp6.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do

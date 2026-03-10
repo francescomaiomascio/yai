@@ -55,9 +55,9 @@ surfaces, pointing to persisted governance object/lifecycle/attachment stores.
 DP-6 adds `authority_artifact_persistence` references in inspect/effective/debug
 surfaces, pointing to persisted authority state/resolution and artifact metadata/linkage stores.
 
-DP-7 adds `brain_persistence` references in inspect/effective/debug surfaces,
-separating persistent graph truth (`graph_truth_authoritative=true`) from
-transient cognition heat (`transient_authoritative=false`).
+DP-7 adds canonical persistence references in inspect/effective/debug surfaces:
+- `graph_persistence` for persistent graph truth (`graph_truth_authoritative=true`)
+- `knowledge_transient_persistence` for transient cognition heat (`transient_authoritative=false`)
 
 
 Operational-state checks during inspection:
