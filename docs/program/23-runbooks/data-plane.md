@@ -150,6 +150,22 @@ Cross-repo verification, qualification evidence, and pre-pilot closure pack.
 - full workflow persistence model
 - full cockpit data fabric
 
+## 7.1) Next block kickoff (DP-10+)
+Second block starts with writer closure:
+- `docs/program/23-runbooks/enforcement-to-record-persistence.md`
+
+Priority order:
+1. close enforcement -> canonical persisted record set writers
+2. materialize graph from typed refs (`docs/program/23-runbooks/graph-materialization-from-runtime-records.md`)
+3. cut readers to DB-first canonical sources (`docs/program/23-runbooks/db-first-read-path-cutover.md`).
+4. map filesystem operational residues (`docs/program/23-runbooks/filesystem-governance-state-decommission.md`).
+5. execute cleanup/archive of decommissioned residues (`docs/program/23-runbooks/filesystem-cleanup-and-archive-execution.md`).
+6. strengthen DB-backed governance/compliance visibility.
+7. define lifecycle/retention/tiering model (`docs/program/23-runbooks/data-lifecycle-retention-and-tiering.md`).
+8. implement compaction/pruning/archive anti-leakage execution model (DP-15B).
+9. expose graph baseline read surfaces and summaries (DP-16).
+10. close second-block verification/qualification (DP-17).
+
 ## 8) Verification matrix baseline
 Mandatory lanes:
 - pin/contract checks against `law`
@@ -186,7 +202,17 @@ Evidence minimum:
 - `docs/program/23-runbooks/data-plane-storage-topology.md`
 - `docs/program/23-runbooks/workspace-data-sinks.md`
 - `docs/program/23-runbooks/evidence-and-event-persistence.md`
+- `docs/program/23-runbooks/governance-and-compliance-persistence.md`
+- `docs/program/23-runbooks/authority-and-artifact-persistence.md`
 - `docs/program/23-runbooks/brain-memory-and-graph-sinks.md`
+- `docs/program/23-runbooks/data-surfaces-and-operator-query-model.md`
+- `docs/program/23-runbooks/data-plane-qualification-and-closure.md`
+- `docs/program/23-runbooks/enforcement-to-record-persistence.md`
+- `docs/program/23-runbooks/graph-materialization-from-runtime-records.md`
+- `docs/program/23-runbooks/db-first-read-path-cutover.md`
+- `docs/program/23-runbooks/filesystem-governance-state-decommission.md`
+- `docs/program/23-runbooks/filesystem-cleanup-and-archive-execution.md`
+- `docs/program/23-runbooks/data-lifecycle-retention-and-tiering.md`
 
 ## 12) Definition of Done (program)
 - DP-1..DP-9 closures contain explicit evidence links.
