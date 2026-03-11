@@ -16,7 +16,7 @@ This runbook executes DP-13 matrix decisions.
 
 ## 2) Archive zone
 Operational archive is standardized at:
-- `../archive_tmp/data-plane-filesystem/`
+- `../archive/data-plane-filesystem/`
 
 Rules:
 - runtime/SDK/CLI must not read archive paths as primary truth.
@@ -24,10 +24,10 @@ Rules:
 
 ## 3) Executed moves
 - `law/transitional/domain-family-seed/**`
-  -> `../archive_tmp/data-plane-filesystem/law/transitional/domain-family-seed/**`
+  -> `../archive/data-plane-filesystem/law/transitional/domain-family-seed/**`
 
 Tracked in:
-- `../archive_tmp/data-plane-filesystem/notes/RELOCATION_MAP.md`
+- `../archive/data-plane-filesystem/notes/RELOCATION_MAP.md`
 - `docs/program/reports/filesystem-cleanup-relocation-map.md`
 
 ## 4) Operational cleanup outcome

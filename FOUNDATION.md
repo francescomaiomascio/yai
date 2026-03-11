@@ -8,7 +8,7 @@ This repository is the single canonical system root.
 ## Layer model
 
 - **L0 Governance**: contracts, schemas, manifests, registry, and policy content in `governance/`
-- **L1 Kernel**: authority boundaries and enforcement gates
+- **L1 Runtime Core**: authority boundaries and enforcement gates
 - **L2 Engine**: deterministic execution under governance constraints
 - **L3 Agents/Clients**: consumers of governed services, never authority owners
 

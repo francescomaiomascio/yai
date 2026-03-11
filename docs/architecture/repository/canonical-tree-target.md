@@ -21,7 +21,7 @@ Canonical roots:
 
 Non-canonical/transitional root:
 
-- `archive_tmp/` (temporary migration residue only)
+- `archive/` (temporary migration residue only)
 
 ## Five Primary Masses
 

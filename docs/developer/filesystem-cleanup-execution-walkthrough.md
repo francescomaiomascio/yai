@@ -7,9 +7,9 @@
 - They looked like policy/compliance state-bearing payloads despite being migration scaffolding.
 
 ## Execution
-- Moved to `../archive_tmp/data-plane-filesystem/law/transitional/domain-family-seed/**`.
+- Moved to `../archive/data-plane-filesystem/law/transitional/domain-family-seed/**`.
 - Kept relocation map in:
-  - `../archive_tmp/data-plane-filesystem/notes/RELOCATION_MAP.md`
+  - `../archive/data-plane-filesystem/notes/RELOCATION_MAP.md`
   - `docs/program/reports/filesystem-cleanup-relocation-map.md`
 
 ## Runtime truth now

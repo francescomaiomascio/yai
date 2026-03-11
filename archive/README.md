@@ -1,8 +1,8 @@
-# archive_tmp (Repository Marker)
+# archive (Repository Marker)
 
 Operational archive for filesystem cleanup waves lives at:
-`../archive_tmp/`
+`../archive/`
 
 This repository marker prevents future runtime use of archived residues as canonical state.
 
-In the unified repository target, `archive_tmp/` is non-canonical and temporary.
+In the unified repository target, `archive/` is non-canonical and temporary.

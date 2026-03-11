@@ -110,7 +110,7 @@ This repository may contain non-sensitive datasets under `data/` for testing/eva
 
 Rules: no PII, credentials, secrets, or tokens; no runtime logs/events/state; provenance and intended usage must be declared for any dataset addition.
 
-See `DATA_POLICY.md`.
+See `DATA.md`.
 
 ## Security-Sensitive Changes
 

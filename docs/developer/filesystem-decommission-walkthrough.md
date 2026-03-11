@@ -18,7 +18,7 @@ Show how to classify a file-ish runtime artifact and map it to Data Plane truth 
 ## Example 3: Transitional seed domain pack
 - Artifact: `law/transitional/domain-family-seed/**`
 - Class: `FS-C4` transitional residue.
-- Action: move to `archive_tmp/data-plane-filesystem/` in DP-14.
+- Action: move to `archive/data-plane-filesystem/` in DP-14.
 
 ## Verification check
 After a governed action, inspect/query payloads must report:

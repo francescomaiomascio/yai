@@ -26,7 +26,7 @@ related:
 | `law/manifests/embedded-export.manifest.json` | `law` | FS-C2 | FS-C2 | no | yes | no | yes | no | yes | build/export compatibility | DP-14 | Derivative; not runtime state truth. |
 | `law/manifests/customer-policy-packs/examples/**` | `law` | FS-C2 | FS-C2 | no | yes | no | yes | no | yes | none | DP-14 | Example authoring inputs only. |
 | `law/manifests/customer-policy-packs/templates/**` | `law` | FS-C2 | FS-C2 | no | yes | no | yes | no | yes | none | DP-14 | Templates only. |
-| `law/transitional/domain-family-seed/**` | `law` | FS-C4 | FS-C6 | no | yes | no | no | yes | yes | none | DP-14 (executed 2026-03-10) | Transitional residue moved to archive_tmp. |
+| `law/transitional/domain-family-seed/**` | `law` | FS-C4 | FS-C6 | no | yes | no | no | yes | yes | none | DP-14 (executed 2026-03-10) | Transitional residue moved to archive. |
 | `yai/embedded/law/manifests/**` | `yai` | FS-C2 | FS-C2 | yes | no | no | yes | no | no | runtime loader packaging | DP-14 | Keep as packaged export surface. |
 | `yai/embedded/law/generated/**` | `yai` | FS-C2 | FS-C2 | yes | no | no | yes | no | no | runtime loader packaging | DP-14 | Generated embed artifacts; non-authoritative governance state. |
 | `~/.yai/run/<ws>/events/*.ndjson` | runtime | FS-C5 | FS-C5 (interim) | yes | no | no | no | no | no (now) | sink backend migration | DP-14+ | Current persisted record store (single-node). |
@@ -43,9 +43,9 @@ related:
 | `sdk/examples/**` | `sdk` | FS-C2 | FS-C2 | no | yes | no | yes | no | yes | none | DP-14 | Example usage surface. |
 | `cli/dist/**` | `cli` | FS-C2 | FS-C2 | no | yes | no | yes | no | yes | package pipeline | DP-14 | Build derivative only. |
 
-## Archive Plan (`archive_tmp`)
+## Archive Plan (`archive`)
 Planned non-operational destination:
-- `archive_tmp/data-plane-filesystem/`
+- `archive/data-plane-filesystem/`
 
 Initial archive candidates:
 - `law/transitional/domain-family-seed/**`

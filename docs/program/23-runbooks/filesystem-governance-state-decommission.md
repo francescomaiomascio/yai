@@ -37,7 +37,7 @@ Runtime-sensitive path classes covered:
 - `FS-C3 Debug/Diagnostic Surface`: trace/debug snapshots, not primary reads.
 - `FS-C4 Transitional Residue`: temporary migration scaffolding.
 - `FS-C5 False Operational State`: file surfaces that still look/behave like runtime truth.
-- `FS-C6 Archive Candidate`: keep history, move out of operational path (`archive_tmp`).
+- `FS-C6 Archive Candidate`: keep history, move out of operational path (`archive`).
 
 ## 4) Decision matrix
 Canonical matrix is:
@@ -77,13 +77,13 @@ A file/path is removed from operational path if all are true:
 3. file usage is export/debug/transitional only,
 4. fallback does not silently depend on that file.
 
-## 9) `archive_tmp` strategy
+## 9) `archive` strategy
 Target holding area:
-- `archive_tmp/data-plane-filesystem/` (per repo where needed).
+- `archive/data-plane-filesystem/` (per repo where needed).
 
 Rules:
-- runtime never reads from `archive_tmp`.
-- CLI/SDK never use `archive_tmp` as canonical source.
+- runtime never reads from `archive`.
+- CLI/SDK never use `archive` as canonical source.
 - every moved item carries `archived/transitional` marker in matrix.
 
 ## 10) Repo-by-repo map
@@ -107,7 +107,7 @@ Required payload invariants (already enforced by DP-12):
 
 ## 13) Handoff to DP-14
 DP-14 executes the matrix mechanically:
-- move `FS-C6` targets to `archive_tmp`
+- move `FS-C6` targets to `archive`
 - remove `FS-C5` from operational paths
 - keep `FS-C1/C2/C3` with explicit role labels
 
