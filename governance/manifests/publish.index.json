@@ -23,7 +23,7 @@
       ],
       "excludes": [
         "**/*.md",
-        "archive_tmp/**",
+        "archive/**",
         "docs/**",
         "authority/**",
         "tools/**",
