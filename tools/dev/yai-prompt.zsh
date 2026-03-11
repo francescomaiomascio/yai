@@ -10,17 +10,16 @@ fi
 typeset -g YAI_PROMPT_LOADED=1
 
 yai_prompt_token_cmd() {
-  local canonical="$HOME/Developer/YAI/yai/tools/bin/yai-ws-token"
-  if [[ -x "$canonical" ]]; then
-    printf '%s\n' "$canonical"
-    return 0
-  fi
-
   local script_dir
   script_dir="$(cd -- "$(dirname -- "${(%):-%N}")" && pwd)"
   local fallback="${script_dir}/../bin/yai-ws-token"
   if [[ -x "$fallback" ]]; then
     printf '%s\n' "$fallback"
+    return 0
+  fi
+  local canonical="$HOME/Developer/YAI/yai/tools/bin/yai-ws-token"
+  if [[ -x "$canonical" ]]; then
+    printf '%s\n' "$canonical"
     return 0
   fi
   if command -v yai-ws-token >/dev/null 2>&1; then
