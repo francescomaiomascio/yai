@@ -291,6 +291,26 @@
         "escalation_required"
       ],
       "non_sovereign_rule": "binding_and_action_point_control_is_delegated_not_sovereign"
+    },
+    "workspace_authority_truth_plane": {
+      "workspace_owner_runtime_role": "sovereign_authority_and_canonical_truth_plane",
+      "owner_canonical_truth_classes": [
+        "global_policy_truth",
+        "graph_truth",
+        "database_truth",
+        "canonical_case_state",
+        "final_conflict_resolution",
+        "canonical_provenance_binding"
+      ],
+      "final_adjudication": "owner_side_only",
+      "edge_contribution_classes": [
+        "governed_observation",
+        "local_outcome",
+        "evidence_candidate",
+        "operational_runtime_state"
+      ],
+      "edge_non_truth_rule": "edge_state_snapshot_spool_and_local_outcomes_never_become_autonomous_truth",
+      "canonicalization_boundary": "owner_runtime_acceptance_required"
     }
   },
   "topology_target": "unified-runtime-v1",

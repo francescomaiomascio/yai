@@ -46,6 +46,12 @@ ER-3 edge binding/action-point lock:
 - binding, observation, mediation and enforcement scopes are explicit and distinct;
 - action points are first-class source-plane entities, not implicit event side effects.
 
+SW-1 authority/truth lock:
+- workspace binding context is part of owner-side sovereignty and canonical truth
+  boundary;
+- edge-local binding/context caches are operational inputs only and cannot become
+  final authority or canonical state.
+
 ## Workspace-local vs Runtime-global
 
 Workspace-local:

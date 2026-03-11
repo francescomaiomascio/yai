@@ -35,3 +35,8 @@ YD-1 lock:
 RF-0.4:
 - attach context can scope what edge runtime is allowed to observe;
 - observation scope remains distinct from mediation/enforcement scope.
+
+SW-1:
+- attach descriptor remains owner-side authority metadata and not edge-side
+  canonical truth;
+- final workspace state transitions and conflict adjudication remain owner-side.

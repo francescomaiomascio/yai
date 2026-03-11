@@ -98,6 +98,8 @@ This creates a stable contract for later commands like `ws status`, `ws inspect`
 
 - Canonical normative logic stays in `law` and is consumed through embedded contract.
 - Workspace model in `yai` stores and exposes operational context, not normative authorship.
+- Workspace owner runtime is the sovereign authority and canonical truth plane
+  for policy/graph/db/case/conflict/provenance final state.
 
 Session semantics and prompt-facing binding contract are detailed in `docs/architecture/workspace-session-binding.md`.
 

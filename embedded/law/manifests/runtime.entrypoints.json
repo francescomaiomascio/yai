@@ -65,7 +65,8 @@
       },
       "global_to_edge_policy_hierarchy_ref": "manifests/governance-attachability.constraints.v1.json#constraints.global_to_edge_policy_hierarchy",
       "delegated_edge_enforcement_ref": "manifests/governance-attachability.constraints.v1.json#constraints.delegated_edge_enforcement",
-      "edge_binding_action_point_model_ref": "manifests/governance-attachability.constraints.v1.json#constraints.edge_binding_action_point_model"
+      "edge_binding_action_point_model_ref": "manifests/governance-attachability.constraints.v1.json#constraints.edge_binding_action_point_model",
+      "workspace_authority_truth_plane_ref": "manifests/governance-attachability.constraints.v1.json#constraints.workspace_authority_truth_plane"
     }
   ],
   "runtime_contract": {

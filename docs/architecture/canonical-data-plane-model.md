@@ -65,6 +65,12 @@ ER-2 local durability/resilience baseline:
   acceptance;
 - edge continuity never upgrades into owner authority or canonical truth.
 
+SW-1 workspace truth lock:
+- owner workspace runtime is canonical truth plane for graph/db/case/provenance
+  binding and final conflict adjudication;
+- edge-local observations/outcomes/spool/snapshots remain non-canonical
+  operational contributors until owner acceptance/canonicalization.
+
 ### 3) Control/Data Path Separation
 Mandatory path:
 

@@ -63,6 +63,8 @@ ER-2 edge resilience/state model is defined in
 `docs/architecture/daemon-local-runtime-model.md`.
 ER-3 edge binding/action-point model is defined in
 `docs/architecture/edge-binding-and-action-point-model.md`.
+SW-1 workspace authority/truth plane lock is defined in
+`docs/architecture/workspace-authority-and-truth-plane-model.md`.
 Source-plane entity/contract model is defined in
 `docs/architecture/source-plane-model.md`.
 Owner ingest runtime flow is defined in
