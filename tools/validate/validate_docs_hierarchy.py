@@ -18,6 +18,12 @@ REQUIRED_DIRS = [
     "docs/archive/migration",
     "docs/archive/legacy",
     "docs/archive/historical-architecture",
+    "docs/architecture/distributed-runtime",
+    "docs/architecture/data-runtime",
+    "docs/architecture/intelligence-runtime",
+    "docs/architecture/system-theory",
+    "docs/guides/user/guide",
+    "docs/program/policies/style",
 ]
 
 REQUIRED_READMES = [
@@ -51,6 +57,12 @@ FORBIDDEN_DOC_DIRS = [
     "docs/_generated",
     "docs/runbooks/operations/program",
     "docs/guides/developer/dev-guide",
+    "docs/architecture/edge-mesh",
+    "docs/architecture/data-graph",
+    "docs/architecture/providers-agents",
+    "docs/architecture/formal-foundation",
+    "docs/guides/user/user-guide",
+    "docs/program/policies/_policy",
 ]
 
 FORBIDDEN_DOC_FILES = [

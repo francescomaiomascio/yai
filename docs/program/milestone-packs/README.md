@@ -1,10 +1,10 @@
 ---
 id: MP-CONTRACT-BASELINE-LOCK-0.1.0
 status: active
-runbook: docs/program/milestone-packs/runtime-baselines/contract-baseline-lock.md
+runbook: docs/program/milestone-packs/runtime-baselines/mp-runtime-000-contract-runbook-lock.md
 phase: index
 adrs:
-  - docs/program/adr/ADR-011-contract-baseline-lock.md
+  - docs/program/adr/adr-contracts-011-contract-runbook-lock.md
 spec_anchors:
   - ../law/SPEC_MAP.md
 issues:
@@ -49,28 +49,28 @@ An MP is a closure artifact for a concrete phase and should make review/audit st
 ## Current track: Root hardening
 
 - `docs/program/milestone-packs/root-hardening/README.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.2.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.3.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
-- `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.5.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-0.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-1.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-2.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-3.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-4.md`
+- `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-5.md`
 
 ## Current track: Data plane
 
 - `docs/program/milestone-packs/data-plane/README.md`
-- `docs/program/milestone-packs/data-plane/DP-CLOSEOUT-v0.1.0.md`
+- `docs/program/milestone-packs/data-plane/mp-data-000-dp-report-v0-1-0.md`
 
 ## Current track: Unified runtime closeout
 
 - Canonical entrypoint: `docs/program/reports/audit-convergence/UNIFIED-RUNTIME-CLOSEOUT-INDEX-v0.1.0.md`
-- Program closeout statement: `docs/program/milestone-packs/unified-runtime-closeout/CL-1-UNIFIED-RUNTIME-ECOSYSTEM-CLOSEOUT.md`
+- Program closeout statement: `docs/program/milestone-packs/unified-runtime-closeout/mp-runtime-000-cl-1-unified-runtime-ecosystem-report.md`
 
 ## Current track: Workspace verticalization closeout
 
 - Matrix: `docs/program/reports/audit-convergence/WORKSPACE-VERTICALIZATION-ECOSYSTEM-VERIFICATION-MATRIX-v0.1.0.md`
 - Manual pack: `docs/program/reports/audit-convergence/WORKSPACE-VERTICALIZATION-MANUAL-TEST-COMMAND-PACK-v0.1.0.md`
-- Program closeout statement: `docs/program/milestone-packs/workspace-verticalization-closeout/WSV-6-WORKSPACE-SURFACE-CLOSEOUT.md`
+- Program closeout statement: `docs/program/milestone-packs/workspace-verticalization-closeout/mp-workspace-000-wsv-6-workspace-surface-report.md`
 
 ## Template
 
@@ -78,4 +78,4 @@ An MP is a closure artifact for a concrete phase and should make review/audit st
 
 ## Workflow reference
 
-- `docs/60-guides/dev-guide/cross-repo-workflow.md`
+- `docs/guides/developer/workflow/cross-repo-workflow.md`

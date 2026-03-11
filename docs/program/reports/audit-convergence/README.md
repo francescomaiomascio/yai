@@ -16,7 +16,7 @@ related:
   - docs/program/reports/audit-convergence/FILESYSTEM-GOVERNANCE-DECOMMISSION-MATRIX-v0.1.0.md
   - ops/evidence/validation/audits/claims/infra-grammar.v0.1.json
   - docs/program/reports/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md
-  - docs/program/adr/ADR-012-audit-convergence-gates.md
+  - docs/program/adr/adr-program-012-audit-convergence-gates.md
 issue:
   - https://github.com/yai-labs/yai/issues/140
   - https://github.com/yai-labs/yai/issues/211
@@ -51,7 +51,7 @@ Canonical artifacts:
 - Filesystem decommission matrix: `docs/program/reports/audit-convergence/FILESYSTEM-GOVERNANCE-DECOMMISSION-MATRIX-v0.1.0.md`
 - Claims registry: `ops/evidence/validation/audits/claims/infra-grammar.v0.1.json`
 - Active Gate A workplan: `docs/program/reports/audit-convergence/SC102-GATEA-WORKPLAN-v0.1.0.md`
-- Governance ADR: `docs/program/adr/ADR-012-audit-convergence-gates.md`
+- Governance ADR: `docs/program/adr/adr-program-012-audit-convergence-gates.md`
 
 Rules:
 - Source of truth for claims is the registry JSON.

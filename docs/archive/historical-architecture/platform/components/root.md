@@ -36,9 +36,9 @@ implemented
 
 ## Traceability
 
-- ADR refs: `docs/program/adr/ADR-001-single-runtime.md`, `docs/program/adr/ADR-002-root-entrypoint.md`
-- Runbook refs: `docs/program/milestone-packs/runtime-baselines/root-hardening.md`
-- MP refs: `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`, `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.1.md`
+- ADR refs: `docs/program/adr/adr-runtime-001-single-runtime.md`, `docs/program/adr/adr-runtime-002-root-entrypoint.md`
+- Runbook refs: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`
+- MP refs: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-0.md`, `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-1.md`
 - L0 anchors: `../law/contracts/protocol/include/transport.h`, `../law/contracts/protocol/include/auth.h`
 
 ## Known Drift / Gaps

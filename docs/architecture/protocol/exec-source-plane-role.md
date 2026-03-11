@@ -101,7 +101,7 @@ This path is validated by integration test:
   - `docs/architecture/distributed-acquisition-plane-model.md`
   - `docs/architecture/ai-grounding-governed-case-state-model.md`
 - Decision anchor:
-  - `docs/program/adr/ADR-013-distributed-acquisition-centralized-control.md`
+  - `docs/program/adr/adr-distributed-013-distributed-acquisition-centralized-control.md`
 
 QG-3 grounding extension:
 - `exec` consumes governed case-state context derived from owner-side query and

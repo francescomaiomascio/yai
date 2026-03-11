@@ -1,10 +1,10 @@
 ---
 id: MP-SPECS-REFACTOR-FOUNDATION-0.1.0
 status: active
-runbook: docs/program/milestone-packs/runtime-baselines/specs-refactor-foundation.md
+runbook: docs/program/milestone-packs/runtime-baselines/mp-runtime-000-mp-runtime-000-specs-refactor-foundation.md
 phase: index
 adrs:
-  - docs/program/adr/ADR-011-contract-baseline-lock.md
+  - docs/program/adr/adr-contracts-011-contract-runbook-lock.md
 spec_anchors:
   - ../law/SPEC_MAP.md
 issues:
@@ -14,7 +14,7 @@ issues:
 # Specs Refactor Foundation Milestone Packs
 
 Runbook reference:
-- `docs/program/milestone-packs/runtime-baselines/specs-refactor-foundation.md`
+- `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-mp-runtime-000-specs-refactor-foundation.md`
 
 Wave binding:
 - `https://github.com/yai-labs/yai/issues/142`
@@ -23,15 +23,15 @@ Wave binding:
 - `ops/evidence/validation/audits/claims/infra-grammar.v0.1.json`
 
 Phase sequence and closure status:
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.0.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.1.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.2.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.3.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.4.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.5.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.6.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.7.md`
-- `docs/program/milestone-packs/specs-refactor-foundation/MP-SPECS-REFACTOR-FOUNDATION-0.1.8.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-0.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-1.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-2.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-3.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-4.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-5.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-6.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-7.md`
+- `docs/program/milestone-packs/specs-refactor-foundation/mp-governance-000-specs-refactor-foundation-v0-1-8.md`
 
 Notes:
 - Keep phases mapping-only where required; avoid normative content changes in structural phases.

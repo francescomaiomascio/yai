@@ -32,9 +32,9 @@ implemented
 
 ## Traceability
 
-- ADR refs: `docs/program/adr/ADR-010-boot-entrypoint.md`
-- Runbook refs: `docs/program/milestone-packs/runtime-baselines/root-hardening.md`
-- MP refs: `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+- ADR refs: `docs/program/adr/adr-runtime-010-boot-entrypoint.md`
+- Runbook refs: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`
+- MP refs: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-0.md`
 - L0 anchors: `../law/foundation/invariants/I-001-traceability.md`
 
 ## Known Drift / Gaps

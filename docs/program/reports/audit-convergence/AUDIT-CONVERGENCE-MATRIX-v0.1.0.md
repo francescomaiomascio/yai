@@ -29,13 +29,13 @@ Legend:
 | Mind (L3) | `RB-MIND-REDIS-STM#phase-mind-proposer` | `RB-MIND-REDIS-STM#phase-mind-proposer` | `RB-MIND-REDIS-STM` + `ADR-005-mind-proposer` | `RB-MIND-REDIS-STM#phase-mind-proposer` | Kernel/Engine mediated path required by runbook closure | End-to-end proposal->enforcement evidence bundle | `C-MIND-PROPOSER-KERNEL-ENFORCER` | B | not_present |
 
 ## 2) Runbook Re-centering Order
-1. `docs/program/milestone-packs/runtime-baselines/contract-baseline-lock.md` (continue from active `0.1.1`, no mid-phase rewrite)
-2. `docs/program/milestone-packs/runtime-baselines/specs-refactor-foundation.md` (backbone binding)
-3. `docs/program/milestone-packs/runtime-baselines/root-hardening.md`
-4. `docs/program/milestone-packs/runtime-baselines/workspaces-lifecycle.md`
-5. `docs/program/milestone-packs/runtime-baselines/engine-attach.md`
-6. `docs/program/milestone-packs/runtime-baselines/data-plane.md`
-7. `docs/program/milestone-packs/runtime-baselines/mind-redis-stm.md`
+1. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-contract-runbook-lock.md` (continue from active `0.1.1`, no mid-phase rewrite)
+2. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-specs-refactor-foundation.md` (backbone binding)
+3. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`
+4. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-workspaces-lifecycle.md`
+5. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-engine-attach.md`
+6. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-data-plane.md`
+7. `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-mind-redis-stm.md`
 
 ## 3) Mandatory Evidence Command Families
 - Pins/contracts:

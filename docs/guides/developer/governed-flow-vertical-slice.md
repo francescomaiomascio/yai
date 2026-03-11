@@ -2,7 +2,7 @@
 
 Closeout anchor:
 
-- `docs/guides/developer/pre-pilot-governed-workspace-baseline.md`
+- `docs/guides/developer/pre-pilot-governed-workspace-guide.md`
 
 ## Scenario
 

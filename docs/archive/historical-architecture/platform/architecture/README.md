@@ -11,8 +11,8 @@ Normative source model:
 
 Use these docs as active runtime architecture authority:
 
-- `docs/architecture/runtime-model.md`
-- `docs/architecture/workspace-model.md`
+- `docs/architecture/runtime-architecture.md`
+- `docs/architecture/workspace-architecture.md`
 - `docs/architecture/overview/repository-scope.md`
 - `docs/architecture/cross-repo-naming-and-terminology-contract.md`
 

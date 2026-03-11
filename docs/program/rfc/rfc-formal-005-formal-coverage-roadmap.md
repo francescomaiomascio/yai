@@ -1,0 +1,73 @@
+---
+id: RFC-005
+title: Formal coverage roadmap for spec-critical domains
+status: draft
+owners:
+  - "@francescomaiomascio"
+legacy_owner: formal-methods
+links:
+  replaces: PRP-005
+
+effective_date: 2026-02-19
+revision: 1
+supersedes: []
+related:
+  adr:
+    - docs/program/adr/adr-protocol-006-unified-rpc.md
+    - docs/program/adr/adr-contracts-011-contract-runbook-lock.md
+  runbooks:
+    - docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md
+  milestone_packs:
+    - docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-5.md
+  specs:
+    - ../law/formal/spec_map.md
+    - ../law/formal/tla/YAI_KERNEL.tla
+    - ../law/formal/bindings/BINDING_PROTOCOL.md
+    - ../law/formal/bindings/BINDING_CLI.md
+tags:
+  - formal
+  - roadmap
+  - coverage
+---
+
+# RFC-005 - Formal coverage roadmap for spec-critical domains
+
+## Problem
+Current formal coverage is uneven across domains. Some areas are modeled while others remain smoke/none, which limits confidence for stronger TRL claims.
+
+## Scope
+- In scope: Coverage priorities, domain gap list, staged property roadmap, evidence expectations.
+- Out of scope: Rewriting the whole TLA model in one phase.
+
+## Proposed Change
+Define a prioritized formal roadmap that starts from protocol/control criticality, then addresses CLI, vault, and graph gaps with explicit property targets.
+
+## Options Compared
+- Option A: Risk-first roadmap based on invariant and boundary criticality.
+- Option B: Surface-first roadmap by component ownership.
+
+## Risks
+- Over-expansion of formal scope. Mitigation: milestone-based slices with hard acceptance criteria.
+- Weak adoption if disconnected from delivery gates. Mitigation: link roadmap outputs to CI and milestone packs.
+
+## Rollout Sketch
+1. Publish current modeled/smoke/none matrix.
+2. Select next two domains for explicit property additions.
+3. Bind roadmap outputs to release evidence expectations.
+
+## Exit Criteria
+- [ ] Coverage matrix and priority order are explicit.
+- [ ] Next formal increments define target properties and artifacts.
+- [ ] Proposal links to ADR and milestone evidence strategy.
+
+## Traceability
+
+- Spec anchors (if any): `../law/formal/spec_map.md`, `../law/formal/tla/YAI_KERNEL.tla`, `../law/formal/bindings/BINDING_PROTOCOL.md`, `../law/formal/bindings/BINDING_CLI.md`
+- Targets ADR: `docs/program/adr/adr-protocol-006-unified-rpc.md`, `docs/program/adr/adr-contracts-011-contract-runbook-lock.md`
+- Downstream runbook: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`
+- Downstream MP: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-5.md`
+
+## References
+- `docs/program/spine.md`
+- `../law/formal/spec_map.md`
+- `../law/formal/traceability.v1.json`

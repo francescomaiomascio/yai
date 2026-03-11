@@ -32,9 +32,9 @@ partial
 
 ## Traceability
 
-- ADR refs: `docs/program/adr/ADR-001-single-runtime.md`
-- Runbook refs: `docs/program/milestone-packs/runtime-baselines/root-hardening.md`
-- MP refs: `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+- ADR refs: `docs/program/adr/adr-runtime-001-single-runtime.md`
+- Runbook refs: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`
+- MP refs: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-0.md`
 - L0 anchors: `../law/foundation/boundaries/L0-vault.md`, `../law/contracts/vault/include/yai_vault_abi.h`
 
 ## Known Drift / Gaps

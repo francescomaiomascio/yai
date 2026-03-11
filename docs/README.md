@@ -26,3 +26,4 @@ Canonical documentation for the unified YAI platform.
 
 - Do not create new top-level folders under `docs/` without updating hierarchy validation.
 - Do not place migration notes in live architecture/reference/guides areas.
+- Live docs must follow canonical naming grammar (no `-model`, `-baseline`, `-closeout`, `-refoundation`, `-legacy-notes`, `-residue` suffixes).

@@ -1,10 +1,10 @@
 ---
 id: MP-CONTRACT-BASELINE-LOCK-0.1.0
 status: active
-runbook: docs/program/milestone-packs/runtime-baselines/contract-baseline-lock.md
+runbook: docs/program/milestone-packs/runtime-baselines/mp-runtime-000-contract-runbook-lock.md
 phase: index
 adrs:
-  - docs/program/adr/ADR-011-contract-baseline-lock.md
+  - docs/program/adr/adr-contracts-011-contract-runbook-lock.md
 spec_anchors:
   - ../law/foundation/invariants/I-001-traceability.md
 issues:
@@ -16,14 +16,14 @@ issues:
 This is the foundational MP track for ADR-011.
 
 Runbook reference:
-- `docs/program/milestone-packs/runtime-baselines/contract-baseline-lock.md`
+- `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-contract-runbook-lock.md`
 
 Phase sequence (Wave 0 closure status):
-- `docs/program/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.0.md`
-- `docs/program/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.1.md`
-- `docs/program/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.2.md`
-- `docs/program/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.3.md`
-- `docs/program/milestone-packs/contract-baseline-lock/MP-CONTRACT-BASELINE-LOCK-0.1.4.md`
+- `docs/program/milestone-packs/contract-baseline-lock/mp-contracts-000-contract-runbook-lock-v0-1-0.md`
+- `docs/program/milestone-packs/contract-baseline-lock/mp-contracts-000-contract-runbook-lock-v0-1-1.md`
+- `docs/program/milestone-packs/contract-baseline-lock/mp-contracts-000-contract-runbook-lock-v0-1-2.md`
+- `docs/program/milestone-packs/contract-baseline-lock/mp-contracts-000-contract-runbook-lock-v0-1-3.md`
+- `docs/program/milestone-packs/contract-baseline-lock/mp-contracts-000-contract-runbook-lock-v0-1-4.md`
 
 Notes:
 - Create each MP only when the corresponding runbook phase is delivered.

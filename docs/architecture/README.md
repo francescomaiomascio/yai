@@ -8,11 +8,11 @@ Canonical architecture model, grouped by system function.
 - `runtime/`
 - `governance/`
 - `workspace/`
-- `edge-mesh/`
+- `distributed-runtime/`
 - `protocol/`
-- `data-graph/`
-- `providers-agents/`
-- `formal-foundation/`
+- `data-runtime/`
+- `intelligence-runtime/`
+- `system-theory/`
 
 ## Scope
 

@@ -40,7 +40,7 @@ Canonical Topology: Root -> Kernel -> Engine with Mind as planned/external L3 pl
 
 ## Traceability
 
-- ADRs: `docs/program/adr/ADR-001-single-runtime.md`, `docs/program/adr/ADR-002-root-entrypoint.md`, `docs/program/adr/ADR-003-kernel-authority.md`, `docs/program/adr/ADR-004-engine-execution.md`, `docs/program/adr/ADR-005-mind-proposer.md`
-- Runbooks: `docs/program/milestone-packs/runtime-baselines/root-hardening.md`, `docs/program/milestone-packs/runtime-baselines/engine-attach.md`, `docs/program/milestone-packs/runtime-baselines/mind-redis-stm.md`
-- MPs: `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.0.md`
+- ADRs: `docs/program/adr/adr-runtime-001-single-runtime.md`, `docs/program/adr/adr-runtime-002-root-entrypoint.md`, `docs/program/adr/adr-runtime-003-kernel-authority.md`, `docs/program/adr/adr-orchestration-004-engine-execution.md`, `docs/program/adr/adr-runtime-005-mind-proposer.md`
+- Runbooks: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`, `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-engine-attach.md`, `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-mind-redis-stm.md`
+- MPs: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-0.md`
 - L0 anchors: `../law/foundation/boundaries/L1-kernel.md`, `../law/foundation/boundaries/L2-engine.md`, `../law/foundation/boundaries/L3-mind.md`

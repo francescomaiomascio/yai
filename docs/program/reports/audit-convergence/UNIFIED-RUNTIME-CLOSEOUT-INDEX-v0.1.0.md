@@ -7,7 +7,7 @@ role: canonical-entrypoint
 related:
   - docs/program/reports/audit-convergence/UNIFIED-RUNTIME-ECOSYSTEM-VERIFICATION-MATRIX-v0.1.0.md
   - docs/program/reports/audit-convergence/UNIFIED-RUNTIME-MANUAL-TEST-COMMAND-PACK-v0.1.0.md
-  - docs/program/milestone-packs/unified-runtime-closeout/CL-1-UNIFIED-RUNTIME-ECOSYSTEM-CLOSEOUT.md
+  - docs/program/milestone-packs/unified-runtime-closeout/mp-runtime-000-cl-1-unified-runtime-ecosystem-report.md
 ---
 
 # Unified Runtime Closeout Index (Canonical Entry)
@@ -22,7 +22,7 @@ Primary artifacts:
 
 Program closeout statement:
 - CL-1 closeout delivery document:
-  `docs/program/milestone-packs/unified-runtime-closeout/CL-1-UNIFIED-RUNTIME-ECOSYSTEM-CLOSEOUT.md`
+  `docs/program/milestone-packs/unified-runtime-closeout/mp-runtime-000-cl-1-unified-runtime-ecosystem-report.md`
 
 Reading order:
 1. Verification matrix

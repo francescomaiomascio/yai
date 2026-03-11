@@ -34,9 +34,9 @@ implemented
 
 ## Traceability
 
-- ADR refs: `docs/program/adr/ADR-003-kernel-authority.md`, `docs/program/adr/ADR-007-workspace-isolation.md`, `docs/program/adr/ADR-008-connection-lifecycle.md`
-- Runbook refs: `docs/program/milestone-packs/runtime-baselines/root-hardening.md`, `docs/program/milestone-packs/runtime-baselines/workspaces-lifecycle.md`
-- MP refs: `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.2.md`, `docs/program/milestone-packs/root-hardening/MP-ROOT-HARDENING-0.1.4.md`
+- ADR refs: `docs/program/adr/adr-runtime-003-kernel-authority.md`, `docs/program/adr/adr-workspace-007-workspace-isolation.md`, `docs/program/adr/adr-workspace-008-connection-lifecycle.md`
+- Runbook refs: `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-root-hardening.md`, `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-workspaces-lifecycle.md`
+- MP refs: `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-2.md`, `docs/program/milestone-packs/root-hardening/mp-runtime-000-root-hardening-v0-1-4.md`
 - L0 anchors: `../law/foundation/boundaries/L1-kernel.md`, `../law/contracts/protocol/include/session.h`
 
 ## Known Drift / Gaps

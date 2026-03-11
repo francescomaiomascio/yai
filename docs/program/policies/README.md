@@ -1,7 +1,7 @@
 # Policies Index
 
 Primary source paths:
-- `docs/program/policies/_policy/README.md`
+- `docs/program/policies/style/README.md`
 - `GOVERNANCE.md`
 - `FOUNDATION.md`
 - `DATA.md`

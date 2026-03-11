@@ -34,11 +34,11 @@ Updated to reflect Mind C canonical path:
 - `docs/guides/developer/build-test/build.md`
 - `docs/guides/developer/build-test/mind-build.md`
 - `docs/guides/developer/build-test/mind-testing.md`
-- `docs/guides/user/user-guide/activation.md`
+- `docs/guides/user/guide/activation.md`
 
 Historical runbook marked as non-canonical for active runtime usage:
 
-- `docs/program/milestone-packs/runtime-baselines/mind-redis-stm.md`
+- `docs/program/milestone-packs/runtime-baselines/mp-runtime-000-mind-redis-stm.md`
 
 ## 4. Intentionally retained references
 
