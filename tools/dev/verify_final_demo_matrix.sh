@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-LAW="$ROOT/../law"
 SDK="$ROOT/../sdk"
 CLI="$ROOT/../cli"
 
@@ -11,9 +10,8 @@ run() {
   "$@"
 }
 
-run make -C "$LAW" -j4
 run make -C "$ROOT" -j4
-run make -C "$ROOT" law-embed-sync
+run make -C "$ROOT" governance-check
 run tests/unit/governance/run_governance_unit_tests.sh
 run tests/integration/governance/run_governance_resolution_smoke.sh
 

@@ -9,7 +9,7 @@ BIND_FILE="$HOME/.yai/session/active_workspace.json"
 if [[ ! -x "$YAI" ]]; then
   make -C "$REPO" yai >/dev/null
 fi
-make -C "$REPO" law-embed-sync >/dev/null
+make -C "$REPO" governance-sync >/dev/null
 
 start_runtime() {
   local mode="${1:-normal}"

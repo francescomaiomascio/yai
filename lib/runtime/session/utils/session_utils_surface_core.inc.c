@@ -198,15 +198,11 @@ static int yai_workspace_build_runtime_capabilities_json(const yai_workspace_run
     return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
 }
 
-static int yai_embedded_law_path(char *out, size_t out_cap, const char *rel)
+static int yai_governance_root_path(char *out, size_t out_cap, const char *rel)
 {
     const char *root = getenv("YAI_GOVERNANCE_ROOT");
-    const char *legacy_root = getenv("YAI_LAW_EMBED_ROOT");
-    const char *allow_legacy = getenv("YAI_GOVERNANCE_ALLOW_LEGACY");
-    int legacy_enabled = (allow_legacy && strcmp(allow_legacy, "1") == 0) ? 1 : 0;
     const char *base = NULL;
     const char *candidates[] = {"governance", "../yai/governance", "../../yai/governance"};
-    const char *legacy_candidates[] = {"embedded/law", "../yai/embedded/law", "../../yai/embedded/law"};
     int i;
     FILE *probe = NULL;
     if (!out || out_cap == 0)
@@ -228,29 +224,6 @@ static int yai_embedded_law_path(char *out, size_t out_cap, const char *rel)
                 fclose(probe);
                 base = candidates[i];
                 break;
-            }
-        }
-    }
-    if (!base && legacy_enabled)
-    {
-        if (legacy_root && legacy_root[0])
-        {
-            base = legacy_root;
-        }
-        else
-        {
-            for (i = 0; i < (int)(sizeof(legacy_candidates) / sizeof(legacy_candidates[0])); i++)
-            {
-                char p[MAX_PATH_LEN];
-                if (snprintf(p, sizeof(p), "%s/classification/classification-map.json", legacy_candidates[i]) <= 0)
-                    continue;
-                probe = fopen(p, "rb");
-                if (probe)
-                {
-                    fclose(probe);
-                    base = legacy_candidates[i];
-                    break;
-                }
             }
         }
     }
@@ -276,14 +249,14 @@ static int yai_read_text(const char *path, char *out, size_t out_cap)
     return 0;
 }
 
-static int yai_embedded_family_exists(const char *family)
+static int yai_governance_family_exists(const char *family)
 {
     char path[MAX_PATH_LEN];
     char json[YAI_WS_JSON_IO_CAP];
     char needle[160];
     if (!family || !family[0])
         return 0;
-    if (yai_embedded_law_path(path, sizeof(path), "control-families/index/families.index.json") != 0)
+    if (yai_governance_root_path(path, sizeof(path), "control-families/index/families.index.json") != 0)
         return 0;
     if (yai_read_text(path, json, sizeof(json)) != 0)
         return 0;
@@ -292,7 +265,7 @@ static int yai_embedded_family_exists(const char *family)
     return strstr(json, needle) != NULL;
 }
 
-static int yai_embedded_resolve_specialization_family(const char *specialization, char *family_out, size_t family_cap)
+static int yai_governance_resolve_specialization_family(const char *specialization, char *family_out, size_t family_cap)
 {
     char path[MAX_PATH_LEN];
     char json[YAI_WS_JSON_IO_CAP];
@@ -304,7 +277,7 @@ static int yai_embedded_resolve_specialization_family(const char *specialization
     if (!specialization || !specialization[0] || !family_out || family_cap == 0)
         return -1;
     family_out[0] = '\0';
-    if (yai_embedded_law_path(path, sizeof(path), "domain-specializations/index/specializations.index.json") != 0)
+    if (yai_governance_root_path(path, sizeof(path), "domain-specializations/index/specializations.index.json") != 0)
         return -1;
     if (yai_read_text(path, json, sizeof(json)) != 0)
         return -1;
@@ -337,12 +310,12 @@ static int yai_embedded_resolve_specialization_family(const char *specialization
     return family_out[0] ? 0 : -1;
 }
 
-static int yai_embedded_specialization_matches_family(const char *family, const char *specialization)
+static int yai_governance_specialization_matches_family(const char *family, const char *specialization)
 {
     char inferred_family[96];
     if (!specialization || !specialization[0])
         return 1;
-    if (yai_embedded_resolve_specialization_family(specialization, inferred_family, sizeof(inferred_family)) != 0)
+    if (yai_governance_resolve_specialization_family(specialization, inferred_family, sizeof(inferred_family)) != 0)
         return 0;
     if (!family || !family[0])
         return 1;

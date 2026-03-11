@@ -32,7 +32,7 @@
 #define YAI_MANAGED_END   "# END YAI MANAGED SHELL INTEGRATION"
 #define YAI_POLICY_ATTACHMENTS_MAX 16
 
-static int yai_embedded_law_path(char *out, size_t out_cap, const char *rel);
+static int yai_governance_root_path(char *out, size_t out_cap, const char *rel);
 static int yai_read_text(const char *path, char *out, size_t out_cap);
 static int mkdir_if_missing(const char *path, mode_t mode);
 int yai_law_decision_to_audit_blob(const yai_law_decision_t *decision, char *out, size_t out_cap);
@@ -193,7 +193,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
         {
             yai_governable_object_meta_t meta;
             yai_governable_meta_defaults(&meta);
-            if (tok[0] && yai_embedded_governable_object_lookup(tok, &meta))
+            if (tok[0] && yai_governance_governable_object_lookup(tok, &meta))
             {
                 char governance_err[96];
                 if (yai_workspace_append_governance_persistence(ws_id,

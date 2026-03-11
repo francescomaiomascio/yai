@@ -6,6 +6,7 @@ Developer utilities for local workflows and artifact consistency.
 
 - `gen-vault-abi`: generates headers/artifacts from specs.
 - `check-generated.sh`: validates generated artifact drift.
+- `resolve-governance-root.sh`: canonical governance root resolver for wrappers.
 - `resolve-yai-bin.sh`: resolves active `yai` binary.
 - `protocol_tester`: local protocol tester.
 - `yai-doctor`: environment diagnostics.

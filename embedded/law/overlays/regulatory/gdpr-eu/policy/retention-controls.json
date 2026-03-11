@@ -1,1 +1,0 @@
-{"kind":"overlay_policy_rule_set","version":"v1","overlay_id":"gdpr-eu","rules":[{"rule_id":"gdpr-retention-controls","when":["personal_data_artifact"],"effect":"require_justification"}]}

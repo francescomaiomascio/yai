@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI_ROOT="$ROOT"
-LAW_ROOT="$ROOT/../law"
+GOVERNANCE_ROOT="$ROOT/governance"
 CLI_ROOT="$ROOT/../cli"
 SDK_ROOT="$ROOT/../sdk"
 TMP="$(mktemp -d /tmp/yai-wsv6-closeout-XXXXXX)"
@@ -19,22 +19,22 @@ need_dir() {
   [[ -d "$p" ]] || { echo "wsv6_closeout: missing dir: $p"; exit 2; }
 }
 
-need_dir "$LAW_ROOT"
+need_dir "$GOVERNANCE_ROOT"
 need_dir "$CLI_ROOT"
 need_dir "$SDK_ROOT"
-need_file "$YAI_ROOT/lib/core/session/session.c"
-need_file "$LAW_ROOT/registry/commands.v1.json"
+need_file "$YAI_ROOT/lib/runtime/session/session.c"
+need_file "$GOVERNANCE_ROOT/registry/commands.v1.json"
 need_file "$CLI_ROOT/src/help/help.c"
 need_file "$SDK_ROOT/include/yai_sdk/public.h"
 
 # 1) Runtime command-id substrate exists for canonical families.
 rg -n "yai\\.workspace\\.graph\\.(summary|workspace|governance|decision|evidence|authority|artifact|lineage|recent)" \
-  "$YAI_ROOT/lib/core/session/session.c" >/dev/null
+  "$YAI_ROOT/lib/runtime/session/session.c" >/dev/null
 rg -n "yai\\.workspace\\.(query|events\\.tail|status|inspect|domain_get|domain_set|policy_effective|policy_attach|policy_activate|policy_detach|policy_dry_run|debug_resolution|open|create|set|switch|unset|clear|reset|destroy)" \
-  "$YAI_ROOT/lib/core/session/session.c" >/dev/null
+  "$YAI_ROOT/lib/runtime/session/session.c" >/dev/null
 
 # 2) Law registry has canonical ws topics/families.
-python3 - "$LAW_ROOT/registry/commands.v1.json" <<'PY'
+python3 - "$GOVERNANCE_ROOT/registry/commands.v1.json" <<'PY'
 import json, sys
 from collections import defaultdict
 p = sys.argv[1]
@@ -69,14 +69,14 @@ if missing:
     for t, m in missing:
         print(f"missing topic/op: {t} -> {','.join(m)}", file=sys.stderr)
     raise SystemExit(1)
-print("law-registry-ws-topics: ok")
+print("governance-registry-ws-topics: ok")
 PY
 
 # 3) CLI help exposes canonical ws families.
-YAI_SDK_COMPAT_REGISTRY_DIR="$LAW_ROOT" "$CLI_ROOT/dist/bin/yai" help ws >"$TMP/help_ws.txt" 2>&1
+YAI_SDK_COMPAT_REGISTRY_DIR="$GOVERNANCE_ROOT" "$CLI_ROOT/dist/bin/yai" help ws >"$TMP/help_ws.txt" 2>&1
 rg -n "graph|db|data|knowledge|policy|domain|recovery|debug|query" "$TMP/help_ws.txt" >/dev/null
 
-YAI_SDK_COMPAT_REGISTRY_DIR="$LAW_ROOT" "$CLI_ROOT/dist/bin/yai" help ws graph >"$TMP/help_ws_graph.txt" 2>&1
+YAI_SDK_COMPAT_REGISTRY_DIR="$GOVERNANCE_ROOT" "$CLI_ROOT/dist/bin/yai" help ws graph >"$TMP/help_ws_graph.txt" 2>&1
 rg -n "summary|workspace|governance|decision|evidence|authority|artifact|lineage|recent" "$TMP/help_ws_graph.txt" >/dev/null
 
 # 4) SDK public surface exports typed family headers/helpers.

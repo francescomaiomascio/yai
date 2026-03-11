@@ -3,22 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GOV_ROOT="$ROOT/governance"
-LAW_ROOT="${YAI_LAW_ROOT:-}"
 
 if [[ ! -d "$GOV_ROOT/contracts" ]]; then
-  if [[ -z "$LAW_ROOT" ]]; then
-    CANDIDATE="$(cd "$ROOT/.." && pwd)/law"
-    [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
-  fi
-  if [[ -z "$LAW_ROOT" ]]; then
-    CANDIDATE="$ROOT/embedded/law"
-    [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
-  fi
-  if [[ -z "$LAW_ROOT" ]]; then
-    echo "no contract/schema source found (expected governance/ or ../law or embedded/law)" >&2
-    exit 2
-  fi
-  GOV_ROOT="$LAW_ROOT"
+  echo "no contract/schema source found (expected governance/)" >&2
+  exit 2
 fi
 
 SPEC_CONTRACTS="$GOV_ROOT/contracts/vault/schema/vault_abi.json"

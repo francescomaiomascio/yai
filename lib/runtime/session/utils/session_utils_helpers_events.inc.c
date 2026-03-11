@@ -121,7 +121,7 @@ static void yai_json_array_to_csv(cJSON *arr, char *out, size_t out_cap)
     if (n < 0) out[0] = '\0';
 }
 
-static int yai_embedded_governable_object_lookup(const char *object_id, yai_governable_object_meta_t *meta)
+static int yai_governance_governable_object_lookup(const char *object_id, yai_governable_object_meta_t *meta)
 {
     char path[MAX_PATH_LEN];
     char json[YAI_WS_JSON_IO_CAP];
@@ -132,7 +132,7 @@ static int yai_embedded_governable_object_lookup(const char *object_id, yai_gove
     yai_governable_meta_defaults(meta);
     if (!object_id || !object_id[0]) return 0;
     if (meta) snprintf(meta->id, sizeof(meta->id), "%s", object_id);
-    if (yai_embedded_law_path(path, sizeof(path), "registry/governable-objects.v1.json") != 0)
+    if (yai_governance_root_path(path, sizeof(path), "registry/governable-objects.v1.json") != 0)
         return 0;
     if (yai_read_text(path, json, sizeof(json)) != 0)
         return 0;

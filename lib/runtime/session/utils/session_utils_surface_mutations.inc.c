@@ -34,7 +34,7 @@ int yai_session_set_workspace_declared_context(const char *family,
         snprintf(resolved_family, sizeof(resolved_family), "%s", info.declared_control_family);
 
     /* Deterministic error precedence: explicit family validity is checked before specialization matching. */
-    if (family && family[0] && !yai_embedded_family_exists(resolved_family))
+    if (family && family[0] && !yai_governance_family_exists(resolved_family))
     {
         if (err && err_cap > 0)
             snprintf(err, err_cap, "%s", "family_not_found");
@@ -44,7 +44,7 @@ int yai_session_set_workspace_declared_context(const char *family,
     if (specialization && specialization[0])
     {
         char inferred_family[96] = {0};
-        if (yai_embedded_resolve_specialization_family(specialization, inferred_family, sizeof(inferred_family)) != 0)
+        if (yai_governance_resolve_specialization_family(specialization, inferred_family, sizeof(inferred_family)) != 0)
         {
             if (err && err_cap > 0)
                 snprintf(err, err_cap, "%s", "specialization_not_found");
@@ -60,13 +60,13 @@ int yai_session_set_workspace_declared_context(const char *family,
         }
     }
 
-    if (resolved_family[0] && !yai_embedded_family_exists(resolved_family))
+    if (resolved_family[0] && !yai_governance_family_exists(resolved_family))
     {
         if (err && err_cap > 0)
             snprintf(err, err_cap, "%s", "family_not_found");
         return -1;
     }
-    if (!yai_embedded_specialization_matches_family(resolved_family, specialization && specialization[0] ? specialization : info.declared_specialization))
+    if (!yai_governance_specialization_matches_family(resolved_family, specialization && specialization[0] ? specialization : info.declared_specialization))
     {
         if (!specialization || !specialization[0])
             info.declared_specialization[0] = '\0';
@@ -155,7 +155,7 @@ int yai_session_workspace_policy_attachment_update(const char *object_id,
         return -1;
     }
     yai_governable_meta_defaults(&meta);
-    if (!yai_embedded_governable_object_lookup(object_id, &meta))
+    if (!yai_governance_governable_object_lookup(object_id, &meta))
     {
         if (err && err_cap > 0) snprintf(err, err_cap, "%s", "governable_object_not_found");
         return -1;
@@ -390,7 +390,7 @@ int yai_session_workspace_policy_apply_dry_run(const char *object_id,
         return -1;
     }
     yai_governable_meta_defaults(&meta);
-    if (!yai_embedded_governable_object_lookup(object_id, &meta))
+    if (!yai_governance_governable_object_lookup(object_id, &meta))
     {
         if (err && err_cap > 0) snprintf(err, err_cap, "%s", "governable_object_not_found");
         return -1;

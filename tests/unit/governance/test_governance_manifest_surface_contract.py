@@ -14,11 +14,11 @@ def main() -> int:
 
     runtime = None
     for t in publish_idx.get("targets", []):
-        if t.get("target") == "runtime-embedded":
+        if t.get("target") == "runtime-governance":
             runtime = t
             break
     if runtime is None:
-        raise SystemExit("governance_manifest_surface_contract: missing runtime-embedded target")
+        raise SystemExit("governance_manifest_surface_contract: missing runtime-governance target")
 
     for rel in runtime.get("includes", []):
         if not (root / "governance" / rel).exists():

@@ -3,7 +3,6 @@ set -euo pipefail
 
 YAI_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CLI_ROOT="$YAI_ROOT/../cli"
-LAW_ROOT="$YAI_ROOT/../law"
 RUNTIME_BIN="$YAI_ROOT/build/bin/yai"
 CLI_BIN="$CLI_ROOT/dist/bin/yai"
 TMP="$(mktemp -d /tmp/yai-wsv82-postconditions-XXXXXX)"
@@ -14,11 +13,10 @@ trap 'rm -rf "$TMP"; rm -f "$SOCK" "$PIDF"' EXIT
 
 [[ -x "$RUNTIME_BIN" ]] || { echo "wsv82_postconditions: missing runtime bin $RUNTIME_BIN"; exit 2; }
 [[ -x "$CLI_BIN" ]] || { echo "wsv82_postconditions: missing cli bin $CLI_BIN"; exit 2; }
-[[ -d "$LAW_ROOT" ]] || { echo "wsv82_postconditions: missing law repo $LAW_ROOT"; exit 2; }
 
 export YAI_RUNTIME_INGRESS="$SOCK"
 export YAI_RUNTIME_PIDFILE="$PIDF"
-export YAI_SDK_COMPAT_REGISTRY_DIR="$LAW_ROOT"
+export YAI_SDK_COMPAT_REGISTRY_DIR="$YAI_ROOT/governance"
 
 rm -f "$SOCK" "$PIDF"
 "$RUNTIME_BIN" up >"$TMP/runtime.log" 2>&1 &

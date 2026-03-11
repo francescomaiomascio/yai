@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "DEPRECATION: yai-specs-sync is deprecated; use yai-law-embed-sync" >&2
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-exec "$ROOT/tools/bin/yai-law-embed-sync" "$@"
+echo "removed: yai-specs-sync is not supported after B10 (embedded shutdown)" >&2
+echo "canonical governance root: $ROOT/governance" >&2
+exit 2

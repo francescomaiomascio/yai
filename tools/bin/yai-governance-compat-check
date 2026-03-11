@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+python3 - "$ROOT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+
+required = [
+    "governance/manifests/law.manifest.json",
+    "governance/manifests/runtime.entrypoints.json",
+    "governance/manifests/publish.index.json",
+    "governance/manifests/publish.layers.json",
+    "governance/manifests/compatibility.matrix.json",
+    "governance/manifests/domain-resolution-order.json",
+    "governance/manifests/compliance-resolution-order.json",
+    "governance/manifests/governance-attachability.constraints.v1.json",
+    "governance/manifests/customer-policy-packs.index.json",
+    "governance/manifests/enterprise-custom-governance.index.json",
+    "governance/contracts/control/schema/control_plane.v1.json",
+    "governance/contracts/control/schema/control_call.v1.json",
+    "governance/contracts/control/schema/exec_reply.v1.json",
+    "governance/contracts/providers/schema/providers.v1.json",
+    "governance/contracts/vault/schema/vault_abi.json",
+    "governance/schema/policy.v1.schema.json",
+    "governance/schema/decision_record.v1.schema.json",
+    "governance/schema/governance_review_state.v1.schema.json",
+    "governance/schema/evidence_index.v1.schema.json",
+    "governance/schema/workspace_governance_attachment.v1.schema.json",
+    "governance/schema/retention.policy.v1.json",
+    "governance/schema/containment_metrics.v1.schema.json",
+    "governance/schema/verification_report.v1.schema.json",
+    "governance/ingestion/templates/enterprise_governance_source.template.v1.json",
+    "governance/ingestion/sources/src.ecohmedia.digital-outbound.source.v1.json",
+    "governance/ingestion/parsed/src.ecohmedia.digital-outbound.parsed.v1.json",
+    "governance/ingestion/normalized/src.ecohmedia.digital-outbound.normalized.v1.json",
+    "governance/ingestion/candidates/enterprise.ecohmedia.src-ecohmedia-digital-outbound.candidate.v1.json",
+    "governance/ingestion/review/enterprise.ecohmedia.src-ecohmedia-digital-outbound.candidate.v1.review.v1.json",
+]
+
+errors = []
+for rel in required:
+    p = root / rel
+    if not p.exists():
+        errors.append(f"missing: {rel}")
+
+for rel in [r for r in required if r.endswith(".json") and (root / r).exists()]:
+    try:
+        json.loads((root / rel).read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append(f"invalid json: {rel} ({exc})")
+
+manifest = root / "governance/manifests/law.manifest.json"
+if manifest.exists():
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    if payload.get("resolution_entrypoints_ref") != "manifests/runtime.entrypoints.json":
+        errors.append("invalid resolution_entrypoints_ref in governance/manifests/law.manifest.json")
+
+if errors:
+    print("governance manifest compatibility: FAIL")
+    for e in errors:
+        print(" -", e)
+    raise SystemExit(1)
+
+print("governance manifest compatibility: OK")
+PY

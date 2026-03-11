@@ -4,7 +4,7 @@
 
 ROOT_DIR := $(abspath .)
 GOVERNANCE_CONTRACT_ROOT ?= $(ROOT_DIR)/governance/contracts
-LAW_COMPAT_ROOT ?= $(if $(wildcard $(ROOT_DIR)/../law/contracts),$(ROOT_DIR)/../law,$(ROOT_DIR)/embedded/law)
+GOVERNANCE_COMPAT_ROOT ?= $(ROOT_DIR)/governance
 
 BUILD_DIR ?= $(ROOT_DIR)/build
 BIN_DIR ?= $(BUILD_DIR)/bin
@@ -21,10 +21,7 @@ CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/include/yai \
             -I$(ROOT_DIR)/lib/third_party/cjson \
             -I$(GOVERNANCE_CONTRACT_ROOT)/protocol/include \
             -I$(GOVERNANCE_CONTRACT_ROOT)/protocol/runtime/include \
-            -I$(GOVERNANCE_CONTRACT_ROOT)/vault/include \
-            -I$(LAW_COMPAT_ROOT)/contracts/protocol/include \
-            -I$(LAW_COMPAT_ROOT)/contracts/protocol/runtime/include \
-            -I$(LAW_COMPAT_ROOT)/contracts/vault/include
+            -I$(GOVERNANCE_CONTRACT_ROOT)/vault/include
 CFLAGS ?= -Wall -Wextra -std=c11 -O2
 LDFLAGS ?=
 LDLIBS ?= -lm
@@ -245,7 +242,7 @@ DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
         preflight-release docs docs-clean docs-verify proof-verify release-guards \
         release-guards-dev changelog-verify dirs help legacy-build \
-        governance-embed-sync governance-embed-check law-embed-sync law-embed-check
+        governance-sync governance-check
 
 all: yai yai-daemon foundations
 	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN)"
@@ -399,14 +396,11 @@ verify:
 		echo "No verify script found at ./tools/bin/yai-verify"; \
 	fi
 
-governance-embed-sync:
-	@./tools/bin/yai-law-embed-sync
+governance-sync:
+	@echo "governance sync: canonical governance/ tree is in-repo (no embedded export target)"
 
-governance-embed-check:
-	@./tools/bin/yai-law-compat-check
-
-law-embed-sync: governance-embed-sync
-law-embed-check: governance-embed-check
+governance-check:
+	@./tools/bin/yai-governance-compat-check
 
 preflight-release:
 	@tools/bin/yai-check-pins

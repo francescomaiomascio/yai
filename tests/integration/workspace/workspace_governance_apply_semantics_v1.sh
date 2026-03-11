@@ -9,7 +9,7 @@ ATTACH_OBJ="enterprise.ecohmedia.digital-outbound.review-gate"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 make -C "$REPO" yai >/dev/null
-make -C "$REPO" law-embed-sync >/dev/null
+make -C "$REPO" governance-sync >/dev/null
 
 "$YAI" down >/dev/null 2>&1 || true
 rm -f "$SOCK" >/dev/null 2>&1 || true

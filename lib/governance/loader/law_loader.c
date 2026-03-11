@@ -65,11 +65,6 @@ int yai_law_read_governance_surface_file(const yai_law_runtime_t *rt,
     return 0;
   }
 
-  if (yai_law_safe_snprintf(path, sizeof(path), "embedded/law/%s", rel_path) == 0 &&
-      yai_law_read_text_file(path, out, out_cap) == 0) {
-    return 0;
-  }
-
   return -1;
 }
 
@@ -105,11 +100,10 @@ int yai_law_json_contains(const char *json, const char *needle) {
 
 static int yai_law_resolve_root(char *out, size_t out_cap) {
   const char *gov_env = getenv("YAI_GOVERNANCE_ROOT");
-  const char *env = getenv("YAI_LAW_EMBED_ROOT");
+  const char *env = getenv("YAI_GOVERNANCE_LEGACY_ROOT");
   const char *allow_legacy = getenv("YAI_GOVERNANCE_ALLOW_LEGACY");
   int legacy_enabled = (allow_legacy && strcmp(allow_legacy, "1") == 0) ? 1 : 0;
   const char *canonical_candidates[] = {"governance", "../yai/governance", "../../yai/governance"};
-  const char *candidates[] = {"embedded/law", "../yai/embedded/law", "../../yai/embedded/law"};
   size_t i;
   if (gov_env && gov_env[0] && yai_law_path_exists(gov_env)) {
     return yai_law_safe_snprintf(out, out_cap, "%s", gov_env);
@@ -122,11 +116,6 @@ static int yai_law_resolve_root(char *out, size_t out_cap) {
   if (!legacy_enabled) return -1;
   if (env && env[0] && yai_law_path_exists(env)) {
     return yai_law_safe_snprintf(out, out_cap, "%s", env);
-  }
-  for (i = 0; i < sizeof(candidates) / sizeof(candidates[0]); i++) {
-    if (yai_law_path_exists(candidates[i])) {
-      return yai_law_safe_snprintf(out, out_cap, "%s", candidates[i]);
-    }
   }
   return -1;
 }

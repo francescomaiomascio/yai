@@ -2,5 +2,6 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-echo "DEPRECATION: yai-law-sync now delegates to yai-law-embed-sync" >&2
-exec "$ROOT/tools/bin/yai-law-embed-sync" "$@"
+echo "removed: yai-law-sync is not supported after B10 (embedded shutdown)" >&2
+echo "canonical governance root: $ROOT/governance" >&2
+exit 2

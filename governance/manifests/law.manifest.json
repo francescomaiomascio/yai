@@ -14,7 +14,7 @@
   "governance_attachability_constraints_ref": "manifests/governance-attachability.constraints.v1.json",
   "resolution_entrypoints_ref": "manifests/runtime.entrypoints.json",
   "export_targets": [
-    "runtime-embedded",
+    "runtime-governance",
     "docs-reference",
     "audit-reference"
   ],

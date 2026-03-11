@@ -54,13 +54,13 @@ def main() -> int:
 
     runtime_target = None
     for target in publish_index.get("targets", []):
-        if target.get("target") == "runtime-embedded":
+        if target.get("target") == "runtime-governance":
             runtime_target = target
             break
     if runtime_target is None:
-        raise SystemExit("governance_manifest_spine: publish.index.json missing runtime-embedded target")
+        raise SystemExit("governance_manifest_spine: publish.index.json missing runtime-governance target")
     if "manifests" not in runtime_target.get("includes", []):
-        raise SystemExit("governance_manifest_spine: runtime-embedded target must include manifests")
+        raise SystemExit("governance_manifest_spine: runtime-governance target must include manifests")
 
     runtime_surface = publish_layers.get("runtime_surface", {})
     if runtime_surface.get("manifests") != "manifests/":

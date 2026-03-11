@@ -17,4 +17,4 @@ Governance content may be published as canonical only when:
 
 - schema/contract/manifests separation is preserved
 - overlays/compliance content lands in dedicated canonical areas
-- no new canonical governance content is published in `embedded/law`
+- embedded law surfaces are removed from active topology; canonical publication is `governance/` only

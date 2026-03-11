@@ -3,21 +3,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CONTRACT_ROOT="${YAI_GOVERNANCE_CONTRACT_ROOT:-$ROOT/governance/contracts}"
-LAW_ROOT="${LAW_COMPAT_ROOT:-}"
 if [[ ! -d "$CONTRACT_ROOT/protocol/include" ]]; then
-  if [[ -z "$LAW_ROOT" ]]; then
-    CANDIDATE="$(cd "$ROOT/.." && pwd)/law"
-    [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
-  fi
-  if [[ -z "$LAW_ROOT" ]]; then
-    echo "contract root not found (expected governance/contracts or ../law/contracts)" >&2
-    exit 2
-  fi
-  CONTRACT_ROOT="$LAW_ROOT/contracts"
-fi
-if [[ -z "$LAW_ROOT" ]]; then
-  CANDIDATE="$(cd "$ROOT/.." && pwd)/law"
-  [[ -d "$CANDIDATE" ]] && LAW_ROOT="$CANDIDATE"
+  echo "contract root not found (expected governance/contracts)" >&2
+  exit 2
 fi
 
 OUT_ROOT="$ROOT/build/test/knowledge"

@@ -3,7 +3,7 @@
   "version": "v4",
   "targets": [
     {
-      "target": "runtime-embedded",
+      "target": "runtime-governance",
       "profile": "runtime-consumer.v4",
       "includes": [
         "classification",
