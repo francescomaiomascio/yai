@@ -19,6 +19,8 @@ canonical state.
 2. Delegated edge policy plane (owner-issued snapshots/grants/envelopes)
 3. Edge execution/observation plane (subordinate runtime behavior)
 
+RF-0.2 formalizes this hierarchy and precedence as architecture lock.
+
 ## Edge Runtime Allowed (owner-scoped only)
 
 - local observation (assets, process-local signals baseline)

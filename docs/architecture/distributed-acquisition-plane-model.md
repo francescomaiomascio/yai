@@ -58,6 +58,8 @@ Topology class:
 - runtime-side dispatch bridge into canonical control and persistence paths
 
 `exec` is not treated as a legacy bridge-only area in this model.
+It mediates delegated edge behavior under owner-issued constraints and does not
+form a sovereign authority plane.
 
 ## Control-plane and acquisition-plane contract
 
@@ -69,6 +71,7 @@ Control and final truth stay owner-side:
 - runtime readiness and acceptance checks
 - workspace binding semantics
 - canonical records and graph state
+- policy issuance and delegated capability authority
 
 ### Distributed acquisition plane
 

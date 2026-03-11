@@ -42,6 +42,10 @@ YD-1 daemon boundary:
 - `yai-daemon` can mediate delegated local actions only under owner-issued scope;
 - only owner runtime `yai` can accept payloads into canonical records/graph/policy/conflict truth.
 
+RF-0.2 hierarchy rule:
+- delegated edge policy plane is derived from owner global policy plane;
+- delegated edge state cannot override canonical owner truth classes.
+
 ### 3) Control/Data Path Separation
 Mandatory path:
 

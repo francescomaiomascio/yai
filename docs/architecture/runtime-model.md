@@ -15,6 +15,7 @@ The YD-1 refoundation slice locks these invariants:
 - topology is `distributed acquisition / centralized control`.
 - daemon state is operational/advisory and never canonical workspace/policy/graph/conflict truth.
 - `exec` is the active mediation layer for owner/daemon source-plane flows.
+- edge delegated behavior is owner-issued, scope-limited, and revocable.
 
 ## Canonical runtime flow
 
@@ -50,6 +51,8 @@ YD-1 daemon refoundation lock is defined in
 `docs/architecture/daemon-architecture-refoundation-model.md`.
 RF-0.1 semantic refoundation lock is defined in
 `docs/architecture/source-plane-model-refoundation-rf01.md`.
+RF-0.2 policy hierarchy lock is defined in
+`docs/architecture/global-to-edge-policy-hierarchy-model.md`.
 Source-plane entity/contract model is defined in
 `docs/architecture/source-plane-model.md`.
 Owner ingest runtime flow is defined in

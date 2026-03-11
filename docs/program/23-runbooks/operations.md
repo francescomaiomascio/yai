@@ -89,3 +89,5 @@ Define the operational control loop for running, validating, and recovering the 
   `docs/program/23-runbooks/daemon-architecture-refoundation-baseline.md`.
 - Keep owner/daemon role boundaries explicit during operations and qualification.
 - Treat daemon-side execution as delegated and owner-scoped, never sovereign.
+- RF-0.2 policy hierarchy lock baseline:
+  `docs/program/23-runbooks/global-to-edge-policy-hierarchy-baseline.md`.

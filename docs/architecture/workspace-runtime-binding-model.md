@@ -29,6 +29,10 @@ YD-1 boundary lock:
 - runtime binding is owner-side only;
 - `yai-daemon` never sets canonical active workspace truth.
 
+RF-0.2 delegation lock:
+- edge-local binding/cache artifacts are delegated execution inputs only;
+- they do not become workspace policy or binding truth.
+
 ## Workspace-local vs Runtime-global
 
 Workspace-local:
