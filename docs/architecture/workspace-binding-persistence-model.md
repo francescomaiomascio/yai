@@ -9,5 +9,8 @@
 - `unset`: remove active binding pointer and clear workspace-local binding marker.
 - `clear`: keep binding, clear runtime/effective inferred surfaces.
 
+Source-plane `source_binding` records are separate attach entities and do not
+replace owner workspace binding truth.
+
 ## Stale/invalid defenses
 - Invalid id, missing workspace, root mismatch, containment surface mismatch produce explicit reasons in status/current.

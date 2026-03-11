@@ -24,3 +24,5 @@ Attach descriptor is the execution-containment snapshot used during workspace at
 - Bridges lifecycle (`set/switch`) and execution (`run`).
 - Makes attach semantics explicit and inspectable.
 - Prepares future hard backends without changing high-level command grammar.
+- Owner-runtime (`yai`) remains canonical descriptor authority even when source
+  acquisition is mediated by `yai-daemon`.

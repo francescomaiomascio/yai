@@ -42,3 +42,26 @@ int yai_graph_materialize_runtime_record_bundle(const char *workspace_id,
 int yai_graph_materialization_workspace_counts(const char *workspace_id,
                                                size_t *node_count_out,
                                                size_t *edge_count_out);
+
+int yai_graph_materialization_workspace_source_counts(const char *workspace_id,
+                                                      size_t *source_node_count_out,
+                                                      size_t *source_edge_count_out);
+
+int yai_graph_materialize_source_record(const char *workspace_id,
+                                        const char *record_class,
+                                        const char *record_json,
+                                        char *out_node_ref,
+                                        size_t out_node_ref_cap,
+                                        char *out_edge_ref,
+                                        size_t out_edge_ref_cap,
+                                        char *err,
+                                        size_t err_cap);
+
+/* YD-3 source-plane canonical projection classes (implemented in YD-6). */
+#define YAI_GRAPH_SOURCE_NODE_CLASS "source_node"
+#define YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS "source_daemon_instance"
+#define YAI_GRAPH_SOURCE_BINDING_CLASS "source_binding"
+#define YAI_GRAPH_SOURCE_ASSET_CLASS "source_asset"
+#define YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS "source_acquisition_event"
+#define YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS "source_evidence_candidate"
+#define YAI_GRAPH_SOURCE_OWNER_LINK_CLASS "source_owner_link"

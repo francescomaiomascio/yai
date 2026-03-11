@@ -30,6 +30,9 @@ YAI adopts one canonical machine runtime composed of:
 
 Workspaces are logical tenants managed by this runtime, not independent daemon stacks.
 
+Distributed source acquisition is allowed only as an edge feed into this owner
+runtime model (see `ADR-013`). It does not introduce additional owner runtimes.
+
 ## Rationale
 
 A single runtime reduces authority ambiguity, improves observability, and strengthens deterministic enforcement of workspace boundaries.

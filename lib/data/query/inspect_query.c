@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <yai/data/query.h>
+#include <yai/daemon/source_plane_model.h>
 
 #include <stdio.h>
 
@@ -35,6 +36,8 @@ int yai_data_query_summary_json(const char *workspace_id,
 {
   size_t events = 0, decisions = 0, evidence = 0, governance = 0, authority = 0, authority_resolution = 0;
   size_t enforcement_outcome = 0, enforcement_linkage = 0;
+  size_t source_node = 0, source_daemon_instance = 0, source_binding = 0;
+  size_t source_asset = 0, source_acquisition_event = 0, source_evidence_candidate = 0, source_owner_link = 0;
   if (!out_json || out_cap == 0) return -1;
   out_json[0] = '\0';
   if (yai_data_query_count(workspace_id, "events", &events, err, err_cap) != 0) return -1;
@@ -45,9 +48,24 @@ int yai_data_query_summary_json(const char *workspace_id,
   if (yai_data_query_count(workspace_id, "authority_resolution", &authority_resolution, err, err_cap) != 0) return -1;
   if (yai_data_query_count(workspace_id, "enforcement_outcome", &enforcement_outcome, err, err_cap) != 0) return -1;
   if (yai_data_query_count(workspace_id, "enforcement_linkage", &enforcement_linkage, err, err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id, YAI_SOURCE_RECORD_CLASS_NODE, &source_node, err, err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id, YAI_SOURCE_RECORD_CLASS_DAEMON_INSTANCE, &source_daemon_instance, err, err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id, YAI_SOURCE_RECORD_CLASS_BINDING, &source_binding, err, err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id, YAI_SOURCE_RECORD_CLASS_ASSET, &source_asset, err, err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id,
+                           YAI_SOURCE_RECORD_CLASS_ACQUISITION_EVENT,
+                           &source_acquisition_event,
+                           err,
+                           err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id,
+                           YAI_SOURCE_RECORD_CLASS_EVIDENCE_CANDIDATE,
+                           &source_evidence_candidate,
+                           err,
+                           err_cap) != 0) return -1;
+  if (yai_data_query_count(workspace_id, YAI_SOURCE_RECORD_CLASS_OWNER_LINK, &source_owner_link, err, err_cap) != 0) return -1;
   if (snprintf(out_json,
                out_cap,
-               "{\"workspace_id\":\"%s\",\"counts\":{\"events\":%zu,\"decisions\":%zu,\"evidence\":%zu,\"governance\":%zu,\"authority\":%zu,\"authority_resolution\":%zu,\"enforcement_outcome\":%zu,\"enforcement_linkage\":%zu}}",
+               "{\"workspace_id\":\"%s\",\"counts\":{\"events\":%zu,\"decisions\":%zu,\"evidence\":%zu,\"governance\":%zu,\"authority\":%zu,\"authority_resolution\":%zu,\"enforcement_outcome\":%zu,\"enforcement_linkage\":%zu,\"source_node\":%zu,\"source_daemon_instance\":%zu,\"source_binding\":%zu,\"source_asset\":%zu,\"source_acquisition_event\":%zu,\"source_evidence_candidate\":%zu,\"source_owner_link\":%zu}}",
                workspace_id,
                events,
                decisions,
@@ -56,7 +74,14 @@ int yai_data_query_summary_json(const char *workspace_id,
                authority,
                authority_resolution,
                enforcement_outcome,
-               enforcement_linkage) <= 0) {
+               enforcement_linkage,
+               source_node,
+               source_daemon_instance,
+               source_binding,
+               source_asset,
+               source_acquisition_event,
+               source_evidence_candidate,
+               source_owner_link) <= 0) {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "summary_encode_failed");
     return -1;
   }

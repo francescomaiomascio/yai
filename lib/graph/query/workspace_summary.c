@@ -18,6 +18,8 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
   yai_mind_graph_stats_t stats = {0};
   size_t ws_nodes = 0;
   size_t ws_edges = 0;
+  size_t src_nodes = 0;
+  size_t src_edges = 0;
   char node_ref[192];
   char edge_ref[192];
   char graph_store_ref[512];
@@ -32,6 +34,7 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
     return -1;
   }
   (void)yai_graph_materialization_workspace_counts(workspace_id, &ws_nodes, &ws_edges);
+  (void)yai_graph_materialization_workspace_source_counts(workspace_id, &src_nodes, &src_edges);
   (void)yai_mind_storage_bridge_last_refs(workspace_id,
                                           node_ref,
                                           sizeof(node_ref),
@@ -49,6 +52,7 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
                out_cap,
                "{\"workspace_id\":\"%s\",\"backend\":\"%s\",\"graph_node_count\":%zu,\"graph_edge_count\":%zu,"
                "\"workspace_graph_node_count\":%zu,\"workspace_graph_edge_count\":%zu,"
+               "\"source_graph_node_count\":%zu,\"source_graph_edge_count\":%zu,"
                "\"last_graph_node_ref\":\"%s\",\"last_graph_edge_ref\":\"%s\",\"graph_store_ref\":\"%s\"}",
                workspace_id,
                backend ? backend : "unknown",
@@ -56,6 +60,8 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
                stats.edge_count,
                ws_nodes,
                ws_edges,
+               src_nodes,
+               src_edges,
                node_ref,
                edge_ref,
                graph_store_ref) <= 0) {

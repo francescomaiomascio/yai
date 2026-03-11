@@ -1,0 +1,80 @@
+# Daemon Local Runtime Model (YD-5)
+
+## Scope
+
+`yai-daemon` is an edge-side acquisition runtime. In v1 it is intentionally
+non-authoritative: no workspace truth, no final authority/enforcement, no
+local graph truth.
+
+## Runtime Planes
+
+`yai-daemon` runs four explicit local planes:
+
+1. `binding` plane
+   Loads and activates local source bindings from
+   `config/source-bindings.manifest.json`.
+2. `observation` plane
+   Performs polling scan on active filesystem bindings and detects new/changed
+   assets through local fingerprints (`size` + `mtime` baseline).
+3. `spool` plane
+   Persists acquisition units on disk under `spool/queue` and tracks
+   `delivered` / `failed` units.
+4. `delivery` plane
+   Sends source-plane operations to owner runtime:
+   `yai.source.enroll`, `yai.source.attach`, `yai.source.emit`,
+   `yai.source.status`.
+
+## Local Layout
+
+YD-5 actively uses daemon-local roots:
+
+- `~/.yai/daemon/config`
+- `~/.yai/daemon/state`
+- `~/.yai/daemon/log`
+- `~/.yai/daemon/spool`
+  - `queue`
+  - `delivered`
+  - `failed`
+- `~/.yai/daemon/identity`
+- `~/.yai/daemon/bindings`
+
+Runtime state files:
+
+- `state/health.v1.json` (v2 payload with health+spool counters)
+- `state/bindings.v1.json`
+- `state/observed-assets.v1.tsv`
+
+## Binding/Unit/Health States
+
+Binding state:
+
+- `configured`
+- `active`
+- `degraded`
+- `invalid`
+
+Acquisition unit state:
+
+- `discovered`
+- `queued`
+- `emitting`
+- `delivered`
+- `retry_due`
+- `failed_terminal`
+
+Daemon health state:
+
+- `starting`
+- `ready`
+- `degraded`
+- `disconnected`
+- `stopping`
+
+## Retry Baseline
+
+- Failed delivery remains in spool.
+- Retry uses simple exponential backoff baseline.
+- Attempts are persisted with each unit.
+- After max attempts, unit is moved to `spool/failed`.
+
+This is intentionally minimal v1 behavior for deterministic edge validation.

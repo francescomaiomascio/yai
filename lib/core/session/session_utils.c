@@ -8,6 +8,7 @@
 #include <yai/data/binding.h>
 #include <yai/data/query.h>
 #include <yai/exec/runtime.h>
+#include <yai/graph/materialization.h>
 #include <yai/graph/query.h>
 #include <yai/knowledge/memory.h>
 #include <yai/law/policy_effects.h>

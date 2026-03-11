@@ -31,3 +31,5 @@ Current canonical states:
 A workspace can be active while shell cwd is outside workspace root.
 That is valid and explicit in inspect/status surfaces.
 
+In distributed acquisition v1, lifecycle truth remains owner-runtime (`yai`)
+and is not delegated to source-node daemons.

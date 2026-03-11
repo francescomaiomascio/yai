@@ -47,10 +47,12 @@ endif
 
 YAI_OBJ := $(OBJ_DIR)/cmd/yai/main.o
 YAI_BIN := $(BIN_DIR)/yai
+YAI_DAEMON_OBJ := $(OBJ_DIR)/cmd/yai-daemon/main.o
+YAI_DAEMON_BIN := $(BIN_DIR)/yai-daemon
 
 SUPPORT_SRCS := lib/support/ids.c lib/support/logger.c lib/support/errors.c lib/support/strings.c lib/support/paths.c
 PLATFORM_SRCS := lib/platform/os.c lib/platform/fs.c lib/platform/clock.c lib/platform/uds.c
-PROTOCOL_SRCS := lib/protocol/rpc_runtime.c lib/protocol/rpc_codec.c lib/protocol/rpc_binary.c lib/protocol/message_types.c
+PROTOCOL_SRCS := lib/protocol/rpc_runtime.c lib/protocol/rpc_codec.c lib/protocol/rpc_binary.c lib/protocol/message_types.c lib/protocol/source_plane_contract.c
 CORE_SRCS := \
 	lib/core/lifecycle/bootstrap.c \
 	lib/core/lifecycle/preboot.c \
@@ -113,6 +115,8 @@ EXEC_SRCS := \
 	lib/exec/runtime/exec_runtime.c \
 	lib/exec/runtime/config_loader.c \
 	lib/exec/runtime/runtime_model.c \
+	lib/exec/runtime/source_plane_contract.c \
+	lib/exec/runtime/source_ingest.c \
 	lib/exec/gates/provider_gate.c \
 	lib/exec/gates/network_gate.c \
 	lib/exec/gates/storage_gate.c \
@@ -172,6 +176,16 @@ GRAPH_SRCS := \
 	lib/graph/domains/semantic.c \
 	lib/graph/materialization/from_runtime_records.c \
 	lib/graph/query/workspace_summary.c
+DAEMON_SRCS := \
+	lib/daemon/config.c \
+	lib/daemon/paths.c \
+	lib/daemon/runtime.c \
+	lib/daemon/local_runtime.c \
+	lib/daemon/lifecycle.c \
+	lib/daemon/internal.c \
+	lib/daemon/source_plane_model.c \
+	lib/daemon/source_ids.c \
+	lib/third_party/cjson/cJSON.c
 
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
 PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
@@ -181,6 +195,7 @@ EXEC_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(EXEC_SRCS))
 KNOWLEDGE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(KNOWLEDGE_SRCS))
 DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
 GRAPH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(GRAPH_SRCS))
+DAEMON_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DAEMON_SRCS))
 
 SUPPORT_LIB := $(LIB_DIR)/libyai_support.a
 PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
@@ -190,6 +205,7 @@ EXEC_LIB := $(LIB_DIR)/libyai_exec.a
 KNOWLEDGE_LIB := $(LIB_DIR)/libyai_knowledge.a
 DATA_LIB := $(LIB_DIR)/libyai_data.a
 GRAPH_LIB := $(LIB_DIR)/libyai_graph.a
+DAEMON_LIB := $(LIB_DIR)/libyai_daemon.a
 
 SPINE_DIRS := $(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) $(TEST_DIR)
 
@@ -197,7 +213,7 @@ DOXYFILE := Doxyfile
 DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
-.PHONY: all yai foundations support platform protocol core exec knowledge data graph \
+.PHONY: all yai yai-daemon foundations support platform protocol core exec knowledge data graph daemon \
         test test-unit test-integration test-e2e test-core test-brain test-protocol test-law \
         test-demo-matrix verify-final-demo-matrix \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
@@ -205,10 +221,11 @@ DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
         release-guards-dev changelog-verify dirs help legacy-build \
         law-embed-sync law-embed-check
 
-all: yai foundations
-	@echo "[YAI] unified binary spine ready: $(YAI_BIN)"
+all: yai yai-daemon foundations
+	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN)"
 
 yai: $(YAI_BIN)
+yai-daemon: $(YAI_DAEMON_BIN)
 
 foundations: support platform protocol
 core: $(CORE_LIB)
@@ -216,6 +233,7 @@ exec: $(EXEC_LIB)
 knowledge: $(KNOWLEDGE_LIB)
 data: $(DATA_LIB)
 graph: $(GRAPH_LIB)
+daemon: $(DAEMON_LIB)
 
 support: $(SUPPORT_LIB)
 platform: $(PLATFORM_LIB)
@@ -241,6 +259,9 @@ test-integration:
 	@tests/integration/workspace_lifecycle/workspace_flow_state_readability_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh
 	@tests/integration/workspace_lifecycle/workspace_negative_paths_v1.sh
+	@tests/integration/source_plane/source_owner_ingest_bridge_v1.sh
+	@tests/integration/source_plane/daemon_local_runtime_scan_spool_retry_v1.sh
+	@tests/integration/source_plane/source_plane_read_model_v1.sh
 	@tests/integration/runtime_handshake/run_runtime_handshake_smoke.sh
 	@echo "[YAI] integration suites complete"
 
@@ -270,8 +291,11 @@ test-law:
 	@tests/integration/law_resolution/run_law_resolution_smoke.sh
 	@echo "[YAI] law-native resolution suites complete"
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+
+$(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
 
 $(SUPPORT_LIB): $(SUPPORT_OBJS) | dirs
 	ar rcs $@ $^
@@ -297,6 +321,9 @@ $(DATA_LIB): $(DATA_OBJS) | dirs
 $(GRAPH_LIB): $(GRAPH_OBJS) | dirs
 	ar rcs $@ $^
 
+$(DAEMON_LIB): $(DAEMON_OBJS) | dirs
+	ar rcs $@ $^
+
 $(OBJ_DIR)/%.o: %.c | dirs
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -304,18 +331,19 @@ $(OBJ_DIR)/%.o: %.c | dirs
 dirs:
 	@mkdir -p $(SPINE_DIRS)
 
-build: yai
-	@echo "--- [YAI] primary entrypoint build complete (yai) ---"
+build: yai yai-daemon
+	@echo "--- [YAI] primary entrypoints build complete (yai + yai-daemon) ---"
 
 legacy-build:
 	@echo "--- [YAI] legacy-build removed: legacy top-level planes were decommissioned ---"
 
 build-all: build
-	@echo "--- [YAI] build-all complete (primary topology only) ---"
+	@echo "--- [YAI] build-all complete (owner + daemon baseline topology) ---"
 
 dist: build
 	@mkdir -p $(BIN_DIST)
 	@cp "$(YAI_BIN)" "$(BIN_DIST)/yai"
+	@if [ -f "$(YAI_DAEMON_BIN)" ]; then cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-daemon"; fi
 	@echo "--- [YAI] dist staged in $(BIN_DIST) ---"
 
 dist-all: dist
@@ -377,8 +405,10 @@ clean-all: clean clean-dist
 
 help:
 	@echo "Primary build targets:"
-	@echo "  all            (yai + foundation libs)"
+	@echo "  all            (yai + yai-daemon + foundation libs)"
 	@echo "  yai            (build/bin/yai)"
+	@echo "  yai-daemon     (build/bin/yai-daemon baseline daemon skeleton)"
+	@echo "  daemon         (build daemon static library)"
 	@echo "  foundations    (support/platform/protocol archives)"
 	@echo "  test-unit      (core/protocol/knowledge+graph unit suites)"
 	@echo "  test-integration (runtime/core-exec/workspace + legacy core_brain scripts)"

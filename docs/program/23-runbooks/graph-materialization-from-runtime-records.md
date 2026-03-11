@@ -128,3 +128,13 @@ Matrix integration:
 DP-11 enables:
 - DP-12 DB-first read path cutover,
 - DP-16 graph baseline read/summary surfaces over typed graph truth.
+
+## 12) Source-plane extension note (YD-3 -> YD-6)
+
+Source-plane entity classes are defined in YD-3 (`source_node`,
+`source_daemon_instance`, `source_binding`, `source_asset`,
+`source_acquisition_event`, `source_evidence_candidate`,
+`source_owner_link`).
+
+YD-3 does not materialize these graph nodes/edges yet.
+YD-6 extends graph materialization/read surfaces using these canonical classes.

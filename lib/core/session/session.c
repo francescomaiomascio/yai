@@ -8,6 +8,7 @@
 #include <yai/core/workspace.h>
 #include <yai/data/binding.h>
 #include <yai/exec/runtime.h>
+#include <yai/exec/source_ingest.h>
 #include <yai/law/resolver.h>
 #include <yai/law/policy_effects.h>
 
@@ -503,6 +504,102 @@ int yai_session_handle_control_call(
         else if (strstr(payload, "yai.workspace.debug.resolution")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.debug.resolution");
         else if (strstr(payload, "yai.workspace.prompt_context")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.prompt_context");
         else if (strstr(payload, "yai.workspace.run")) snprintf(command_id, sizeof(command_id), "%s", "yai.workspace.run");
+        else if (strstr(payload, "yai.source.enroll")) snprintf(command_id, sizeof(command_id), "%s", "yai.source.enroll");
+        else if (strstr(payload, "yai.source.attach")) snprintf(command_id, sizeof(command_id), "%s", "yai.source.attach");
+        else if (strstr(payload, "yai.source.emit")) snprintf(command_id, sizeof(command_id), "%s", "yai.source.emit");
+        else if (strstr(payload, "yai.source.status")) snprintf(command_id, sizeof(command_id), "%s", "yai.source.status");
+    }
+
+    /*
+     * Source-plane owner/daemon mediation is exec-owned.
+     * Keep canonical workspace truth in core, but do not bypass exec runtime
+     * mediation for yai.source.* operation handling.
+     */
+    if (command_id[0] != '\0' && strncmp(command_id, "yai.source.", 11) == 0)
+    {
+        const char *ingest_ws = action_ws_id[0] ? action_ws_id : (action_arg[0] ? action_arg : s->ws.ws_id);
+        char ingest_reason[128];
+        int ingest_rc;
+
+        if (!ingest_ws || !ingest_ws[0] || !yai_ws_id_is_valid(ingest_ws))
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "error",
+                                        "BAD_ARGS",
+                                        "workspace_id_required",
+                                        command_id,
+                                        "runtime",
+                                        NULL);
+            return -1;
+        }
+
+        if (yai_session_read_workspace_info(ingest_ws, &ws_info) != 0 || !ws_info.exists)
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "error",
+                                        "BAD_ARGS",
+                                        "workspace_not_found",
+                                        command_id,
+                                        "runtime",
+                                        NULL);
+            return -1;
+        }
+
+        ingest_rc = yai_exec_source_ingest_handle(ingest_ws,
+                                                  command_id,
+                                                  payload,
+                                                  data,
+                                                  sizeof(data),
+                                                  ingest_reason,
+                                                  sizeof(ingest_reason));
+        if (ingest_rc == 0)
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "ok",
+                                        "OK",
+                                        ingest_reason[0] ? ingest_reason : "source_ingest_accepted",
+                                        command_id,
+                                        "runtime",
+                                        data);
+            return 0;
+        }
+        if (ingest_rc == -2)
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "error",
+                                        "BAD_ARGS",
+                                        ingest_reason[0] ? ingest_reason : "source_ingest_bad_args",
+                                        command_id,
+                                        "runtime",
+                                        NULL);
+            return -1;
+        }
+        if (ingest_rc == -3)
+        {
+            yai_session_send_exec_reply(client_fd,
+                                        env,
+                                        "error",
+                                        "INVALID_STATE",
+                                        ingest_reason[0] ? ingest_reason : "source_ingest_invalid_state",
+                                        command_id,
+                                        "runtime",
+                                        NULL);
+            return -1;
+        }
+
+        yai_session_send_exec_reply(client_fd,
+                                    env,
+                                    "error",
+                                    "INTERNAL_ERROR",
+                                    ingest_reason[0] ? ingest_reason : "source_ingest_failed",
+                                    command_id,
+                                    "runtime",
+                                    NULL);
+        return -1;
     }
 
     if (command_id[0] != '\0' && strncmp(command_id, "yai.workspace.", 14) == 0)

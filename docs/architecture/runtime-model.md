@@ -2,6 +2,9 @@
 
 `yai` is the runtime host of the platform and executes the internal modules `core`, `exec`, `data`, `graph`, and `knowledge`.
 
+For distributed source acquisition v1, `yai` remains the centralized owner
+runtime while edge acquisition is handled by standalone `yai-daemon` processes.
+
 ## Canonical runtime flow
 
 1. Ingress request reaches runtime control surface.
@@ -27,5 +30,16 @@ This runtime model covers the unified runtime topology target where:
 - graph truth state is in `graph`.
 - cognition/memory/provider substrate is in `knowledge`.
 - persisted records/query/lifecycle are in `data`.
+- source-plane transport mediation/handoff is an active `exec` responsibility.
 
 Workspace model details are defined in `docs/architecture/workspace-model.md`.
+Distributed acquisition topology details are defined in
+`docs/architecture/distributed-acquisition-plane-model.md`.
+Source-plane entity/contract model is defined in
+`docs/architecture/source-plane-model.md`.
+Owner ingest runtime flow is defined in
+`docs/architecture/source-owner-ingest-model.md`.
+Daemon local runtime behavior is defined in
+`docs/architecture/daemon-local-runtime-model.md`.
+Source-plane query/graph read surfaces are defined in
+`docs/architecture/source-plane-read-model.md`.

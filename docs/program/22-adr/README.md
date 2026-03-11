@@ -28,6 +28,7 @@ An ADR should answer:
 - `ADR-010-boot-entrypoint.md`
 - `ADR-011-contract-baseline-lock.md`
 - `ADR-012-audit-convergence-gates.md`
+- `ADR-013-distributed-acquisition-centralized-control.md`
 
 ## Template policy
 

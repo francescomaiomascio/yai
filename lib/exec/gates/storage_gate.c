@@ -18,6 +18,7 @@ typedef struct {
 
 #define MAX_OPEN_DBS 16
 static yai_db_conn_t db_registry[MAX_OPEN_DBS];
+static int g_storage_initialized = 0;
 
 // --- Inizializzazione ---
 void yai_storage_init(void) {
@@ -25,6 +26,14 @@ void yai_storage_init(void) {
         memset(&db_registry[i], 0, sizeof(yai_db_conn_t));
         db_registry[i].active = false;
     }
+    g_storage_initialized = 1;
+}
+
+int yai_exec_storage_gate_ready(void) {
+    if (!g_storage_initialized) {
+        yai_storage_init();
+    }
+    return g_storage_initialized ? 1 : 0;
 }
 
 // Helper per creare risposte JSON
@@ -170,4 +179,5 @@ void yai_storage_shutdown(void) {
             db_registry[i].active = false;
         }
     }
+    g_storage_initialized = 0;
 }

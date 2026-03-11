@@ -21,6 +21,25 @@ This document is normative for active terminology until superseded.
 - Preferred usage: `runtime`, `unified runtime`.
 - Disallowed confusion: detached subsystem runtime narratives.
 
+### Owner runtime
+
+- Meaning: centralized control-plane runtime hosted by `yai`.
+- Preferred usage: `owner runtime`, `owner-side runtime`, `yai owner runtime`.
+- Disallowed confusion: owner-equivalent runtime on source nodes.
+
+### Source node
+
+- Meaning: remote/local edge node that runs acquisition process.
+- Preferred usage: `source node`.
+- Disallowed confusion: peer owner runtime.
+
+### YAI daemon
+
+- Meaning: standalone edge acquisition binary.
+- Canonical name: `yai-daemon`.
+- Scope: distributed acquisition feed into owner runtime truth.
+- Disallowed confusion: canonical owner runtime replacement.
+
 ### Workspace
 
 - Meaning: canonical runtime binding boundary for scoped capability state.
@@ -149,6 +168,10 @@ Liveness and readiness must never be conflated in SDK/CLI/operator surfaces.
 
 - `brain` as canonical runtime subsystem.
 - `mind` as canonical runtime subsystem.
+- `yai-source` as canonical binary name.
+- `source runtime` as owner-equivalent topology term.
+- `peer runtime` for v1 source-plane topology.
+- `federated runtime` for v1 source-plane topology.
 - detached cognitive lifecycle or attach-stage wording as current runtime truth.
 - umbrella wording that hides `exec`, `data`, `graph`, or `knowledge` ownership.
 

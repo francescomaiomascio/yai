@@ -74,6 +74,8 @@ Data Plane is not a backend choice. Data Plane is the persistent substrate for
 - Inside `yai`, responsibilities are stratified in `core`, `exec`, `data`,
   `graph`, `knowledge`.
 - `law` remains normative source; `ops` remains closure evidence sink.
+- `yai-daemon` may run edge-side for distributed acquisition but does not
+  introduce a second data-plane source of truth.
 
 ### Declassed legacy center
 - `mind-redis-stm.md` is historical component/backend guidance, not DP center.
@@ -104,6 +106,15 @@ Runtime anchors used by this program:
 - `lib/knowledge/memory/*`
 - `lib/graph/*`
 - `data/global/knowledge.db`
+
+YD-3 source-plane baseline classes are owner-side runtime classes:
+- `source_node`
+- `source_daemon_instance`
+- `source_binding`
+- `source_asset`
+- `source_acquisition_event`
+- `source_evidence_candidate`
+- `source_owner_link`
 
 ## 5) Sink-first execution strategy
 Mandatory order:

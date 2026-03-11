@@ -10,6 +10,7 @@
 - internal unified runtime composition (`core`, `exec`, `data`, `graph`, `knowledge`)
 - workspace-first runtime binding and active workspace capability attachment
 - runtime consumption/integration of canonical law surfaces
+- owner-runtime side of distributed acquisition plane (`yai` as centralized control plane)
 
 ## Out of scope (this tranche)
 

@@ -249,6 +249,7 @@ static void yai_print_help(void)
   puts("  - this binary hosts the YAI service process");
   puts("  - operator entrypoint is CLI: `yai up|status|down` from repo cli");
   puts("  - this binary exposes fallback lifecycle only (up/down)");
+  puts("  - edge acquisition companion binary is `yai-daemon` (YD-2 skeleton)");
   puts("  - canonical ingress: $HOME/.yai/run/control.sock");
   puts("  - client flow: cli -> sdk -> yai ingress");
   puts("  - core, exec, data, graph and knowledge are internal runtime modules");

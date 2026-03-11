@@ -24,6 +24,7 @@ This document is the DP-1 source of truth for:
 - Distributed topology and replication.
 - Full operator query surface and data APIs.
 - Performance tuning and production HA design.
+- Runtime federation and peer-owner control-plane topology.
 
 ## Canonical Model
 
@@ -34,6 +35,7 @@ All persistence operations are resolved inside a workspace boundary and must rem
 ### 2) Authority Mediation
 No component writes durable state without governed mediation.  
 `Kernel` is the authority gate; `Engine` performs sink operations only after governed dispatch.
+Source-node daemons can feed acquisition payloads but do not own final sink authority.
 
 ### 3) Control/Data Path Separation
 Mandatory path:
@@ -55,6 +57,12 @@ All data-plane actions must expose deterministic outcomes through canonical repl
 - explicit success/failure,
 - stable reason code,
 - trace/evidence pointer when available.
+
+Source-plane extension (YD-3 baseline):
+- source records are canonical runtime classes (`source_node`,
+  `source_daemon_instance`, `source_binding`, `source_asset`,
+  `source_acquisition_event`, `source_evidence_candidate`,
+  `source_owner_link`) and stay owner-side persisted truth.
 
 ## Cross-Repo Responsibility Baseline
 

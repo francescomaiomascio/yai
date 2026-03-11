@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 typedef enum yai_exec_runtime_state {
@@ -18,7 +19,17 @@ typedef struct yai_exec_config {
   bool enforce_tla_safety;
 } yai_exec_config_t;
 
+/* Source-plane mediation is exec-owned in distributed acquisition v1. */
 const char *yai_exec_runtime_state_name(yai_exec_runtime_state_t state);
 int yai_exec_runtime_probe(void);
 int yai_exec_config_load_initial(const char *config_path, yai_exec_config_t *out_cfg);
 bool yai_exec_config_enforce_limits(yai_exec_config_t *cfg);
+
+int yai_exec_source_ingest_operation_known(const char *command_id);
+int yai_exec_source_ingest_handle(const char *workspace_id,
+                                  const char *command_id,
+                                  const char *payload_json,
+                                  char *out_json,
+                                  size_t out_cap,
+                                  char *out_reason,
+                                  size_t reason_cap);

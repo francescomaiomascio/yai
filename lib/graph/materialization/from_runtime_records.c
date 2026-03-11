@@ -1,10 +1,12 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <yai/graph/materialization.h>
+#include <yai/daemon/source_plane_model.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <cJSON.h>
 
 #if defined(YAI_HAVE_HIREDIS)
 #include <hiredis/hiredis.h>
@@ -14,6 +16,8 @@ typedef struct yai_graph_workspace_counts {
   char workspace_id[64];
   size_t node_count;
   size_t edge_count;
+  size_t source_node_count;
+  size_t source_edge_count;
 } yai_graph_workspace_counts_t;
 
 static yai_graph_workspace_counts_t g_workspace_counts[128];
@@ -33,6 +37,8 @@ static yai_graph_workspace_counts_t *workspace_counts_slot(const char *workspace
            workspace_id);
   g_workspace_counts[g_workspace_count_n].node_count = 0;
   g_workspace_counts[g_workspace_count_n].edge_count = 0;
+  g_workspace_counts[g_workspace_count_n].source_node_count = 0;
+  g_workspace_counts[g_workspace_count_n].source_edge_count = 0;
   g_workspace_count_n++;
   return &g_workspace_counts[g_workspace_count_n - 1];
 }
@@ -176,5 +182,186 @@ int yai_graph_materialization_workspace_counts(const char *workspace_id,
   if (!slot) return -1;
   if (node_count_out) *node_count_out = slot->node_count;
   if (edge_count_out) *edge_count_out = slot->edge_count;
+  return 0;
+}
+
+int yai_graph_materialization_workspace_source_counts(const char *workspace_id,
+                                                      size_t *source_node_count_out,
+                                                      size_t *source_edge_count_out)
+{
+  yai_graph_workspace_counts_t *slot;
+  if (source_node_count_out) *source_node_count_out = 0;
+  if (source_edge_count_out) *source_edge_count_out = 0;
+  if (!workspace_id || !workspace_id[0]) return -1;
+  slot = workspace_counts_slot(workspace_id);
+  if (!slot) return -1;
+  if (source_node_count_out) *source_node_count_out = slot->source_node_count;
+  if (source_edge_count_out) *source_edge_count_out = slot->source_edge_count;
+  return 0;
+}
+
+static const char *json_string(cJSON *root, const char *key)
+{
+  cJSON *v = NULL;
+  if (!root || !key) return NULL;
+  v = cJSON_GetObjectItemCaseSensitive(root, key);
+  if (cJSON_IsString(v) && v->valuestring && v->valuestring[0]) return v->valuestring;
+  return NULL;
+}
+
+int yai_graph_materialize_source_record(const char *workspace_id,
+                                        const char *record_class,
+                                        const char *record_json,
+                                        char *out_node_ref,
+                                        size_t out_node_ref_cap,
+                                        char *out_edge_ref,
+                                        size_t out_edge_ref_cap,
+                                        char *err,
+                                        size_t err_cap)
+{
+  yai_graph_workspace_counts_t *slot = NULL;
+  cJSON *root = NULL;
+  const char *source_node_id = NULL;
+  const char *daemon_instance_id = NULL;
+  const char *source_binding_id = NULL;
+  const char *source_asset_id = NULL;
+  const char *source_event_id = NULL;
+  const char *source_candidate_id = NULL;
+  const char *owner_ws_id = NULL;
+  yai_mind_node_id_t ws_node = 0;
+  yai_mind_node_id_t src_node = 0;
+  yai_mind_node_id_t daemon_node = 0;
+  yai_mind_node_id_t binding_node = 0;
+  yai_mind_node_id_t asset_node = 0;
+  yai_mind_node_id_t event_node = 0;
+  yai_mind_node_id_t candidate_node = 0;
+  yai_mind_edge_id_t rel_edge = 0;
+  char ws_slug[96];
+  char src_slug[128];
+  char a_slug[128];
+  char b_slug[128];
+
+  if (err && err_cap > 0) err[0] = '\0';
+  if (out_node_ref && out_node_ref_cap > 0) out_node_ref[0] = '\0';
+  if (out_edge_ref && out_edge_ref_cap > 0) out_edge_ref[0] = '\0';
+  if (!workspace_id || !workspace_id[0] || !record_class || !record_class[0] || !record_json || !record_json[0]) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "source_graph_bad_args");
+    return -1;
+  }
+  if (!yai_source_record_class_is_known(record_class)) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "source_graph_unknown_record_class");
+    return -1;
+  }
+
+  root = cJSON_Parse(record_json);
+  if (!root) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "source_graph_record_not_json");
+    return -1;
+  }
+
+  source_node_id = json_string(root, "source_node_id");
+  daemon_instance_id = json_string(root, "daemon_instance_id");
+  source_binding_id = json_string(root, "source_binding_id");
+  source_asset_id = json_string(root, "source_asset_id");
+  source_event_id = json_string(root, "source_acquisition_event_id");
+  source_candidate_id = json_string(root, "source_evidence_candidate_id");
+  owner_ws_id = json_string(root, "owner_workspace_id");
+  if (!owner_ws_id || !owner_ws_id[0]) owner_ws_id = workspace_id;
+
+  yai_graph_slug(owner_ws_id, ws_slug, sizeof(ws_slug));
+  (void)yai_mind_graph_node_create("owner_workspace", ws_slug, owner_ws_id, &ws_node);
+  slot = workspace_counts_slot(workspace_id);
+
+  if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_NODE) == 0)
+  {
+    yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+                                     src_slug,
+                                     source_node_id ? source_node_id : "source_node_unset",
+                                     &src_node);
+    (void)yai_mind_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_NODE_CLASS, src_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-attached-to-%s", src_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_DAEMON_INSTANCE) == 0)
+  {
+    yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
+    yai_graph_slug(daemon_instance_id, a_slug, sizeof(a_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS, a_slug, daemon_instance_id ? daemon_instance_id : "daemon_instance_unset", &daemon_node);
+    (void)yai_mind_graph_edge_create(daemon_node, src_node, "runs_on", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-runs-on-%s", a_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_BINDING) == 0)
+  {
+    yai_graph_slug(source_binding_id, a_slug, sizeof(a_slug));
+    yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, a_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_mind_graph_edge_create(binding_node, src_node, "bound_on", 1.0f, &rel_edge);
+    (void)yai_mind_graph_edge_create(binding_node, ws_node, "targets_workspace", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 3; slot->source_edge_count += 2; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_BINDING_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-targets-workspace-%s", a_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_ASSET) == 0)
+  {
+    yai_graph_slug(source_asset_id, a_slug, sizeof(a_slug));
+    yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, a_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, b_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
+    (void)yai_mind_graph_edge_create(asset_node, binding_node, "discovered_via", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_ASSET_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-discovered-via-%s", a_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_ACQUISITION_EVENT) == 0)
+  {
+    yai_graph_slug(source_event_id, a_slug, sizeof(a_slug));
+    yai_graph_slug(source_asset_id, b_slug, sizeof(b_slug));
+    yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, a_slug, source_event_id ? source_event_id : "source_event_unset", &event_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, b_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_mind_graph_edge_create(event_node, asset_node, "observed", 1.0f, &rel_edge);
+    (void)yai_mind_graph_edge_create(event_node, src_node, "emitted_by", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 3; slot->source_edge_count += 2; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-observed-%s", a_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_EVIDENCE_CANDIDATE) == 0)
+  {
+    const char *src_event_ref = json_string(root, "source_acquisition_event_id");
+    yai_graph_slug(source_candidate_id, a_slug, sizeof(a_slug));
+    yai_graph_slug(src_event_ref, b_slug, sizeof(b_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS, a_slug, source_candidate_id ? source_candidate_id : "source_candidate_unset", &candidate_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, b_slug, src_event_ref ? src_event_ref : "source_event_unset", &event_node);
+    (void)yai_mind_graph_edge_create(candidate_node, event_node, "derived_from", 1.0f, &rel_edge);
+    if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-derived-from-%s", a_slug);
+  }
+  else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_OWNER_LINK) == 0)
+  {
+    const char *owner_ref = json_string(root, "owner_ref");
+    const char *source_owner_link_id = json_string(root, "source_owner_link_id");
+    yai_graph_slug(source_owner_link_id, a_slug, sizeof(a_slug));
+    yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_OWNER_LINK_CLASS, a_slug, source_owner_link_id ? source_owner_link_id : "source_owner_link_unset", &candidate_node);
+    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_mind_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
+    if (owner_ref && owner_ref[0]) {
+      (void)yai_mind_graph_edge_create(candidate_node, src_node, "source_owner_link", 1.0f, &rel_edge);
+      if (slot) { slot->source_edge_count += 1; }
+    }
+    if (slot) { slot->source_node_count += 3; slot->source_edge_count += 1; }
+    if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_OWNER_LINK_CLASS, a_slug);
+    if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-attached-to-%s", src_slug);
+  }
+
+  cJSON_Delete(root);
   return 0;
 }

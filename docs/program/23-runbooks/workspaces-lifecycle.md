@@ -1,7 +1,7 @@
 ---
 
 > Historical topology note: references to root/kernel/engine in this runbook are legacy semantic aliases.
-> Current ingress/runtime truth is single-binary `yai` via `~/.yai/run/control.sock`.
+> Current control-plane runtime truth is owner `yai` via `~/.yai/run/control.sock`; source acquisition may be distributed via `yai-daemon`.
 id: RB-WORKSPACES-LIFECYCLE
 title: Workspace Lifecycle
 status: draft
@@ -21,6 +21,7 @@ adr_refs:
   - docs/program/22-adr/ADR-006-unified-rpc.md
   - docs/program/22-adr/ADR-007-workspace-isolation.md
   - docs/program/22-adr/ADR-009-engine-attachment.md
+  - docs/program/22-adr/ADR-013-distributed-acquisition-centralized-control.md
   - docs/program/22-adr/ADR-011-contract-baseline-lock.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 
@@ -86,6 +87,7 @@ Command inventory remains in the dedicated command-map file.
 - Full command catalog documentation.
 - Multi-node orchestration and federated cross-workspace operations.
 - Mandatory SC103 (Mind) behavior for SC102 closure.
+- Runtime federation or peer-owner topology for source-plane v1.
 
 ## 3.1 Operator capability hooks (CLI surface)
 Runtime lifecycle operations are expected to be diagnosable through the operator capability pack:

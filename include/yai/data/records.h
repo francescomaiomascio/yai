@@ -51,3 +51,53 @@ int yai_data_records_append_enforcement_linkage(const char *workspace_id,
                                                 size_t out_ref_cap,
                                                 char *err,
                                                 size_t err_cap);
+int yai_data_records_append_source_class(const char *workspace_id,
+                                         const char *source_record_class,
+                                         const char *source_record_json,
+                                         char *out_ref,
+                                         size_t out_ref_cap,
+                                         char *err,
+                                         size_t err_cap);
+
+int yai_data_records_append_source_node(const char *workspace_id,
+                                        const char *source_node_json,
+                                        char *out_ref,
+                                        size_t out_ref_cap,
+                                        char *err,
+                                        size_t err_cap);
+int yai_data_records_append_source_daemon_instance(const char *workspace_id,
+                                                   const char *source_daemon_instance_json,
+                                                   char *out_ref,
+                                                   size_t out_ref_cap,
+                                                   char *err,
+                                                   size_t err_cap);
+int yai_data_records_append_source_binding(const char *workspace_id,
+                                           const char *source_binding_json,
+                                           char *out_ref,
+                                           size_t out_ref_cap,
+                                           char *err,
+                                           size_t err_cap);
+int yai_data_records_append_source_asset(const char *workspace_id,
+                                         const char *source_asset_json,
+                                         char *out_ref,
+                                         size_t out_ref_cap,
+                                         char *err,
+                                         size_t err_cap);
+int yai_data_records_append_source_acquisition_event(const char *workspace_id,
+                                                     const char *source_acquisition_event_json,
+                                                     char *out_ref,
+                                                     size_t out_ref_cap,
+                                                     char *err,
+                                                     size_t err_cap);
+int yai_data_records_append_source_evidence_candidate(const char *workspace_id,
+                                                      const char *source_evidence_candidate_json,
+                                                      char *out_ref,
+                                                      size_t out_ref_cap,
+                                                      char *err,
+                                                      size_t err_cap);
+int yai_data_records_append_source_owner_link(const char *workspace_id,
+                                              const char *source_owner_link_json,
+                                              char *out_ref,
+                                              size_t out_ref_cap,
+                                              char *err,
+                                              size_t err_cap);

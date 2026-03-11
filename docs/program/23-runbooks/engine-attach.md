@@ -1,7 +1,7 @@
 ---
 
 > Historical topology note: engine-attach terminology is preserved for traceability.
-> Runtime ingress ownership is now single-binary `yai`; no standalone root/kernel/engine binaries are required.
+> Runtime control-plane ingress ownership is `yai`; source-plane edge acquisition may run via standalone `yai-daemon`.
 id: RB-ENGINE-ATTACH
 title: Engine Attach
 status: active
@@ -18,10 +18,12 @@ adr_refs:
   - docs/program/22-adr/ADR-009-engine-attachment.md
   - docs/program/22-adr/ADR-008-connection-lifecycle.md
   - docs/program/22-adr/ADR-006-unified-rpc.md
+  - docs/program/22-adr/ADR-013-distributed-acquisition-centralized-control.md
   - docs/program/22-adr/ADR-012-audit-convergence-gates.md
 decisions:
   - docs/program/22-adr/ADR-009-engine-attachment.md
   - docs/program/22-adr/ADR-008-connection-lifecycle.md
+  - docs/program/22-adr/ADR-013-distributed-acquisition-centralized-control.md
 related:
   adr:
     - docs/program/22-adr/ADR-009-engine-attachment.md
@@ -68,6 +70,7 @@ It is not a step-by-step command cookbook.
 - Workspace context is carried by governed dispatch metadata.
 - Readiness is functional (RPC probe), not socket-presence-driven.
 - Workspace lifecycle and Data Plane consume engine attach as a baseline dependency.
+- Distributed source acquisition is modeled as edge `yai-daemon` feed into owner-side `yai` truth.
 
 ## 3) Scope
 

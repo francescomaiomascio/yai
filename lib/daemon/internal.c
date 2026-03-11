@@ -1,0 +1,85 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <time.h>
+
+#include "internal.h"
+
+int yai_daemon_write_file(const char *path, const char *payload)
+{
+  FILE *f = NULL;
+  if (!path || !payload)
+  {
+    return -1;
+  }
+  f = fopen(path, "w");
+  if (!f)
+  {
+    return -1;
+  }
+  if (fputs(payload, f) == EOF)
+  {
+    fclose(f);
+    return -1;
+  }
+  fclose(f);
+  return 0;
+}
+
+int yai_daemon_mkdir_recursive(const char *path)
+{
+  char tmp[1024];
+  size_t i = 0;
+
+  if (!path || !path[0] || strlen(path) >= sizeof(tmp))
+  {
+    return -1;
+  }
+  memset(tmp, 0, sizeof(tmp));
+  (void)snprintf(tmp, sizeof(tmp), "%s", path);
+
+  for (i = 1; tmp[i]; ++i)
+  {
+    if (tmp[i] == '/')
+    {
+      tmp[i] = '\0';
+      if (mkdir(tmp, 0755) != 0 && errno != EEXIST)
+      {
+        return -1;
+      }
+      tmp[i] = '/';
+    }
+  }
+
+  if (mkdir(tmp, 0755) != 0 && errno != EEXIST)
+  {
+    return -1;
+  }
+  return 0;
+}
+
+void yai_daemon_vlog(const char *instance_id,
+                     const char *level,
+                     const char *fmt,
+                     va_list ap)
+{
+  time_t now = time(NULL);
+  struct tm tmv;
+  char ts[64];
+  const char *id = instance_id && instance_id[0] ? instance_id : "yd-bootstrap";
+  const char *lvl = level && level[0] ? level : "info";
+
+  if (gmtime_r(&now, &tmv) == NULL)
+  {
+    memset(&tmv, 0, sizeof(tmv));
+  }
+  (void)strftime(ts, sizeof(ts), "%Y-%m-%dT%H:%M:%SZ", &tmv);
+
+  fprintf(stderr, "[%s] yai-daemon %s %s: ", ts, id, lvl);
+  vfprintf(stderr, fmt, ap);
+  fputc('\n', stderr);
+}
