@@ -37,6 +37,14 @@ Read model is owner-side only. `yai-daemon` does not host canonical graph truth.
 - DB-first read-path metadata
 - workspace graph summary context
 
+OP-3 extends peer-aware read surfaces with:
+
+- `yai.workspace.query source.peer` (`source_peer_inspect`)
+- `yai.workspace.query source.coverage` (`source_peer_coverage_summary`)
+
+These expose per-peer inspect rows and workspace coverage/overlap baseline
+without introducing conflict resolution yet.
+
 Existing graph workspace summary now includes source-plane counters:
 
 - `source_graph_node_count`
@@ -56,6 +64,7 @@ Nodes:
 - `source_acquisition_event`
 - `source_evidence_candidate`
 - `workspace_peer_membership`
+- `source_scope`
 - owner workspace anchor
 
 Edges:
@@ -71,6 +80,9 @@ Edges:
 - `member_of_workspace` (`workspace_peer_membership -> owner_workspace`)
 - `membership_source_node` (`workspace_peer_membership -> source_node`)
 - `membership_binding` (`workspace_peer_membership -> source_binding`)
+- `membership_covers_scope` (`workspace_peer_membership -> source_scope`)
+- `binding_scope` (`source_binding -> source_scope`)
+- `overlap_on_scope` (`source_node -> source_scope`, overlap-signaled only)
 
 ## Semantics guardrails
 

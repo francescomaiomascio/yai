@@ -37,3 +37,15 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
                                                    size_t out_cap,
                                                    char *err,
                                                    size_t err_cap);
+
+int yai_owner_peer_registry_workspace_peer_rows_json(const char *workspace_id,
+                                                     char *out_json,
+                                                     size_t out_cap,
+                                                     char *err,
+                                                     size_t err_cap);
+
+int yai_owner_peer_registry_workspace_coverage_summary_json(const char *workspace_id,
+                                                            char *out_json,
+                                                            size_t out_cap,
+                                                            char *err,
+                                                            size_t err_cap);

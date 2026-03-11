@@ -66,3 +66,4 @@ int yai_graph_materialize_source_record(const char *workspace_id,
 #define YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS "source_evidence_candidate"
 #define YAI_GRAPH_SOURCE_OWNER_LINK_CLASS "source_owner_link"
 #define YAI_GRAPH_WORKSPACE_PEER_MEMBERSHIP_CLASS "workspace_peer_membership"
+#define YAI_GRAPH_SOURCE_SCOPE_CLASS "source_scope"

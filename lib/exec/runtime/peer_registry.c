@@ -116,6 +116,156 @@ static const char *effective_state(const yai_owner_peer_registry_entry_t *e,
   return "active";
 }
 
+static int build_workspace_peer_rows_json(const char *workspace_id,
+                                          char *out_json,
+                                          size_t out_cap,
+                                          int *peer_count_out,
+                                          int *ready_count_out,
+                                          int *degraded_count_out,
+                                          int *disconnected_count_out,
+                                          int *stale_count_out,
+                                          int64_t *backlog_queued_out,
+                                          int64_t *backlog_retry_due_out,
+                                          int64_t *backlog_failed_out,
+                                          int *coverage_scope_count_out,
+                                          int *coverage_overlap_count_out,
+                                          int *coverage_gap_count_out,
+                                          int *coverage_distinct_count_out,
+                                          char *err,
+                                          size_t err_cap)
+{
+  size_t i = 0;
+  int64_t now = now_epoch();
+  char peers_json[8192];
+  size_t used = 0;
+  int first = 1;
+  char seen_coverage[64][256];
+  int seen_coverage_count = 0;
+  int coverage_overlap = 0;
+  int coverage_gap = 0;
+  int coverage_distinct = 0;
+  int peer_count = 0;
+  int ready_count = 0;
+  int degraded_count = 0;
+  int disconnected_count = 0;
+  int stale_count = 0;
+  int64_t backlog_queued = 0;
+  int64_t backlog_retry_due = 0;
+  int64_t backlog_failed = 0;
+
+  peers_json[0] = '[';
+  peers_json[1] = '\0';
+  used = 1;
+
+  for (i = 0; i < YAI_OWNER_PEER_REGISTRY_MAX; ++i)
+  {
+    const yai_owner_peer_registry_entry_t *e = NULL;
+    const char *fresh = NULL;
+    const char *eff = NULL;
+    int n = 0;
+    int seen = 0;
+    int j = 0;
+    if (!g_slots[i].used) continue;
+    if (strcmp(g_slots[i].e.workspace_id, workspace_id) != 0) continue;
+    e = &g_slots[i].e;
+    fresh = freshness_state(e, now);
+    eff = effective_state(e, now);
+    peer_count += 1;
+    backlog_queued += e->backlog_queued;
+    backlog_retry_due += e->backlog_retry_due;
+    backlog_failed += e->backlog_failed;
+    if (strcmp(eff, "disconnected") == 0) disconnected_count += 1;
+    else if (strcmp(eff, "degraded") == 0 || strcmp(eff, "draining") == 0) degraded_count += 1;
+    else ready_count += 1;
+    if (strcmp(fresh, "stale") == 0) stale_count += 1;
+
+    if (e->coverage_ref[0] && seen_coverage_count < (int)(sizeof(seen_coverage) / sizeof(seen_coverage[0])))
+    {
+      for (j = 0; j < seen_coverage_count; ++j)
+      {
+        if (strcmp(seen_coverage[j], e->coverage_ref) == 0)
+        {
+          seen = 1;
+          break;
+        }
+      }
+      if (!seen)
+      {
+        snprintf(seen_coverage[seen_coverage_count], sizeof(seen_coverage[0]), "%s", e->coverage_ref);
+        seen_coverage_count += 1;
+      }
+    }
+    if (strcmp(e->overlap_state, "overlap_confirmed") == 0 || strcmp(e->overlap_state, "overlap_possible") == 0)
+    {
+      coverage_overlap += 1;
+    }
+    else if (strcmp(e->overlap_state, "gap") == 0 || strcmp(e->overlap_state, "uncovered") == 0)
+    {
+      coverage_gap += 1;
+    }
+    else
+    {
+      coverage_distinct += 1;
+    }
+
+    n = snprintf(peers_json + used,
+                 sizeof(peers_json) - used,
+                 "%s{\"source_node_id\":\"%s\",\"source_binding_id\":\"%s\",\"daemon_instance_id\":\"%s\",\"peer_role\":\"%s\",\"peer_scope\":\"%s\",\"effective_state\":\"%s\",\"freshness\":\"%s\",\"backlog\":{\"queued\":%lld,\"retry_due\":%lld,\"failed\":%lld},\"coverage_ref\":\"%s\",\"overlap_state\":\"%s\",\"last_seen_epoch\":%lld,\"last_activity_epoch\":%lld}",
+                 first ? "" : ",",
+                 e->source_node_id,
+                 e->source_binding_id,
+                 e->daemon_instance_id,
+                 e->peer_role,
+                 e->peer_scope,
+                 eff,
+                 fresh,
+                 (long long)e->backlog_queued,
+                 (long long)e->backlog_retry_due,
+                 (long long)e->backlog_failed,
+                 e->coverage_ref,
+                 e->overlap_state,
+                 (long long)e->last_seen_epoch,
+                 (long long)e->last_activity_epoch);
+    if (n <= 0 || (size_t)n >= (sizeof(peers_json) - used))
+    {
+      (void)set_err(err, err_cap, "peer_registry_summary_encode_failed");
+      return -1;
+    }
+    used += (size_t)n;
+    first = 0;
+  }
+
+  if (used + 2 >= sizeof(peers_json))
+  {
+    (void)set_err(err, err_cap, "peer_registry_summary_overflow");
+    return -1;
+  }
+  peers_json[used++] = ']';
+  peers_json[used] = '\0';
+
+  if (out_json && out_cap > 0)
+  {
+    if (snprintf(out_json, out_cap, "%s", peers_json) <= 0)
+    {
+      (void)set_err(err, err_cap, "peer_registry_rows_encode_failed");
+      return -1;
+    }
+  }
+  if (peer_count_out) *peer_count_out = peer_count;
+  if (ready_count_out) *ready_count_out = ready_count;
+  if (degraded_count_out) *degraded_count_out = degraded_count;
+  if (disconnected_count_out) *disconnected_count_out = disconnected_count;
+  if (stale_count_out) *stale_count_out = stale_count;
+  if (backlog_queued_out) *backlog_queued_out = backlog_queued;
+  if (backlog_retry_due_out) *backlog_retry_due_out = backlog_retry_due;
+  if (backlog_failed_out) *backlog_failed_out = backlog_failed;
+  if (coverage_scope_count_out) *coverage_scope_count_out = seen_coverage_count;
+  if (coverage_overlap_count_out) *coverage_overlap_count_out = coverage_overlap;
+  if (coverage_gap_count_out) *coverage_gap_count_out = coverage_gap;
+  if (coverage_distinct_count_out) *coverage_distinct_count_out = coverage_distinct;
+  return 0;
+}
+
 int yai_owner_peer_registry_upsert(const yai_owner_peer_registry_entry_t *entry,
                                    char *err,
                                    size_t err_cap)
@@ -220,8 +370,6 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
                                                    char *err,
                                                    size_t err_cap)
 {
-  size_t i = 0;
-  int64_t now = now_epoch();
   int peer_count = 0;
   int ready_count = 0;
   int degraded_count = 0;
@@ -230,9 +378,11 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
   int64_t backlog_queued = 0;
   int64_t backlog_retry_due = 0;
   int64_t backlog_failed = 0;
+  int coverage_scope_count = 0;
+  int coverage_overlap_count = 0;
+  int coverage_gap_count = 0;
+  int coverage_distinct_count = 0;
   char peers_json[8192];
-  size_t used = 0;
-  int first = 1;
   const char *sched = "nominal";
 
   if (err && err_cap > 0) err[0] = '\0';
@@ -241,64 +391,26 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
     (void)set_err(err, err_cap, "peer_registry_summary_bad_args");
     return -1;
   }
-  peers_json[0] = '[';
-  peers_json[1] = '\0';
-  used = 1;
-
-  for (i = 0; i < YAI_OWNER_PEER_REGISTRY_MAX; ++i)
+  if (build_workspace_peer_rows_json(workspace_id,
+                                     peers_json,
+                                     sizeof(peers_json),
+                                     &peer_count,
+                                     &ready_count,
+                                     &degraded_count,
+                                     &disconnected_count,
+                                     &stale_count,
+                                     &backlog_queued,
+                                     &backlog_retry_due,
+                                     &backlog_failed,
+                                     &coverage_scope_count,
+                                     &coverage_overlap_count,
+                                     &coverage_gap_count,
+                                     &coverage_distinct_count,
+                                     err,
+                                     err_cap) != 0)
   {
-    const yai_owner_peer_registry_entry_t *e = NULL;
-    const char *fresh = NULL;
-    const char *eff = NULL;
-    int n = 0;
-    if (!g_slots[i].used) continue;
-    if (strcmp(g_slots[i].e.workspace_id, workspace_id) != 0) continue;
-    e = &g_slots[i].e;
-    fresh = freshness_state(e, now);
-    eff = effective_state(e, now);
-    peer_count += 1;
-    backlog_queued += e->backlog_queued;
-    backlog_retry_due += e->backlog_retry_due;
-    backlog_failed += e->backlog_failed;
-    if (strcmp(eff, "disconnected") == 0) disconnected_count += 1;
-    else if (strcmp(eff, "degraded") == 0 || strcmp(eff, "draining") == 0) degraded_count += 1;
-    else ready_count += 1;
-    if (strcmp(fresh, "stale") == 0) stale_count += 1;
-
-    n = snprintf(peers_json + used,
-                 sizeof(peers_json) - used,
-                 "%s{\"source_node_id\":\"%s\",\"source_binding_id\":\"%s\",\"daemon_instance_id\":\"%s\",\"peer_role\":\"%s\",\"peer_scope\":\"%s\",\"effective_state\":\"%s\",\"freshness\":\"%s\",\"backlog\":{\"queued\":%lld,\"retry_due\":%lld,\"failed\":%lld},\"coverage_ref\":\"%s\",\"overlap_state\":\"%s\",\"last_seen_epoch\":%lld,\"last_activity_epoch\":%lld}",
-                 first ? "" : ",",
-                 e->source_node_id,
-                 e->source_binding_id,
-                 e->daemon_instance_id,
-                 e->peer_role,
-                 e->peer_scope,
-                 eff,
-                 fresh,
-                 (long long)e->backlog_queued,
-                 (long long)e->backlog_retry_due,
-                 (long long)e->backlog_failed,
-                 e->coverage_ref,
-                 e->overlap_state,
-                 (long long)e->last_seen_epoch,
-                 (long long)e->last_activity_epoch);
-    if (n <= 0 || (size_t)n >= (sizeof(peers_json) - used))
-    {
-      (void)set_err(err, err_cap, "peer_registry_summary_encode_failed");
-      return -1;
-    }
-    used += (size_t)n;
-    first = 0;
-  }
-
-  if (used + 2 >= sizeof(peers_json))
-  {
-    (void)set_err(err, err_cap, "peer_registry_summary_overflow");
     return -1;
   }
-  peers_json[used++] = ']';
-  peers_json[used] = '\0';
 
   if (disconnected_count > 0 || backlog_failed > 0)
   {
@@ -311,7 +423,7 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
 
   if (snprintf(out_json,
                out_cap,
-               "{\"workspace_id\":\"%s\",\"peer_count\":%d,\"states\":{\"ready\":%d,\"degraded\":%d,\"disconnected\":%d,\"stale\":%d},\"backlog\":{\"queued\":%lld,\"retry_due\":%lld,\"failed\":%lld},\"scheduling_state\":\"%s\",\"peers\":%s}",
+               "{\"workspace_id\":\"%s\",\"peer_count\":%d,\"states\":{\"ready\":%d,\"degraded\":%d,\"disconnected\":%d,\"stale\":%d},\"backlog\":{\"queued\":%lld,\"retry_due\":%lld,\"failed\":%lld},\"coverage\":{\"scope_count\":%d,\"distinct\":%d,\"overlap\":%d,\"gap\":%d},\"scheduling_state\":\"%s\",\"peers\":%s}",
                workspace_id,
                peer_count,
                ready_count,
@@ -321,10 +433,91 @@ int yai_owner_peer_registry_workspace_summary_json(const char *workspace_id,
                (long long)backlog_queued,
                (long long)backlog_retry_due,
                (long long)backlog_failed,
+               coverage_scope_count,
+               coverage_distinct_count,
+               coverage_overlap_count,
+               coverage_gap_count,
                sched,
                peers_json) <= 0)
   {
     (void)set_err(err, err_cap, "peer_registry_summary_encode_failed");
+    return -1;
+  }
+  return 0;
+}
+
+int yai_owner_peer_registry_workspace_peer_rows_json(const char *workspace_id,
+                                                     char *out_json,
+                                                     size_t out_cap,
+                                                     char *err,
+                                                     size_t err_cap)
+{
+  if (err && err_cap > 0) err[0] = '\0';
+  if (!workspace_id || !workspace_id[0] || !out_json || out_cap == 0)
+  {
+    (void)set_err(err, err_cap, "peer_registry_rows_bad_args");
+    return -1;
+  }
+  return build_workspace_peer_rows_json(workspace_id,
+                                        out_json,
+                                        out_cap,
+                                        NULL, NULL, NULL, NULL, NULL,
+                                        NULL, NULL, NULL,
+                                        NULL, NULL, NULL, NULL,
+                                        err,
+                                        err_cap);
+}
+
+int yai_owner_peer_registry_workspace_coverage_summary_json(const char *workspace_id,
+                                                            char *out_json,
+                                                            size_t out_cap,
+                                                            char *err,
+                                                            size_t err_cap)
+{
+  int peer_count = 0;
+  int coverage_scope_count = 0;
+  int coverage_overlap_count = 0;
+  int coverage_gap_count = 0;
+  int coverage_distinct_count = 0;
+  char peers_json[8192];
+  if (err && err_cap > 0) err[0] = '\0';
+  if (!workspace_id || !workspace_id[0] || !out_json || out_cap == 0)
+  {
+    (void)set_err(err, err_cap, "peer_registry_coverage_bad_args");
+    return -1;
+  }
+  if (build_workspace_peer_rows_json(workspace_id,
+                                     peers_json,
+                                     sizeof(peers_json),
+                                     &peer_count,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     &coverage_scope_count,
+                                     &coverage_overlap_count,
+                                     &coverage_gap_count,
+                                     &coverage_distinct_count,
+                                     err,
+                                     err_cap) != 0)
+  {
+    return -1;
+  }
+
+  if (snprintf(out_json,
+               out_cap,
+               "{\"workspace_id\":\"%s\",\"peer_count\":%d,\"coverage_scope_count\":%d,\"coverage_distinct_count\":%d,\"overlap_count\":%d,\"gap_count\":%d}",
+               workspace_id,
+               peer_count,
+               coverage_scope_count,
+               coverage_distinct_count,
+               coverage_overlap_count,
+               coverage_gap_count) <= 0)
+  {
+    (void)set_err(err, err_cap, "peer_registry_coverage_encode_failed");
     return -1;
   }
   return 0;

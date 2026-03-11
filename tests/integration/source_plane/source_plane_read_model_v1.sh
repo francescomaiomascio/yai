@@ -166,7 +166,12 @@ status = call(ws, {
   "daemon_instance_id": daemon_id,
   "owner_trust_artifact_id": trust_artifact_id,
   "owner_trust_artifact_token": trust_artifact_token,
-  "health":"ready"
+  "health":"ready",
+  "coverage_ref":"coverage://office/performance/kpi",
+  "overlap_state":"overlap_possible",
+  "backlog_queued":2,
+  "backlog_retry_due":1,
+  "backlog_failed":0
 }, "status")
 expect_ok(status, "source.status")
 
@@ -193,6 +198,37 @@ if coord.get("peer_count", 0) < 1:
     raise RuntimeError(f"source coordination missing peer_count: {source_query}")
 if not coord.get("scheduling_state"):
     raise RuntimeError(f"source coordination missing scheduling_state: {source_query}")
+coverage = coord.get("coverage", {})
+if coverage.get("scope_count", 0) < 1:
+    raise RuntimeError(f"source coordination missing coverage scope_count: {source_query}")
+if coverage.get("overlap", 0) < 1:
+    raise RuntimeError(f"source coordination missing overlap count: {source_query}")
+
+source_peer = call(ws, {
+  "type":"yai.control.call.v1",
+  "command_id":"yai.workspace.query",
+  "target_plane":"runtime",
+  "argv":["source.peer"]
+}, "query-source-peer")
+expect_ok(source_peer, "workspace.query source.peer")
+peer_rows = source_peer.get("data", {}).get("rows", [])
+if len(peer_rows) < 1:
+    raise RuntimeError(f"source.peer missing rows: {source_peer}")
+if not any(row.get("coverage_ref") == "coverage://office/performance/kpi" for row in peer_rows):
+    raise RuntimeError(f"source.peer missing coverage_ref: {source_peer}")
+
+source_coverage = call(ws, {
+  "type":"yai.control.call.v1",
+  "command_id":"yai.workspace.query",
+  "target_plane":"runtime",
+  "argv":["source.coverage"]
+}, "query-source-coverage")
+expect_ok(source_coverage, "workspace.query source.coverage")
+coverage_summary = source_coverage.get("data", {}).get("coverage", {})
+if coverage_summary.get("coverage_scope_count", 0) < 1:
+    raise RuntimeError(f"source.coverage missing coverage_scope_count: {source_coverage}")
+if coverage_summary.get("overlap_count", 0) < 1:
+    raise RuntimeError(f"source.coverage missing overlap_count: {source_coverage}")
 
 graph_ws = call(ws, {
   "type":"yai.control.call.v1",

@@ -232,6 +232,7 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   yai_mind_node_id_t src_node = 0;
   yai_mind_node_id_t daemon_node = 0;
   yai_mind_node_id_t binding_node = 0;
+  yai_mind_node_id_t scope_node = 0;
   yai_mind_node_id_t asset_node = 0;
   yai_mind_node_id_t event_node = 0;
   yai_mind_node_id_t candidate_node = 0;
@@ -240,6 +241,7 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   char src_slug[128];
   char a_slug[128];
   char b_slug[128];
+  char c_slug[128];
 
   if (err && err_cap > 0) err[0] = '\0';
   if (out_node_ref && out_node_ref_cap > 0) out_node_ref[0] = '\0';
@@ -364,6 +366,8 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   else if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_WORKSPACE_PEER_MEMBERSHIP) == 0)
   {
     const char *membership_id = json_string(root, "workspace_peer_membership_id");
+    const char *coverage_ref = json_string(root, "coverage_ref");
+    const char *overlap_state = json_string(root, "overlap_state");
     yai_graph_slug(membership_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
@@ -382,6 +386,24 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     (void)yai_mind_graph_edge_create(candidate_node, ws_node, "member_of_workspace", 1.0f, &rel_edge);
     (void)yai_mind_graph_edge_create(candidate_node, src_node, "membership_source_node", 1.0f, &rel_edge);
     (void)yai_mind_graph_edge_create(candidate_node, binding_node, "membership_binding", 1.0f, &rel_edge);
+    if (coverage_ref && coverage_ref[0])
+    {
+      yai_graph_slug(coverage_ref, c_slug, sizeof(c_slug));
+      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS,
+                                       c_slug,
+                                       coverage_ref,
+                                       &scope_node);
+      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "membership_covers_scope", 1.0f, &rel_edge);
+      (void)yai_mind_graph_edge_create(binding_node, scope_node, "binding_scope", 1.0f, &rel_edge);
+      if (overlap_state && overlap_state[0] &&
+          (strcmp(overlap_state, "overlap_possible") == 0 ||
+           strcmp(overlap_state, "overlap_confirmed") == 0))
+      {
+        (void)yai_mind_graph_edge_create(src_node, scope_node, "overlap_on_scope", 1.0f, &rel_edge);
+        if (slot) { slot->source_edge_count += 1; }
+      }
+      if (slot) { slot->source_node_count += 1; slot->source_edge_count += 2; }
+    }
     if (slot) { slot->source_node_count += 4; slot->source_edge_count += 3; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_WORKSPACE_PEER_MEMBERSHIP_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-member-of-workspace-%s", a_slug);

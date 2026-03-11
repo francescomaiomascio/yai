@@ -892,6 +892,8 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
     char source_candidate_tail_json[2048];
     char source_peer_membership_tail_json[2048];
     char source_coordination_json[4096];
+    char source_peer_rows_json[8192];
+    char source_coverage_json[1024];
     size_t source_node_count = 0;
     size_t source_daemon_count = 0;
     size_t source_binding_count = 0;
@@ -937,6 +939,8 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
         strcmp(qf, "graph.lineage") != 0 &&
         strcmp(qf, "graph.recent") != 0 &&
         strcmp(qf, "source") != 0 &&
+        strcmp(qf, "source.peer") != 0 &&
+        strcmp(qf, "source.coverage") != 0 &&
         strcmp(qf, "lifecycle") != 0)
     {
         if (err && err_cap > 0)
@@ -1051,6 +1055,8 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
     source_candidate_tail_json[0] = '\0';
     source_peer_membership_tail_json[0] = '\0';
     source_coordination_json[0] = '\0';
+    source_peer_rows_json[0] = '\0';
+    source_coverage_json[0] = '\0';
     source_query_err[0] = '\0';
     (void)yai_data_query_count(info.ws_id, "source_node", &source_node_count, source_query_err, sizeof(source_query_err));
     (void)yai_data_query_count(info.ws_id, "source_daemon_instance", &source_daemon_count, source_query_err, sizeof(source_query_err));
@@ -1076,6 +1082,25 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
         (void)snprintf(source_coordination_json,
                        sizeof(source_coordination_json),
                        "{\"workspace_id\":\"%s\",\"peer_count\":0,\"states\":{\"ready\":0,\"degraded\":0,\"disconnected\":0,\"stale\":0},\"backlog\":{\"queued\":0,\"retry_due\":0,\"failed\":0},\"scheduling_state\":\"unknown\",\"peers\":[]}",
+                       info.ws_id);
+    }
+    if (yai_owner_peer_registry_workspace_peer_rows_json(info.ws_id,
+                                                         source_peer_rows_json,
+                                                         sizeof(source_peer_rows_json),
+                                                         source_query_err,
+                                                         sizeof(source_query_err)) != 0)
+    {
+        (void)snprintf(source_peer_rows_json, sizeof(source_peer_rows_json), "[]");
+    }
+    if (yai_owner_peer_registry_workspace_coverage_summary_json(info.ws_id,
+                                                                source_coverage_json,
+                                                                sizeof(source_coverage_json),
+                                                                source_query_err,
+                                                                sizeof(source_query_err)) != 0)
+    {
+        (void)snprintf(source_coverage_json,
+                       sizeof(source_coverage_json),
+                       "{\"workspace_id\":\"%s\",\"peer_count\":0,\"coverage_scope_count\":0,\"coverage_distinct_count\":0,\"overlap_count\":0,\"gap_count\":0}",
                        info.ws_id);
     }
     (void)yai_graph_materialization_workspace_source_counts(info.ws_id,
@@ -1516,6 +1541,53 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
                      fallback_active ? "true" : "false",
                      read_fallback_reason,
                      graph_query_summary_json);
+        return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
+    }
+
+    if (strcmp(qf, "source.peer") == 0)
+    {
+        n = snprintf(out,
+                     out_cap,
+                     "{"
+                     "\"type\":\"yai.workspace.query.result.v1\","
+                     "\"query_family\":\"source.peer\","
+                     "\"result_shape\":\"source_peer_inspect\","
+                     "\"workspace_id\":\"%s\","
+                     "\"summary\":{\"peer_count\":%zu,\"workspace_peer_membership_count\":%zu},"
+                     "\"rows\":%s,"
+                     "\"coordination\":%s,"
+                     "\"read_path\":{\"mode\":\"db_first\",\"primary_source\":\"data_plane_persisted_records\",\"db_first_ready\":%s,\"fallback_active\":%s,\"fallback_reason\":\"%s\",\"filesystem_primary\":false}"
+                     "}",
+                     info.ws_id,
+                     source_peer_membership_count,
+                     source_peer_membership_count,
+                     source_peer_rows_json[0] ? source_peer_rows_json : "[]",
+                     source_coordination_json,
+                     db_first_ready ? "true" : "false",
+                     fallback_active ? "true" : "false",
+                     read_fallback_reason);
+        return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
+    }
+
+    if (strcmp(qf, "source.coverage") == 0)
+    {
+        n = snprintf(out,
+                     out_cap,
+                     "{"
+                     "\"type\":\"yai.workspace.query.result.v1\","
+                     "\"query_family\":\"source.coverage\","
+                     "\"result_shape\":\"source_peer_coverage_summary\","
+                     "\"workspace_id\":\"%s\","
+                     "\"coverage\":%s,"
+                     "\"coordination\":%s,"
+                     "\"read_path\":{\"mode\":\"db_first\",\"primary_source\":\"data_plane_persisted_records\",\"db_first_ready\":%s,\"fallback_active\":%s,\"fallback_reason\":\"%s\",\"filesystem_primary\":false}"
+                     "}",
+                     info.ws_id,
+                     source_coverage_json,
+                     source_coordination_json,
+                     db_first_ready ? "true" : "false",
+                     fallback_active ? "true" : "false",
+                     read_fallback_reason);
         return (n > 0 && (size_t)n < out_cap) ? 0 : -1;
     }
 
