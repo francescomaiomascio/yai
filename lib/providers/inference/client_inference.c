@@ -1,32 +1,36 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/providers/providers.h>
+#include <yai/providers/inference.h>
 
 #include <stdio.h>
 #include <string.h>
 
-static yai_provider_t *resolve_provider(const char *provider_name)
+static int resolve_inference_provider(const char *provider_name, yai_provider_t **provider_out)
 {
   yai_provider_registry_t *registry = yai_knowledge_provider_registry();
-  if (!registry) return NULL;
-  if (provider_name && provider_name[0]) {
-    yai_provider_t *named = yai_provider_registry_get(registry, provider_name);
-    if (named) return named;
-  }
-  return yai_provider_registry_default(registry);
+  yai_provider_selection_request_t request = {
+    .provider_name = provider_name,
+    .capability = YAI_PROVIDER_CAPABILITY_INFERENCE,
+    .min_trust = YAI_PROVIDER_TRUST_SANDBOXED,
+    .allow_mock_override = 0,
+  };
+
+  if (!registry || !provider_out) return YAI_MIND_ERR_PROVIDER;
+  return yai_provider_select(registry, &request, NULL, provider_out);
 }
 
 int yai_client_completion(const char *provider_name,
-                               const char *payload,
-                               yai_provider_response_t *response_out)
+                          const char *payload,
+                          yai_provider_response_t *response_out)
 {
-  yai_provider_t *provider;
+  yai_provider_t *provider = NULL;
   yai_provider_request_t req;
+  int rc;
 
   if (!payload || !payload[0] || !response_out) return YAI_MIND_ERR_INVALID_ARG;
 
-  provider = resolve_provider(provider_name);
-  if (!provider) return YAI_MIND_ERR_PROVIDER;
+  rc = resolve_inference_provider(provider_name, &provider);
+  if (rc != YAI_MIND_OK || !provider) return YAI_MIND_ERR_PROVIDER;
 
   memset(&req, 0, sizeof(req));
   snprintf(req.request_id, sizeof(req.request_id), "providers-inference");

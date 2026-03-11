@@ -152,6 +152,8 @@ ORCHESTRATION_SRCS := \
 PROVIDERS_SRCS := \
 	lib/providers/registry/providers.c \
 	lib/providers/registry/provider_registry.c \
+	lib/providers/policy/provider_policy.c \
+	lib/providers/selection/provider_selection.c \
 	lib/providers/inference/client_inference.c \
 	lib/providers/embedding/client_embedding.c \
 	lib/providers/mocks/mock_provider.c \
