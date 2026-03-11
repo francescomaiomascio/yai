@@ -18,6 +18,7 @@ CANONICAL_REQUIRED = {
 }
 
 FORBIDDEN_ROOT_NAMES = {
+    "archive_tmp",
     "embedded",
     "grammar",
     "schema",
@@ -39,7 +40,15 @@ FORBIDDEN_ROOT_FILES = {
 }
 
 REQUIRED_FOUNDATION_SUBDIRS = {"axioms", "invariants", "boundaries", "extensions", "terminology"}
-REQUIRED_FORMAL_SUBDIRS = {"tla", "schema", "configs"}
+REQUIRED_FORMAL_SUBDIRS = {
+    "audit",
+    "artifacts",
+    "configs",
+    "models",
+    "modules",
+    "schema",
+    "traceability",
+}
 REQUIRED_MESH_IMPL_FILES = {
     "lib/mesh/identity/identity.c",
     "lib/mesh/peer_registry/peer_registry.c",

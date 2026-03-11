@@ -7,6 +7,7 @@ REQUIRED = {
     "GOVERNANCE.md": ["No external governance repository is required"],
     "COMPATIBILITY.md": ["single-repository", "lib/protocol/contracts/schema/"],
     "VERSIONING.md": ["single-repository", "v1.0.0"],
+    "DATA.md": ["source repository", "data/datasets/"],
 }
 
 FORBIDDEN = [
