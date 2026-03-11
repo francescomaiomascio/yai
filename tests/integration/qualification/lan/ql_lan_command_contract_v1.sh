@@ -10,7 +10,7 @@ yai_qual_require_bins
 TMP_HOME="$(yai_qual_new_home)"
 SOCK="$TMP_HOME/.yai/run/control.sock"
 LOG_FILE="$TMP_HOME/owner-runtime.log"
-WS="qw1_lan_backlog_drain"
+WS="qw1_contract_ws"
 OWNER_PID=""
 
 cleanup() {
@@ -32,7 +32,7 @@ for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || yai_qual_fail "ql_lan_backlog_drain_v1: owner socket not ready"
+[[ -S "$SOCK" ]] || yai_qual_fail "ql_lan_command_contract_v1: owner socket not ready"
 
 HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - <<'PY'
 import json
@@ -41,7 +41,7 @@ import socket
 import struct
 
 SOCK = os.environ["YAI_RUNTIME_INGRESS"]
-WS = "qw1_lan_backlog_drain"
+WS = "qw1_contract_ws"
 YAI_FRAME_MAGIC = 0x59414950
 YAI_PROTOCOL_IDS_VERSION = 1
 YAI_CMD_HANDSHAKE = 0x0102
@@ -92,7 +92,7 @@ def expect_ok(reply, why):
     if reply.get("status") != "ok":
         raise RuntimeError(f"{why}: expected ok got {reply}")
 
-
+# owner lifecycle/workspace contract
 expect_ok(call("system", {
     "type": "yai.control.call.v1",
     "command_id": "yai.workspace.create",
@@ -106,6 +106,7 @@ expect_ok(call("system", {
     "argv": [WS]
 }, "ws-set"), "workspace.set")
 
+# source command contract (enroll/attach + read surfaces)
 enroll = call(WS, {
     "type": "yai.control.call.v1",
     "command_id": "yai.source.enroll",
@@ -115,6 +116,7 @@ enroll = call(WS, {
     "owner_ref": "unix://lan-owner"
 }, "src-enroll")
 expect_ok(enroll, "source.enroll")
+
 node = enroll.get("data", {}).get("source_node_id")
 aid = enroll.get("data", {}).get("owner_trust_artifact_id")
 tok = enroll.get("data", {}).get("owner_trust_artifact_token")
@@ -130,59 +132,68 @@ attach = call(WS, {
     "owner_trust_artifact_id": aid,
     "owner_trust_artifact_token": tok,
     "binding_scope": "workspace",
-    "coverage_ref": "coverage://lan/backlog",
+    "coverage_ref": "coverage://lan/contract",
     "overlap_state": "none"
 }, "src-attach")
 expect_ok(attach, "source.attach")
+
+# source command contract (emit on enrolled+attached source)
 binding_id = attach.get("data", {}).get("source_binding_id")
 if not binding_id:
     raise RuntimeError(f"source.attach missing source_binding_id: {attach}")
 
-for i in range(1, 6):
-    emit = call(WS, {
-        "type": "yai.control.call.v1",
-        "command_id": "yai.source.emit",
-        "target_plane": "runtime",
-        "workspace_id": WS,
+emit = call(WS, {
+    "type": "yai.control.call.v1",
+    "command_id": "yai.source.emit",
+    "target_plane": "runtime",
+    "workspace_id": WS,
+    "source_node_id": node,
+    "source_binding_id": binding_id,
+    "owner_trust_artifact_id": aid,
+    "owner_trust_artifact_token": tok,
+    "idempotency_key": "qw1-contract-emit-1",
+    "source_assets": [{
+        "type": "yai.source_asset.v1",
+        "source_asset_id": "sa-qw1-contract-1",
+        "source_binding_id": binding_id,
+        "locator": "file:///tmp/qw1-contract.txt",
+        "asset_type": "file",
+        "provenance_fingerprint": "sha256:qw1-contract",
+        "observation_state": "observed"
+    }],
+    "source_acquisition_events": [{
+        "type": "yai.source_acquisition_event.v1",
+        "source_acquisition_event_id": "se-qw1-contract-1",
         "source_node_id": node,
         "source_binding_id": binding_id,
-        "owner_trust_artifact_id": aid,
-        "owner_trust_artifact_token": tok,
-        "idempotency_key": f"qw1-backlog-{i}",
-        "source_assets": [{
-            "type": "yai.source_asset.v1",
-            "source_asset_id": f"sa-qw1-backlog-{i}",
-            "source_binding_id": binding_id,
-            "locator": f"file:///tmp/qw1-backlog-{i}.txt",
-            "asset_type": "file",
-            "provenance_fingerprint": f"sha256:qw1-backlog-{i}",
-            "observation_state": "observed"
-        }],
-        "source_acquisition_events": [{
-            "type": "yai.source_acquisition_event.v1",
-            "source_acquisition_event_id": f"se-qw1-backlog-{i}",
-            "source_node_id": node,
-            "source_binding_id": binding_id,
-            "source_asset_id": f"sa-qw1-backlog-{i}",
-            "event_type": "discovered",
-            "observed_at_epoch": 1773301300 + i,
-            "idempotency_key": f"qw1-backlog-{i}",
-            "delivery_status": "received"
-        }]
-    }, f"src-emit-{i}")
-    expect_ok(emit, f"source.emit {i}")
+        "source_asset_id": "sa-qw1-contract-1",
+        "event_type": "discovered",
+        "observed_at_epoch": 1773301001,
+        "idempotency_key": "qw1-contract-emit-1",
+        "delivery_status": "received"
+    }]
+}, "src-emit")
+expect_ok(emit, "source.emit")
 
-cov = call(WS, {
+# inspect/query contract surfaces
+for family in ("source", "source.peer", "source.coverage"):
+    q = call(WS, {
+        "type": "yai.control.call.v1",
+        "command_id": "yai.workspace.query",
+        "target_plane": "runtime",
+        "argv": [family]
+    }, f"query-{family}")
+    expect_ok(q, f"workspace.query {family}")
+
+g = call(WS, {
     "type": "yai.control.call.v1",
-    "command_id": "yai.workspace.query",
+    "command_id": "yai.workspace.graph.summary",
     "target_plane": "runtime",
-    "argv": ["source.coverage"]
-}, "q-coverage")
-expect_ok(cov, "workspace.query source.coverage")
-if cov.get("data", {}).get("coverage", {}).get("coverage_scope_count", 0) < 1:
-    raise RuntimeError(f"expected coverage_scope_count>=1 got {cov}")
+    "argv": []
+}, "graph-summary")
+expect_ok(g, "workspace.graph.summary")
 
-print("backlog_drain_status=ok")
+print("contract_status=ok")
 PY
 
-echo "ql_lan_backlog_drain_v1: ok"
+echo "ql_lan_command_contract_v1: ok"

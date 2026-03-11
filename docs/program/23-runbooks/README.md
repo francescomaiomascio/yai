@@ -54,6 +54,7 @@ A good runbook must be deterministic:
 - `docs/program/23-runbooks/source-and-edge-query-surfaces-baseline.md`
 - `docs/program/23-runbooks/unified-graph-workspace-edge-baseline.md`
 - `docs/program/23-runbooks/ai-grounding-governed-case-state-baseline.md`
+- `docs/program/23-runbooks/qualification-lan-baseline.md`
 
 These runbooks are expected to reflect:
 - unified runtime ownership (`core`, `exec`, `data`, `graph`, `knowledge`),

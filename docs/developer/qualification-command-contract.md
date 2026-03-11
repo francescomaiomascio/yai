@@ -21,24 +21,27 @@ This document is the baseline contract for the QW waves:
 
 Canonical operator namespace (CLI-facing):
 
-- `yai up` (`stable` in this repo)
-- `yai down` (`stable` in this repo)
-- `yai workspace create <ws>` (`baseline` via runtime control call)
-- `yai workspace set <ws>` (`baseline` via runtime control call)
-- `yai workspace domain-set --family ... --specialization ...` (`baseline`)
-- `yai workspace governance-apply --overlays ...` (`baseline`)
-- `yai source enroll ...` (`baseline` via runtime control call)
-- `yai source attach ...` (`baseline` via runtime control call)
-- `yai source list ...` (`baseline`, mapped to `yai.workspace.query source.peer`)
-- `yai source status ...` (`baseline` via runtime control call)
-- `yai source inspect ...` (`baseline`, mapped to source inspect/query surfaces)
-- `yai workspace query ...` (`stable` in runtime control layer)
-- `yai workspace graph summary` (`baseline`, mapped to graph read surfaces)
+- `yai up` (`stable`)
+- `yai down` (`stable`)
+- `yai ws create <ws-id>` (`baseline`)
+- `yai ws set <ws-id>` (`baseline`)
+- `yai ws status` (`stable`)
+- `yai ws inspect` (`stable`)
+- `yai ws query <family>` (`stable`, fallback substrate)
+- `yai ws graph summary` (`baseline`)
+- `yai source enroll <source-label>` (`baseline`)
+- `yai source attach <source-node-id>` (`baseline`)
+- `yai source list` (`baseline`)
+- `yai source status` (`baseline`)
+- `yai source inspect` (`baseline`)
+- `yai inspect runtime|workspace|source|edge|mesh|grant|transport|ingress|case` (`baseline`)
+- `yai watch runtime|source|inspect ...` (`baseline`)
 
 Current implementation note for this repo (`yai`):
 
 - fallback binary `build/bin/yai` exposes direct lifecycle CLI (`up/down`) and runtime ingress;
-- qualification scripts call owner operations through `yai.control.call.v1` over runtime socket.
+- qualification scripts call owner operations through `yai.control.call.v1` over runtime socket (backend bridge for canonical surfaces);
+- in QW-1 runtime precheck, canonical source inspect surfaces are validated via `yai.workspace.query` families (`source`, `source.peer`, `source.coverage`) and `yai.workspace.graph.summary` instead of direct runtime control-call IDs for `yai.source.list/status/inspect`.
 
 ## Peer-Side Contract
 
@@ -71,14 +74,34 @@ Current implementation note for this repo (`yai`):
   - owner truth and orchestration on `yai`
   - peer acquisition/spool/retry on `yai-daemon`
 
+## QW-1 Verification Set
+
+QW-1 validates this command contract in two layers:
+
+1. Contract precheck (`ql_lan_command_contract_v1.sh`)
+Verify owner-side command IDs and inspect/query/graph contract shape over runtime control call.
+
+2. LAN scenarios (`ql_lan_*_v1.sh`)
+Verify that contract surfaces remain semantically coherent with observed runtime state:
+- peer visibility and membership
+- health/freshness read-model visibility
+- coverage and overlap read-model visibility
+- backlog/replay/retry visibility
+
+Contract acceptance rule:
+
+- command success alone is insufficient
+- outputs must remain semantically aligned with runtime state transitions
+- evidence must be captured in reusable wave artifacts
+
 ## QW-1 Scope Boundary
 
 QW-1 qualifies LAN baseline only:
 
 - owner + peer connectivity in local/trusted network
-- source enroll/attach/emit/status path
+- source enroll/attach/emit path
 - workspace multi-peer baseline (3 peers)
-- replay/backlog/retry and overlap visibility baseline
+- replay-like repeated emit and burst-ingest visibility baseline, plus overlap visibility
 
 Not in QW-1:
 

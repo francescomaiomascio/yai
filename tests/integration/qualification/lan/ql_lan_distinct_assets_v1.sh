@@ -146,8 +146,8 @@ def enroll_attach(label, coverage):
     expect_ok(att, f"attach-{label}")
     return node, aid, tok, att["data"]["source_binding_id"]
 
-node_a, aid_a, tok_a, binding_a = enroll_attach("distinct-peer-a", "coverage://office/performance")
-node_b, aid_b, tok_b, binding_b = enroll_attach("distinct-peer-b", "coverage://office/programmazione")
+node_a, aid_a, tok_a, binding_a = enroll_attach("p1", "coverage://lan/p1")
+node_b, aid_b, tok_b, binding_b = enroll_attach("p2", "coverage://lan/p2")
 
 asset_a = FIX_ROOT / "peer-a-performance" / "kpi_2025.csv"
 asset_b = FIX_ROOT / "peer-b-programmazione" / "bilancio_previsionale.csv"

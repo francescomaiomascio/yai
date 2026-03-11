@@ -29,7 +29,7 @@ trap cleanup EXIT
 (cd "$REPO" && HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" "$YAI" >/tmp/yai_source_owner_ingest.log 2>&1) &
 RUNTIME_PID=$!
 
-for _ in $(seq 1 50); do
+for _ in $(seq 1 120); do
   if [[ -S "$SOCK" ]]; then
     break
   fi

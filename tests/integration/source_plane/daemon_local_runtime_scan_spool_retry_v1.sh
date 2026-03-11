@@ -11,8 +11,11 @@ if [[ ! -x "$YAI" || ! -x "$YAI_DAEMON" ]]; then
 fi
 
 OWNER_HOME="$(mktemp -d "${TMPDIR:-/tmp}/yai_yd5_owner.XXXXXX")"
-DAEMON_HOME="$(mktemp -d "${TMPDIR:-/tmp}/yai_yd5_daemon.XXXXXX")"
-SRC_DIR="$DAEMON_HOME/sources/inbox"
+DAEMON_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/yai_yd5_daemon.XXXXXX")"
+DAEMON_HOME="$DAEMON_ROOT/home"
+SRC_DIR="$DAEMON_ROOT/sources/inbox"
+CFG_DIR="$DAEMON_ROOT/config"
+MANIFEST="$CFG_DIR/source-bindings.manifest.json"
 WS="yd5_source_ws"
 RUNTIME_PID=""
 
@@ -24,19 +27,19 @@ cleanup() {
   fi
   rm -f "$SOCK" >/dev/null 2>&1 || true
   if [[ "${YD5_KEEP_TMP:-0}" != "1" ]]; then
-    rm -rf "$OWNER_HOME" "$DAEMON_HOME"
+    rm -rf "$OWNER_HOME" "$DAEMON_ROOT"
   else
-    echo "daemon_local_runtime_scan_spool_retry_v1: kept tmp dirs owner=$OWNER_HOME daemon=$DAEMON_HOME"
+    echo "daemon_local_runtime_scan_spool_retry_v1: kept tmp dirs owner=$OWNER_HOME daemon_root=$DAEMON_ROOT daemon_home=$DAEMON_HOME"
   fi
 }
 trap cleanup EXIT
 
-mkdir -p "$SRC_DIR" "$DAEMON_HOME/config"
+mkdir -p "$SRC_DIR" "$CFG_DIR"
 cat >"$SRC_DIR/a.txt" <<'TXT'
 yd5 sample payload
 TXT
 
-cat >"$DAEMON_HOME/config/source-bindings.manifest.json" <<JSON
+cat >"$MANIFEST" <<JSON
 {
   "bindings": [
     {
@@ -56,10 +59,11 @@ rm -f "$SOCK" >/dev/null 2>&1 || true
 YAI_DAEMON_HOME="$DAEMON_HOME" \
 YAI_DAEMON_OWNER_REF="unix://$SOCK" \
 YAI_DAEMON_SOURCE_LABEL="yd5-node-a" \
-YAI_DAEMON_BINDINGS_MANIFEST="$DAEMON_HOME/config/source-bindings.manifest.json" \
+YAI_DAEMON_BINDINGS_MANIFEST="$MANIFEST" \
 "$YAI_DAEMON" --tick-ms 120 --max-ticks 8 >/tmp/yai_yd5_daemon_phase1.log 2>&1 || true
 
-Q1="$(find "$DAEMON_HOME/spool/queue" -type f 2>/dev/null | wc -l | tr -d ' ')"
+Q1="$(find "$DAEMON_HOME/spool/queue" -type f 2>/dev/null || true)"
+Q1="$(printf '%s\n' "$Q1" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$Q1" -lt 1 ]]; then
   echo "daemon_local_runtime_scan_spool_retry_v1: debug queue_count=$Q1 daemon_home=$DAEMON_HOME"
   find "$DAEMON_HOME" -maxdepth 4 2>/dev/null | sort | sed -n '1,220p'
@@ -150,10 +154,11 @@ PY
 YAI_DAEMON_HOME="$DAEMON_HOME" \
 YAI_DAEMON_OWNER_REF="unix://$SOCK" \
 YAI_DAEMON_SOURCE_LABEL="yd5-node-a" \
-YAI_DAEMON_BINDINGS_MANIFEST="$DAEMON_HOME/config/source-bindings.manifest.json" \
+YAI_DAEMON_BINDINGS_MANIFEST="$MANIFEST" \
 "$YAI_DAEMON" --tick-ms 120 --max-ticks 18 >/tmp/yai_yd5_daemon_phase2.log 2>&1
 
-D2="$(find "$DAEMON_HOME/spool/delivered" -type f 2>/dev/null | wc -l | tr -d ' ')"
+D2="$(find "$DAEMON_HOME/spool/delivered" -type f 2>/dev/null || true)"
+D2="$(printf '%s\n' "$D2" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$D2" -lt 1 ]]; then
   echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (no delivered units after owner recovery)"
   exit 1

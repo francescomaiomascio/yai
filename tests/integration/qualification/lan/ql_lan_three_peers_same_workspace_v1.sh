@@ -135,9 +135,9 @@ expect_ok(call("system", {
   "argv":[WS]
 }, "set"), "workspace.set")
 
-enroll_attach("bologna-peer-a", "coverage://office/performance", "performance")
-enroll_attach("bologna-peer-b", "coverage://office/programmazione", "programmazione")
-enroll_attach("bologna-peer-c", "coverage://office/documentale", "documentale")
+enroll_attach("p1", "coverage://lan/p1", "r1")
+enroll_attach("p2", "coverage://lan/p2", "r2")
+enroll_attach("p3", "coverage://lan/p3", "r3")
 
 peer = call(WS, {
   "type":"yai.control.call.v1",
