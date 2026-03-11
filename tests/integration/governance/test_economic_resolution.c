@@ -30,7 +30,7 @@ int main(void) {
   if (out.decision.stack.authority_contributor_count < 1) return 1;
   if (out.decision.stack.evidence_contributor_count < 2) return 1;
 
-  if (out.decision.final_effect == YAI_LAW_EFFECT_UNKNOWN) return 1;
+  if (out.decision.final_effect == YAI_GOVERNANCE_EFFECT_UNKNOWN) return 1;
   if (strstr(out.trace_json, "D5-economic") == NULL) return 1;
   if (strstr(out.trace_json, "\"family_candidates\"") == NULL) return 1;
 

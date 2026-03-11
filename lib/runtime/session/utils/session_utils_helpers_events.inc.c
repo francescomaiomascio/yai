@@ -833,7 +833,7 @@ static int yai_workspace_append_event_evidence_records(const char *ws_id,
                  event_lifecycle,
                  law_out->decision.family_id,
                  law_out->decision.specialization_id,
-                 yai_law_effect_name(law_out->decision.final_effect)) <= 0)
+                 yai_governance_effect_name(law_out->decision.final_effect)) <= 0)
     {
         if (err && err_cap > 0) (void)snprintf(err, err_cap, "%s", "event_sink_encode_failed");
         return -1;

@@ -1,12 +1,11 @@
 # Interfaces
 
-Status: `active for interface context; canonical naming uses governance`
+Status: `active interface context; canonical naming uses governance`
 
-Interfaces consume governance contracts through the unified repository model:
+Interfaces consume governance contracts from unified repository roots:
 
 - canonical target path: `governance/`
-- transitional compatibility path: `embedded/law`
-- historical external references: `../law/*` (migration-only)
+- canonical runtime/tooling model: single-repo
 
-Legacy `law` naming is compatibility-only and must not be expanded as new
-primary runtime pathing.
+Legacy split-repo and embedded-era references are historical only and must not
+be used as active implementation guidance.

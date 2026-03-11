@@ -28,7 +28,7 @@ int main(void) {
   if (strcmp(out.decision.domain_id, "D5-economic") != 0) return 1;
   if (strcmp(out.decision.family_id, "economic") != 0) return 1;
   if (strcmp(out.decision.specialization_id, "payments") != 0) return 1;
-  if (out.decision.final_effect != YAI_LAW_EFFECT_QUARANTINE) return 1;
+  if (out.decision.final_effect != YAI_GOVERNANCE_EFFECT_QUARANTINE) return 1;
   if (out.decision.stack.sector_overlay_count < 1 || out.decision.stack.regulatory_overlay_count < 1) return 1;
   if (!has_req(out.decision.authority_requirements, out.decision.authority_requirement_count, "escalation_required")) return 1;
   if (!has_req(out.decision.evidence_requirements, out.decision.evidence_requirement_count, "dependency_chain_ref")) return 1;
@@ -46,7 +46,7 @@ int main(void) {
   if (strcmp(out.decision.domain_id, "D1-digital") != 0) return 1;
   if (strcmp(out.decision.family_id, "digital") != 0) return 1;
   if (strcmp(out.decision.specialization_id, "remote-publication") != 0) return 1;
-  if (out.decision.final_effect != YAI_LAW_EFFECT_REVIEW_REQUIRED) return 1;
+  if (out.decision.final_effect != YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED) return 1;
   if (out.decision.stack.regulatory_overlay_count < 1) return 1;
   if (!has_req(out.decision.evidence_requirements, out.decision.evidence_requirement_count, "lawful_basis_trace")) return 1;
   if (out.evidence.lawful_basis_required != 1) return 1;
@@ -64,7 +64,7 @@ int main(void) {
   if (strcmp(out.decision.domain_id, "D8-scientific") != 0) return 1;
   if (strcmp(out.decision.family_id, "scientific") != 0) return 1;
   if (strcmp(out.decision.specialization_id, "parameter-governance") != 0) return 1;
-  if (out.decision.final_effect != YAI_LAW_EFFECT_REVIEW_REQUIRED) return 1;
+  if (out.decision.final_effect != YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED) return 1;
   if (!has_req(out.decision.authority_requirements, out.decision.authority_requirement_count, "human_oversight_required")) return 1;
   if (!has_req(out.decision.evidence_requirements, out.decision.evidence_requirement_count, "oversight_trace_required")) return 1;
   if (out.evidence.oversight_trace_required != 1) return 1;

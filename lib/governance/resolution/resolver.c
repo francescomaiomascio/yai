@@ -5,11 +5,11 @@
 #include <string.h>
 #include <time.h>
 
-int yai_law_apply_precedence(yai_law_effect_t *effect);
-int yai_law_apply_fallback(const yai_law_discovery_result_t *discovery, yai_law_effect_t *effect);
-int yai_law_resolve_conflicts(yai_law_effect_t *effect);
+int yai_law_apply_precedence(yai_governance_effect_t *effect);
+int yai_law_apply_fallback(const yai_law_discovery_result_t *discovery, yai_governance_effect_t *effect);
+int yai_law_resolve_conflicts(yai_governance_effect_t *effect);
 int yai_law_effective_stack_finalize(yai_law_effective_stack_t *stack);
-int yai_law_map_policy_to_effect(yai_law_effect_t in_effect, yai_law_effect_t *out_effect);
+int yai_law_map_policy_to_effect(yai_governance_effect_t in_effect, yai_governance_effect_t *out_effect);
 int yai_law_decision_to_audit_blob(const yai_law_decision_t *decision, char *out, size_t out_cap);
 
 static void append_requirement(char arr[][64], int *count, int cap, const char *id) {
@@ -32,8 +32,8 @@ int yai_law_resolve_control_call(const char *ws_id,
   yai_law_runtime_t runtime;
   yai_law_classification_ctx_t ctx;
   yai_law_discovery_result_t discovery;
-  yai_law_effect_t base_effect = YAI_LAW_EFFECT_UNKNOWN;
-  yai_law_effect_t final_effect = YAI_LAW_EFFECT_UNKNOWN;
+  yai_governance_effect_t base_effect = YAI_GOVERNANCE_EFFECT_UNKNOWN;
+  yai_governance_effect_t final_effect = YAI_GOVERNANCE_EFFECT_UNKNOWN;
   char rationale[192] = {0};
 
   if (!payload || !out) return -1;

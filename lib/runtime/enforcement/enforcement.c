@@ -189,7 +189,7 @@ int yai_enforcement_finalize_control_call(const yai_rpc_envelope_t *env,
     out->authority_decision = YAI_AUTHORITY_ALLOW;
     out->runtime_bound = 0;
 
-    effect_name = yai_law_effect_name(law_out->decision.final_effect);
+    effect_name = yai_governance_effect_name(law_out->decision.final_effect);
     if (!effect_name || !effect_name[0]) effect_name = "deny";
 
     for (i = 0; i < law_out->decision.authority_requirement_count; i++) {

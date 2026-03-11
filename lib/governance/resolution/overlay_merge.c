@@ -23,15 +23,15 @@ int yai_law_overlay_merge_apply(yai_law_effective_stack_t *stack) {
   int i;
   if (!stack) return -1;
   for (i = 0; i < stack->regulatory_overlay_count; ++i) {
-    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_LAW_COMPLIANCE_MAX, stack->regulatory_overlays[i]);
-    add_unique(stack->compliance_layers, &stack->compliance_count, YAI_LAW_COMPLIANCE_MAX, stack->regulatory_overlays[i]);
+    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_GOVERNANCE_COMPLIANCE_MAX, stack->regulatory_overlays[i]);
+    add_unique(stack->compliance_layers, &stack->compliance_count, YAI_GOVERNANCE_COMPLIANCE_MAX, stack->regulatory_overlays[i]);
   }
   for (i = 0; i < stack->sector_overlay_count; ++i) {
-    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_LAW_COMPLIANCE_MAX, stack->sector_overlays[i]);
-    add_unique(stack->compliance_layers, &stack->compliance_count, YAI_LAW_COMPLIANCE_MAX, stack->sector_overlays[i]);
+    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_GOVERNANCE_COMPLIANCE_MAX, stack->sector_overlays[i]);
+    add_unique(stack->compliance_layers, &stack->compliance_count, YAI_GOVERNANCE_COMPLIANCE_MAX, stack->sector_overlays[i]);
   }
   for (i = 0; i < stack->contextual_overlay_count; ++i) {
-    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_LAW_COMPLIANCE_MAX, stack->contextual_overlays[i]);
+    add_unique(stack->overlay_layers, &stack->overlay_count, YAI_GOVERNANCE_COMPLIANCE_MAX, stack->contextual_overlays[i]);
   }
   return 0;
 }

@@ -16,7 +16,11 @@ int yai_law_load_domain_manifest(const yai_law_runtime_t *rt,
     "domains"
   };
   const char *legacy_seed = "transitional/domain-family-seed";
-  const char *allow_seed = getenv("YAI_LAW_ENABLE_TRANSITIONAL_SEED");
+  const char *allow_seed = getenv("YAI_GOVERNANCE_ENABLE_TRANSITIONAL_SEED");
+  if (!allow_seed || allow_seed[0] == '\0') {
+    /* Backward-compatible alias during migration cleanup. */
+    allow_seed = getenv("YAI_LAW_ENABLE_TRANSITIONAL_SEED");
+  }
   size_t i;
   if (!rt || !domain_id || !out_json || out_cap == 0) return -1;
 

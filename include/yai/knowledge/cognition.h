@@ -20,7 +20,7 @@ typedef enum yai_agent_role {
 } yai_agent_role_t;
 
 typedef struct yai_cognition_request {
-  yai_session_t session;
+  yai_knowledge_session_t session;
   yai_task_t task;
   yai_plan_step_t hint_step;
   yai_agent_role_t preferred_role;

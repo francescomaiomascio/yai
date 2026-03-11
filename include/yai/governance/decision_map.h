@@ -8,7 +8,7 @@ typedef struct yai_law_decision {
   char domain_id[64];
   char family_id[64];
   char specialization_id[96];
-  yai_law_effect_t final_effect;
+  yai_governance_effect_t final_effect;
   char rationale[192];
   yai_law_effective_stack_t stack;
   char evidence_requirements[8][64];

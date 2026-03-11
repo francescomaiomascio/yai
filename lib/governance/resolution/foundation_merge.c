@@ -1,7 +1,7 @@
 #include "../internal.h"
 
 int yai_law_foundation_merge_apply(yai_law_effective_stack_t *stack,
-                                   yai_law_effect_t *effect) {
+                                   yai_governance_effect_t *effect) {
   if (!stack || !effect) return -1;
   if (stack->authority_contributor_count == 0) {
     (void)yai_law_safe_snprintf(stack->authority_contributors[0],
@@ -29,8 +29,8 @@ int yai_law_foundation_merge_apply(yai_law_effective_stack_t *stack,
                                 "%s",
                                 stack->evidence_contributors[0]);
   }
-  if (*effect == YAI_LAW_EFFECT_UNKNOWN) {
-    *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+  if (*effect == YAI_GOVERNANCE_EFFECT_UNKNOWN) {
+    *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
   }
   return 0;
 }

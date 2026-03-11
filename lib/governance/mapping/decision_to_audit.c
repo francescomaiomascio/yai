@@ -18,7 +18,7 @@ int yai_law_decision_to_audit_blob(const yai_law_decision_t *decision, char *out
                                decision->family_id,
                                decision->domain_id,
                                decision->specialization_id,
-                               yai_law_effect_name(decision->final_effect),
+                               yai_governance_effect_name(decision->final_effect),
                                decision->rationale,
                                decision->stack.stack_id,
                                decision->stack.precedence_trace,

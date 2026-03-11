@@ -29,8 +29,8 @@ int main(void) {
   if (strcmp(out.decision.domain_id, "D5-economic") != 0) return 1;
   if (strcmp(out.decision.family_id, "economic") != 0) return 1;
   if (strcmp(out.decision.specialization_id, "transfers") != 0) return 1;
-  if (out.decision.final_effect != YAI_LAW_EFFECT_REVIEW_REQUIRED &&
-      out.decision.final_effect != YAI_LAW_EFFECT_QUARANTINE) return 1;
+  if (out.decision.final_effect != YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED &&
+      out.decision.final_effect != YAI_GOVERNANCE_EFFECT_QUARANTINE) return 1;
 
   if (out.decision.stack.regulatory_overlay_count < 1) return 1;
   if (out.decision.stack.sector_overlay_count < 1) return 1;

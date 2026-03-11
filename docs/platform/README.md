@@ -1,10 +1,10 @@
 # Platform Docs Status
 
-Status: `mixed (active architecture + historical anchors)`  
-Primary runtime contract references remain under:
+Status: `mixed (active architecture + historical anchors)`
+
+Primary runtime contract references:
 
 - `docs/architecture/`
-- `governance/` (canonical target)
-- `embedded/law/` (transitional compatibility only)
+- `governance/` (canonical)
 
 Use platform docs as implementation context, not as canonical normative source.

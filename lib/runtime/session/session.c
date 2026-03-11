@@ -1254,7 +1254,7 @@ int yai_session_handle_control_call(
         return -1;
     }
 
-    effect_name = yai_law_effect_name(law_out.decision.final_effect);
+    effect_name = yai_governance_effect_name(law_out.decision.final_effect);
     if (yai_enforcement_finalize_control_call(env,
                                               runtime_ws_id,
                                               &law_out,
@@ -1337,9 +1337,9 @@ int yai_session_handle_control_call(
                  sizeof(sci_publication),
                  "%s",
                  strcmp(law_out.decision.specialization_id, "result-publication-control") == 0
-                     ? (law_out.decision.final_effect == YAI_LAW_EFFECT_DENY
+                     ? (law_out.decision.final_effect == YAI_GOVERNANCE_EFFECT_DENY
                             ? "publication blocked pending authority/repro checks"
-                            : law_out.decision.final_effect == YAI_LAW_EFFECT_QUARANTINE
+                            : law_out.decision.final_effect == YAI_GOVERNANCE_EFFECT_QUARANTINE
                                   ? "publication quarantined pending review"
                                   : "publication control active")
                      : "publication control not primary");
@@ -1370,9 +1370,9 @@ int yai_session_handle_control_call(
                  sizeof(dig_publication),
                  "%s",
                  strcmp(law_out.decision.specialization_id, "remote-publication") == 0
-                     ? (law_out.decision.final_effect == YAI_LAW_EFFECT_DENY
+                     ? (law_out.decision.final_effect == YAI_GOVERNANCE_EFFECT_DENY
                             ? "publication denied pending authority/sink checks"
-                            : law_out.decision.final_effect == YAI_LAW_EFFECT_QUARANTINE
+                            : law_out.decision.final_effect == YAI_GOVERNANCE_EFFECT_QUARANTINE
                                   ? "publication quarantined pending sink review"
                                   : "publication requires review record")
                      : "publication control not primary");

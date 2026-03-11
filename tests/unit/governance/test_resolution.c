@@ -12,7 +12,7 @@ int main(void) {
     fprintf(stderr, "resolution failed: %s\n", err);
     return 1;
   }
-  if (out.decision.final_effect != YAI_LAW_EFFECT_DENY && out.decision.final_effect != YAI_LAW_EFFECT_REVIEW_REQUIRED) return 1;
+  if (out.decision.final_effect != YAI_GOVERNANCE_EFFECT_DENY && out.decision.final_effect != YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED) return 1;
   if (out.decision.family_id[0] == '\0' || out.decision.specialization_id[0] == '\0') return 1;
   if (strstr(out.trace_json, "\"routing_mode\":\"family-specialization\"") == NULL) return 1;
   if (strstr(out.trace_json, "\"family_candidates\"") == NULL) return 1;

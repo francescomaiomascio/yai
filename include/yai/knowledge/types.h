@@ -8,11 +8,11 @@
 extern "C" {
 #endif
 
-typedef struct yai_session {
+typedef struct yai_knowledge_session {
   char session_id[64];
   char workspace_id[64];
   char transport[32];
-} yai_session_t;
+} yai_knowledge_session_t;
 
 typedef struct yai_task {
   char task_id[64];

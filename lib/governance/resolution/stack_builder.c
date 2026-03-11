@@ -32,7 +32,7 @@ typedef struct yai_stack_accumulator {
 
 static void add_rule(yai_law_effective_stack_t *stack, const char *id) {
   if (!stack || !id) return;
-  if (stack->applied_rule_count >= YAI_LAW_RULE_MAX) return;
+  if (stack->applied_rule_count >= YAI_GOVERNANCE_RULE_MAX) return;
   (void)yai_law_safe_snprintf(stack->applied_rules[stack->applied_rule_count],
                               sizeof(stack->applied_rules[stack->applied_rule_count]),
                               "%s", id);
@@ -41,7 +41,7 @@ static void add_rule(yai_law_effective_stack_t *stack, const char *id) {
 
 static void add_compliance(yai_law_effective_stack_t *stack, const char *id) {
   if (!stack || !id) return;
-  if (stack->compliance_count >= YAI_LAW_COMPLIANCE_MAX) return;
+  if (stack->compliance_count >= YAI_GOVERNANCE_COMPLIANCE_MAX) return;
   (void)yai_law_safe_snprintf(stack->compliance_layers[stack->compliance_count],
                               sizeof(stack->compliance_layers[stack->compliance_count]),
                               "%s", id);
@@ -60,7 +60,7 @@ static int stack_has_token(char arr[][64], int count, const char *id) {
 static void add_overlay(yai_law_effective_stack_t *stack, const char *id) {
   if (!stack || !id) return;
   if (stack_has_token(stack->overlay_layers, stack->overlay_count, id)) return;
-  if (stack->overlay_count >= YAI_LAW_COMPLIANCE_MAX) return;
+  if (stack->overlay_count >= YAI_GOVERNANCE_COMPLIANCE_MAX) return;
   (void)yai_law_safe_snprintf(stack->overlay_layers[stack->overlay_count],
                               sizeof(stack->overlay_layers[stack->overlay_count]),
                               "%s", id);
@@ -71,7 +71,7 @@ static void add_regulatory_overlay(yai_law_effective_stack_t *stack, const char 
   char buf[64];
   if (!stack || !overlay_id) return;
   if (stack_has_token(stack->regulatory_overlays, stack->regulatory_overlay_count, overlay_id)) return;
-  if (stack->regulatory_overlay_count >= YAI_LAW_COMPLIANCE_MAX) return;
+  if (stack->regulatory_overlay_count >= YAI_GOVERNANCE_COMPLIANCE_MAX) return;
   (void)yai_law_safe_snprintf(stack->regulatory_overlays[stack->regulatory_overlay_count],
                               sizeof(stack->regulatory_overlays[stack->regulatory_overlay_count]),
                               "%s",
@@ -85,7 +85,7 @@ static void add_regulatory_overlay(yai_law_effective_stack_t *stack, const char 
 static void add_sector_overlay(yai_law_effective_stack_t *stack, const char *overlay_id) {
   if (!stack || !overlay_id) return;
   if (stack_has_token(stack->sector_overlays, stack->sector_overlay_count, overlay_id)) return;
-  if (stack->sector_overlay_count >= YAI_LAW_COMPLIANCE_MAX) return;
+  if (stack->sector_overlay_count >= YAI_GOVERNANCE_COMPLIANCE_MAX) return;
   (void)yai_law_safe_snprintf(stack->sector_overlays[stack->sector_overlay_count],
                               sizeof(stack->sector_overlays[stack->sector_overlay_count]),
                               "%s",
@@ -99,7 +99,7 @@ static void add_contextual_overlay(yai_law_effective_stack_t *stack, const char 
   char full[64];
   if (!stack || !overlay_id) return;
   if (stack_has_token(stack->contextual_overlays, stack->contextual_overlay_count, overlay_id)) return;
-  if (stack->contextual_overlay_count >= YAI_LAW_COMPLIANCE_MAX) return;
+  if (stack->contextual_overlay_count >= YAI_GOVERNANCE_COMPLIANCE_MAX) return;
   (void)yai_law_safe_snprintf(stack->contextual_overlays[stack->contextual_overlay_count],
                               sizeof(stack->contextual_overlays[stack->contextual_overlay_count]),
                               "%s",
@@ -112,7 +112,7 @@ static void add_contextual_overlay(yai_law_effective_stack_t *stack, const char 
 static void add_authority_contributor(yai_law_effective_stack_t *stack, const char *id) {
   if (!stack || !id) return;
   if (stack_has_token(stack->authority_contributors, stack->authority_contributor_count, id)) return;
-  if (stack->authority_contributor_count >= YAI_LAW_CONTRIBUTOR_MAX) return;
+  if (stack->authority_contributor_count >= YAI_GOVERNANCE_CONTRIBUTOR_MAX) return;
   (void)yai_law_safe_snprintf(stack->authority_contributors[stack->authority_contributor_count],
                               sizeof(stack->authority_contributors[stack->authority_contributor_count]),
                               "%s",
@@ -123,7 +123,7 @@ static void add_authority_contributor(yai_law_effective_stack_t *stack, const ch
 static void add_evidence_contributor(yai_law_effective_stack_t *stack, const char *id) {
   if (!stack || !id) return;
   if (stack_has_token(stack->evidence_contributors, stack->evidence_contributor_count, id)) return;
-  if (stack->evidence_contributor_count >= YAI_LAW_CONTRIBUTOR_MAX) return;
+  if (stack->evidence_contributor_count >= YAI_GOVERNANCE_CONTRIBUTOR_MAX) return;
   (void)yai_law_safe_snprintf(stack->evidence_contributors[stack->evidence_contributor_count],
                               sizeof(stack->evidence_contributors[stack->evidence_contributor_count]),
                               "%s",
@@ -234,7 +234,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
                         const yai_law_discovery_result_t *discovery,
                         const yai_law_classification_ctx_t *ctx,
                         yai_law_effective_stack_t *stack,
-                        yai_law_effect_t *effect,
+                        yai_governance_effect_t *effect,
                         char *rationale,
                         size_t rationale_cap) {
   yai_stack_accumulator_t agg;
@@ -262,7 +262,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     if (stack->sector_overlay_count == 0) add_sector_overlay(stack, "sector.finance");
     add_contextual_overlay(stack, "organization");
     add_contextual_overlay(stack, "workspace");
-    *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     add_rule(stack, "economic.baseline.review");
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "economic specialization baseline review");
     agg.has_review_required = 1;
@@ -270,7 +270,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
   } else if (strcmp(discovery->family_id, "scientific") == 0) {
     if (stack->regulatory_overlay_count == 0) add_regulatory_overlay(stack, "ai-act");
     add_contextual_overlay(stack, "experimental");
-    *effect = YAI_LAW_EFFECT_ALLOW;
+    *effect = YAI_GOVERNANCE_EFFECT_ALLOW;
     add_rule(stack, "scientific.baseline.allow");
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "scientific specialization baseline");
   } else {
@@ -279,7 +279,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
       add_regulatory_overlay(stack, "retention-governance");
     }
     add_contextual_overlay(stack, "workspace");
-    *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     add_rule(stack, "digital.baseline.review");
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "digital specialization baseline review");
     agg.has_review_required = 1;
@@ -291,7 +291,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_dual_control = 1;
     agg.has_approval_chain = 1;
     agg.has_review_required = 1;
-    *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "high-impact specialization requires dual-control review");
   }
   if (strcmp(discovery->specialization_id, "fraud-risk-controls") == 0 || strstr(ctx->command, "fraud") || strstr(ctx->resource, "anomaly")) {
@@ -299,7 +299,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_fraud_trace = 1;
     agg.has_provenance = 1;
     agg.has_escalation = 1;
-    *effect = YAI_LAW_EFFECT_QUARANTINE;
+    *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "fraud-risk controls triggered");
   }
   if (strcmp(discovery->specialization_id, "parameter-governance") == 0 && !ctx->has_params_hash) {
@@ -307,14 +307,14 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_parameter_lock = 1;
     agg.has_review_trace = 1;
     agg.has_review_required = 1;
-    *effect = YAI_LAW_EFFECT_DENY;
+    *effect = YAI_GOVERNANCE_EFFECT_DENY;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "missing parameter lock");
   }
   if (strcmp(discovery->specialization_id, "parameter-governance") == 0 && ctx->has_params_hash) {
     add_rule(stack, "specialization.parameter-lock.present");
     agg.has_parameter_lock = 1;
     agg.has_provenance = 1;
-    if (*effect == YAI_LAW_EFFECT_ALLOW) *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     agg.has_review_required = 1;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "parameter lock captured; review required for governed parameter changes");
   }
@@ -323,7 +323,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_review_trace = 1;
     agg.has_provenance = 1;
     agg.has_review_required = 1;
-    if (*effect == YAI_LAW_EFFECT_ALLOW) *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "experiment configuration requires reproducibility traceability");
   }
   if (strcmp(discovery->specialization_id, "reproducibility-control") == 0) {
@@ -332,7 +332,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
       agg.has_provenance = 1;
       agg.has_review_trace = 1;
       agg.has_review_required = 1;
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "reproducibility context is incomplete");
     } else {
       add_rule(stack, "specialization.reproducibility.proofpack-required");
@@ -340,7 +340,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
       agg.has_retention = 1;
       agg.has_review_trace = 1;
       agg.has_review_required = 1;
-      if (*effect == YAI_LAW_EFFECT_ALLOW) *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "reproducibility proof material required before publication");
     }
   }
@@ -350,10 +350,10 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_review_trace = 1;
     agg.has_review_required = 1;
     if (!ctx->has_dataset_ref) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "dataset integrity operation missing dataset reference");
-    } else if (*effect == YAI_LAW_EFFECT_ALLOW) {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    } else if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) {
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "dataset integrity requires attestation and review trace");
     }
   }
@@ -364,15 +364,15 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_retention = 1;
     agg.has_review_required = 1;
     if (!ctx->has_authority_contract) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       agg.has_explicit_approval = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "result publication requires authority contract");
     } else if (!ctx->has_repro_context || !ctx->has_result_ref) {
-      *effect = YAI_LAW_EFFECT_QUARANTINE;
+      *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
       agg.has_escalation = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "result publication quarantined until reproducibility proof is complete");
-    } else if (*effect == YAI_LAW_EFFECT_ALLOW) {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    } else if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) {
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "publication-ready result requires final human review");
     }
   }
@@ -381,7 +381,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_review_required = 1;
     agg.has_review_trace = 1;
     agg.has_provenance = 1;
-    *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "black-box evaluation requires review");
   }
   if (strcmp(discovery->specialization_id, "remote-retrieval") == 0) {
@@ -389,11 +389,11 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_destination_trace = 1;
     agg.has_retrieval_attestation = 1;
     if (ctx->sink_external && !ctx->sink_trusted) {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_review_required = 1;
       agg.has_review_trace = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "external retrieval requires source attestation review");
-    } else if (*effect == YAI_LAW_EFFECT_ALLOW) {
+    } else if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) {
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "retrieval allowed with source and destination trace");
     }
   }
@@ -402,11 +402,11 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_destination_trace = 1;
     agg.has_channel_trace = 1;
     if (ctx->sink_external && !ctx->has_authority_contract) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       agg.has_explicit_approval = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "external egress requires authority contract");
-    } else if (ctx->sink_external && *effect == YAI_LAW_EFFECT_ALLOW) {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    } else if (ctx->sink_external && *effect == YAI_GOVERNANCE_EFFECT_ALLOW) {
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_review_required = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "external egress allowed with review");
     }
@@ -418,15 +418,15 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_review_required = 1;
     agg.has_review_trace = 1;
     if (!ctx->has_authority_contract) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       agg.has_explicit_approval = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "remote publication requires authority contract");
     } else if (!ctx->sink_trusted && ctx->sink_external) {
-      *effect = YAI_LAW_EFFECT_QUARANTINE;
+      *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
       agg.has_escalation = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "publication to untrusted external sink quarantined");
-    } else if (*effect == YAI_LAW_EFFECT_ALLOW) {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    } else if (*effect == YAI_GOVERNANCE_EFFECT_ALLOW) {
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "publication requires review record");
     }
   }
@@ -435,11 +435,11 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_destination_trace = 1;
     agg.has_commentary_review = 1;
     if (ctx->sink_external && !ctx->has_authority_contract) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       agg.has_explicit_approval = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "external commentary denied without authority contract");
     } else {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_review_required = 1;
       agg.has_review_trace = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "external commentary requires review trace");
@@ -450,16 +450,16 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_destination_trace = 1;
     agg.has_distribution_manifest = 1;
     if (!ctx->has_result_ref || !ctx->has_sink_ref) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       agg.has_explicit_approval = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "artifact distribution missing artifact or sink reference");
     } else if (!ctx->has_authority_contract || !ctx->sink_trusted) {
-      *effect = YAI_LAW_EFFECT_QUARANTINE;
+      *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
       agg.has_escalation = 1;
       agg.has_review_trace = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "artifact distribution quarantined pending manifest and sink review");
     } else {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_review_required = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "artifact distribution requires final release review");
     }
@@ -469,14 +469,14 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_sink_attestation = 1;
     agg.has_destination_trace = 1;
     if (!ctx->has_sink_ref) {
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "digital sink control requires sink reference");
     } else if (ctx->sink_external && !ctx->sink_trusted) {
-      *effect = YAI_LAW_EFFECT_QUARANTINE;
+      *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
       agg.has_escalation = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "untrusted external sink quarantined");
     } else {
-      *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_review_required = 1;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "sink policy attestation required");
     }
@@ -489,14 +489,14 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_provenance = 1;
     agg.has_dependency_chain = 1;
     agg.has_review_trace = 1;
-    *effect = YAI_LAW_EFFECT_QUARANTINE;
+    *effect = YAI_GOVERNANCE_EFFECT_QUARANTINE;
     (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "security supply-chain quarantine for untrusted provider");
   }
 
   if (stack_has_token(stack->regulatory_overlays, stack->regulatory_overlay_count, "gdpr-eu") &&
       (strstr(ctx->command, "personal") || strstr(ctx->resource, "personal") || strstr(ctx->resource, "sensitive"))) {
     add_rule(stack, "overlay.gdpr.personal-data.review");
-    if (*effect != YAI_LAW_EFFECT_DENY && *effect != YAI_LAW_EFFECT_QUARANTINE) *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+    if (*effect != YAI_GOVERNANCE_EFFECT_DENY && *effect != YAI_GOVERNANCE_EFFECT_QUARANTINE) *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
     agg.has_review_required = 1;
     agg.has_lawful_basis = 1;
     agg.has_retention = 1;
@@ -510,11 +510,11 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
       agg.has_explicit_approval = 1;
       agg.has_oversight_trace = 1;
       agg.has_provenance = 1;
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "ai-act prohibited use");
     } else if (strstr(ctx->command, "high-risk")) {
       add_rule(stack, "overlay.ai-act.high-risk.review");
-      if (*effect != YAI_LAW_EFFECT_DENY && *effect != YAI_LAW_EFFECT_QUARANTINE) *effect = YAI_LAW_EFFECT_REVIEW_REQUIRED;
+      if (*effect != YAI_GOVERNANCE_EFFECT_DENY && *effect != YAI_GOVERNANCE_EFFECT_QUARANTINE) *effect = YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED;
       agg.has_human_oversight = 1;
       agg.has_oversight_trace = 1;
       agg.has_review_required = 1;
@@ -532,7 +532,7 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
     agg.has_provenance = 1;
     if (!ctx->has_authority_contract) {
       agg.has_explicit_approval = 1;
-      *effect = YAI_LAW_EFFECT_DENY;
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "finance overlay requires authority contract");
     }
   }
@@ -544,8 +544,8 @@ int yai_law_stack_build(const yai_law_runtime_t *rt,
                                        strcmp(ctx->action, "authorize") == 0 || strcmp(ctx->action, "settle") == 0)) {
     add_rule(stack, "authority.contract.missing");
     agg.has_explicit_approval = 1;
-    if (*effect != YAI_LAW_EFFECT_DENY && *effect != YAI_LAW_EFFECT_QUARANTINE) {
-      *effect = YAI_LAW_EFFECT_DENY;
+    if (*effect != YAI_GOVERNANCE_EFFECT_DENY && *effect != YAI_GOVERNANCE_EFFECT_QUARANTINE) {
+      *effect = YAI_GOVERNANCE_EFFECT_DENY;
       (void)yai_law_safe_snprintf(rationale, rationale_cap, "%s", "authority contract missing for sensitive action");
     }
   }

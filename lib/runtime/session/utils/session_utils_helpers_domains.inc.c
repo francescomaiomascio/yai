@@ -524,7 +524,7 @@ static int yai_workspace_append_authority_artifact_persistence(const char *ws_id
                  decision_ref ? decision_ref : "",
                  evidence_ref ? evidence_ref : "",
                  event_ref ? event_ref : "",
-                 yai_law_effect_name(law_out->decision.final_effect),
+                 yai_governance_effect_name(law_out->decision.final_effect),
                  law_out->decision.rationale,
                  ts_iso,
                  authority_resolution_lifecycle) <= 0)
@@ -821,7 +821,7 @@ static int yai_workspace_append_enforcement_record_set(const char *ws_id,
         if (err && err_cap > 0) (void)snprintf(err, err_cap, "%s", "enforcement_lifecycle_encode_failed");
         return -1;
     }
-    effect = yai_law_effect_name(law_out->decision.final_effect);
+    effect = yai_governance_effect_name(law_out->decision.final_effect);
     evidence_ref_use = force_partial ? "" : (evidence_ref ? evidence_ref : "");
 
     (void)snprintf(outcome_id, sizeof(outcome_id), "enf-%s", law_out->decision.decision_id);

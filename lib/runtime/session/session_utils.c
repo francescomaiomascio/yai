@@ -130,7 +130,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
     snprintf(info.inferred_specialization, sizeof(info.inferred_specialization), "%s", law_out->decision.specialization_id);
     info.inferred_confidence = 1.0;
     snprintf(info.effective_stack_ref, sizeof(info.effective_stack_ref), "%s", stack->stack_id);
-    snprintf(info.last_effect_summary, sizeof(info.last_effect_summary), "%s", yai_law_effect_name(law_out->decision.final_effect));
+    snprintf(info.last_effect_summary, sizeof(info.last_effect_summary), "%s", yai_governance_effect_name(law_out->decision.final_effect));
     snprintf(info.last_authority_summary, sizeof(info.last_authority_summary), "%s", stack->authority_profile);
     snprintf(info.last_evidence_summary, sizeof(info.last_evidence_summary), "%s", stack->evidence_profile);
     snprintf(info.last_resolution_trace_ref, sizeof(info.last_resolution_trace_ref), "%s", law_out->evidence.trace_id);
@@ -139,7 +139,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
              "%s/%s => %s",
              law_out->decision.family_id,
              law_out->decision.specialization_id,
-             yai_law_effect_name(law_out->decision.final_effect));
+             yai_governance_effect_name(law_out->decision.final_effect));
 
     if (yai_workspace_append_event_evidence_records(ws_id,
                                                     law_out,
@@ -168,7 +168,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
                        event_ref,
                        decision_ref,
                        evidence_ref,
-                       yai_law_effect_name(law_out->decision.final_effect));
+                       yai_governance_effect_name(law_out->decision.final_effect));
         if (yai_data_records_append_event(ws_id,
                                           canonical_record,
                                           canonical_ref,
@@ -295,8 +295,8 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
                        authority_resolution_ref,
                        authority_last_ref,
                        law_out->evidence.authority_context,
-                       yai_law_effect_name(law_out->decision.final_effect),
-                       law_out->decision.final_effect == YAI_LAW_EFFECT_REVIEW_REQUIRED ? "true" : "false");
+                       yai_governance_effect_name(law_out->decision.final_effect),
+                       law_out->decision.final_effect == YAI_GOVERNANCE_EFFECT_REVIEW_REQUIRED ? "true" : "false");
         if (yai_data_records_append_authority_resolution(ws_id,
                                                          canonical_authority_resolution_record,
                                                          canonical_authority_resolution_ref,
@@ -351,7 +351,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
                        law_out->evidence.trace_id,
                        decision_ref,
                        enforce_last_outcome_ref,
-                       yai_law_effect_name(law_out->decision.final_effect),
+                       yai_governance_effect_name(law_out->decision.final_effect),
                        enforcement_out->status,
                        enforcement_out->code,
                        enforcement_out->reason,
@@ -404,7 +404,7 @@ int yai_session_record_resolution_snapshot(const char *ws_id,
         int brain_rc = yai_storage_bridge_resolution_hook(ws_id,
                                                                 law_out->decision.family_id,
                                                                 law_out->decision.specialization_id,
-                                                                yai_law_effect_name(law_out->decision.final_effect),
+                                                                yai_governance_effect_name(law_out->decision.final_effect),
                                                                 law_out->decision.stack.authority_profile,
                                                                 law_out->evidence.resource,
                                                                 info.policy_attachments_csv,
