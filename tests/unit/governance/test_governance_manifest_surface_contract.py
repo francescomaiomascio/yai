@@ -27,7 +27,7 @@ def main() -> int:
     runtime_surface = layers.get("runtime_surface", {})
     required = [
         runtime_surface.get("classification"),
-        runtime_surface.get("control_families"),
+        runtime_surface.get("families"),
         runtime_surface.get("domain_specializations"),
         runtime_surface.get("manifests"),
         runtime_surface.get("overlays", {}).get("regulatory"),

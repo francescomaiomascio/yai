@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "yai.governance.control-families.family-registry-entry.v1",
+  "$id": "yai.governance.families.family-registry-entry.v1",
   "title": "Control Family Registry Entry v1",
   "type": "object",
   "required": [
@@ -16,7 +16,6 @@
     "canonical_name": { "type": "string", "minLength": 1 },
     "descriptor_ref": { "type": "string", "minLength": 1 },
     "materialized_manifest_ref": { "type": "string", "minLength": 1 },
-    "legacy_family_manifest_ref": { "type": "string" },
     "manifest_ref": { "type": "string" },
     "status": { "type": "string", "minLength": 1 },
     "maturity": { "type": "string", "minLength": 1 }

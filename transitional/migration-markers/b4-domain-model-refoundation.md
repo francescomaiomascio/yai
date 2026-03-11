@@ -4,7 +4,7 @@ Status: completed
 
 Implemented outcomes:
 
-- absorbed `classification/`, `domains/`, `control-families/`, `domain-specializations/`
+- absorbed `classification/`, `domains/`, `families/`, `domain-specializations/`
   into canonical `governance/` tree
 - introduced schema/index-driven domain model matrix
 - wired loader/discovery/resolution/mapping to read matrix for runtime decisions

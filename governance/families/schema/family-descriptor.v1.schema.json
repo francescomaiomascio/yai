@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "yai.governance.control-families.family-descriptor.v1",
+  "$id": "yai.governance.families.family-descriptor.v1",
   "title": "Control Family Descriptor v1",
   "type": "object",
   "required": [
@@ -30,7 +30,6 @@
     "classification_ref": { "type": "string", "minLength": 1 },
     "specializations_ref": { "type": "string", "minLength": 1 },
     "materialized_manifest_ref": { "type": "string", "minLength": 1 },
-    "legacy_family_manifest_ref": { "type": "string" },
     "hierarchy": {
       "type": "object",
       "required": ["specializations"],

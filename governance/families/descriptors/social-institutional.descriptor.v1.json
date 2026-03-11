@@ -1,28 +1,27 @@
 {
   "kind": "control_family_descriptor.v1",
   "version": "v1",
-  "family_id": "D2",
-  "canonical_name": "physical",
-  "display_name": "Physical",
-  "slug": "physical",
-  "internal_id": "D2",
-  "legacy_label": "D2-physical",
+  "family_id": "D4",
+  "canonical_name": "social-institutional",
+  "display_name": "Social-Institutional",
+  "slug": "social-institutional",
+  "internal_id": "D4",
+  "legacy_label": "D4-social-institutional",
   "status": "active",
   "maturity": "seed",
   "classification_ref": "classification/classification-map.json",
   "specializations_ref": "domain-specializations/index/specializations.index.json",
-  "materialized_manifest_ref": "control-families/physical/manifest.json",
-  "legacy_family_manifest_ref": "control-families/physical/family.manifest.json",
+  "materialized_manifest_ref": "families/materialized/social-institutional.manifest.json",
   "hierarchy": {
     "parent": "",
     "specializations": [
-      "actuation-governance",
-      "device-integrity",
-      "safety-window-control"
+      "procedural-authorization",
+      "policy-adherence",
+      "institutional-escalation"
     ]
   },
   "resolution": {
-    "default_specialization": "actuation-governance",
+    "default_specialization": "procedural-authorization",
     "overlay_refs": {
       "regulatory": "overlays/regulatory/index/regulatory.index.json",
       "sector": "overlays/sector/index/sector.index.json",
@@ -33,7 +32,7 @@
   },
   "applicability": {
     "domains": [
-      "physical"
+      "social-institutional"
     ],
     "risk_focus": [],
     "lead_vertical": false
@@ -41,11 +40,11 @@
   "hooks": {
     "policy_composition": {
       "specializations": [
-        "actuation-governance",
-        "device-integrity",
-        "safety-window-control"
+        "procedural-authorization",
+        "policy-adherence",
+        "institutional-escalation"
       ],
-      "legacy_seed_ref": "transitional/domain-family-seed/D2-physical"
+      "legacy_seed_ref": "transitional/domain-family-seed/D4-social-institutional"
     },
     "evidence": {
       "requires_policy_match_trace": false,
@@ -53,8 +52,7 @@
     }
   },
   "source": {
-    "materialized_manifest_ref": "control-families/physical/manifest.json",
-    "legacy_family_manifest_ref": "control-families/physical/family.manifest.json",
+    "materialized_manifest_ref": "families/materialized/social-institutional.manifest.json",
     "generator": "tools/gen/build_control_family_descriptors.py"
   }
 }

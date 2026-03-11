@@ -12,7 +12,7 @@ Top-level destination blocks:
 - `registry/`
 - `classification/`
 - `domains/`
-- `control-families/`
+- `families/`
 - `domain-specializations/`
 - `compliance/`
 - `overlays/`

@@ -26,7 +26,7 @@ Rule of truth:
 | `schema/` | `governance/schema/` | governance schemas | canonical | B7 primary intake |
 | `classification/` | `governance/classification/` | domain/family classification surfaces | canonical | B4 primary intake |
 | `domains/` | `governance/domains/` | domain definitions and shared domain context | canonical | B4 primary intake |
-| `control-families/` | `governance/control-families/` | family-level policy content | canonical | B4 primary intake |
+| `families/` | `governance/families/` | family-level policy content | canonical | B4 primary intake |
 | `domain-specializations/` | `governance/domain-specializations/` | specialization-level policy content | canonical | B4 primary intake |
 | `compliance/` | `governance/compliance/` | compliance overlays, controls, obligations | canonical | B5 primary intake |
 | `overlays/` | `governance/overlays/` | regulatory/sector/context overlays | canonical | B5 primary intake |
@@ -93,7 +93,7 @@ From B1 onward:
 
 - B2: import `authority/` and `foundation/`
 - B3: import `grammar/` and `registry/`
-- B4: import `classification/`, `domains/`, `control-families/`, `domain-specializations/`
+- B4: import `classification/`, `domains/`, `families/`, `domain-specializations/`
 - B5: import `compliance/`, `overlays/`, `packs/`
 - B6: unify `manifests/` (+ formal/vector publish ties)
 - B7: unify `contracts/` and `schema/`

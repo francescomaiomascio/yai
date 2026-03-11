@@ -256,7 +256,7 @@ static int yai_governance_family_exists(const char *family)
     char needle[160];
     if (!family || !family[0])
         return 0;
-    if (yai_governance_root_path(path, sizeof(path), "control-families/index/families.index.json") != 0)
+    if (yai_governance_root_path(path, sizeof(path), "families/index/families.index.json") != 0)
         return 0;
     if (yai_read_text(path, json, sizeof(json)) != 0)
         return 0;

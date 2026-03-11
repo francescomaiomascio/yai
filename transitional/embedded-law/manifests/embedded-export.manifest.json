@@ -56,9 +56,9 @@
     "classification/asset-taxonomy.json",
     "classification/risk-taxonomy.json",
     "classification/signal-taxonomy.json",
-    "control-families/index/families.index.json",
-    "control-families/index/family-naming-registry.json",
-    "control-families/index/family-hierarchy.json",
+    "families/index/families.index.json",
+    "families/index/family-naming-registry.json",
+    "families/index/family-hierarchy.json",
     "domain-specializations/index/specializations.index.json",
     "domain-specializations/index/specialization-taxonomy.json",
     "domain-specializations/index/subdomain-taxonomy.json",
@@ -85,7 +85,7 @@
   ],
   "six_layer_scope": {
     "classification": "classification/",
-    "control_families": "control-families/",
+    "control_families": "families/",
     "domain_specializations": "domain-specializations/",
     "overlays": {
       "regulatory": "overlays/regulatory/",

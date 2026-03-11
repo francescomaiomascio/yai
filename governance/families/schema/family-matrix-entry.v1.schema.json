@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "yai.governance.control-families.family-matrix-entry.v1",
+  "$id": "yai.governance.families.family-matrix-entry.v1",
   "title": "Control Family Matrix Entry v1",
   "type": "object",
   "required": [

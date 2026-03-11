@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "yai.governance.control-families.family-hierarchy-node.v1",
+  "$id": "yai.governance.families.family-hierarchy-node.v1",
   "title": "Control Family Hierarchy Node v1",
   "type": "object",
   "required": ["family_id", "canonical_name", "specializations"],

@@ -1,13 +1,13 @@
 # B4 Domain Model Refoundation Map
 
-Scope: absorb and refound classification/domains/control-families/domain-specializations
+Scope: absorb and refound classification/domains/families/domain-specializations
 as schema-first, index-driven runtime model.
 
 ## Canonical content absorption
 
 - `../law/classification/*` -> `governance/classification/*`
 - `../law/domains/*` -> `governance/domains/*`
-- `../law/control-families/*` -> `governance/control-families/*`
+- `../law/families/*` -> `governance/families/*`
 - `../law/domain-specializations/*` -> `governance/domain-specializations/*`
 
 ## New canonical semantic spine

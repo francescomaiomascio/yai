@@ -7,7 +7,7 @@ GOV = ROOT / "governance"
 
 classification_map = json.loads((GOV / "classification" / "classification-map.json").read_text())
 domains_index = json.loads((GOV / "domains" / "index" / "domains.index.json").read_text())
-families_index = json.loads((GOV / "control-families" / "index" / "families.descriptors.index.json").read_text())
+families_index = json.loads((GOV / "families" / "index" / "families.descriptors.index.json").read_text())
 spec_index = json.loads((GOV / "domain-specializations" / "index" / "specializations.index.json").read_text())
 
 family_to_domain = {}
@@ -58,7 +58,7 @@ family_resolution = []
 
 for fam in runtime_families:
     did = family_to_domain[fam]
-    fmanifest = family_manifest.get(fam, f"control-families/{fam}/manifest.json")
+    fmanifest = family_manifest.get(fam, f"families/materialized/{fam}.manifest.json")
     specs = specs_by_family.get(fam, [])
     default_spec = default_pref.get(fam)
     if default_spec not in {s["id"] for s in specs}:

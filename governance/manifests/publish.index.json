@@ -7,7 +7,7 @@
       "profile": "runtime-consumer.v4",
       "includes": [
         "classification",
-        "control-families",
+        "families",
         "domain-specializations",
         "overlays/regulatory",
         "overlays/sector",

@@ -11,8 +11,7 @@
   "maturity": "seed",
   "classification_ref": "classification/classification-map.json",
   "specializations_ref": "domain-specializations/index/specializations.index.json",
-  "materialized_manifest_ref": "control-families/operational/manifest.json",
-  "legacy_family_manifest_ref": "control-families/operational/family.manifest.json",
+  "materialized_manifest_ref": "families/materialized/operational.manifest.json",
   "hierarchy": {
     "parent": "",
     "specializations": [
@@ -53,8 +52,7 @@
     }
   },
   "source": {
-    "materialized_manifest_ref": "control-families/operational/manifest.json",
-    "legacy_family_manifest_ref": "control-families/operational/family.manifest.json",
+    "materialized_manifest_ref": "families/materialized/operational.manifest.json",
     "generator": "tools/gen/build_control_family_descriptors.py"
   }
 }

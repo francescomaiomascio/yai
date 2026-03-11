@@ -15,5 +15,5 @@ Primary policy semantics remain in:
 - `compliance/`
 - `overlays/`
 - `classification/`
-- `control-families/`
+- `families/`
 - `domain-specializations/`

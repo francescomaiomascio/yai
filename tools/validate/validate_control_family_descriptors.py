@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CF = ROOT / "governance" / "control-families"
+CF = ROOT / "governance" / "families"
 IDX = CF / "index"
 
 families_index = json.loads((IDX / "families.index.json").read_text(encoding="utf-8"))

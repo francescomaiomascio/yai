@@ -11,8 +11,7 @@
   "maturity": "structured",
   "classification_ref": "classification/classification-map.json",
   "specializations_ref": "domain-specializations/index/specializations.index.json",
-  "materialized_manifest_ref": "control-families/scientific/manifest.json",
-  "legacy_family_manifest_ref": "control-families/scientific/family.manifest.json",
+  "materialized_manifest_ref": "families/materialized/scientific.manifest.json",
   "hierarchy": {
     "parent": "",
     "specializations": [
@@ -67,8 +66,7 @@
     }
   },
   "source": {
-    "materialized_manifest_ref": "control-families/scientific/manifest.json",
-    "legacy_family_manifest_ref": "control-families/scientific/family.manifest.json",
+    "materialized_manifest_ref": "families/materialized/scientific.manifest.json",
     "generator": "tools/gen/build_control_family_descriptors.py"
   }
 }

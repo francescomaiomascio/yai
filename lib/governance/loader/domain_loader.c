@@ -69,7 +69,7 @@ int yai_governance_load_control_family_descriptor(const yai_governance_runtime_t
   }
 
   if (yai_governance_read_governance_surface_file(rt,
-                                           "control-families/index/families.descriptors.index.json",
+                                           "families/index/families.descriptors.index.json",
                                            index_json,
                                            sizeof(index_json)) != 0) {
     return -1;
@@ -95,7 +95,6 @@ int yai_governance_load_domain_manifest(const yai_governance_runtime_t *rt,
   char manifest_ref[256];
   int rc;
   const char *roots_primary[] = {
-    "control-families",
     "domain-specializations",
     "domains"
   };

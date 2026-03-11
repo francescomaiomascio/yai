@@ -3,7 +3,7 @@
   "version": "v1",
   "runtime_surface": {
     "classification": "classification/",
-    "control_families": "control-families/",
+    "families": "families/",
     "domain_specializations": "domain-specializations/",
     "overlays": {
       "regulatory": "overlays/regulatory/",

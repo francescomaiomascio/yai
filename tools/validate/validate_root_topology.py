@@ -28,7 +28,7 @@ FORBIDDEN_ROOT_NAMES = {
     "packs",
     "ingestion",
     "vectors",
-    "control-families",
+    "families",
     "domain-specializations",
     "classification",
 }

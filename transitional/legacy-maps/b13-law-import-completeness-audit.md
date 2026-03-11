@@ -13,7 +13,7 @@ Destination compared: `governance/`
 - schema: complete
 - classification: complete
 - domains: complete
-- control-families: complete
+- families: complete
 - domain-specializations: complete
 - compliance: complete
 - overlays: complete

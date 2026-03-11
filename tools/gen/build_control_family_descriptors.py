@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CF = ROOT / "governance" / "control-families"
+CF = ROOT / "governance" / "families"
 IDX = CF / "index"
 DESCRIPTORS = CF / "descriptors"
 
@@ -27,17 +27,14 @@ for f in families_index.get("families", []):
     canonical = f.get("canonical_name")
     if not canonical:
         continue
-    fam_dir = CF / canonical
-    manifest_path = fam_dir / "manifest.json"
-    legacy_manifest_path = fam_dir / "family.manifest.json"
+    manifest_path = CF / "materialized" / f"{canonical}.manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
-    legacy_manifest = json.loads(legacy_manifest_path.read_text(encoding="utf-8")) if legacy_manifest_path.exists() else {}
 
     hierarchy_entry = hier_by_name.get(canonical, {})
     naming_entry = naming_by_name.get(canonical, {})
 
-    descriptor_rel = f"control-families/descriptors/{canonical}.descriptor.v1.json"
-    descriptor_path = ROOT / "governance" / "control-families" / "descriptors" / f"{canonical}.descriptor.v1.json"
+    descriptor_rel = f"families/descriptors/{canonical}.descriptor.v1.json"
+    descriptor_path = ROOT / "governance" / "families" / "descriptors" / f"{canonical}.descriptor.v1.json"
 
     specializations = manifest.get("specializations") or hierarchy_entry.get("specializations") or []
 
@@ -54,8 +51,7 @@ for f in families_index.get("families", []):
         "maturity": f.get("maturity", "seed"),
         "classification_ref": manifest.get("classification_ref", "classification/classification-map.json"),
         "specializations_ref": manifest.get("specializations_ref", "domain-specializations/index/specializations.index.json"),
-        "materialized_manifest_ref": f.get("materialized_manifest_ref") or f.get("manifest_ref") or f"control-families/{canonical}/manifest.json",
-        "legacy_family_manifest_ref": f"control-families/{canonical}/family.manifest.json",
+        "materialized_manifest_ref": f.get("materialized_manifest_ref") or f.get("manifest_ref") or f"families/materialized/{canonical}.manifest.json",
         "hierarchy": {
             "parent": hierarchy_entry.get("parent", ""),
             "specializations": specializations,
@@ -82,8 +78,7 @@ for f in families_index.get("families", []):
             },
         },
         "source": {
-            "materialized_manifest_ref": f"control-families/{canonical}/manifest.json",
-            "legacy_family_manifest_ref": f"control-families/{canonical}/family.manifest.json",
+            "materialized_manifest_ref": f"families/materialized/{canonical}.manifest.json",
             "generator": "tools/gen/build_control_family_descriptors.py",
         },
     }
@@ -96,7 +91,6 @@ for f in families_index.get("families", []):
             "canonical_name": canonical,
             "descriptor_ref": descriptor_rel,
             "materialized_manifest_ref": descriptor["materialized_manifest_ref"],
-            "legacy_family_manifest_ref": descriptor["legacy_family_manifest_ref"],
             "status": descriptor["status"],
             "maturity": descriptor["maturity"],
         }
@@ -135,10 +129,8 @@ for f in families_index.get("families", []):
     if not canonical:
         continue
     enriched = dict(f)
-    enriched.setdefault("descriptor_ref", f"control-families/descriptors/{canonical}.descriptor.v1.json")
-    enriched.setdefault("materialized_manifest_ref", enriched.get("manifest_ref", f"control-families/{canonical}/manifest.json"))
-    enriched.setdefault("legacy_family_manifest_ref", f"control-families/{canonical}/family.manifest.json")
-    # Keep legacy field for compatibility, but no longer primary.
+    enriched.setdefault("descriptor_ref", f"families/descriptors/{canonical}.descriptor.v1.json")
+    enriched.setdefault("materialized_manifest_ref", enriched.get("manifest_ref", f"families/materialized/{canonical}.manifest.json"))
     enriched["manifest_ref"] = enriched["materialized_manifest_ref"]
     updated_families.append(enriched)
 
