@@ -31,6 +31,12 @@ Future law slices can govern:
 OP-1 does not embed law decisions in runtime orchestration.
 It introduces structured runtime signals so law can govern them in later waves.
 
+MF-2 coordination extension:
+- mesh coordination membership is owner-anchored and scope-governed;
+- peer awareness metadata is coordination input, not sovereign authority;
+- ordering/replay/overlap/conflict coordination signals are review/adjudication
+  inputs and not final law verdicts.
+
 SW-1 compatibility:
 - multi-peer orchestration signals are owner-consumed inputs;
 - canonical authority/truth and final adjudication remain workspace owner-side.

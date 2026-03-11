@@ -86,6 +86,12 @@ defining a distributed scheduler.
 - Registry is not the graph projection itself.
 - Coordination baseline is not conflict resolution closure.
 
+MF-2 compatibility:
+- this owner peer registry is the concrete owner-anchored substrate of the Mesh
+  Coordination Plane;
+- peer awareness, coverage/overlap, and ordering/replay signals remain
+  coordination-plane semantics and do not transfer sovereign authority.
+
 ## References
 
 - `docs/architecture/workspace-peer-orchestration-model.md`

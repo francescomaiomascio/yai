@@ -94,6 +94,14 @@ MF-1 discovery data-plane lock:
 - owner discovery and peer discovery remain governed visibility classes;
 - discovery state is preparatory input for enrollment/trust/coordination planes.
 
+MF-2 coordination data-plane lock:
+- workspace peer membership and owner peer-registry records are canonical
+  coordination-plane classes;
+- coordination classes expose distributed operation signals
+  (coverage/overlap/order/replay/conflict pressure) without redefining final
+  owner adjudication;
+- coordination metadata is owner-anchored and not a sovereign truth transfer.
+
 ### 3) Control/Data Path Separation
 Mandatory path:
 

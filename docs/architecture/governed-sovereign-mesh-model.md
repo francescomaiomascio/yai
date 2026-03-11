@@ -144,3 +144,8 @@ MF-A1 provides the canonical base for:
 - MT transport waves and distributed qualification waves
 
 These waves can proceed without re-deciding topology-vs-authority boundaries.
+
+MF-1 and MF-2 concrete foundation docs:
+
+- `docs/architecture/mesh-discovery-foundation-model.md`
+- `docs/architecture/mesh-coordination-foundation-model.md`

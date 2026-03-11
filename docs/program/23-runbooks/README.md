@@ -46,6 +46,7 @@ A good runbook must be deterministic:
 - `docs/program/23-runbooks/workspace-authority-truth-plane-baseline.md`
 - `docs/program/23-runbooks/governed-sovereign-mesh-baseline.md`
 - `docs/program/23-runbooks/mesh-discovery-foundation-baseline.md`
+- `docs/program/23-runbooks/mesh-coordination-foundation-baseline.md`
 
 These runbooks are expected to reflect:
 - unified runtime ownership (`core`, `exec`, `data`, `graph`, `knowledge`),

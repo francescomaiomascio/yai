@@ -76,6 +76,12 @@ MF-1 discovery lock:
 - discovery-scoped node visibility does not imply enrollment/trust completion
   or delegated control authority.
 
+MF-2 coordination lock:
+- workspace binding context anchors coordinated peer membership and registry
+  interpretation;
+- coordination metadata (coverage/overlap/freshness/backlog/order/replay) is
+  operational context and does not alter owner authority boundaries.
+
 ## Workspace-local vs Runtime-global
 
 Workspace-local:

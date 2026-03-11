@@ -73,6 +73,8 @@ MF-A1 governed sovereign mesh foundation is defined in
 `docs/architecture/governed-sovereign-mesh-model.md`.
 MF-1 mesh discovery foundation is defined in
 `docs/architecture/mesh-discovery-foundation-model.md`.
+MF-2 mesh coordination foundation is defined in
+`docs/architecture/mesh-coordination-foundation-model.md`.
 Source-plane entity/contract model is defined in
 `docs/architecture/source-plane-model.md`.
 Owner ingest runtime flow is defined in
@@ -122,3 +124,11 @@ Mesh discovery is an explicit governed visibility/bootstrap plane. Node
 discoverability and topology visibility enable bootstrap and coordination
 handoff, but do not imply trust, enrollment completion, delegated permission,
 or sovereign authority transfer.
+
+## MF-2 coordination lock
+
+Mesh coordination is a distinct plane that manages governed membership,
+owner-anchored registry state, awareness metadata, and distributed
+coverage/overlap/order/replay coordination signals. Coordination improves
+distributed operation but does not transfer final authority or canonical truth
+from owner runtime.
