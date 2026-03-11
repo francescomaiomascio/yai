@@ -3,18 +3,19 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
-YAI_DAEMON="$REPO/build/bin/yai-daemon"
-SOCK="${TMPDIR:-/tmp}/yai-yd5-owner-$$.sock"
+YAI_EDGE="$REPO/build/bin/yai-edge"
+TMP_BASE="${YAI_TMPDIR:-/tmp}"
+SOCK="$TMP_BASE/yai-yd5-owner-$$.sock"
 
-if [[ ! -x "$YAI" || ! -x "$YAI_DAEMON" ]]; then
-  make -C "$REPO" yai yai-daemon >/dev/null
+if [[ ! -x "$YAI" || ! -x "$YAI_EDGE" ]]; then
+  make -C "$REPO" yai yai-edge >/dev/null
 fi
 
-OWNER_HOME="$(mktemp -d "${TMPDIR:-/tmp}/yai_yd5_owner.XXXXXX")"
-DAEMON_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/yai_yd5_daemon.XXXXXX")"
-DAEMON_HOME="$DAEMON_ROOT/home"
-SRC_DIR="$DAEMON_ROOT/sources/inbox"
-CFG_DIR="$DAEMON_ROOT/config"
+OWNER_HOME="$(mktemp -d "$TMP_BASE/yai_yd5_owner.XXXXXX")"
+EDGE_ROOT="$(mktemp -d "$TMP_BASE/yai_yd5_edge.XXXXXX")"
+EDGE_HOME="$EDGE_ROOT/home"
+SRC_DIR="$EDGE_ROOT/sources/inbox"
+CFG_DIR="$EDGE_ROOT/config"
 MANIFEST="$CFG_DIR/source-bindings.manifest.json"
 WS="yd5_source_ws"
 RUNTIME_PID=""
@@ -27,9 +28,9 @@ cleanup() {
   fi
   rm -f "$SOCK" >/dev/null 2>&1 || true
   if [[ "${YD5_KEEP_TMP:-0}" != "1" ]]; then
-    rm -rf "$OWNER_HOME" "$DAEMON_ROOT"
+    rm -rf "$OWNER_HOME" "$EDGE_ROOT"
   else
-    echo "daemon_local_runtime_scan_spool_retry_v1: kept tmp dirs owner=$OWNER_HOME daemon_root=$DAEMON_ROOT daemon_home=$DAEMON_HOME"
+    echo "edge_local_runtime_scan_spool_retry_v1: kept tmp dirs owner=$OWNER_HOME edge_root=$EDGE_ROOT edge_home=$EDGE_HOME"
   fi
 }
 trap cleanup EXIT
@@ -56,19 +57,19 @@ JSON
 rm -f "$SOCK" >/dev/null 2>&1 || true
 
 # Phase 1: owner unavailable -> spool must populate
-YAI_DAEMON_HOME="$DAEMON_HOME" \
-YAI_DAEMON_OWNER_REF="unix://$SOCK" \
-YAI_DAEMON_SOURCE_LABEL="yd5-node-a" \
-YAI_DAEMON_BINDINGS_MANIFEST="$MANIFEST" \
-"$YAI_DAEMON" --tick-ms 120 --max-ticks 8 >/tmp/yai_yd5_daemon_phase1.log 2>&1 || true
+YAI_EDGE_HOME="$EDGE_HOME" \
+YAI_EDGE_OWNER_REF="unix://$SOCK" \
+YAI_EDGE_SOURCE_LABEL="yd5-node-a" \
+YAI_EDGE_BINDINGS_MANIFEST="$MANIFEST" \
+"$YAI_EDGE" --tick-ms 120 --max-ticks 8 >/tmp/yai_yd5_edge_phase1.log 2>&1 || true
 
-Q1="$(find "$DAEMON_HOME/spool/queue" -type f 2>/dev/null || true)"
+Q1="$(find "$EDGE_HOME/spool/queue" -type f 2>/dev/null || true)"
 Q1="$(printf '%s\n' "$Q1" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$Q1" -lt 1 ]]; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: debug queue_count=$Q1 daemon_home=$DAEMON_HOME"
-  find "$DAEMON_HOME" -maxdepth 4 2>/dev/null | sort | sed -n '1,220p'
-  sed -n '1,220p' /tmp/yai_yd5_daemon_phase1.log 2>/dev/null || true
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (queue not populated in disconnected phase)"
+  echo "edge_local_runtime_scan_spool_retry_v1: debug queue_count=$Q1 edge_home=$EDGE_HOME"
+  find "$EDGE_HOME" -maxdepth 4 2>/dev/null | sort | sed -n '1,220p'
+  sed -n '1,220p' /tmp/yai_yd5_edge_phase1.log 2>/dev/null || true
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (queue not populated in disconnected phase)"
   exit 1
 fi
 
@@ -81,7 +82,7 @@ for _ in $(seq 1 80); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (owner socket not ready)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "edge_local_runtime_scan_spool_retry_v1: FAIL (owner socket not ready)"; exit 1; }
 
 HOME="$OWNER_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - "$SOCK" "$WS" <<'PY'
 import json
@@ -151,35 +152,35 @@ expect_ok(call("system", {
 }, "set"), "set")
 PY
 
-YAI_DAEMON_HOME="$DAEMON_HOME" \
-YAI_DAEMON_OWNER_REF="unix://$SOCK" \
-YAI_DAEMON_SOURCE_LABEL="yd5-node-a" \
-YAI_DAEMON_BINDINGS_MANIFEST="$MANIFEST" \
-"$YAI_DAEMON" --tick-ms 120 --max-ticks 18 >/tmp/yai_yd5_daemon_phase2.log 2>&1
+YAI_EDGE_HOME="$EDGE_HOME" \
+YAI_EDGE_OWNER_REF="unix://$SOCK" \
+YAI_EDGE_SOURCE_LABEL="yd5-node-a" \
+YAI_EDGE_BINDINGS_MANIFEST="$MANIFEST" \
+"$YAI_EDGE" --tick-ms 120 --max-ticks 18 >/tmp/yai_yd5_edge_phase2.log 2>&1
 
-D2="$(find "$DAEMON_HOME/spool/delivered" -type f 2>/dev/null || true)"
+D2="$(find "$EDGE_HOME/spool/delivered" -type f 2>/dev/null || true)"
 D2="$(printf '%s\n' "$D2" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$D2" -lt 1 ]]; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (no delivered units after owner recovery)"
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (no delivered units after owner recovery)"
   exit 1
 fi
 
-if [[ ! -f "$DAEMON_HOME/state/health.v1.json" ]]; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (missing daemon health state file)"
+if [[ ! -f "$EDGE_HOME/state/health.v1.json" ]]; then
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (missing edge health state file)"
   exit 1
 fi
-if ! rg -n '"state":"ready"|"state":"degraded"|"state":"stopping"' "$DAEMON_HOME/state/health.v1.json" >/dev/null; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (unexpected health state payload)"
-  exit 1
-fi
-
-if [[ ! -f "$DAEMON_HOME/state/bindings.v1.json" ]]; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (missing bindings state file)"
-  exit 1
-fi
-if ! rg -n '"status":"active"|\"status\":\"degraded\"' "$DAEMON_HOME/state/bindings.v1.json" >/dev/null; then
-  echo "daemon_local_runtime_scan_spool_retry_v1: FAIL (bindings state does not expose runtime status)"
+if ! rg -n '"state":"ready"|"state":"degraded"|"state":"stopping"' "$EDGE_HOME/state/health.v1.json" >/dev/null; then
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (unexpected health state payload)"
   exit 1
 fi
 
-echo "daemon_local_runtime_scan_spool_retry_v1: ok"
+if [[ ! -f "$EDGE_HOME/state/bindings.v1.json" ]]; then
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (missing bindings state file)"
+  exit 1
+fi
+if ! rg -n '"status":"active"|\"status\":\"degraded\"' "$EDGE_HOME/state/bindings.v1.json" >/dev/null; then
+  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (bindings state does not expose runtime status)"
+  exit 1
+fi
+
+echo "edge_local_runtime_scan_spool_retry_v1: ok"

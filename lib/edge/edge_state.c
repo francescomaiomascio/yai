@@ -2,7 +2,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/daemon/edge_state.h>
+#include <yai/edge/edge_state.h>
 
 static int copy_string(char *dst, size_t dst_cap, const char *src)
 {
@@ -22,9 +22,9 @@ static int64_t now_epoch(void)
   return (int64_t)time(NULL);
 }
 
-int yai_daemon_edge_state_init(yai_daemon_edge_state_t *state,
-                               const yai_daemon_config_t *cfg,
-                               const yai_daemon_paths_t *paths,
+int yai_edge_edge_state_init(yai_edge_edge_state_t *state,
+                               const yai_edge_config_t *cfg,
+                               const yai_edge_paths_t *paths,
                                const char *instance_id)
 {
   (void)paths;
@@ -34,7 +34,7 @@ int yai_daemon_edge_state_init(yai_daemon_edge_state_t *state,
   }
   memset(state, 0, sizeof(*state));
 
-  (void)copy_string(state->phase, sizeof(state->phase), YAI_DAEMON_EDGE_PHASE_BOOTSTRAP);
+  (void)copy_string(state->phase, sizeof(state->phase), YAI_EDGE_EDGE_PHASE_BOOTSTRAP);
   (void)copy_string(state->runtime_status, sizeof(state->runtime_status), "initializing");
   (void)copy_string(state->source_label, sizeof(state->source_label), cfg->source_label);
   (void)copy_string(state->node_identity_state, sizeof(state->node_identity_state), "pending");
@@ -70,7 +70,7 @@ int yai_daemon_edge_state_init(yai_daemon_edge_state_t *state,
   return 0;
 }
 
-int yai_daemon_edge_state_set_phase(yai_daemon_edge_state_t *state, const char *phase)
+int yai_edge_edge_state_set_phase(yai_edge_edge_state_t *state, const char *phase)
 {
   if (!state || !phase || !phase[0])
   {
@@ -79,7 +79,7 @@ int yai_daemon_edge_state_set_phase(yai_daemon_edge_state_t *state, const char *
   return copy_string(state->phase, sizeof(state->phase), phase);
 }
 
-int yai_daemon_edge_state_set_runtime_status(yai_daemon_edge_state_t *state, const char *status)
+int yai_edge_edge_state_set_runtime_status(yai_edge_edge_state_t *state, const char *status)
 {
   if (!state || !status || !status[0])
   {
@@ -88,8 +88,8 @@ int yai_daemon_edge_state_set_runtime_status(yai_daemon_edge_state_t *state, con
   return copy_string(state->runtime_status, sizeof(state->runtime_status), status);
 }
 
-int yai_daemon_edge_state_refresh_from_local(yai_daemon_edge_state_t *state,
-                                             const yai_daemon_local_runtime_t *local,
+int yai_edge_edge_state_refresh_from_local(yai_edge_edge_state_t *state,
+                                             const yai_edge_local_runtime_t *local,
                                              uint32_t tick_count)
 {
   if (!state)
@@ -207,24 +207,24 @@ int yai_daemon_edge_state_refresh_from_local(yai_daemon_edge_state_t *state,
 
   if (!local->owner_connected)
   {
-    (void)copy_string(state->phase, sizeof(state->phase), YAI_DAEMON_EDGE_PHASE_DISCONNECTED);
+    (void)copy_string(state->phase, sizeof(state->phase), YAI_EDGE_EDGE_PHASE_DISCONNECTED);
     (void)copy_string(state->runtime_status, sizeof(state->runtime_status), "degraded");
   }
-  else if (strcmp(local->health_state, YAI_DAEMON_HEALTH_DEGRADED) == 0)
+  else if (strcmp(local->health_state, YAI_EDGE_HEALTH_DEGRADED) == 0)
   {
-    (void)copy_string(state->phase, sizeof(state->phase), YAI_DAEMON_EDGE_PHASE_DEGRADED);
+    (void)copy_string(state->phase, sizeof(state->phase), YAI_EDGE_EDGE_PHASE_DEGRADED);
     (void)copy_string(state->runtime_status, sizeof(state->runtime_status), "degraded");
   }
   else
   {
-    (void)copy_string(state->phase, sizeof(state->phase), YAI_DAEMON_EDGE_PHASE_OBSERVATION_LOOP);
+    (void)copy_string(state->phase, sizeof(state->phase), YAI_EDGE_EDGE_PHASE_OBSERVATION_LOOP);
     (void)copy_string(state->runtime_status, sizeof(state->runtime_status), "running");
   }
 
   return 0;
 }
 
-int yai_daemon_edge_state_json(const yai_daemon_edge_state_t *state,
+int yai_edge_edge_state_json(const yai_edge_edge_state_t *state,
                                char *out,
                                size_t out_cap)
 {

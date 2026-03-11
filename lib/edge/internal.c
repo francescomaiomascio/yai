@@ -34,7 +34,7 @@ static int ensure_dir_component(const char *path)
   return -1;
 }
 
-int yai_daemon_write_file(const char *path, const char *payload)
+int yai_edge_write_file(const char *path, const char *payload)
 {
   FILE *f = NULL;
   if (!path || !payload)
@@ -55,7 +55,7 @@ int yai_daemon_write_file(const char *path, const char *payload)
   return 0;
 }
 
-int yai_daemon_mkdir_recursive(const char *path)
+int yai_edge_mkdir_recursive(const char *path)
 {
   char tmp[1024];
   size_t i = 0;
@@ -87,7 +87,7 @@ int yai_daemon_mkdir_recursive(const char *path)
   return 0;
 }
 
-void yai_daemon_vlog(const char *instance_id,
+void yai_edge_vlog(const char *instance_id,
                      const char *level,
                      const char *fmt,
                      va_list ap)
@@ -104,7 +104,7 @@ void yai_daemon_vlog(const char *instance_id,
   }
   (void)strftime(ts, sizeof(ts), "%Y-%m-%dT%H:%M:%SZ", &tmv);
 
-  fprintf(stderr, "[%s] yai-daemon %s %s: ", ts, id, lvl);
+  fprintf(stderr, "[%s] yai-edge %s %s: ", ts, id, lvl);
   vfprintf(stderr, fmt, ap);
   fputc('\n', stderr);
 }

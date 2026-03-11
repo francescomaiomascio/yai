@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/daemon/action_point.h>
+#include <yai/edge/action_point.h>
 
 static unsigned long fnv1a(const char *s)
 {
@@ -19,7 +19,7 @@ static unsigned long fnv1a(const char *s)
   return h;
 }
 
-int yai_daemon_action_point_id(char *out,
+int yai_edge_action_point_id(char *out,
                                size_t out_cap,
                                const char *source_binding_id,
                                const char *action_ref)

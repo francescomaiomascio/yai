@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/daemon/edge_services.h>
+#include <yai/edge/edge_services.h>
 
-static void service_slot_init(yai_daemon_service_slot_t *slot, const char *name)
+static void service_slot_init(yai_edge_service_slot_t *slot, const char *name)
 {
   if (!slot)
   {
@@ -16,7 +16,7 @@ static void service_slot_init(yai_daemon_service_slot_t *slot, const char *name)
   (void)snprintf(slot->mode, sizeof(slot->mode), "%s", "placeholder");
 }
 
-static void service_slot_start(yai_daemon_service_slot_t *slot)
+static void service_slot_start(yai_edge_service_slot_t *slot)
 {
   if (!slot || !slot->enabled)
   {
@@ -26,7 +26,7 @@ static void service_slot_start(yai_daemon_service_slot_t *slot)
   slot->ticks = 0;
 }
 
-static void service_slot_tick(yai_daemon_service_slot_t *slot)
+static void service_slot_tick(yai_edge_service_slot_t *slot)
 {
   if (!slot || !slot->enabled || !slot->ready)
   {
@@ -35,7 +35,7 @@ static void service_slot_tick(yai_daemon_service_slot_t *slot)
   slot->ticks += 1U;
 }
 
-static void service_slot_stop(yai_daemon_service_slot_t *slot)
+static void service_slot_stop(yai_edge_service_slot_t *slot)
 {
   if (!slot)
   {
@@ -44,7 +44,7 @@ static void service_slot_stop(yai_daemon_service_slot_t *slot)
   slot->ready = 0;
 }
 
-int yai_daemon_edge_services_init(yai_daemon_edge_services_t *services)
+int yai_edge_edge_services_init(yai_edge_edge_services_t *services)
 {
   if (!services)
   {
@@ -61,7 +61,7 @@ int yai_daemon_edge_services_init(yai_daemon_edge_services_t *services)
   return 0;
 }
 
-int yai_daemon_edge_services_start(yai_daemon_edge_services_t *services)
+int yai_edge_edge_services_start(yai_edge_edge_services_t *services)
 {
   if (!services)
   {
@@ -77,7 +77,7 @@ int yai_daemon_edge_services_start(yai_daemon_edge_services_t *services)
   return 0;
 }
 
-int yai_daemon_edge_services_tick(yai_daemon_edge_services_t *services)
+int yai_edge_edge_services_tick(yai_edge_edge_services_t *services)
 {
   if (!services)
   {
@@ -93,7 +93,7 @@ int yai_daemon_edge_services_tick(yai_daemon_edge_services_t *services)
   return 0;
 }
 
-int yai_daemon_edge_services_stop(yai_daemon_edge_services_t *services)
+int yai_edge_edge_services_stop(yai_edge_edge_services_t *services)
 {
   if (!services)
   {

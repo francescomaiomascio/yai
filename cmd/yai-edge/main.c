@@ -6,16 +6,16 @@
 #include <unistd.h>
 
 #include <yai/api/version.h>
-#include <yai/daemon/config.h>
-#include <yai/daemon/lifecycle.h>
-#include <yai/daemon/runtime.h>
+#include <yai/edge/config.h>
+#include <yai/edge/lifecycle.h>
+#include <yai/edge/runtime.h>
 
 static void print_help(void)
 {
-  puts("yai-daemon - subordinate edge runtime daemon (ER-1 baseline)");
+  puts("yai-edge - subordinate edge runtime (ER-1 baseline)");
   printf("version: %s\n", YAI_VERSION_STRING);
   puts("");
-  puts("usage: yai-daemon [options]");
+  puts("usage: yai-edge [options]");
   puts("  --help                    show help");
   puts("  --config <path>           config file path (KEY=VALUE lines)");
   puts("  --owner-ref <ref>         owner runtime reference placeholder");
@@ -26,12 +26,13 @@ static void print_help(void)
   puts("  --max-ticks <n>           exit after n ticks (0 = run until signal)");
   puts("");
   puts("environment:");
-  puts("  YAI_DAEMON_HOME, YAI_DAEMON_CONFIG, YAI_DAEMON_OWNER_REF,");
-  puts("  YAI_DAEMON_SOURCE_LABEL, YAI_DAEMON_LOG_LEVEL, YAI_DAEMON_MODE,");
-  puts("  YAI_DAEMON_BINDINGS_MANIFEST, YAI_DAEMON_TICK_MS, YAI_DAEMON_MAX_TICKS");
+  puts("  YAI_EDGE_HOME, YAI_EDGE_CONFIG, YAI_EDGE_OWNER_REF,");
+  puts("  YAI_EDGE_SOURCE_LABEL, YAI_EDGE_LOG_LEVEL, YAI_EDGE_MODE,");
+  puts("  YAI_EDGE_BINDINGS_MANIFEST, YAI_EDGE_TICK_MS, YAI_EDGE_MAX_TICKS");
   puts("");
   puts("guardrails:");
-  puts("  - yai-daemon is subordinate to owner workspace sovereignty");
+  puts("  - yai-edge is subordinate to owner workspace sovereignty");
+  puts("  - legacy alias `yai-daemon` remains available for compatibility");
   puts("  - explicit lifecycle: bootstrap -> config -> identity -> scope -> runtime");
   puts("  - local action mediation/enforcement is delegated and owner-scoped");
   puts("  - local outcomes baseline: observe_only|allow|block|hold|execute|escalate");
@@ -53,7 +54,7 @@ static int read_hostname(char *dst, size_t dst_cap)
   return 0;
 }
 
-static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
+static int parse_args(int argc, char **argv, yai_edge_config_t *cfg)
 {
   int i = 0;
 
@@ -66,7 +67,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--config") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_set_string(cfg->config_path, sizeof(cfg->config_path), argv[++i]) != 0)
+      if (yai_edge_config_set_string(cfg->config_path, sizeof(cfg->config_path), argv[++i]) != 0)
       {
         return -1;
       }
@@ -74,7 +75,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--owner-ref") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_set_string(cfg->owner_ref, sizeof(cfg->owner_ref), argv[++i]) != 0)
+      if (yai_edge_config_set_string(cfg->owner_ref, sizeof(cfg->owner_ref), argv[++i]) != 0)
       {
         return -1;
       }
@@ -82,7 +83,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--source-label") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_set_string(cfg->source_label, sizeof(cfg->source_label), argv[++i]) != 0)
+      if (yai_edge_config_set_string(cfg->source_label, sizeof(cfg->source_label), argv[++i]) != 0)
       {
         return -1;
       }
@@ -90,7 +91,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--log-level") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_set_string(cfg->log_level, sizeof(cfg->log_level), argv[++i]) != 0)
+      if (yai_edge_config_set_string(cfg->log_level, sizeof(cfg->log_level), argv[++i]) != 0)
       {
         return -1;
       }
@@ -98,7 +99,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--mode") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_set_string(cfg->mode, sizeof(cfg->mode), argv[++i]) != 0)
+      if (yai_edge_config_set_string(cfg->mode, sizeof(cfg->mode), argv[++i]) != 0)
       {
         return -1;
       }
@@ -106,7 +107,7 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--tick-ms") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_parse_uint(argv[++i], &cfg->tick_ms) != 0)
+      if (yai_edge_config_parse_uint(argv[++i], &cfg->tick_ms) != 0)
       {
         return -1;
       }
@@ -114,14 +115,14 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
     }
     if (strcmp(argv[i], "--max-ticks") == 0 && i + 1 < argc)
     {
-      if (yai_daemon_config_parse_int(argv[++i], &cfg->max_ticks) != 0)
+      if (yai_edge_config_parse_int(argv[++i], &cfg->max_ticks) != 0)
       {
         return -1;
       }
       continue;
     }
 
-    fprintf(stderr, "yai-daemon: unknown/invalid argument: %s\n", argv[i]);
+    fprintf(stderr, "yai-edge: unknown/invalid argument: %s\n", argv[i]);
     return -1;
   }
 
@@ -130,16 +131,16 @@ static int parse_args(int argc, char **argv, yai_daemon_config_t *cfg)
 
 int main(int argc, char **argv)
 {
-  yai_daemon_config_t cfg;
-  yai_daemon_runtime_t rt;
+  yai_edge_config_t cfg;
+  yai_edge_runtime_t rt;
   int rc = 0;
 
-  if (yai_daemon_config_defaults(&cfg) != 0)
+  if (yai_edge_config_defaults(&cfg) != 0)
   {
-    fprintf(stderr, "yai-daemon: failed to initialize defaults\n");
+    fprintf(stderr, "yai-edge: failed to initialize defaults\n");
     return 70;
   }
-  (void)yai_daemon_config_apply_env(&cfg);
+  (void)yai_edge_config_apply_env(&cfg);
 
   rc = parse_args(argc, argv, &cfg);
   if (rc == 1)
@@ -151,8 +152,8 @@ int main(int argc, char **argv)
     return 64;
   }
 
-  (void)yai_daemon_config_apply_file(&cfg, cfg.config_path);
-  (void)yai_daemon_config_apply_env(&cfg);
+  (void)yai_edge_config_apply_file(&cfg, cfg.config_path);
+  (void)yai_edge_config_apply_env(&cfg);
   /* Re-apply CLI args so explicit flags override file values deterministically. */
   rc = parse_args(argc, argv, &cfg);
   if (rc != 0)
@@ -164,50 +165,50 @@ int main(int argc, char **argv)
   {
     if (read_hostname(cfg.source_label, sizeof(cfg.source_label)) != 0)
     {
-      (void)yai_daemon_config_set_string(cfg.source_label, sizeof(cfg.source_label), "source-node");
+      (void)yai_edge_config_set_string(cfg.source_label, sizeof(cfg.source_label), "source-node");
     }
   }
 
-  rc = yai_daemon_config_validate(&cfg);
+  rc = yai_edge_config_validate(&cfg);
   if (rc != 0)
   {
-    fprintf(stderr, "yai-daemon: config validation failed rc=%d\n", rc);
+    fprintf(stderr, "yai-edge: config validation failed rc=%d\n", rc);
     return 78;
   }
 
   if (strcmp(cfg.mode, "background") == 0)
   {
     fprintf(stderr,
-            "yai-daemon: background mode placeholder only; use --mode foreground in YD-2\n");
+            "yai-edge: background mode placeholder only; use --mode foreground in YD-2\n");
     return 78;
   }
 
-  rc = yai_daemon_runtime_init(&rt, &cfg);
+  rc = yai_edge_runtime_init(&rt, &cfg);
   if (rc != 0)
   {
-    fprintf(stderr, "yai-daemon: runtime init failed rc=%d\n", rc);
+    fprintf(stderr, "yai-edge: runtime init failed rc=%d\n", rc);
     return 70;
   }
-  if (yai_daemon_lifecycle_install_signals() != 0)
+  if (yai_edge_lifecycle_install_signals() != 0)
   {
-    fprintf(stderr, "yai-daemon: failed to install signal handlers\n");
+    fprintf(stderr, "yai-edge: failed to install signal handlers\n");
     return 70;
   }
-  if (yai_daemon_runtime_start(&rt) != 0)
+  if (yai_edge_runtime_start(&rt) != 0)
   {
-    fprintf(stderr, "yai-daemon: runtime start failed\n");
+    fprintf(stderr, "yai-edge: runtime start failed\n");
     return 70;
   }
 
-  rc = yai_daemon_lifecycle_run_foreground(&rt);
+  rc = yai_edge_lifecycle_run_foreground(&rt);
   if (rc != 0)
   {
-    fprintf(stderr, "yai-daemon: foreground loop failed rc=%d\n", rc);
+    fprintf(stderr, "yai-edge: foreground loop failed rc=%d\n", rc);
   }
 
-  if (yai_daemon_runtime_shutdown(&rt) != 0)
+  if (yai_edge_runtime_shutdown(&rt) != 0)
   {
-    fprintf(stderr, "yai-daemon: shutdown failed\n");
+    fprintf(stderr, "yai-edge: shutdown failed\n");
     return 70;
   }
 

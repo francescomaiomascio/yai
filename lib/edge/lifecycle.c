@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/daemon/lifecycle.h>
+#include <yai/edge/lifecycle.h>
 
 static volatile sig_atomic_t g_stop_requested = 0;
 
@@ -15,7 +15,7 @@ static void on_signal(int sig)
   g_stop_requested = 1;
 }
 
-int yai_daemon_lifecycle_install_signals(void)
+int yai_edge_lifecycle_install_signals(void)
 {
   struct sigaction sa;
   memset(&sa, 0, sizeof(sa));
@@ -32,12 +32,12 @@ int yai_daemon_lifecycle_install_signals(void)
   return 0;
 }
 
-int yai_daemon_lifecycle_should_stop(void)
+int yai_edge_lifecycle_should_stop(void)
 {
   return g_stop_requested ? 1 : 0;
 }
 
-int yai_daemon_lifecycle_run_foreground(yai_daemon_runtime_t *rt)
+int yai_edge_lifecycle_run_foreground(yai_edge_runtime_t *rt)
 {
   struct timespec req;
   int max_ticks = 0;
@@ -50,9 +50,9 @@ int yai_daemon_lifecycle_run_foreground(yai_daemon_runtime_t *rt)
   req.tv_sec = rt->config.tick_ms / 1000U;
   req.tv_nsec = (long)(rt->config.tick_ms % 1000U) * 1000000L;
 
-  while (!yai_daemon_lifecycle_should_stop())
+  while (!yai_edge_lifecycle_should_stop())
   {
-    if (yai_daemon_runtime_tick(rt) != 0)
+    if (yai_edge_runtime_tick(rt) != 0)
     {
       return -2;
     }

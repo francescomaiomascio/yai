@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/daemon/paths.h>
+#include <yai/edge/paths.h>
 #include <yai/support/paths.h>
 
 #include "internal.h"
 
-int yai_daemon_paths_build(const yai_daemon_config_t *cfg, yai_daemon_paths_t *paths)
+int yai_edge_paths_build(const yai_edge_config_t *cfg, yai_edge_paths_t *paths)
 {
   if (!cfg || !paths)
   {
@@ -46,7 +46,7 @@ int yai_daemon_paths_build(const yai_daemon_config_t *cfg, yai_daemon_paths_t *p
   {
     return -1;
   }
-  if (yai_path_join(paths->pid_file, sizeof(paths->pid_file), paths->run_dir, "yai-daemon.pid") != 0)
+  if (yai_path_join(paths->pid_file, sizeof(paths->pid_file), paths->run_dir, "yai-edge.pid") != 0)
   {
     return -1;
   }
@@ -64,20 +64,20 @@ int yai_daemon_paths_build(const yai_daemon_config_t *cfg, yai_daemon_paths_t *p
   return 0;
 }
 
-int yai_daemon_paths_ensure(const yai_daemon_paths_t *paths)
+int yai_edge_paths_ensure(const yai_edge_paths_t *paths)
 {
   if (!paths)
   {
     return -1;
   }
-  if (yai_daemon_mkdir_recursive(paths->home) != 0 ||
-      yai_daemon_mkdir_recursive(paths->config_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->state_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->log_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->spool_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->bindings_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->identity_dir) != 0 ||
-      yai_daemon_mkdir_recursive(paths->run_dir) != 0)
+  if (yai_edge_mkdir_recursive(paths->home) != 0 ||
+      yai_edge_mkdir_recursive(paths->config_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->state_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->log_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->spool_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->bindings_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->identity_dir) != 0 ||
+      yai_edge_mkdir_recursive(paths->run_dir) != 0)
   {
     return -1;
   }
