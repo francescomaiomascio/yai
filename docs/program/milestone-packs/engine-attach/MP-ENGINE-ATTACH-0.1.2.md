@@ -1,0 +1,48 @@
+---
+id: MP-ENGINE-ATTACH-0.1.2
+status: draft
+runbook: docs/runbooks/operations/program/engine-attach.md
+phase: "0.1.2 — EA-2 workspace contract validation"
+adrs:
+  - docs/program/adr/ADR-007-workspace-isolation.md
+  - docs/program/adr/ADR-009-engine-attachment.md
+  - docs/program/adr/ADR-012-audit-convergence-gates.md
+spec_anchors:
+  - ../law/contracts/protocol/include/auth.h
+  - ../law/contracts/control/schema/authority.v1.json
+  - ../law/registry/commands.v1.json
+claims:
+  - C-DOMAIN-COVERAGE-RESOURCE
+  - C-CONTEXT-PROPAGATION
+evidence_commands_required:
+  - tools/bin/yai-verify
+  - tools/bin/yai-gate
+issues:
+  - "N/A: engine-attach wave sequencing"
+---
+
+# MP-ENGINE-ATTACH-0.1.2
+
+## Metadata
+- Runbook: `docs/runbooks/operations/program/engine-attach.md`
+- Phase: `0.1.2 — EA-2 workspace contract validation`
+- Status: `draft`
+
+## Objective
+Enforce workspace-bound attach semantics (identity, isolation, path-jail interactions).
+
+## Mandatory command outcomes
+- `tools/bin/yai-verify` -> `PASS`
+- `tools/bin/yai-gate` -> `PASS`
+
+Closure policy: mandatory `SKIP` is treated as `FAIL`.
+
+## Definition of Done
+- [ ] Workspace mismatch is hard rejected.
+- [ ] No cross-workspace side effects under negative tests.
+- [ ] Workspace-open readiness checks include governed engine probe.
+- [ ] Evidence links and logs archived.
+
+## Execution Snapshot
+- Status: `PLANNED`
+- Evidence bundle: `docs/program/milestone-packs/engine-attach/evidence/0.1.2/`

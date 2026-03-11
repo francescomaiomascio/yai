@@ -1,21 +1,20 @@
-# yai docs
+# Documentation
 
-Central documentation root for the unified YAI repository.
+Canonical documentation for the unified YAI platform.
 
-## Canonical documentation areas
+## Navigation
 
-- `architecture/`
-- `operators/`
-- `developers/`
-- `product/`
-- `reference/`
+- `architecture/` system architecture by domain.
+- `guides/` audience guides (developer, operator, user).
+- `runbooks/` operational procedures, qualification, demos, remediation.
+- `reference/` technical reference surfaces (CLI, protocol, schemas, registries, commands).
+- `program/` RFC/ADR/milestone/templates/policies/reports.
+- `product/` product scenarios, demos, and pre-pilot assets.
+- `generated/` generated documentation artifacts.
+- `archive/` legacy, migration, and historical architecture material.
 
-## Active program and migration tracking
+## Rules
 
-- `program/` (ADR/runbooks/reports and program delivery tracking)
-
-## Transitional policy
-
-- legacy/superseded materials may remain during migration, but canonical
-  architecture and operator guidance must converge under the five documentation
-  areas above.
+- New architecture docs go under `docs/architecture/` only.
+- New user/developer/operator docs go under `docs/guides/`.
+- Historical or superseded material must go under `docs/archive/`.

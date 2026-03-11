@@ -1,0 +1,62 @@
+---
+id: ADR-008
+status: accepted
+effective_date: 2026-02-18
+supersedes: []
+applies_to:
+  runbook: docs/runbooks/operations/program/workspaces-lifecycle.md
+  phase: 0.1.1
+  anchor: "#phase-0-1-1-ws-create-guardrails"
+law_refs:
+  - ../law/foundation/invariants/I-001-traceability.md
+  - ../law/foundation/invariants/I-002-determinism.md
+  - ../law/foundation/invariants/I-003-governance.md
+  - ../law/contracts/protocol/include/session.h
+  - ../law/contracts/protocol/include/transport.h
+---
+# ADR-008 - Connection Lifecycle Semantics
+
+## Context
+
+Connection semantics are foundational for deterministic control-plane behavior and must stay consistent across Root and workspace-attached sessions.
+
+## Decision
+
+Two connection states are supported:
+
+- Root session
+- Workspace-attached session
+
+Lifecycle rules:
+
+- Handshake is mandatory before execution
+- Workspace attach is mandatory for runtime-bound operations
+- Reconnect requires fresh handshake
+- Reject paths must remain deterministic and traceable
+
+## Rationale
+
+A strict lifecycle avoids hidden state transitions and improves forensic clarity for failures.
+
+## Consequences
+
+- Positive:
+  - Cleaner protocol guarantees and stable observability.
+  - Better fit for non-skip proof requirements.
+- Negative:
+  - Partial implementations cannot be presented as full readiness.
+
+## Traceability
+
+- Proposals:
+  - `docs/program/rfc/RFC-003-workspace-lifecycle-and-isolation.md`
+- Implemented by runbooks:
+  - `docs/runbooks/operations/program/workspaces-lifecycle.md`
+  - `docs/runbooks/operations/program/engine-attach.md`
+- Milestone packs:
+  - `docs/program/milestone-packs/workspaces-lifecycle/MP-WORKSPACES-LIFECYCLE-0.1.0.md` *(planned)*
+  - `docs/program/milestone-packs/engine-attach/MP-ENGINE-ATTACH-0.1.0.md` *(planned)*
+
+## Status
+
+Accepted and active, with remaining evidence hardening tracked in runbook phases.

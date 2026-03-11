@@ -1,0 +1,14 @@
+# 25 Templates
+
+Canonical templates for governance artifacts in this repository.
+
+Use these templates when creating new documents:
+- ADR template: `docs/program/templates/adr/ADR-000-template.md`
+- RFC template: `docs/program/templates/rfc/RFC-000-template.md`
+- Runbook template: `docs/program/templates/runbooks/RB-000-template.md`
+- Milestone Pack template: `docs/program/templates/milestone-packs/MP-000-template.md`
+
+Rules:
+- Keep IDs stable (`ADR-`, `RFC-`, `RB-`, `MP-`).
+- Add explicit traceability links (RFC -> ADR -> runbook -> MP -> evidence).
+- Do not publish closure artifacts with missing mandatory evidence.

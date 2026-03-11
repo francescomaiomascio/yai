@@ -412,7 +412,7 @@ yd1-baseline: yai yai-edge
 	@echo "  edge/source runtime: build/bin/yai-edge"
 	@echo "  refs:"
 	@echo "    docs/architecture/daemon-architecture-refoundation-model.md"
-	@echo "    docs/program/22-adr/ADR-015-daemon-architecture-refoundation-slice.md"
+	@echo "    docs/program/adr/ADR-015-daemon-architecture-refoundation-slice.md"
 
 legacy-build:
 	@echo "--- [YAI] legacy-build removed: legacy top-level planes were decommissioned ---"

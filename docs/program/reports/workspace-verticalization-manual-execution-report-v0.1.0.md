@@ -5,8 +5,8 @@ owner: runtime-governance
 updated: 2026-03-10
 scope: [yai, yai-law, yai-cli, yai-sdk]
 related:
-  - docs/program/audit-convergence/WORKSPACE-VERTICALIZATION-MANUAL-TEST-COMMAND-PACK-v0.1.0.md
-  - docs/program/audit-convergence/WORKSPACE-VERTICALIZATION-ECOSYSTEM-VERIFICATION-MATRIX-v0.1.0.md
+  - docs/program/reports/audit-convergence/WORKSPACE-VERTICALIZATION-MANUAL-TEST-COMMAND-PACK-v0.1.0.md
+  - docs/program/reports/audit-convergence/WORKSPACE-VERTICALIZATION-ECOSYSTEM-VERIFICATION-MATRIX-v0.1.0.md
   - docs/program/reports/workspace-verticalization-gap-classification-v0.1.0.md
   - docs/program/reports/workspace-verticalization-hardening-backlog-v0.1.0.md
 ---
