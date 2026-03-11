@@ -15,17 +15,13 @@ No external governance repository is required for canonical operation.
 1. Update normative governance artifacts first (`governance/`).
 2. Align runtime/tooling consumers to canonical paths.
 3. Validate with canonical validators and smoke suites.
-4. Keep migration traces only under `transitional/`.
+4. Keep migration traces only in historical docs/report areas under `docs/`.
 
 ## Boundaries
 
 - `governance/` defines policy/contract/schema semantics.
 - runtime enforces and materializes governed behavior.
 - docs explain, but do not supersede normative artifacts.
-
-## Transitional policy
-
-`transitional/` is non-canonical and shrink-to-zero. It may hold migration evidence only.
 
 ## License
 

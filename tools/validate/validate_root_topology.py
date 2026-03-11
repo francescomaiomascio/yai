@@ -14,10 +14,10 @@ CANONICAL_REQUIRED = {
     "tests",
     "tools",
     "data",
-    "transitional",
 }
 
 FORBIDDEN_ROOT_NAMES = {
+    "transitional",
     "archive_tmp",
     "embedded",
     "grammar",

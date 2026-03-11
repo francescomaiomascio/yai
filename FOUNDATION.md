@@ -33,8 +33,6 @@ This repository is the single canonical system root.
 - `tools/`
 - `data/`
 
-`transitional/` is migration-only and not part of canonical 1.0.0 topology.
-
 ## License
 
 Apache-2.0.

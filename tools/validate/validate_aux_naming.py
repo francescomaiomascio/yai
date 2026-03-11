@@ -21,13 +21,6 @@ TOOL_PATTERNS = [
     re.compile(r"build_overlay_compliance_runtime_view"),
 ]
 
-TRANSITIONAL_PATTERNS = [
-    re.compile(r"governance-foundation-formal-repartition-map"),
-    re.compile(r"domain-specializations-dehardcoding"),
-    re.compile(r"final-repo-convergence-and-law-sunset"),
-]
-
-
 def find_violations(base: str, globs: list[str], patterns: list[re.Pattern[str]]) -> list[str]:
     out: list[str] = []
     for g in globs:
@@ -45,8 +38,6 @@ def main() -> int:
 
     violations.extend(find_violations("tests", ["**/*.sh"], TEST_PATTERNS))
     violations.extend(find_violations("tools", ["**/*.py", "**/*.sh", "**/*"], TOOL_PATTERNS))
-    violations.extend(find_violations("transitional", ["**/*.md", "**/*.json"], TRANSITIONAL_PATTERNS))
-
     if violations:
         print("aux naming validation: FAIL")
         for v in sorted(set(violations)):

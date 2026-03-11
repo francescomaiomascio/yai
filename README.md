@@ -15,7 +15,7 @@
 
 - split-repository topology is sunset
 - the former separate governance repository is no longer an operational prerequisite for build/test/release in this repository
-- embedded legacy surfaces are removed from active root topology (historical traces are transitional-only)
+- embedded and transitional legacy surfaces are removed from active root topology
 
 ## Governance model
 
@@ -26,7 +26,6 @@ by runtime/tooling from canonical paths.
 ## Program baseline
 
 - roadmap closure: `docs/program/repo-unico-overview-32-consegne.md`
-- migration closure markers: `transitional/migration-markers/`
 
 ## Start here
 

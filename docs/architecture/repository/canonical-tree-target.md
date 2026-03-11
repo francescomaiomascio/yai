@@ -17,7 +17,6 @@ Canonical roots:
 - `tests/`
 - `tools/`
 - `data/`
-- `transitional/`
 
 Non-canonical/transitional root:
 
@@ -29,7 +28,7 @@ Non-canonical/transitional root:
 2. Governance content: `governance/`
 3. Foundation + formal methods: `foundation/`, `formal/`
 4. Documentation/reference: `docs/`
-5. Validation/tooling + migration-control: `tests/`, `tools/`, `data/`, `transitional/`
+5. Validation/tooling/data: `tests/`, `tools/`, `data/`
 
 ## Canonical Role Lock
 
@@ -37,7 +36,7 @@ Non-canonical/transitional root:
 - `foundation/` defines conceptual system basis.
 - `formal/` defines formal verification artifacts and traceability models.
 - `docs/` is the single central documentation space.
-- `transitional/` is the only migration-only area.
+- migration evidence is kept in documentation/report spaces under `docs/`.
 
 ## A2 Outcome
 
