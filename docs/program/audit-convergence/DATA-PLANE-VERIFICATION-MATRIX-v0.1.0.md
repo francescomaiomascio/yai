@@ -25,39 +25,39 @@ Legend:
 
 | Check | Status | Evidence | Notes / Residual gap |
 |---|---|---|---|
-| Event sink persisted | confirmed | `workspace_event_evidence_sink_hardening_v1.sh` | Append baseline active. |
-| Evidence/decision sink persisted | confirmed | `workspace_event_evidence_sink_hardening_v1.sh` | Typed records + refs. |
-| Governance persistence active | confirmed | `workspace_governance_persistence_dp5_v1.sh` | Candidate/approved/apply refs baseline. |
-| Authority persistence active | confirmed | `workspace_authority_artifact_persistence_dp6_v1.sh` | Runtime-owned refs and index. |
-| Artifact metadata persistence active | confirmed | `workspace_authority_artifact_persistence_dp6_v1.sh` | Linkage refs persisted. |
-| Brain graph truth persisted | confirmed | `workspace_brain_graph_transient_dp7_v1.sh` | BR-3 role modeled. |
-| Transient cognition separated | confirmed | `workspace_brain_graph_transient_dp7_v1.sh` | Explicit non-authoritative. |
+| Event sink persisted | confirmed | `workspace_event_evidence_sink_hardening.sh` | Append baseline active. |
+| Evidence/decision sink persisted | confirmed | `workspace_event_evidence_sink_hardening.sh` | Typed records + refs. |
+| Governance persistence active | confirmed | `workspace_governance_persistence.sh` | Candidate/approved/apply refs baseline. |
+| Authority persistence active | confirmed | `workspace_authority_artifact_persistence.sh` | Runtime-owned refs and index. |
+| Artifact metadata persistence active | confirmed | `workspace_authority_artifact_persistence.sh` | Linkage refs persisted. |
+| Brain graph truth persisted | confirmed | `workspace_brain_graph_transient.sh` | BR-3 role modeled. |
+| Transient cognition separated | confirmed | `workspace_brain_graph_transient.sh` | Explicit non-authoritative. |
 
 ## C) Runtime integration
 
 | Check | Status | Evidence | Notes / Residual gap |
 |---|---|---|---|
 | Runtime writer paths canonical | confirmed | `lib/core/session/session_utils.c` + matrix scripts | Core writes sinks; no CLI direct writes. |
-| Inspect/effective/debug aligned to persisted refs | confirmed | `workspace_inspect_surfaces_v1.sh` | Multi-domain refs visible. |
-| Workspace↔governance linkage visible | confirmed | `workspace_governance_apply_semantics_v1.sh` | Attachment/apply state surfaced. |
-| Governance lifecycle gating enforced | confirmed | `workspace_review_approval_gate_v1.sh` | Candidate blocked without approval path. |
+| Inspect/effective/debug aligned to persisted refs | confirmed | `workspace_inspect_surfaces.sh` | Multi-domain refs visible. |
+| Workspace↔governance linkage visible | confirmed | `workspace_governance_apply_semantics.sh` | Attachment/apply state surfaced. |
+| Governance lifecycle gating enforced | confirmed | `workspace_review_approval_gate.sh` | Candidate blocked without approval path. |
 
 ## D) Surface integrity
 
 | Check | Status | Evidence | Notes / Residual gap |
 |---|---|---|---|
-| Operator query families exposed | confirmed | `workspace_operator_query_surfaces_dp8_v1.sh` | governance/events/evidence/authority/artifacts/graph/workspace. |
-| Deterministic result shapes | confirmed | `workspace_operator_query_surfaces_dp8_v1.sh` | table/timeline/detail_record/summary_card. |
+| Operator query families exposed | confirmed | `workspace_operator_query_surfaces.sh` | governance/events/evidence/authority/artifacts/graph/workspace. |
+| Deterministic result shapes | confirmed | `workspace_operator_query_surfaces.sh` | table/timeline/detail_record/summary_card. |
 | No backend leakage in canonical contract | confirmed | `docs/program/23-runbooks/data-surfaces-and-operator-query-model.md` | Backend roles remain internal detail. |
-| CLI matrix readability preserved | confirmed | `workspace_final_demo_matrix_v1.sh` | End-to-end scenario remains green. |
+| CLI matrix readability preserved | confirmed | `workspace_demo_matrix.sh` | End-to-end scenario remains green. |
 
 ## E) Safety and discipline
 
 | Check | Status | Evidence | Notes / Residual gap |
 |---|---|---|---|
-| Lifecycle no-skip respected | confirmed | `workspace_agent_safe_boundaries_v1.sh` | review/approval boundaries enforced. |
-| Workspace scoping respected | confirmed | `workspace_session_binding_contract_v1.sh` + `workspace_negative_paths_v1.sh` | stale/invalid handled explicitly. |
-| Transient is non-authoritative | confirmed | `workspace_brain_graph_transient_dp7_v1.sh` | Declared and validated in index/state. |
+| Lifecycle no-skip respected | confirmed | `workspace_agent_safe_boundaries.sh` | review/approval boundaries enforced. |
+| Workspace scoping respected | confirmed | `workspace_session_binding_contract.sh` + `workspace_negative_paths.sh` | stale/invalid handled explicitly. |
+| Transient is non-authoritative | confirmed | `workspace_brain_graph_transient.sh` | Declared and validated in index/state. |
 | Consumer bypass blocked as canonical flow | confirmed | runtime command mediation in `session.c` | Contract path remains runtime-mediated. |
 
 ## F) Block qualification outcome

@@ -143,7 +143,7 @@ Edges:
 
 Representative integration path:
 
-- `tests/integration/source_plane/source_plane_read_model_v1.sh`
+- `tests/integration/source_plane/source_plane_read_model.sh`
 
 The test validates persistence -> query -> graph chain:
 

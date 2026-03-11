@@ -25,14 +25,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
-(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_governance_persistence_dp5.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_governance_persistence.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "workspace_governance_persistence_dp5_v1: FAIL (missing ingress socket)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "workspace_governance_persistence: FAIL (missing ingress socket)"; exit 1; }
 
 python3 - "$SOCK" "$WS" "$OBJ" "$HOME" <<'PY'
 import json
@@ -174,4 +174,4 @@ r = call("system", "yai.workspace.unset")
 assert r["status"] == "ok", r
 PY
 
-echo "workspace_governance_persistence_dp5_v1: ok"
+echo "workspace_governance_persistence: ok"

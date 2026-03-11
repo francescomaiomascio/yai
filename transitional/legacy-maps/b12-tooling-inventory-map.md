@@ -19,8 +19,8 @@ Date: 2026-03-11
 - `tools/dev/verify_final_demo_matrix.sh`
 - `tests/unit/protocol/run_protocol_unit_tests.sh`
 - `tests/unit/knowledge/run_knowledge_unit_tests.sh`
-- `tests/integration/workspace/workspace_binding_postconditions_wsv82_v1.sh`
-- `tests/integration/workspace/workspace_runtime_reachability_convergence_wsv81_v1.sh`
+- `tests/integration/workspace/workspace_binding_postconditions.sh`
+- `tests/integration/workspace/workspace_runtime_reachability.sh`
 
 ## C. Legacy aliases confined/declassified
 - `tools/bin/yai-law-sync` (hard-fail)

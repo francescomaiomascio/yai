@@ -10,16 +10,16 @@ mkdir -p "$EVID_ROOT"
 export YAI_QUAL_EVIDENCE_DIR="$EVID_ROOT"
 
 PRECHECK=(
-  "$ROOT/tests/integration/qualification/lan/ql_lan_command_contract_v1.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_command_contract.sh"
 )
 
 SCRIPTS=(
-  "$ROOT/tests/integration/qualification/lan/ql_lan_enroll_attach_emit_v1.sh"
-  "$ROOT/tests/integration/qualification/lan/ql_lan_three_peers_same_workspace_v1.sh"
-  "$ROOT/tests/integration/qualification/lan/ql_lan_peer_offline_replay_v1.sh"
-  "$ROOT/tests/integration/qualification/lan/ql_lan_distinct_assets_v1.sh"
-  "$ROOT/tests/integration/qualification/lan/ql_lan_overlap_assets_v1.sh"
-  "$ROOT/tests/integration/qualification/lan/ql_lan_backlog_drain_v1.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_enroll_attach_emit.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_three_peers_same_workspace.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_peer_offline_replay.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_distinct_assets.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_overlap_assets.sh"
+  "$ROOT/tests/integration/qualification/lan/lan_backlog_drain.sh"
 )
 
 echo "[QW-1/LAN] evidence_root=$EVID_ROOT"
@@ -62,4 +62,4 @@ for s in "${SCRIPTS[@]}"; do
 done
 
 printf "finished_at=%s\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >>"$EVID_ROOT/meta.txt"
-echo "run_qw1_lan_wave_v1: ok"
+echo "run_lan_wave: ok"

@@ -37,8 +37,8 @@ Tracked in:
 
 ## 5) Safety checks
 Post-cleanup validation:
-- `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover_dp12_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_final_demo_matrix_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover.sh`
+- `tests/integration/workspace_lifecycle/workspace_demo_matrix.sh`
 
 ## 6) Remaining residues (planned DP-15)
 Still transitional in runtime path and not yet removable:

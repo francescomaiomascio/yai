@@ -18,9 +18,9 @@ start_runtime() {
   rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 
   if [[ "$mode" == "partial" ]]; then
-    (cd "$REPO" && YAI_ENFORCEMENT_RECORD_FORCE_PARTIAL=1 "$YAI" >/tmp/yai_workspace_enforcement_dp10_partial.log 2>&1) &
+    (cd "$REPO" && YAI_ENFORCEMENT_RECORD_FORCE_PARTIAL=1 "$YAI" >/tmp/yai_workspace_enforcement_partial.log 2>&1) &
   else
-    (cd "$REPO" && "$YAI" >/tmp/yai_workspace_enforcement_dp10.log 2>&1) &
+    (cd "$REPO" && "$YAI" >/tmp/yai_workspace_enforcement.log 2>&1) &
   fi
   RUNTIME_PID=$!
 
@@ -28,7 +28,7 @@ start_runtime() {
     [[ -S "$SOCK" ]] && break
     sleep 0.1
   done
-  [[ -S "$SOCK" ]] || { echo "workspace_enforcement_record_closure_dp10_v1: FAIL (missing ingress socket)"; exit 1; }
+  [[ -S "$SOCK" ]] || { echo "workspace_enforcement_record_closure: FAIL (missing ingress socket)"; exit 1; }
 }
 
 stop_runtime() {
@@ -182,15 +182,15 @@ PY
 }
 
 # Phase 1: normal writer path -> complete record set.
-WS_COMPLETE="ws_enforcement_dp10_complete"
+WS_COMPLETE="ws_enforcement_complete"
 start_runtime normal
 phase_check "$WS_COMPLETE" "complete"
 stop_runtime
 
 # Phase 2: forced partial path -> explicit incomplete semantics.
-WS_PARTIAL="ws_enforcement_dp10_partial"
+WS_PARTIAL="ws_enforcement_partial"
 start_runtime partial
 phase_check "$WS_PARTIAL" "incomplete"
 stop_runtime
 
-echo "workspace_enforcement_record_closure_dp10_v1: ok"
+echo "workspace_enforcement_record_closure: ok"

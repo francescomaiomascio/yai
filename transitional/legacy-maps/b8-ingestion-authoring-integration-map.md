@@ -38,4 +38,4 @@ B8 makes `governance/ingestion/` the canonical authoring supply chain.
 - `tests/unit/governance/run_governance_unit_tests.sh`
 - `tests/integration/governance/test_ingestion_pipeline.sh`
 - `tests/integration/governance/run_governance_resolution_smoke.sh`
-- `tests/integration/workspace/workspace_agent_safe_boundaries_v1.sh`
+- `tests/integration/workspace/workspace_agent_safe_boundaries.sh`

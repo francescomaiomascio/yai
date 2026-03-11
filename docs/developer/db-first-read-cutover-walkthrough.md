@@ -21,4 +21,4 @@ Show that inspect/query surfaces now read from persisted Data Plane records firs
 
 ## Evidence script
 Run:
-- `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover_dp12_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover.sh`

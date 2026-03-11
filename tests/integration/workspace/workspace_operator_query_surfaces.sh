@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
 SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
-WS="ws_operator_query_dp8_v1"
+WS="ws_operator_query"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 if [[ ! -x "$YAI" ]]; then
@@ -26,14 +26,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
-(cd "$REPO" && "$YAI" >/tmp/yai_workspace_operator_query_dp8.log 2>&1) &
+(cd "$REPO" && "$YAI" >/tmp/yai_workspace_operator_query.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "workspace_operator_query_surfaces_dp8_v1: FAIL (missing ingress socket)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "workspace_operator_query_surfaces: FAIL (missing ingress socket)"; exit 1; }
 
 python3 - "$SOCK" "$WS" <<'PY'
 import json
@@ -140,4 +140,4 @@ r = call("system", "yai.workspace.unset")
 assert r["status"] == "ok", r
 PY
 
-echo "workspace_operator_query_surfaces_dp8_v1: ok"
+echo "workspace_operator_query_surfaces: ok"

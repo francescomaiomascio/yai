@@ -32,7 +32,7 @@ for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || yai_qual_fail "ql_lan_peer_offline_replay_v1: owner socket not ready"
+[[ -S "$SOCK" ]] || yai_qual_fail "lan_peer_offline_replay: owner socket not ready"
 
 HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - <<'PY'
 import json
@@ -190,4 +190,4 @@ if len(peer.get("data", {}).get("rows", [])) < 1:
 print("peer_offline_replay_status=ok")
 PY
 
-echo "ql_lan_peer_offline_replay_v1: ok"
+echo "lan_peer_offline_replay: ok"

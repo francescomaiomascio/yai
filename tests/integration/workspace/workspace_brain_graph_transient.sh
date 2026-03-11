@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
 SOCK="$HOME/.yai/run/control.sock"
-WS="ws_brain_graph_transient_dp7_v1"
+WS="ws_brain_graph_transient"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 if [[ ! -x "$YAI" ]]; then
@@ -26,7 +26,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_brain_graph_transient_dp7.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_brain_graph_transient.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do

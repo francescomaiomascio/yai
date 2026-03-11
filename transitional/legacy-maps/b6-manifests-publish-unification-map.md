@@ -26,7 +26,7 @@ This map tracks B6 cutover from legacy manifest loading to canonical
 
 ## Tooling And Tests
 
-- `tools/validate/validate_governance_manifest_spine.py`
+- `tools/validate/validate_governance_manifests.py`
 - `tests/unit/governance/test_governance_manifest_surface_contract.py`
 - `tests/unit/governance/test_manifest_loader.c`
 - `tests/unit/governance/test_contract_surface.c`

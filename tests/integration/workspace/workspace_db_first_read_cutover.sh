@@ -18,9 +18,9 @@ start_runtime() {
   rm -f "$BIND_FILE" >/dev/null 2>&1 || true
 
   if [[ "$mode" == "partial" ]]; then
-    (cd "$REPO" && YAI_ENFORCEMENT_RECORD_FORCE_PARTIAL=1 "$YAI" >/tmp/yai_workspace_dbfirst_dp12_partial.log 2>&1) &
+    (cd "$REPO" && YAI_ENFORCEMENT_RECORD_FORCE_PARTIAL=1 "$YAI" >/tmp/yai_workspace_dbfirst_partial.log 2>&1) &
   else
-    (cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_dbfirst_dp12.log 2>&1) &
+    (cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_dbfirst.log 2>&1) &
   fi
   RUNTIME_PID=$!
 
@@ -28,7 +28,7 @@ start_runtime() {
     [[ -S "$SOCK" ]] && break
     sleep 0.1
   done
-  [[ -S "$SOCK" ]] || { echo "workspace_db_first_read_cutover_dp12_v1: FAIL (missing ingress socket)"; exit 1; }
+  [[ -S "$SOCK" ]] || { echo "workspace_db_first_read_cutover: FAIL (missing ingress socket)"; exit 1; }
 }
 
 stop_runtime() {
@@ -172,14 +172,14 @@ assert r["status"] == "ok", r
 PY
 }
 
-WS_COMPLETE="ws_db_first_dp12_complete"
+WS_COMPLETE="ws_db_first_complete"
 start_runtime normal
 phase_check "$WS_COMPLETE" false
 stop_runtime
 
-WS_PARTIAL="ws_db_first_dp12_partial"
+WS_PARTIAL="ws_db_first_partial"
 start_runtime partial
 phase_check "$WS_PARTIAL" true
 stop_runtime
 
-echo "workspace_db_first_read_cutover_dp12_v1: ok"
+echo "workspace_db_first_read_cutover: ok"

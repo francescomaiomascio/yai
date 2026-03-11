@@ -93,7 +93,7 @@ prepares DB-first reader cutover.
 
 ## 8) Verification
 Smoke/integration:
-- `tests/integration/workspace_lifecycle/workspace_enforcement_record_closure_dp10_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_enforcement_record_closure.sh`
 
 Coverage:
 - complete materialization baseline
@@ -101,7 +101,7 @@ Coverage:
 - inspect/query visibility of completeness status.
 
 Matrix inclusion:
-- `tests/integration/workspace_lifecycle/workspace_final_demo_matrix_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_demo_matrix.sh`
 
 ## 9) Handoff
 DP-10 enables:

@@ -301,24 +301,24 @@ test-integration:
 	@tests/integration/runtime/run_runtime_state_smoke.sh
 	@tests/integration/edge/run_edge_smoke.sh
 	@tests/integration/mesh/run_mesh_smoke.sh
-	@tests/integration/workspace/workspace_runtime_contract_v1.sh
-	@tests/integration/workspace/workspace_session_binding_contract_v1.sh
-	@tests/integration/workspace/workspace_inspect_surfaces_v1.sh
-	@tests/integration/workspace/workspace_real_flow_v1.sh
-	@tests/integration/workspace/workspace_scientific_flow_v1.sh
-	@tests/integration/workspace/workspace_digital_flow_v1.sh
-	@tests/integration/workspace/workspace_event_surface_semantics_v1.sh
-	@tests/integration/workspace/workspace_flow_state_readability_v1.sh
-	@tests/integration/workspace/workspace_governed_vertical_slice_v1.sh
-	@tests/integration/workspace/workspace_negative_paths_v1.sh
-	@tests/integration/source-plane/source_owner_ingest_bridge_v1.sh
-	@tests/integration/source-plane/edge_local_runtime_scan_spool_retry_v1.sh
-	@tests/integration/source-plane/source_plane_read_model_v1.sh
+	@tests/integration/workspace/workspace_runtime_contract.sh
+	@tests/integration/workspace/workspace_session_binding_contract.sh
+	@tests/integration/workspace/workspace_inspect_surfaces.sh
+	@tests/integration/workspace/workspace_real_flow.sh
+	@tests/integration/workspace/workspace_scientific_flow.sh
+	@tests/integration/workspace/workspace_digital_flow.sh
+	@tests/integration/workspace/workspace_event_surface_semantics.sh
+	@tests/integration/workspace/workspace_flow_state_readability.sh
+	@tests/integration/workspace/workspace_governed_vertical_slice.sh
+	@tests/integration/workspace/workspace_negative_paths.sh
+	@tests/integration/source-plane/source_owner_ingest_bridge.sh
+	@tests/integration/source-plane/edge_local_runtime_scan_spool_retry.sh
+	@tests/integration/source-plane/source_plane_read_model.sh
 	@tests/integration/runtime/run_runtime_handshake_smoke.sh
 	@echo "[YAI] integration suites complete"
 
 test-demo-matrix:
-	@tests/integration/workspace/workspace_final_demo_matrix_v1.sh
+	@tests/integration/workspace/workspace_demo_matrix.sh
 	@echo "[YAI] final demo matrix suites complete"
 
 verify-final-demo-matrix:
@@ -513,5 +513,5 @@ help:
 
 
 test-vertical-slice:
-	@tests/integration/workspace/workspace_governed_vertical_slice_v1.sh
+	@tests/integration/workspace/workspace_governed_vertical_slice.sh
 	@echo "[YAI] governed vertical slice complete"

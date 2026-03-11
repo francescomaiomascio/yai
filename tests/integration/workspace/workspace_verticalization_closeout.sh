@@ -84,4 +84,4 @@ rg -n "yai_sdk/(db|policy|recovery|debug)\\.h" "$SDK_ROOT/include/yai_sdk/public
 rg -n "yai_sdk_ws_(graph_|db_|data_|knowledge_|policy_|domain_|recovery_|debug_resolution)" \
   "$SDK_ROOT/include/yai_sdk" >/dev/null
 
-echo "workspace_verticalization_closeout_wsv6_v1: ok"
+echo "workspace_verticalization_closeout: ok"

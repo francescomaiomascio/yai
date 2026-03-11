@@ -32,7 +32,7 @@ for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || yai_qual_fail "ql_lan_enroll_attach_emit_v1: owner socket not ready"
+[[ -S "$SOCK" ]] || yai_qual_fail "lan_enroll_attach_emit: owner socket not ready"
 
 HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - <<'PY'
 import json
@@ -184,4 +184,4 @@ if summary.get("data", {}).get("summary", {}).get("source_graph_node_count", 0) 
 print("enroll_attach_emit_status=ok")
 PY
 
-echo "ql_lan_enroll_attach_emit_v1: ok"
+echo "lan_enroll_attach_emit: ok"

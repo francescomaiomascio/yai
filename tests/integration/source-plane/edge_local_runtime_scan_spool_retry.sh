@@ -30,7 +30,7 @@ cleanup() {
   if [[ "${YD5_KEEP_TMP:-0}" != "1" ]]; then
     rm -rf "$OWNER_HOME" "$EDGE_ROOT"
   else
-    echo "edge_local_runtime_scan_spool_retry_v1: kept tmp dirs owner=$OWNER_HOME edge_root=$EDGE_ROOT edge_home=$EDGE_HOME"
+    echo "edge_local_runtime_scan_spool_retry: kept tmp dirs owner=$OWNER_HOME edge_root=$EDGE_ROOT edge_home=$EDGE_HOME"
   fi
 }
 trap cleanup EXIT
@@ -66,10 +66,10 @@ YAI_EDGE_BINDINGS_MANIFEST="$MANIFEST" \
 Q1="$(find "$EDGE_HOME/spool/queue" -type f 2>/dev/null || true)"
 Q1="$(printf '%s\n' "$Q1" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$Q1" -lt 1 ]]; then
-  echo "edge_local_runtime_scan_spool_retry_v1: debug queue_count=$Q1 edge_home=$EDGE_HOME"
+  echo "edge_local_runtime_scan_spool_retry: debug queue_count=$Q1 edge_home=$EDGE_HOME"
   find "$EDGE_HOME" -maxdepth 4 2>/dev/null | sort | sed -n '1,220p'
   sed -n '1,220p' /tmp/yai_yd5_edge_phase1.log 2>/dev/null || true
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (queue not populated in disconnected phase)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (queue not populated in disconnected phase)"
   exit 1
 fi
 
@@ -82,7 +82,7 @@ for _ in $(seq 1 80); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "edge_local_runtime_scan_spool_retry_v1: FAIL (owner socket not ready)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "edge_local_runtime_scan_spool_retry: FAIL (owner socket not ready)"; exit 1; }
 
 HOME="$OWNER_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - "$SOCK" "$WS" <<'PY'
 import json
@@ -161,26 +161,26 @@ YAI_EDGE_BINDINGS_MANIFEST="$MANIFEST" \
 D2="$(find "$EDGE_HOME/spool/delivered" -type f 2>/dev/null || true)"
 D2="$(printf '%s\n' "$D2" | sed '/^$/d' | wc -l | tr -d ' ')"
 if [[ "$D2" -lt 1 ]]; then
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (no delivered units after owner recovery)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (no delivered units after owner recovery)"
   exit 1
 fi
 
 if [[ ! -f "$EDGE_HOME/state/health.v1.json" ]]; then
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (missing edge health state file)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (missing edge health state file)"
   exit 1
 fi
 if ! rg -n '"state":"ready"|"state":"degraded"|"state":"stopping"' "$EDGE_HOME/state/health.v1.json" >/dev/null; then
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (unexpected health state payload)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (unexpected health state payload)"
   exit 1
 fi
 
 if [[ ! -f "$EDGE_HOME/state/bindings.v1.json" ]]; then
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (missing bindings state file)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (missing bindings state file)"
   exit 1
 fi
 if ! rg -n '"status":"active"|\"status\":\"degraded\"' "$EDGE_HOME/state/bindings.v1.json" >/dev/null; then
-  echo "edge_local_runtime_scan_spool_retry_v1: FAIL (bindings state does not expose runtime status)"
+  echo "edge_local_runtime_scan_spool_retry: FAIL (bindings state does not expose runtime status)"
   exit 1
 fi
 
-echo "edge_local_runtime_scan_spool_retry_v1: ok"
+echo "edge_local_runtime_scan_spool_retry: ok"

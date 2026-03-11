@@ -52,6 +52,6 @@ Initial archive candidates:
 - additional FS-C4 residues discovered during DP-14 execution sweep.
 
 ## Verification Evidence
-- DB-first read cutover smoke: `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover_dp12_v1.sh`
-- full runtime regression: `tests/integration/workspace_lifecycle/workspace_final_demo_matrix_v1.sh`
+- DB-first read cutover smoke: `tests/integration/workspace_lifecycle/workspace_db_first_read_cutover.sh`
+- full runtime regression: `tests/integration/workspace_lifecycle/workspace_demo_matrix.sh`
 - payload invariant: inspect/query surfaces expose `read_path.filesystem_primary=false`.

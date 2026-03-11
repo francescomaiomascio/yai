@@ -9,7 +9,7 @@ related:
   - docs/program/23-runbooks/workspace-runtime-command-mapping-and-canonicalization.md
   - docs/program/24-milestone-packs/workspace-verticalization-closeout/WSV-6-WORKSPACE-SURFACE-CLOSEOUT.md
   - docs/program/audit-convergence/WORKSPACE-VERTICALIZATION-MANUAL-TEST-COMMAND-PACK-v0.1.0.md
-  - tests/integration/workspace_lifecycle/workspace_verticalization_closeout_wsv6_v1.sh
+  - tests/integration/workspace_lifecycle/workspace_verticalization_closeout.sh
 ---
 
 # Workspace Verticalization Ecosystem Verification Matrix (v0.1.0)
@@ -18,11 +18,11 @@ Legend: `PASS`, `PASS WITH DEBT`, `FAIL`
 
 | Domain | Repo(s) | Canonical truth expected | Automatic check / verification method | Manual check / operator path | Evidence expected | Result | Residual issue / blocker | Owner / follow-up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| WSV taxonomy alignment | yai, yai-law, yai-cli, yai-sdk | Same `ws` families: lifecycle, graph, db, data, knowledge, policy, domain, recovery, debug, query fallback | `tests/integration/workspace_lifecycle/workspace_verticalization_closeout_wsv6_v1.sh` | `./dist/bin/yai help ws` in `cli` | Script `ok`; help shows all families | PASS | none | closed |
+| WSV taxonomy alignment | yai, yai-law, yai-cli, yai-sdk | Same `ws` families: lifecycle, graph, db, data, knowledge, policy, domain, recovery, debug, query fallback | `tests/integration/workspace_lifecycle/workspace_verticalization_closeout.sh` | `./dist/bin/yai help ws` in `cli` | Script `ok`; help shows all families | PASS | none | closed |
 | Runtime lifecycle/binding substrate | yai | Runtime exposes `create/open/set/switch/current/status/inspect/unset/clear/reset/destroy` IDs | `rg` in `lib/core/session/session.c` (scripted in WSV6 guardrail) | `yai ws create/open/set/switch/current/status/inspect/unset/clear/reset/destroy` | IDs present in dispatch and handlers | PASS | none | closed |
 | Runtime graph substrate | yai | Runtime exposes `graph summary/workspace/governance/decision/evidence/authority/artifact/lineage/recent` | `rg "yai.workspace.graph.*"` in `lib/core/session/session.c` | `yai ws graph ...` | IDs present + query-family routing | PASS | none | closed |
 | Runtime db/data/knowledge/recovery/debug substrate | yai | Runtime exposes query/events tail + policy/domain/debug + recovery basis | `rg` for `workspace.query/events.tail/policy_*/domain_*/debug_resolution/open/lifecycle.maintain` | `yai ws db ...`, `yai ws data ...`, `yai ws knowledge ...`, `yai ws recovery ...`, `yai ws debug resolution` | IDs present in dispatch | PASS WITH DEBT | Several ws-db/ws-knowledge/ws-recovery commands are composition-backed, not all direct runtime IDs | next hardening wave |
-| Law canonical lifecycle/binding entries | yai-law | Registry has `ws general` ops for lifecycle/binding | Python check in `workspace_verticalization_closeout_wsv6_v1.sh` | `python3` query over `law/registry/commands.v1.json` | topic `general` includes required ops | PASS | none | closed |
+| Law canonical lifecycle/binding entries | yai-law | Registry has `ws general` ops for lifecycle/binding | Python check in `workspace_verticalization_closeout.sh` | `python3` query over `law/registry/commands.v1.json` | topic `general` includes required ops | PASS | none | closed |
 | Law canonical graph entries | yai-law | Registry has `ws graph` ops: summary/workspace/governance/decision/evidence/authority/artifact/lineage/recent | Same WSV6 script topic/op check | inspect registry rows for `topic=graph` | all ops present | PASS | none | closed |
 | Law canonical db entries | yai-law | Registry has `ws db` ops: status/bindings/stores/classes/count/tail | Same WSV6 script topic/op check | inspect registry rows for `topic=db` | all ops present | PASS WITH DEBT | Some db entries model composition over inspect/query, not direct backend command IDs | follow-up for direct IDs |
 | Law canonical data entries | yai-law | Registry has `ws data` ops: events/evidence/governance/authority/artifacts/enforcement | Same WSV6 script topic/op check | inspect registry rows for `topic=data` | all ops present | PASS | none | closed |
@@ -37,7 +37,7 @@ Legend: `PASS`, `PASS WITH DEBT`, `FAIL`
 | DB manual operator readiness | yai-cli, yai | Human can run db family and verify data-plane files/tables | Manual pack section D + duckdb queries | `yai ws db ...`; `duckdb -readonly ...` | DB bindings, classes/count, persisted records | PASS WITH DEBT | db family is partially composition-backed | follow-up hardening |
 | Data/knowledge/policy/domain/recovery/debug manual readiness | yai-cli, yai-law, yai | Human can run family commands and interpret results | Manual pack sections E/F/G/H | `yai ws data ...`, `knowledge ...`, `policy ...`, `domain ...`, `recovery ...`, `debug ...` | Structured output with effect/authority/evidence/context/recovery | PASS WITH DEBT | policy/debug may return protocol error when runtime endpoint is down | non-blocking |
 | Query fallback containment | yai-cli, yai-sdk | `ws query <family>` remains available but non-primary | CLI help note + SDK `yai_sdk_ws_query_family` | `yai ws query evidence` | Fallback path works; dedicated families preferred in docs | PASS | none | closed |
-| Cross-repo automated representative coverage | yai, yai-cli, yai-sdk | At least one representative check for lifecycle/graph/db/data/knowledge/policy/recovery-debug/sdk/law alignment | `workspace_verticalization_closeout_wsv6_v1.sh` + `cli make test` + `sdk make test` | Run three command blocks from manual pack section `Fast sanity` | Script green + suites green | PASS WITH DEBT | yai legacy deep integration scripts may fail in offline/sandbox contexts | next hardening wave |
+| Cross-repo automated representative coverage | yai, yai-cli, yai-sdk | At least one representative check for lifecycle/graph/db/data/knowledge/policy/recovery-debug/sdk/law alignment | `workspace_verticalization_closeout.sh` + `cli make test` + `sdk make test` | Run three command blocks from manual pack section `Fast sanity` | Script green + suites green | PASS WITH DEBT | yai legacy deep integration scripts may fail in offline/sandbox contexts | next hardening wave |
 
 ## Verification disposition
 

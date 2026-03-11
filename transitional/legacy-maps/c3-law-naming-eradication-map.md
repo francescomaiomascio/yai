@@ -27,5 +27,5 @@ Date: 2026-03-11
 
 ## Guardrails
 
-- `tools/validate/validate_no_legacy_tooling_references.py` now forbids `yai-law-` token in active tooling/test roots.
+- `tools/validate/validate_tooling_legacy_refs.py` now forbids `yai-law-` token in active tooling/test roots.
 - legacy `law` tokens remain only inside validator forbidden-token lists and transitional material.

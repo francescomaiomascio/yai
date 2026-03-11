@@ -4,7 +4,7 @@
 Verify authority state and artifact metadata are persisted as live Data Plane entities during a governed workspace action.
 
 ## Scenario
-1. Create workspace `ws_authority_artifact_dp6_v1`.
+1. Create workspace `ws_authority_artifact`.
 2. Set domain `digital/remote-publication`.
 3. Attach and activate approved governance object `enterprise.ecohmedia.digital-outbound.review-gate`.
 4. Run `digital.publish sink=external_untrusted contract=missing artifact=bundle-v1`.

@@ -7,7 +7,7 @@ Executed:
 - Declared `yai` as single canonical repository in root policy framing.
 - Unified versioning/compatibility/release narrative on in-repo governance roots.
 - Added canonical convergence smoke: `tools/release/unified_repo_convergence_smoke.sh`.
-- Added root framing validator: `tools/validate/validate_unified_repo_root_framing.py`.
+- Added root framing validator: `tools/validate/validate_root_framing.py`.
 - Removed active runtime/tooling dependence on split-repo assumptions.
 
 Operational rule:

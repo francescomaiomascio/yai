@@ -78,10 +78,10 @@ Current implementation note for this repo (`yai`):
 
 QW-1 validates this command contract in two layers:
 
-1. Contract precheck (`ql_lan_command_contract_v1.sh`)
+1. Contract precheck (`lan_command_contract.sh`)
 Verify owner-side command IDs and inspect/query/graph contract shape over runtime control call.
 
-2. LAN scenarios (`ql_lan_*_v1.sh`)
+2. LAN scenarios (`lan_*.sh`)
 Verify that contract surfaces remain semantically coherent with observed runtime state:
 - peer visibility and membership
 - health/freshness read-model visibility

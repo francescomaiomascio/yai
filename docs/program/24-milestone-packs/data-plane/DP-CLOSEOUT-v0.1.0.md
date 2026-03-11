@@ -26,12 +26,12 @@ Qualify DP-1..DP-9 as one coherent, verifiable baseline for first pre-pilot usag
 ## 3) Verification anchors
 
 - `docs/program/audit-convergence/DATA-PLANE-VERIFICATION-MATRIX-v0.1.0.md`
-- `tests/integration/workspace_lifecycle/workspace_final_demo_matrix_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_event_evidence_sink_hardening_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_governance_persistence_dp5_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_authority_artifact_persistence_dp6_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_brain_graph_transient_dp7_v1.sh`
-- `tests/integration/workspace_lifecycle/workspace_operator_query_surfaces_dp8_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_demo_matrix.sh`
+- `tests/integration/workspace_lifecycle/workspace_event_evidence_sink_hardening.sh`
+- `tests/integration/workspace_lifecycle/workspace_governance_persistence.sh`
+- `tests/integration/workspace_lifecycle/workspace_authority_artifact_persistence.sh`
+- `tests/integration/workspace_lifecycle/workspace_brain_graph_transient.sh`
+- `tests/integration/workspace_lifecycle/workspace_operator_query_surfaces.sh`
 
 ## 4) Qualification summary
 

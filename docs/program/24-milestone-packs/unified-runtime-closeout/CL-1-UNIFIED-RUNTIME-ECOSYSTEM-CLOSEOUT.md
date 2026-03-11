@@ -64,17 +64,17 @@ Verified green:
 - Runtime docs define unified model and explicitly reject brain-as-canonical (`docs/architecture/runtime-model.md`).
 - Cross-repo terminology contract and impact matrix are present and active.
 - Hard runtime verification block is green:
-  - `workspace_session_binding_contract_v1.sh`
-  - `workspace_inspect_surfaces_v1.sh`
-  - `workspace_real_flow_v1.sh`
-  - `workspace_runtime_contract_v1.sh`
-  - `workspace_db_first_read_cutover_dp12_v1.sh`
-  - `workspace_event_evidence_sink_hardening_v1.sh`
-  - `workspace_governance_persistence_dp5_v1.sh`
-  - `workspace_authority_artifact_persistence_dp6_v1.sh`
-  - `workspace_brain_graph_transient_dp7_v1.sh`
-  - `workspace_graph_materialization_hooks_dp11_v1.sh`
-  - `workspace_graph_read_surfaces_dp16_v1.sh`
+  - `workspace_session_binding_contract.sh`
+  - `workspace_inspect_surfaces.sh`
+  - `workspace_real_flow.sh`
+  - `workspace_runtime_contract.sh`
+  - `workspace_db_first_read_cutover.sh`
+  - `workspace_event_evidence_sink_hardening.sh`
+  - `workspace_governance_persistence.sh`
+  - `workspace_authority_artifact_persistence.sh`
+  - `workspace_brain_graph_transient.sh`
+  - `workspace_graph_materialization_hooks.sh`
+  - `workspace_graph_read_surfaces.sh`
 - Canonical inspect/effective/debug payloads expose `graph_persistence` + `knowledge_transient_persistence`; legacy `brain_persistence` projection removed from active runtime surfaces.
 
 ### `yai-law`

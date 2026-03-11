@@ -36,11 +36,11 @@ WSV-8.2 post-condition hardening is implemented on the workspace lifecycle path.
 ## Verification
 Executed with real runtime UDS (outside sandbox due socket restrictions):
 
-1. `tests/integration/workspace_lifecycle/workspace_runtime_reachability_convergence_wsv81_v1.sh`
+1. `tests/integration/workspace_lifecycle/workspace_runtime_reachability.sh`
 - result: `PASS`
 - output: `wsv81_convergence: ok (up=0 ping=0 status=0 inspect=0 graph=0)`
 
-2. `tests/integration/workspace_lifecycle/workspace_binding_postconditions_wsv82_v1.sh` (new)
+2. `tests/integration/workspace_lifecycle/workspace_binding_postconditions.sh` (new)
 - result: `PASS`
 - output: `wsv82_postconditions: ok (ws=... store_root=/Users/francescomaiomascio/.yai/run/data/<ws>)`
 

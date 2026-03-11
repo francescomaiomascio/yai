@@ -11,18 +11,18 @@ QW-1 introduces the qualification layout and LAN baseline wave.
 
 Entrypoint for QW-1 LAN wave:
 
-- `tests/integration/qualification/lan/run_qw1_lan_wave_v1.sh`
+- `tests/integration/qualification/lan/run_lan_wave.sh`
 
 QW-1 composition:
 
-- precheck: `ql_lan_command_contract_v1.sh` (canonical command contract gate)
+- precheck: `lan_command_contract.sh` (canonical command contract gate)
 - LAN scenarios (6):
-  - `ql_lan_enroll_attach_emit_v1.sh`
-  - `ql_lan_three_peers_same_workspace_v1.sh`
-  - `ql_lan_peer_offline_replay_v1.sh`
-  - `ql_lan_distinct_assets_v1.sh`
-  - `ql_lan_overlap_assets_v1.sh`
-  - `ql_lan_backlog_drain_v1.sh`
+  - `lan_enroll_attach_emit.sh`
+  - `lan_three_peers_same_workspace.sh`
+  - `lan_peer_offline_replay.sh`
+  - `lan_distinct_assets.sh`
+  - `lan_overlap_assets.sh`
+  - `lan_backlog_drain.sh`
 
 Evidence output:
 

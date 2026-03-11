@@ -37,7 +37,7 @@ for _ in $(seq 1 120); do
 done
 
 if [[ ! -S "$SOCK" ]]; then
-  echo "source_owner_ingest_bridge_v1: FAIL (missing ingress socket $SOCK)"
+  echo "source_owner_ingest_bridge: FAIL (missing ingress socket $SOCK)"
   exit 1
 fi
 
@@ -228,8 +228,8 @@ expect_error(bad_emit, "INVALID_STATE", "source_emit_trust_bootstrap_required", 
 PY
 
 if [[ ! -d "$WS_ROOT/yd4_ingest_ws/data/lmdb" ]]; then
-  echo "source_owner_ingest_bridge_v1: FAIL (missing lmdb path for yd4_ingest_ws: $WS_ROOT/yd4_ingest_ws/data/lmdb)"
+  echo "source_owner_ingest_bridge: FAIL (missing lmdb path for yd4_ingest_ws: $WS_ROOT/yd4_ingest_ws/data/lmdb)"
   exit 1
 fi
 
-echo "source_owner_ingest_bridge_v1: ok"
+echo "source_owner_ingest_bridge: ok"

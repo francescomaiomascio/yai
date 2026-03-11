@@ -24,14 +24,14 @@ run make -C "$CLI" -j4
 run "$CLI"/tests/integration/workspace_output_guardrail.sh
 
 if [[ "${RUN_SOCKET_SCENARIOS:-0}" == "1" ]]; then
-  run "$ROOT"/tests/integration/workspace/workspace_session_binding_contract_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_inspect_surfaces_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_real_flow_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_scientific_flow_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_digital_flow_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_hostile_path_baseline_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_isolation_guards_v1.sh
-  run "$ROOT"/tests/integration/workspace/workspace_negative_paths_v1.sh
+  run "$ROOT"/tests/integration/workspace/workspace_session_binding_contract.sh
+  run "$ROOT"/tests/integration/workspace/workspace_inspect_surfaces.sh
+  run "$ROOT"/tests/integration/workspace/workspace_real_flow.sh
+  run "$ROOT"/tests/integration/workspace/workspace_scientific_flow.sh
+  run "$ROOT"/tests/integration/workspace/workspace_digital_flow.sh
+  run "$ROOT"/tests/integration/workspace/workspace_hostile_path_baseline.sh
+  run "$ROOT"/tests/integration/workspace/workspace_isolation_guards.sh
+  run "$ROOT"/tests/integration/workspace/workspace_negative_paths.sh
 else
   echo "[final-matrix] socket scenarios skipped (set RUN_SOCKET_SCENARIOS=1 to enable)"
 fi

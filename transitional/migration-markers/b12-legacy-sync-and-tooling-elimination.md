@@ -9,7 +9,7 @@ Implemented:
 - Removed `tools/dev/resolve-law-compat.sh` and `tools/dev/resolve-law-embed.sh`.
 - Switched build and verify flows to canonical governance checks (`yai-governance-compat-check`).
 - Kept legacy wrapper names only as explicit deprecation aliases that do not define canonical flow.
-- Added tooling guardrail validator: `tools/validate/validate_no_legacy_tooling_references.py`.
+- Added tooling guardrail validator: `tools/validate/validate_tooling_legacy_refs.py`.
 
 Operational rule:
 - Canonical toolchain is governance-rooted and single-repo only.

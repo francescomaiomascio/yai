@@ -25,29 +25,29 @@ make yai yai-daemon
 LAN wave runner:
 
 ```bash
-tests/integration/qualification/lan/run_qw1_lan_wave_v1.sh
+tests/integration/qualification/lan/run_lan_wave.sh
 ```
 
 Optional evidence root override:
 
 ```bash
-QW1_EVIDENCE_ROOT=/tmp/qw1-evidence tests/integration/qualification/lan/run_qw1_lan_wave_v1.sh
+QW1_EVIDENCE_ROOT=/tmp/qw1-evidence tests/integration/qualification/lan/run_lan_wave.sh
 ```
 
 ## LAN Wave Tests
 
 Precheck:
 
-1. `ql_lan_command_contract_v1.sh`
+1. `lan_command_contract.sh`
 
 LAN baseline scenarios:
 
-1. `ql_lan_enroll_attach_emit_v1.sh`
-2. `ql_lan_three_peers_same_workspace_v1.sh`
-3. `ql_lan_peer_offline_replay_v1.sh`
-4. `ql_lan_distinct_assets_v1.sh`
-5. `ql_lan_overlap_assets_v1.sh`
-6. `ql_lan_backlog_drain_v1.sh`
+1. `lan_enroll_attach_emit.sh`
+2. `lan_three_peers_same_workspace.sh`
+3. `lan_peer_offline_replay.sh`
+4. `lan_distinct_assets.sh`
+5. `lan_overlap_assets.sh`
+6. `lan_backlog_drain.sh`
 
 Each script prints `<name>: ok` on success.
 

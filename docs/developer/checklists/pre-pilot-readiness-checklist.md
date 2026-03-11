@@ -28,9 +28,9 @@ Use this checklist before technical demo or stakeholder review.
 
 ## Repeatability
 
-- [ ] vertical slice script passes: `workspace_governed_vertical_slice_v1.sh`
-- [ ] semantic split script passes: `workspace_event_surface_semantics_v1.sh`
-- [ ] flow-state readability script passes: `workspace_flow_state_readability_v1.sh`
+- [ ] vertical slice script passes: `workspace_governed_vertical_slice.sh`
+- [ ] semantic split script passes: `workspace_event_surface_semantics.sh`
+- [ ] flow-state readability script passes: `workspace_flow_state_readability.sh`
 
 ## Documentation coherence
 

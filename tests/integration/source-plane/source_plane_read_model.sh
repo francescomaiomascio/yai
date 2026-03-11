@@ -32,7 +32,7 @@ for _ in $(seq 1 50); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "source_plane_read_model_v1: FAIL (missing ingress socket)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "source_plane_read_model: FAIL (missing ingress socket)"; exit 1; }
 
 HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - <<'PY'
 import json
@@ -332,4 +332,4 @@ if gs.get("source_graph_edge_count", 0) < 1:
     raise RuntimeError(f"graph.workspace missing source_graph_edge_count: {graph_ws}")
 PY
 
-echo "source_plane_read_model_v1: ok"
+echo "source_plane_read_model: ok"

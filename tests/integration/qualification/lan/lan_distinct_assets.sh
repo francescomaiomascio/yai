@@ -8,8 +8,8 @@ source "$ROOT/tests/integration/qualification/lib/qualification_asserts.sh"
 yai_qual_require_bins
 
 FIX_ROOT="$ROOT/tests/integration/qualification/fixtures/bologna-mini"
-yai_qual_assert_dir "$FIX_ROOT/peer-a-performance" "ql_lan_distinct_assets_v1: missing fixture peer-a"
-yai_qual_assert_dir "$FIX_ROOT/peer-b-programmazione" "ql_lan_distinct_assets_v1: missing fixture peer-b"
+yai_qual_assert_dir "$FIX_ROOT/peer-a-performance" "lan_distinct_assets: missing fixture peer-a"
+yai_qual_assert_dir "$FIX_ROOT/peer-b-programmazione" "lan_distinct_assets: missing fixture peer-b"
 
 TMP_HOME="$(yai_qual_new_home)"
 SOCK="$TMP_HOME/.yai/run/control.sock"
@@ -36,7 +36,7 @@ for _ in $(seq 1 80); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || yai_qual_fail "ql_lan_distinct_assets_v1: owner socket not ready"
+[[ -S "$SOCK" ]] || yai_qual_fail "lan_distinct_assets: owner socket not ready"
 
 HOME="$TMP_HOME" YAI_RUNTIME_INGRESS="$SOCK" python3 - "$FIX_ROOT" <<'PY'
 import json
@@ -217,4 +217,4 @@ if len(rows) < 2:
     raise RuntimeError(f"expected >=2 peer rows got {peer}")
 PY
 
-echo "ql_lan_distinct_assets_v1: ok"
+echo "lan_distinct_assets: ok"

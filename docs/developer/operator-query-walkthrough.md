@@ -22,7 +22,7 @@ Run:
 
 ```bash
 cd tests/integration/workspace_lifecycle
-./workspace_operator_query_surfaces_dp8_v1.sh
+./workspace_operator_query_surfaces.sh
 ```
 
 What it validates:

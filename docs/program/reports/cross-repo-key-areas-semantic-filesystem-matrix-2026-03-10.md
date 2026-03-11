@@ -77,7 +77,7 @@ Operational message: the policy engine is intentionally split: `law` decides wha
 | Workspace state + registry + runtime binding | `lib/core/workspace/workspace_registry.c`, `lib/core/workspace/workspace_binding.c`, `lib/core/workspace/workspace_runtime.c` |
 | Recovery/load semantics | `lib/core/workspace/workspace_recovery.c`, `docs/architecture/workspace-binding-persistence-model.md` |
 | Security/containment boundary | `docs/architecture/workspace-boundary-model.md`, `docs/architecture/workspace-containment-levels.md`, `docs/architecture/workspace-security-envelope-model.md` |
-| Governance attach/apply semantics | `docs/architecture/workspace-governance-targeting-and-apply-model.md`, `tests/integration/workspace_lifecycle/workspace_governance_apply_semantics_v1.sh` |
+| Governance attach/apply semantics | `docs/architecture/workspace-governance-targeting-and-apply-model.md`, `tests/integration/workspace_lifecycle/workspace_governance_apply_semantics.sh` |
 | Verification battery | `tests/integration/workspace_lifecycle/*.sh` |
 
 ## 7) Data Plane Area (DB, Knowledge, Graph, Storage)

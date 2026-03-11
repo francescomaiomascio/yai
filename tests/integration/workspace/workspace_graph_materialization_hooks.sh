@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
 SOCK="$HOME/.yai/run/control.sock"
-WS="ws_graph_materialization_dp11_v1"
+WS="ws_graph_materialization"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 if [[ ! -x "$YAI" ]]; then
@@ -26,14 +26,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
-(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_graph_materialization_dp11.log 2>&1) &
+(cd "$REPO" && env -u YAI_RUNTIME_INGRESS "$YAI" >/tmp/yai_workspace_graph_materialization.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "workspace_graph_materialization_hooks_dp11_v1: FAIL (missing ingress socket)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "workspace_graph_materialization_hooks: FAIL (missing ingress socket)"; exit 1; }
 
 python3 - "$SOCK" "$WS" "$HOME" <<'PY'
 import json
@@ -203,4 +203,4 @@ r = call("system", "yai.workspace.unset")
 assert r["status"] == "ok", r
 PY
 
-echo "workspace_graph_materialization_hooks_dp11_v1: ok"
+echo "workspace_graph_materialization_hooks: ok"

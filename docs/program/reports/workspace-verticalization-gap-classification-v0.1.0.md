@@ -27,7 +27,7 @@ related:
 | Policy resolution/effective stack issue | blocked | high | Policy commands never reached live evaluation path. |
 | Recovery surface issue | blocked | medium | `ws recovery *` reachable but runtime unavailable. |
 | Debug surface issue | blocked | medium | `ws debug resolution` returned `SERVER_UNAVAILABLE`. |
-| Law registry drift | 0 in representative checks | low | `workspace_verticalization_closeout_wsv6_v1.sh` law checks passed. |
+| Law registry drift | 0 in representative checks | low | `workspace_verticalization_closeout.sh` law checks passed. |
 | SDK surface drift | 0 structural, 1 transient run anomaly | medium | Typed surface present; one transient `sdk_smoke` failure during wave script; standalone rerun green. |
 | Docs/manual pack mismatch | 0 | low | Pack commands matched implemented CLI grammar. |
 | Compatibility alias confusion | 0 in this run | low | No alias path required for tested commands. |

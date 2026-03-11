@@ -6,7 +6,7 @@ Use this checklist to declare DP baseline readiness for the first pre-pilot slic
 
 - [ ] `make -j4 yai` succeeds.
 - [ ] runtime startup/cleanup is stable (no stale socket/process blockers).
-- [ ] `workspace_final_demo_matrix_v1.sh` is green.
+- [ ] `workspace_demo_matrix.sh` is green.
 
 ## 2) Persistence domains
 
@@ -23,7 +23,7 @@ Use this checklist to declare DP baseline readiness for the first pre-pilot slic
 
 ## 4) Operator query surfaces (DP-8)
 
-- [ ] `workspace_operator_query_surfaces_dp8_v1.sh` is green.
+- [ ] `workspace_operator_query_surfaces.sh` is green.
 - [ ] query families are available: workspace/governance/events/evidence/authority/artifacts/graph.
 - [ ] deterministic result shapes are present: summary_card/table/detail_record/timeline.
 - [ ] unsupported families fail deterministically (`BAD_ARGS`, `unsupported_query_family`).

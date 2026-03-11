@@ -44,18 +44,18 @@ No scenario should rely on CLI-side runtime policy logic duplication.
 ## Automated Packs
 
 - Lifecycle and surfaces:
-  - `tests/integration/workspace_lifecycle/workspace_session_binding_contract_v1.sh`
-  - `tests/integration/workspace_lifecycle/workspace_inspect_surfaces_v1.sh`
-  - `tests/integration/workspace_lifecycle/workspace_real_flow_v1.sh`
+  - `tests/integration/workspace_lifecycle/workspace_session_binding_contract.sh`
+  - `tests/integration/workspace_lifecycle/workspace_inspect_surfaces.sh`
+  - `tests/integration/workspace_lifecycle/workspace_real_flow.sh`
 - Verticals:
-  - `tests/integration/workspace_lifecycle/workspace_scientific_flow_v1.sh`
-  - `tests/integration/workspace_lifecycle/workspace_digital_flow_v1.sh`
+  - `tests/integration/workspace_lifecycle/workspace_scientific_flow.sh`
+  - `tests/integration/workspace_lifecycle/workspace_digital_flow.sh`
 - Hostile/boundary:
-  - `tests/integration/workspace_lifecycle/workspace_hostile_path_baseline_v1.sh`
-  - `tests/integration/workspace_lifecycle/workspace_isolation_guards_v1.sh`
-  - `tests/integration/workspace_lifecycle/workspace_negative_paths_v1.sh`
+  - `tests/integration/workspace_lifecycle/workspace_hostile_path_baseline.sh`
+  - `tests/integration/workspace_lifecycle/workspace_isolation_guards.sh`
+  - `tests/integration/workspace_lifecycle/workspace_negative_paths.sh`
 - Vertical slice:
-  - `tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh`
+  - `tests/integration/workspace_lifecycle/workspace_governed_vertical_slice.sh`
 
 ## Current Honest Limitations
 

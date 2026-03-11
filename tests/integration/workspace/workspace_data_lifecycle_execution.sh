@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 YAI="$REPO/build/bin/yai"
 SOCK="${YAI_RUNTIME_INGRESS:-$HOME/.yai/run/control.sock}"
-WS="ws_data_lifecycle_dp15b_v1"
+WS="ws_data_lifecycle"
 BIND_FILE="$HOME/.yai/session/active_workspace.json"
 
 if [[ ! -x "$YAI" ]]; then
@@ -33,14 +33,14 @@ trap cleanup EXIT
   YAI_LIFECYCLE_KEEP_GRAPH_NODES=8 \
   YAI_LIFECYCLE_KEEP_GRAPH_EDGES=8 \
   YAI_LIFECYCLE_KEEP_TRANSIENT=4 \
-  "$YAI" >/tmp/yai_workspace_lifecycle_dp15b.log 2>&1) &
+  "$YAI" >/tmp/yai_workspace_lifecycle.log 2>&1) &
 RUNTIME_PID=$!
 
 for _ in $(seq 1 120); do
   [[ -S "$SOCK" ]] && break
   sleep 0.1
 done
-[[ -S "$SOCK" ]] || { echo "workspace_data_lifecycle_execution_dp15b_v1: FAIL (missing ingress socket)"; exit 1; }
+[[ -S "$SOCK" ]] || { echo "workspace_data_lifecycle_execution: FAIL (missing ingress socket)"; exit 1; }
 
 python3 - "$SOCK" "$WS" "$HOME" <<'PY'
 import json
@@ -175,4 +175,4 @@ r = call("system", "yai.workspace.unset")
 assert r["status"] == "ok", r
 PY
 
-echo "workspace_data_lifecycle_execution_dp15b_v1: ok"
+echo "workspace_data_lifecycle_execution: ok"

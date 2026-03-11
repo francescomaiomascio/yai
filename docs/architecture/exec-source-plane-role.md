@@ -76,7 +76,7 @@ Owner-side source operation path:
 
 This path is validated by integration test:
 
-- `tests/integration/source_plane/source_owner_ingest_bridge_v1.sh`
+- `tests/integration/source_plane/source_owner_ingest_bridge.sh`
 
 ## Implementation anchor points
 

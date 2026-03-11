@@ -53,7 +53,7 @@ The workspace is not treated as policy-default-only; attachment is explicit and 
 
 Primary script:
 
-- `tests/integration/workspace_lifecycle/workspace_governed_vertical_slice_v1.sh`
+- `tests/integration/workspace_lifecycle/workspace_governed_vertical_slice.sh`
 
 Quick run:
 
