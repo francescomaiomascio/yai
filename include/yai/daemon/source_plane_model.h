@@ -35,6 +35,9 @@
 #define YAI_SOURCE_RECORD_CLASS_CAPABILITY_ENVELOPE "source_capability_envelope"
 #define YAI_SOURCE_RECORD_CLASS_WORKSPACE_PEER_MEMBERSHIP "workspace_peer_membership"
 #define YAI_SOURCE_RECORD_CLASS_INGEST_OUTCOME "source_ingest_outcome"
+#define YAI_SOURCE_RECORD_CLASS_MESH_NODE "mesh_node"
+#define YAI_SOURCE_RECORD_CLASS_MESH_DISCOVERY_ADVERTISEMENT "mesh_discovery_advertisement"
+#define YAI_SOURCE_RECORD_CLASS_MESH_BOOTSTRAP_DESCRIPTOR "mesh_bootstrap_descriptor"
 
 typedef enum yai_source_contract_operation {
   YAI_SOURCE_CONTRACT_INVALID = 0,
@@ -185,6 +188,49 @@ typedef struct yai_source_workspace_peer_membership {
   char overlap_state[YAI_SOURCE_STATUS_MAX];
   int64_t updated_at_epoch;
 } yai_source_workspace_peer_membership_t;
+
+typedef struct yai_source_mesh_node {
+  char mesh_node_id[YAI_SOURCE_NODE_ID_MAX];
+  char node_role[YAI_SOURCE_KIND_MAX];
+  char mesh_id[YAI_SOURCE_REF_MAX];
+  char owner_id[YAI_SOURCE_REF_MAX];
+  char protocol_version[YAI_SOURCE_STATUS_MAX];
+  char capabilities_ref[YAI_SOURCE_REF_MAX];
+  char reachability_state[YAI_SOURCE_STATUS_MAX];
+  char discovery_endpoint_ref[YAI_SOURCE_REF_MAX];
+  char enrollment_mode[YAI_SOURCE_STATUS_MAX];
+  char workspace_visibility_scope[YAI_SOURCE_REF_MAX];
+  char discovery_state[YAI_SOURCE_STATUS_MAX];
+  int64_t advertised_at_epoch;
+} yai_source_mesh_node_t;
+
+typedef struct yai_source_mesh_discovery_advertisement {
+  char mesh_discovery_advertisement_id[YAI_SOURCE_REF_MAX];
+  char mesh_node_id[YAI_SOURCE_NODE_ID_MAX];
+  char node_role[YAI_SOURCE_KIND_MAX];
+  char mesh_id[YAI_SOURCE_REF_MAX];
+  char owner_id[YAI_SOURCE_REF_MAX];
+  char protocol_version[YAI_SOURCE_STATUS_MAX];
+  char capabilities_ref[YAI_SOURCE_REF_MAX];
+  char reachability_state[YAI_SOURCE_STATUS_MAX];
+  char discovery_endpoint_ref[YAI_SOURCE_REF_MAX];
+  char enrollment_mode[YAI_SOURCE_STATUS_MAX];
+  char workspace_visibility_scope[YAI_SOURCE_REF_MAX];
+  char advertisement_status[YAI_SOURCE_STATUS_MAX];
+  int64_t advertised_at_epoch;
+} yai_source_mesh_discovery_advertisement_t;
+
+typedef struct yai_source_mesh_bootstrap_descriptor {
+  char mesh_bootstrap_descriptor_id[YAI_SOURCE_REF_MAX];
+  char mesh_id[YAI_SOURCE_REF_MAX];
+  char owner_id[YAI_SOURCE_REF_MAX];
+  char owner_discovery_ref[YAI_SOURCE_REF_MAX];
+  char peer_discovery_ref[YAI_SOURCE_REF_MAX];
+  char bootstrap_seed_ref[YAI_SOURCE_REF_MAX];
+  char visibility_scope[YAI_SOURCE_REF_MAX];
+  char bootstrap_state[YAI_SOURCE_STATUS_MAX];
+  int64_t refreshed_at_epoch;
+} yai_source_mesh_bootstrap_descriptor_t;
 
 const char *yai_source_contract_operation_name(yai_source_contract_operation_t op);
 int yai_source_record_class_is_known(const char *record_class);

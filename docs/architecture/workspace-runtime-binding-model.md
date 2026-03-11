@@ -70,6 +70,12 @@ MF-A1 mesh lock:
 - mesh awareness does not change workspace binding sovereignty or owner final
   authority semantics.
 
+MF-1 discovery lock:
+- workspace binding context can scope discovery visibility and bootstrap
+  targeting;
+- discovery-scoped node visibility does not imply enrollment/trust completion
+  or delegated control authority.
+
 ## Workspace-local vs Runtime-global
 
 Workspace-local:

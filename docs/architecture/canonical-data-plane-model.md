@@ -88,6 +88,12 @@ MF-A1 mesh foundation lock:
 - mesh visibility/awareness do not imply authority or canonical truth transfer;
 - sovereign authority and canonical truth classes remain owner workspace runtime.
 
+MF-1 discovery data-plane lock:
+- discovery records and advertisement descriptors are topology/bootstrapping
+  artifacts, not trust or authority artifacts;
+- owner discovery and peer discovery remain governed visibility classes;
+- discovery state is preparatory input for enrollment/trust/coordination planes.
+
 ### 3) Control/Data Path Separation
 Mandatory path:
 

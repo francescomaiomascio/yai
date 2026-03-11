@@ -39,6 +39,7 @@ An ADR should answer:
 - `ADR-021-workspace-to-edge-policy-distribution.md`
 - `ADR-022-edge-policy-validity-expiry-refresh.md`
 - `ADR-023-governed-sovereign-mesh-foundation.md`
+- `ADR-024-mesh-discovery-foundation.md`
 
 ## Template policy
 

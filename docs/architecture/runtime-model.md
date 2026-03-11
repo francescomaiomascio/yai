@@ -71,6 +71,8 @@ SW-3 delegated validity/expiry/refresh model is defined in
 `docs/architecture/edge-policy-validity-expiry-refresh-model.md`.
 MF-A1 governed sovereign mesh foundation is defined in
 `docs/architecture/governed-sovereign-mesh-model.md`.
+MF-1 mesh discovery foundation is defined in
+`docs/architecture/mesh-discovery-foundation-model.md`.
 Source-plane entity/contract model is defined in
 `docs/architecture/source-plane-model.md`.
 Owner ingest runtime flow is defined in
@@ -113,3 +115,10 @@ YAI is mesh-native in topology (discovery + coordination across owner/peer
 nodes) while remaining sovereign in authority. Discovery/visibility/peer
 awareness do not transfer canonical policy truth, final adjudication, or
 workspace sovereignty from owner runtime.
+
+## MF-1 discovery lock
+
+Mesh discovery is an explicit governed visibility/bootstrap plane. Node
+discoverability and topology visibility enable bootstrap and coordination
+handoff, but do not imply trust, enrollment completion, delegated permission,
+or sovereign authority transfer.
