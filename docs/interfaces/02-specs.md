@@ -1,4 +1,6 @@
 # Interface Specs (protocol / control / overlays)
 
-Canonical source: `law/manifests/*`, `law/classification/*`, `law/control-families/*`, `law/domain-specializations/*`, `law/overlays/*`.
-Runtime contract artifact: `embedded/law/*`.
+Canonical destination: `governance/manifests/*`, `governance/classification/*`,
+`governance/control-families/*`, `governance/domain-specializations/*`,
+`governance/overlays/*`.
+Runtime transitional contract artifact: `embedded/law/*`.

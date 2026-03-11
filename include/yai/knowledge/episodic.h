@@ -7,10 +7,10 @@
 extern "C" {
 #endif
 
-int yai_mind_domain_episodic_append(const char *episode_id,
-                                    yai_mind_node_id_t node_id,
+int yai_domain_episodic_append(const char *episode_id,
+                                    yai_node_id_t node_id,
                                     const char *summary);
-int yai_mind_domain_episodic_latest(yai_mind_episodic_record_t *record_out);
+int yai_domain_episodic_latest(yai_episodic_record_t *record_out);
 
 #ifdef __cplusplus
 }

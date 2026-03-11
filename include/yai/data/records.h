@@ -2,6 +2,7 @@
 #pragma once
 
 #include <yai/data/store.h>
+#include <yai/data/evidence.h>
 
 int yai_data_records_append_event(const char *workspace_id,
                                   const char *event_json,
@@ -15,6 +16,7 @@ int yai_data_records_append_decision(const char *workspace_id,
                                      size_t out_ref_cap,
                                      char *err,
                                      size_t err_cap);
+/* Transitional compatibility wrapper for yai_data_evidence_append(). */
 int yai_data_records_append_evidence(const char *workspace_id,
                                      const char *evidence_json,
                                      char *out_ref,

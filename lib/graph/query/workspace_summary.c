@@ -5,23 +5,13 @@
 #include <yai/graph/materialization.h>
 #include <yai/graph/query.h>
 #include <yai/graph/summary.h>
-#include <yai/data/query.h>
+#include <yai/graph/domains.h>
 #include <yai/daemon/source_plane_model.h>
 
 #include <stdio.h>
 #include <string.h>
 
-static size_t yai_graph_query_count_or_zero(const char *workspace_id,
-                                            const char *record_class)
-{
-  size_t out = 0;
-  char err[64];
-  if (yai_data_query_count(workspace_id, record_class, &out, err, sizeof(err)) != 0)
-  {
-    return 0;
-  }
-  return out;
-}
+#include "../internal/counts.h"
 
 int yai_graph_query_workspace_summary(const char *workspace_id,
                                       char *out_json,
@@ -29,7 +19,7 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
                                       char *err,
                                       size_t err_cap)
 {
-  yai_mind_graph_stats_t stats = {0};
+  yai_graph_stats_t stats = {0};
   size_t ws_nodes = 0;
   size_t ws_edges = 0;
   size_t src_nodes = 0;
@@ -43,13 +33,13 @@ int yai_graph_query_workspace_summary(const char *workspace_id,
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_query_bad_args");
     return -1;
   }
-  if (yai_mind_graph_stats_get(&stats) != YAI_MIND_OK) {
+  if (yai_graph_stats_get(&stats) != YAI_MIND_OK) {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_stats_failed");
     return -1;
   }
   (void)yai_graph_materialization_workspace_counts(workspace_id, &ws_nodes, &ws_edges);
   (void)yai_graph_materialization_workspace_source_counts(workspace_id, &src_nodes, &src_edges);
-  (void)yai_mind_storage_bridge_last_refs(workspace_id,
+  (void)yai_storage_bridge_last_refs(workspace_id,
                                           node_ref,
                                           sizeof(node_ref),
                                           edge_ref,
@@ -102,7 +92,7 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
                                               char *err,
                                               size_t err_cap)
 {
-  yai_mind_graph_stats_t stats = {0};
+  yai_graph_stats_t stats = {0};
   size_t ws_nodes = 0;
   size_t ws_edges = 0;
   size_t src_nodes = 0;
@@ -129,6 +119,10 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
   size_t mesh_overlay_presence = 0;
   size_t mesh_overlay_target_association = 0;
   size_t mesh_overlay_path_mutation = 0;
+  char activation_json[192];
+  char authority_json[192];
+  char episodic_json[192];
+  char semantic_json[256];
   char graph_store_ref[512];
 
   if (err && err_cap > 0) err[0] = '\0';
@@ -138,7 +132,7 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
     return -1;
   }
 
-  if (yai_mind_graph_stats_get(&stats) != YAI_MIND_OK)
+  if (yai_graph_stats_get(&stats) != YAI_MIND_OK)
   {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_stats_failed");
     return -1;
@@ -146,7 +140,7 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
 
   (void)yai_graph_materialization_workspace_counts(workspace_id, &ws_nodes, &ws_edges);
   (void)yai_graph_materialization_workspace_source_counts(workspace_id, &src_nodes, &src_edges);
-  (void)yai_mind_storage_bridge_last_refs(workspace_id,
+  (void)yai_storage_bridge_last_refs(workspace_id,
                                           NULL,
                                           0,
                                           NULL,
@@ -160,27 +154,39 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
                                           NULL,
                                           0);
 
-  source_node = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_NODE);
-  source_daemon_instance = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_DAEMON_INSTANCE);
-  source_binding = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_BINDING);
-  source_action_point = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ACTION_POINT);
-  source_policy_snapshot = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_POLICY_SNAPSHOT);
-  source_enrollment_grant = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ENROLLMENT_GRANT);
-  source_capability_envelope = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_CAPABILITY_ENVELOPE);
-  source_acquisition_event = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ACQUISITION_EVENT);
-  source_ingest_outcome = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_INGEST_OUTCOME);
-  source_evidence_candidate = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_EVIDENCE_CANDIDATE);
-  mesh_coordination_membership = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_COORDINATION_MEMBERSHIP);
-  mesh_peer_awareness = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_PEER_AWARENESS);
-  mesh_peer_legitimacy = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_PEER_LEGITIMACY);
-  mesh_authority_scope = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_AUTHORITY_SCOPE);
-  mesh_transport_endpoint = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_TRANSPORT_ENDPOINT);
-  mesh_transport_path_state = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_TRANSPORT_PATH_STATE);
-  mesh_owner_remote_ingress = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OWNER_REMOTE_INGRESS);
-  mesh_owner_remote_ingress_decision = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OWNER_REMOTE_INGRESS_DECISION);
-  mesh_overlay_presence = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_PRESENCE);
-  mesh_overlay_target_association = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_TARGET_ASSOCIATION);
-  mesh_overlay_path_mutation = yai_graph_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_PATH_MUTATION);
+  source_node = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_NODE);
+  source_daemon_instance = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_DAEMON_INSTANCE);
+  source_binding = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_BINDING);
+  source_action_point = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ACTION_POINT);
+  source_policy_snapshot = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_POLICY_SNAPSHOT);
+  source_enrollment_grant = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ENROLLMENT_GRANT);
+  source_capability_envelope = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_CAPABILITY_ENVELOPE);
+  source_acquisition_event = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_ACQUISITION_EVENT);
+  source_ingest_outcome = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_INGEST_OUTCOME);
+  source_evidence_candidate = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_EVIDENCE_CANDIDATE);
+  mesh_coordination_membership = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_COORDINATION_MEMBERSHIP);
+  mesh_peer_awareness = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_PEER_AWARENESS);
+  mesh_peer_legitimacy = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_PEER_LEGITIMACY);
+  mesh_authority_scope = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_AUTHORITY_SCOPE);
+  mesh_transport_endpoint = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_TRANSPORT_ENDPOINT);
+  mesh_transport_path_state = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_TRANSPORT_PATH_STATE);
+  mesh_owner_remote_ingress = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OWNER_REMOTE_INGRESS);
+  mesh_owner_remote_ingress_decision = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OWNER_REMOTE_INGRESS_DECISION);
+  mesh_overlay_presence = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_PRESENCE);
+  mesh_overlay_target_association = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_TARGET_ASSOCIATION);
+  mesh_overlay_path_mutation = yai_graph_internal_query_count_or_zero(workspace_id, YAI_SOURCE_RECORD_CLASS_MESH_OVERLAY_PATH_MUTATION);
+  if (yai_graph_domain_activation_summary_json(workspace_id, activation_json, sizeof(activation_json), NULL, 0) != 0) {
+    snprintf(activation_json, sizeof(activation_json), "%s", "{}");
+  }
+  if (yai_graph_domain_authority_summary_json(workspace_id, authority_json, sizeof(authority_json), NULL, 0) != 0) {
+    snprintf(authority_json, sizeof(authority_json), "%s", "{}");
+  }
+  if (yai_graph_domain_episodic_summary_json(workspace_id, episodic_json, sizeof(episodic_json), NULL, 0) != 0) {
+    snprintf(episodic_json, sizeof(episodic_json), "%s", "{}");
+  }
+  if (yai_graph_domain_semantic_summary_json(workspace_id, semantic_json, sizeof(semantic_json), NULL, 0) != 0) {
+    snprintf(semantic_json, sizeof(semantic_json), "%s", "{}");
+  }
 
   if (snprintf(out_json,
                out_cap,
@@ -189,6 +195,7 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
                "\"entity_families\":{\"source_edge\":{\"source_node\":%zu,\"source_daemon_instance\":%zu,\"source_binding\":%zu,\"source_action_point\":%zu,\"source_policy_snapshot\":%zu,\"source_enrollment_grant\":%zu,\"source_capability_envelope\":%zu,\"source_acquisition_event\":%zu,\"source_ingest_outcome\":%zu,\"source_evidence_candidate\":%zu},"
                "\"mesh_coordination\":{\"mesh_coordination_membership\":%zu,\"mesh_peer_awareness\":%zu,\"mesh_peer_legitimacy\":%zu,\"mesh_authority_scope\":%zu},"
                "\"transport_ingress_overlay\":{\"mesh_transport_endpoint\":%zu,\"mesh_transport_path_state\":%zu,\"mesh_owner_remote_ingress\":%zu,\"mesh_owner_remote_ingress_decision\":%zu,\"mesh_overlay_presence\":%zu,\"mesh_overlay_target_association\":%zu,\"mesh_overlay_path_mutation\":%zu}},"
+               "\"domains\":{\"activation\":%s,\"authority\":%s,\"episodic\":%s,\"semantic\":%s},"
                "\"adjudication_model\":{\"observed\":\"runtime_distributed_state\",\"accepted\":\"owner_ingress_or_owner_processing_accepted\",\"canonicalized\":\"owner_final_adjudication\"},"
                "\"graph_store_ref\":\"%s\"}",
                workspace_id,
@@ -220,6 +227,10 @@ int yai_graph_query_workspace_unified_summary(const char *workspace_id,
                mesh_overlay_presence,
                mesh_overlay_target_association,
                mesh_overlay_path_mutation,
+               activation_json,
+               authority_json,
+               episodic_json,
+               semantic_json,
                graph_store_ref) <= 0)
   {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_unified_summary_encode_failed");

@@ -1,13 +1,12 @@
-# Law Compatibility Declaration
+# Governance Naming Compatibility Declaration
 
-- normative authority repo: `law`
-- compatibility mode: `embedded-surface-primary`
-- embedded source path: `embedded/law`
-- supported embedded law version(s):
-  - `0.1.0`
-- tested embedded law version: `0.1.0`
+- status: transitional
+- canonical namespace: `governance`
+- legacy namespace: `law` (compatibility only)
+- target model: governance content converges under `governance/`
+- embedded path status: `embedded/law` is legacy transitional, non-canonical
+- migration marker: `transitional/embedded-law/`
 - notes:
-  - `yai` is the integration/runtime authority.
-  - Canonical law remains outside this repository (`law`).
-  - Runtime-facing law is consumed from exported embedded surface (`embedded/law/`).
-  - Legacy `deps/law/` bridge has been retired from active runtime and tooling paths.
+  - this file exists to track naming/path compatibility during cutover
+  - external/embedded dualism must be removed during Block B convergence
+  - final-state governance authority is represented from unified repository roots

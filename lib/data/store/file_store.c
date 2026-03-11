@@ -16,7 +16,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "internal.h"
+#include "../internal/store_internal.h"
 
 #if defined(YAI_HAVE_HIREDIS)
 #include <hiredis/hiredis.h>

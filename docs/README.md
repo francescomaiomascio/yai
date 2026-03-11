@@ -1,49 +1,21 @@
 # yai docs
 
-Live documentation for the runtime repository.
+Central documentation root for the unified YAI repository.
 
-## Primary live paths
+## Canonical documentation areas
 
-- `architecture/` runtime architecture and law-native consumption
-- `developer/` implementation and debugging guides
-- `interfaces/` integration-facing references
-- `program/` active governance/process records
-- `pointers/` cross-repo official/evidence/collateral pointers
+- `architecture/`
+- `operators/`
+- `developers/`
+- `product/`
+- `reference/`
 
-## Surface classes
+## Active program and migration tracking
 
-- `primary runtime-facing`: `architecture/`, `developer/`, `interfaces/`
-- `program/governance active`: `program/`
-- `historical/superseded`: docs explicitly marked with historical/superseded headers
+- `program/` (ADR/runbooks/reports and program delivery tracking)
 
-## Transitional material policy
+## Transitional policy
 
-Refactor/rewrite/mapping/closeout documents are quarantined under:
-- `../archive_tmp/`
-
-Those files are historical/transitional and not architecture authority.
-
-## Cross-repo model
-
-- `law`: canonical normative source
-- `yai`: runtime consumer/realization
-- `ops`: official qualification/evidence/publication bureau
-
-## Cross-repo terminology contract
-
-- `architecture/cross-repo-naming-and-terminology-contract.md`
-- `program/reports/cross-repo-terminology-impact-matrix.md`
-
-## Workspace references
-
-- `architecture/workspace-model.md`
-- `architecture/workspace-session-binding.md`
-- `architecture/workspace-inspect-surfaces.md`
-- `architecture/workspace-normative-execution-flow.md`
-- `architecture/workspace-validation-matrix.md`
-- `architecture/workspace-transitional-residue.md`
-- `architecture/workspace-closeout-ws6.md`
-- `developer/workspace-inspect-model.md`
-- `developer/workspace-prompt-context.md`
-- `developer/workspace-policy-inspection.md`
-- `developer/workspace-first-real-scenario.md`
+- legacy/superseded materials may remain during migration, but canonical
+  architecture and operator guidance must converge under the five documentation
+  areas above.

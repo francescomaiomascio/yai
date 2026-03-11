@@ -46,17 +46,17 @@ BRAIN_SRCS=(
   lib/graph/state/graph_facade.c
   lib/graph/state/graph.c
   lib/graph/state/ids.c
-  lib/graph/domains/activation.c
-  lib/graph/domains/authority.c
-  lib/graph/domains/episodic.c
-  lib/graph/domains/semantic.c
-  lib/knowledge/memory/semantic_db.c
-  lib/knowledge/memory/vector_index.c
-  lib/knowledge/providers/providers.c
-  lib/knowledge/providers/provider_registry.c
-  lib/exec/bridge/client_bridge.c
-  lib/knowledge/providers/mock_provider.c
-  lib/knowledge/providers/embedder_mock.c
+  lib/knowledge/semantic/semantic_db.c
+  lib/knowledge/vector/vector_index.c
+  lib/knowledge/cognition/activation.c
+  lib/knowledge/memory/authority.c
+  lib/knowledge/episodic/episodic.c
+  lib/providers/registry/providers.c
+  lib/providers/registry/provider_registry.c
+  lib/providers/inference/client_inference.c
+  lib/providers/embedding/client_embedding.c
+  lib/providers/mocks/mock_provider.c
+  lib/providers/embedding/embedder_mock.c
   lib/exec/transport/brain_transport.c
   lib/exec/transport/brain_protocol.c
   lib/exec/transport/uds_server.c

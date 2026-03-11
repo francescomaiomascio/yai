@@ -1,0 +1,22 @@
+# Governance Implementation Domain (Canonical)
+
+`lib/governance/` is the canonical implementation domain for governance logic
+in the unified YAI repository.
+
+Canonical implementation slices include:
+
+- `classification/`
+- `discovery/`
+- `loader/`
+- `mapping/`
+- `resolution/`
+- `policy_effects*`
+- `compliance/`
+- `overlays/`
+- `authority_model/`
+- `internal/`
+
+Transitional note:
+
+- `lib/law/` is compatibility-only during migration and must not receive new
+  canonical implementation logic.

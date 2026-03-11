@@ -4,7 +4,7 @@
 
 #include <yai/knowledge/cognition.h>
 #include <yai/knowledge/memory.h>
-#include <yai/knowledge/providers.h>
+#include <yai/providers/providers.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -24,8 +24,8 @@ static int parse_payload_after(const char *raw, const char *prefix, char *out, s
   return YAI_MIND_OK;
 }
 
-int yai_mind_protocol_parse(const char *raw,
-                            yai_mind_protocol_request_t *request_out)
+int yai_protocol_parse(const char *raw,
+                            yai_protocol_request_t *request_out)
 {
   if (!raw || !request_out) return YAI_MIND_ERR_INVALID_ARG;
   memset(request_out, 0, sizeof(*request_out));
@@ -55,8 +55,8 @@ int yai_mind_protocol_parse(const char *raw,
   return YAI_MIND_ERR_INVALID_ARG;
 }
 
-int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
-                               yai_mind_protocol_response_t *response_out)
+int yai_protocol_dispatch(const yai_protocol_request_t *request,
+                               yai_protocol_response_t *response_out)
 {
   if (!request || !response_out) return YAI_MIND_ERR_INVALID_ARG;
   memset(response_out, 0, sizeof(*response_out));
@@ -70,8 +70,8 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
 
     case YAI_MIND_PROTOCOL_COMPLETE:
       {
-        yai_mind_provider_response_t provider_response = {0};
-        int rc = yai_mind_client_completion(request->provider, request->payload, &provider_response);
+        yai_provider_response_t provider_response = {0};
+        int rc = yai_client_completion(request->provider, request->payload, &provider_response);
         response_out->status = (rc == YAI_MIND_OK) ? 200 : 500;
         response_out->code = rc;
         snprintf(response_out->payload, sizeof(response_out->payload), "%s",
@@ -82,7 +82,7 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
     case YAI_MIND_PROTOCOL_EMBED:
       {
         float vector_out[4] = {0};
-        int rc = yai_mind_client_embedding(request->provider, request->payload, vector_out, 4);
+        int rc = yai_client_embedding(request->provider, request->payload, vector_out, 4);
         response_out->status = (rc == YAI_MIND_OK) ? 200 : 500;
         response_out->code = rc;
         if (rc == YAI_MIND_OK) {
@@ -96,12 +96,12 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
 
     case YAI_MIND_PROTOCOL_QUERY:
       {
-        yai_mind_memory_query_t query = {0};
-        yai_mind_memory_result_t result = {0};
+        yai_memory_query_t query = {0};
+        yai_memory_result_t result = {0};
         int rc;
         snprintf(query.query, sizeof(query.query), "%.240s", request->payload);
         query.limit = 10;
-        rc = yai_mind_memory_query_run(&query, &result);
+        rc = yai_memory_query_run(&query, &result);
         response_out->status = (rc == YAI_MIND_OK) ? 200 : 500;
         response_out->code = rc;
         if (rc == YAI_MIND_OK) {
@@ -115,8 +115,8 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
 
     case YAI_MIND_PROTOCOL_COGNITION:
       {
-        yai_mind_cognition_response_t cognition = {0};
-        int rc = yai_mind_cognition_execute_text(request->payload,
+        yai_cognition_response_t cognition = {0};
+        int rc = yai_cognition_execute_text(request->payload,
                                                  "transport-session",
                                                  request->provider,
                                                  &cognition);
@@ -125,7 +125,7 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
         if (rc == YAI_MIND_OK) {
           snprintf(response_out->payload, sizeof(response_out->payload),
                    "role=%s score=%.2f %.340s",
-                   yai_mind_agent_role_name(cognition.selected_role),
+                   yai_agent_role_name(cognition.selected_role),
                    cognition.score,
                    cognition.output);
         } else {
@@ -142,7 +142,7 @@ int yai_mind_protocol_dispatch(const yai_mind_protocol_request_t *request,
   }
 }
 
-int yai_mind_protocol_format_response(const yai_mind_protocol_response_t *response,
+int yai_protocol_format_response(const yai_protocol_response_t *response,
                                       char *out,
                                       size_t out_cap)
 {

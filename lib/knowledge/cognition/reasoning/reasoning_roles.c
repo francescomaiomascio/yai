@@ -19,7 +19,7 @@ static int contains_word(const char *haystack, const char *needle)
   return 0;
 }
 
-yai_mind_agent_role_t yai_mind_reasoning_select_role(const yai_mind_cognition_request_t *request)
+yai_agent_role_t yai_reasoning_select_role(const yai_cognition_request_t *request)
 {
   const char *text;
   if (!request) return YAI_MIND_AGENT_ROLE_SYSTEM;

@@ -4,8 +4,8 @@
 
 #include <string.h>
 
-float yai_mind_reasoning_score(const yai_mind_cognition_request_t *request,
-                               yai_mind_agent_role_t role)
+float yai_reasoning_score(const yai_cognition_request_t *request,
+                               yai_agent_role_t role)
 {
   float base = 0.45f;
   if (!request) return 0.0f;

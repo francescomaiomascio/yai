@@ -1,5 +1,5 @@
 // Runtime ID helper.
-#include <yai/core/vault.h>
+#include <yai/runtime/vault.h>
 #include <stdio.h>
 
 int yai_generate_runtime_id(const yai_vault_t *vault, char *buffer, size_t cap) {

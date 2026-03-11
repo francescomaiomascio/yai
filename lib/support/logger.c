@@ -1,4 +1,4 @@
-#include <yai/core/events.h>
+#include <yai/runtime/events.h>
 
 #ifndef YAI_RUNTIME_EVENT_SCHEMA_ID
 #define YAI_RUNTIME_EVENT_SCHEMA_ID "yai.runtime.event.v1"

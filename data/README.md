@@ -1,6 +1,8 @@
-# Data
+# data
 
-Runtime repository does not store research datasets or benchmark seeds.
+Canonical data roots for unified-repo fixtures and seeds:
 
-Canonical location:
-- ops/research/
+- `datasets/`
+- `fixtures/`
+- `seeds/`
+- `global/`

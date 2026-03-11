@@ -1,40 +1,36 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/knowledge/activation.h>
-#include "../state/graph_state_internal.h"
+#include <yai/graph/domains.h>
 
 #include <stdio.h>
-#include <string.h>
 
-static yai_mind_activation_record_t g_last_record = {0};
-static yai_mind_activation_trace_t g_last_trace = {0};
+#include "../internal/counts.h"
 
-int yai_mind_domain_activation_record(yai_mind_node_id_t node_id,
-                                      float score,
-                                      const char *source)
+int yai_graph_domain_activation_summary_json(const char *workspace_id,
+                                             char *out_json,
+                                             size_t out_cap,
+                                             char *err,
+                                             size_t err_cap)
 {
-  if (!yai_mind_node_id_is_valid(node_id) || !source || !source[0]) return YAI_MIND_ERR_INVALID_ARG;
-  g_last_record.node_id = node_id;
-  g_last_record.score = score;
-  snprintf(g_last_record.source, sizeof(g_last_record.source), "%s", source);
-
-  g_last_trace.tick++;
-  snprintf(g_last_trace.detail, sizeof(g_last_trace.detail), "activation node=%lu score=%.3f", (unsigned long)node_id, score);
-  return YAI_MIND_OK;
-}
-
-int yai_mind_domain_activation_last(yai_mind_activation_record_t *record_out,
-                                    yai_mind_activation_trace_t *trace_out)
-{
-  if (!record_out || !trace_out) return YAI_MIND_ERR_INVALID_ARG;
-  if (!yai_mind_node_id_is_valid(g_last_record.node_id)) return YAI_MIND_ERR_NOT_FOUND;
-  *record_out = g_last_record;
-  *trace_out = g_last_trace;
-  return YAI_MIND_OK;
-}
-
-void yai_mind_graph_activation_reset(void)
-{
-  memset(&g_last_record, 0, sizeof(g_last_record));
-  memset(&g_last_trace, 0, sizeof(g_last_trace));
+  size_t events = 0;
+  size_t source_events = 0;
+  size_t ingest_outcomes = 0;
+  if (err && err_cap > 0) err[0] = '\0';
+  if (!workspace_id || !workspace_id[0] || !out_json || out_cap == 0) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_activation_domain_bad_args");
+    return -1;
+  }
+  events = yai_graph_internal_query_count_or_zero(workspace_id, "events");
+  source_events = yai_graph_internal_query_count_or_zero(workspace_id, "source_acquisition_event");
+  ingest_outcomes = yai_graph_internal_query_count_or_zero(workspace_id, "source_ingest_outcome");
+  if (snprintf(out_json,
+               out_cap,
+               "{\"events\":%zu,\"source_acquisition_event\":%zu,\"source_ingest_outcome\":%zu}",
+               events,
+               source_events,
+               ingest_outcomes) <= 0) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_activation_domain_encode_failed");
+    return -1;
+  }
+  return 0;
 }

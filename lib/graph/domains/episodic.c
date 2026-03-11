@@ -1,45 +1,36 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/knowledge/episodic.h>
-#include "../state/graph_state_internal.h"
+#include <yai/graph/domains.h>
 
 #include <stdio.h>
-#include <string.h>
 
-#define YAI_MIND_EPISODIC_CAP 256
+#include "../internal/counts.h"
 
-static yai_mind_episodic_record_t g_records[YAI_MIND_EPISODIC_CAP];
-static size_t g_count = 0;
-
-int yai_mind_domain_episodic_append(const char *episode_id,
-                                    yai_mind_node_id_t node_id,
-                                    const char *summary)
+int yai_graph_domain_episodic_summary_json(const char *workspace_id,
+                                           char *out_json,
+                                           size_t out_cap,
+                                           char *err,
+                                           size_t err_cap)
 {
-  if (!episode_id || !episode_id[0] || !summary || !summary[0]) return YAI_MIND_ERR_INVALID_ARG;
-  if (g_count >= YAI_MIND_EPISODIC_CAP) return YAI_MIND_ERR_STATE;
-
-  if (!yai_mind_node_id_is_valid(node_id)) {
-    int rc = yai_mind_graph_node_create("episodic", episode_id, summary, &node_id);
-    if (rc != YAI_MIND_OK) return rc;
+  size_t events = 0;
+  size_t decisions = 0;
+  size_t evidence = 0;
+  if (err && err_cap > 0) err[0] = '\0';
+  if (!workspace_id || !workspace_id[0] || !out_json || out_cap == 0) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_episodic_domain_bad_args");
+    return -1;
   }
-
-  snprintf(g_records[g_count].episode_id, sizeof(g_records[g_count].episode_id), "%s", episode_id);
-  snprintf(g_records[g_count].summary, sizeof(g_records[g_count].summary), "%s", summary);
-  g_records[g_count].node_id = node_id;
-  g_count++;
-  return YAI_MIND_OK;
-}
-
-int yai_mind_domain_episodic_latest(yai_mind_episodic_record_t *record_out)
-{
-  if (!record_out) return YAI_MIND_ERR_INVALID_ARG;
-  if (g_count == 0) return YAI_MIND_ERR_NOT_FOUND;
-  *record_out = g_records[g_count - 1U];
-  return YAI_MIND_OK;
-}
-
-void yai_mind_graph_episodic_reset(void)
-{
-  memset(g_records, 0, sizeof(g_records));
-  g_count = 0;
+  events = yai_graph_internal_query_count_or_zero(workspace_id, "events");
+  decisions = yai_graph_internal_query_count_or_zero(workspace_id, "decisions");
+  evidence = yai_graph_internal_query_count_or_zero(workspace_id, "evidence");
+  if (snprintf(out_json,
+               out_cap,
+               "{\"events\":%zu,\"decisions\":%zu,\"evidence\":%zu}",
+               events,
+               decisions,
+               evidence) <= 0) {
+    if (err && err_cap > 0) snprintf(err, err_cap, "%s", "graph_episodic_domain_encode_failed");
+    return -1;
+  }
+  return 0;
 }

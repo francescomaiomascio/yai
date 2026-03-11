@@ -2,37 +2,38 @@
 
 ## Scope
 
-This document governs the `yai` runtime implementation repository.
+This document governs the `yai` unified repository convergence model.
 
-- Normative contracts: `law` (canonical) and `embedded/law` (runtime contract surface)
-- Runtime implementation: `boot/`, `root/`, `kernel/`, `engine/`, `runtime/`, `mind/`
+- Canonical governance destination: `governance/`
+- Canonical naming namespace: `governance` (`law` is transitional compatibility naming)
+- Runtime implementation: `cmd/`, `include/`, `lib/`
+- Canonical documentation center: `docs/`
+- Migration-only area: `transitional/`
 
 If implementation and contracts diverge, implementation must be corrected.
 
 ## Spec-First Process
 
 For contract-facing changes:
-1. Update contracts in `law` first.
-2. Merge/approve contract change.
-3. Align runtime implementation in `yai`.
-4. Verify with CI and runtime checks.
+1. Define/update normative governance content in canonical governance roots.
+2. Align runtime implementation in `yai`.
+3. Verify with CI, qualification waves, and runtime checks.
+4. Keep migration markers only under `transitional/`.
 
 ## Documentation Residency
 
-Governance/program docs are externalized to `infra`:
-- `../infra/docs/governance/yai/`
-- `../infra/docs/governance/`
-- `../infra/migration/`
+`docs/` is first-class and central in this repository.
 
-`yai/docs/` is runtime-first and minimal.
+Cross-repo references may exist during migration, but canonical architecture/program guidance must remain readable from this root.
 
 ## Required Review Areas
 
-- Contract pin updates and compatibility impact
+- Governance/model updates and compatibility impact
 - Kernel authority/enforcement boundaries
 - Engine external effect gating
 - Runtime protocol behavior
-- Mind interaction with L1/L2 boundaries
+- Edge/mesh/workspace behavior under sovereignty boundaries
+- Migration safety (`embedded/` and legacy paths must not be re-canonized)
 
 ## License
 

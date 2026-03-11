@@ -42,7 +42,12 @@ int yai_data_records_append_evidence(const char *workspace_id,
                                      char *err,
                                      size_t err_cap)
 {
-  return append_record(workspace_id, "evidence", evidence_json, out_ref, out_ref_cap, err, err_cap);
+  return yai_data_evidence_append(workspace_id,
+                                  evidence_json,
+                                  out_ref,
+                                  out_ref_cap,
+                                  err,
+                                  err_cap);
 }
 
 int yai_data_records_append_governance(const char *workspace_id,

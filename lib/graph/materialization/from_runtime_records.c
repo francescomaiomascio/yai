@@ -138,22 +138,22 @@ int yai_graph_materialize_runtime_record_bundle(const char *workspace_id,
   yai_graph_slug(authority_ref, authority_slug, sizeof(authority_slug));
   yai_graph_slug(artifact_ref, artifact_slug, sizeof(artifact_slug));
 
-  (void)yai_mind_graph_node_create("workspace", workspace_id, "runtime_scope", &out->workspace_node);
-  (void)yai_mind_graph_node_create("governance", governance_slug, governance_ref && governance_ref[0] ? governance_ref : "none", &out->governance_node);
-  (void)yai_mind_graph_node_create("decision", decision_slug, effect && effect[0] ? effect : "unknown", &out->decision_node);
-  (void)yai_mind_graph_node_create("evidence", evidence_slug, evidence_ref && evidence_ref[0] ? evidence_ref : "none", &out->evidence_node);
-  (void)yai_mind_graph_node_create("authority", authority_slug, authority_profile && authority_profile[0] ? authority_profile : "unknown", &out->authority_node);
-  (void)yai_mind_graph_node_create("artifact", artifact_slug, resource_hint && resource_hint[0] ? resource_hint : "unknown", &out->artifact_node);
-  (void)yai_mind_graph_node_create("episode", event_slug, family_id && family_id[0] ? family_id : "unknown", &out->episode_node);
+  (void)yai_graph_node_create("workspace", workspace_id, "runtime_scope", &out->workspace_node);
+  (void)yai_graph_node_create("governance", governance_slug, governance_ref && governance_ref[0] ? governance_ref : "none", &out->governance_node);
+  (void)yai_graph_node_create("decision", decision_slug, effect && effect[0] ? effect : "unknown", &out->decision_node);
+  (void)yai_graph_node_create("evidence", evidence_slug, evidence_ref && evidence_ref[0] ? evidence_ref : "none", &out->evidence_node);
+  (void)yai_graph_node_create("authority", authority_slug, authority_profile && authority_profile[0] ? authority_profile : "unknown", &out->authority_node);
+  (void)yai_graph_node_create("artifact", artifact_slug, resource_hint && resource_hint[0] ? resource_hint : "unknown", &out->artifact_node);
+  (void)yai_graph_node_create("episode", event_slug, family_id && family_id[0] ? family_id : "unknown", &out->episode_node);
 
-  (void)yai_mind_graph_edge_create(out->decision_node, out->workspace_node, "decision_in_workspace", 1.0f, &out->edge_decision_in_workspace);
-  (void)yai_mind_graph_edge_create(out->decision_node, out->governance_node, "decision_under_governance", 1.0f, &out->edge_decision_under_governance);
-  (void)yai_mind_graph_edge_create(out->decision_node, out->authority_node, "decision_under_authority", 1.0f, &out->edge_decision_under_authority);
-  (void)yai_mind_graph_edge_create(out->decision_node, out->artifact_node, "decision_on_artifact", 1.0f, &out->edge_decision_on_artifact);
-  (void)yai_mind_graph_edge_create(out->evidence_node, out->decision_node, "evidence_for_decision", 1.0f, &out->edge_evidence_for_decision);
-  (void)yai_mind_graph_edge_create(out->artifact_node, out->governance_node, "artifact_governed_by", 1.0f, &out->edge_artifact_governed_by);
-  (void)yai_mind_graph_edge_create(out->workspace_node, out->governance_node, "workspace_uses_governance", 1.0f, &out->edge_workspace_uses_governance);
-  (void)yai_mind_graph_edge_create(out->episode_node, out->decision_node, "episode_yielded_decision", 1.0f, &out->edge_episode_yielded_decision);
+  (void)yai_graph_edge_create(out->decision_node, out->workspace_node, "decision_in_workspace", 1.0f, &out->edge_decision_in_workspace);
+  (void)yai_graph_edge_create(out->decision_node, out->governance_node, "decision_under_governance", 1.0f, &out->edge_decision_under_governance);
+  (void)yai_graph_edge_create(out->decision_node, out->authority_node, "decision_under_authority", 1.0f, &out->edge_decision_under_authority);
+  (void)yai_graph_edge_create(out->decision_node, out->artifact_node, "decision_on_artifact", 1.0f, &out->edge_decision_on_artifact);
+  (void)yai_graph_edge_create(out->evidence_node, out->decision_node, "evidence_for_decision", 1.0f, &out->edge_evidence_for_decision);
+  (void)yai_graph_edge_create(out->artifact_node, out->governance_node, "artifact_governed_by", 1.0f, &out->edge_artifact_governed_by);
+  (void)yai_graph_edge_create(out->workspace_node, out->governance_node, "workspace_uses_governance", 1.0f, &out->edge_workspace_uses_governance);
+  (void)yai_graph_edge_create(out->episode_node, out->decision_node, "episode_yielded_decision", 1.0f, &out->edge_episode_yielded_decision);
 
   snprintf(out->last_graph_node_ref, sizeof(out->last_graph_node_ref), "bgn-decision-%s-%s", workspace_id, decision_slug);
   snprintf(out->last_graph_edge_ref, sizeof(out->last_graph_edge_ref), "bge-evidence-for-decision-%s-%s", workspace_id, decision_slug);
@@ -228,15 +228,15 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   const char *source_event_id = NULL;
   const char *source_candidate_id = NULL;
   const char *owner_ws_id = NULL;
-  yai_mind_node_id_t ws_node = 0;
-  yai_mind_node_id_t src_node = 0;
-  yai_mind_node_id_t daemon_node = 0;
-  yai_mind_node_id_t binding_node = 0;
-  yai_mind_node_id_t scope_node = 0;
-  yai_mind_node_id_t asset_node = 0;
-  yai_mind_node_id_t event_node = 0;
-  yai_mind_node_id_t candidate_node = 0;
-  yai_mind_edge_id_t rel_edge = 0;
+  yai_node_id_t ws_node = 0;
+  yai_node_id_t src_node = 0;
+  yai_node_id_t daemon_node = 0;
+  yai_node_id_t binding_node = 0;
+  yai_node_id_t scope_node = 0;
+  yai_node_id_t asset_node = 0;
+  yai_node_id_t event_node = 0;
+  yai_node_id_t candidate_node = 0;
+  yai_edge_id_t rel_edge = 0;
   char ws_slug[96];
   char src_slug[128];
   char a_slug[128];
@@ -271,17 +271,17 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   if (!owner_ws_id || !owner_ws_id[0]) owner_ws_id = workspace_id;
 
   yai_graph_slug(owner_ws_id, ws_slug, sizeof(ws_slug));
-  (void)yai_mind_graph_node_create("owner_workspace", ws_slug, owner_ws_id, &ws_node);
+  (void)yai_graph_node_create("owner_workspace", ws_slug, owner_ws_id, &ws_node);
   slot = workspace_counts_slot(workspace_id);
 
   if (strcmp(record_class, YAI_SOURCE_RECORD_CLASS_NODE) == 0)
   {
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
                                      src_slug,
                                      source_node_id ? source_node_id : "source_node_unset",
                                      &src_node);
-    (void)yai_mind_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_NODE_CLASS, src_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-attached-to-%s", src_slug);
@@ -290,9 +290,9 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   {
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(daemon_instance_id, a_slug, sizeof(a_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS, a_slug, daemon_instance_id ? daemon_instance_id : "daemon_instance_unset", &daemon_node);
-    (void)yai_mind_graph_edge_create(daemon_node, src_node, "runs_on", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS, a_slug, daemon_instance_id ? daemon_instance_id : "daemon_instance_unset", &daemon_node);
+    (void)yai_graph_edge_create(daemon_node, src_node, "runs_on", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-runs-on-%s", a_slug);
@@ -301,10 +301,10 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   {
     yai_graph_slug(source_binding_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, a_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
-    (void)yai_mind_graph_edge_create(binding_node, src_node, "bound_on", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(binding_node, ws_node, "targets_workspace", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, a_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_graph_edge_create(binding_node, src_node, "bound_on", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(binding_node, ws_node, "targets_workspace", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 3; slot->source_edge_count += 2; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_BINDING_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-targets-workspace-%s", a_slug);
@@ -313,9 +313,9 @@ int yai_graph_materialize_source_record(const char *workspace_id,
   {
     yai_graph_slug(source_asset_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, a_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, b_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
-    (void)yai_mind_graph_edge_create(asset_node, binding_node, "discovered_via", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, a_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS, b_slug, source_binding_id ? source_binding_id : "source_binding_unset", &binding_node);
+    (void)yai_graph_edge_create(asset_node, binding_node, "discovered_via", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_ASSET_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-discovered-via-%s", a_slug);
@@ -325,11 +325,11 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     yai_graph_slug(source_event_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_asset_id, b_slug, sizeof(b_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, a_slug, source_event_id ? source_event_id : "source_event_unset", &event_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, b_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
-    (void)yai_mind_graph_edge_create(event_node, asset_node, "observed", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(event_node, src_node, "emitted_by", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, a_slug, source_event_id ? source_event_id : "source_event_unset", &event_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_ASSET_CLASS, b_slug, source_asset_id ? source_asset_id : "source_asset_unset", &asset_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_graph_edge_create(event_node, asset_node, "observed", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(event_node, src_node, "emitted_by", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 3; slot->source_edge_count += 2; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-observed-%s", a_slug);
@@ -339,9 +339,9 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     const char *src_event_ref = json_string(root, "source_acquisition_event_id");
     yai_graph_slug(source_candidate_id, a_slug, sizeof(a_slug));
     yai_graph_slug(src_event_ref, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS, a_slug, source_candidate_id ? source_candidate_id : "source_candidate_unset", &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, b_slug, src_event_ref ? src_event_ref : "source_event_unset", &event_node);
-    (void)yai_mind_graph_edge_create(candidate_node, event_node, "derived_from", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS, a_slug, source_candidate_id ? source_candidate_id : "source_candidate_unset", &candidate_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_ACQUISITION_EVENT_CLASS, b_slug, src_event_ref ? src_event_ref : "source_event_unset", &event_node);
+    (void)yai_graph_edge_create(candidate_node, event_node, "derived_from", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 2; slot->source_edge_count += 1; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_EVIDENCE_CANDIDATE_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-derived-from-%s", a_slug);
@@ -352,11 +352,11 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     const char *source_owner_link_id = json_string(root, "source_owner_link_id");
     yai_graph_slug(source_owner_link_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_OWNER_LINK_CLASS, a_slug, source_owner_link_id ? source_owner_link_id : "source_owner_link_unset", &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
-    (void)yai_mind_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_OWNER_LINK_CLASS, a_slug, source_owner_link_id ? source_owner_link_id : "source_owner_link_unset", &candidate_node);
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS, src_slug, source_node_id ? source_node_id : "source_node_unset", &src_node);
+    (void)yai_graph_edge_create(src_node, ws_node, "attached_to", 1.0f, &rel_edge);
     if (owner_ref && owner_ref[0]) {
-      (void)yai_mind_graph_edge_create(candidate_node, src_node, "source_owner_link", 1.0f, &rel_edge);
+      (void)yai_graph_edge_create(candidate_node, src_node, "source_owner_link", 1.0f, &rel_edge);
       if (slot) { slot->source_edge_count += 1; }
     }
     if (slot) { slot->source_node_count += 3; slot->source_edge_count += 1; }
@@ -371,29 +371,29 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     yai_graph_slug(source_policy_snapshot_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(daemon_instance_id, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_POLICY_SNAPSHOT_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_POLICY_SNAPSHOT_CLASS,
                                      a_slug,
                                      source_policy_snapshot_id ? source_policy_snapshot_id : "source_policy_snapshot_unset",
                                      &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
                                      src_slug,
                                      source_node_id ? source_node_id : "source_node_unset",
                                      &src_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS,
                                      b_slug,
                                      daemon_instance_id ? daemon_instance_id : "source_daemon_instance_unset",
                                      &event_node);
-    (void)yai_mind_graph_edge_create(candidate_node, src_node, "snapshot_for_node", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, event_node, "snapshot_for_daemon", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, ws_node, "distributed_by_workspace", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, src_node, "snapshot_for_node", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, event_node, "snapshot_for_daemon", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, ws_node, "distributed_by_workspace", 1.0f, &rel_edge);
     if (distribution_target_ref && distribution_target_ref[0])
     {
       yai_graph_slug(distribution_target_ref, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS,
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS,
                                        c_slug,
                                        distribution_target_ref,
                                        &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "distribution_target", 1.0f, &rel_edge);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "distribution_target", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (slot) { slot->source_node_count += 4; slot->source_edge_count += 3; }
@@ -411,57 +411,57 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     yai_graph_slug(source_capability_envelope_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_CAPABILITY_ENVELOPE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_CAPABILITY_ENVELOPE_CLASS,
                                      a_slug,
                                      source_capability_envelope_id ? source_capability_envelope_id : "source_capability_envelope_unset",
                                      &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
                                      src_slug,
                                      source_node_id ? source_node_id : "source_node_unset",
                                      &src_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
                                      b_slug,
                                      source_binding_id ? source_binding_id : "source_binding_unset",
                                      &binding_node);
-    (void)yai_mind_graph_edge_create(candidate_node, src_node, "envelope_for_node", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, binding_node, "envelope_for_binding", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, ws_node, "distributed_by_workspace", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, src_node, "envelope_for_node", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, binding_node, "envelope_for_binding", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, ws_node, "distributed_by_workspace", 1.0f, &rel_edge);
     if (daemon_instance_id && daemon_instance_id[0])
     {
       yai_graph_slug(daemon_instance_id, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS,
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_DAEMON_INSTANCE_CLASS,
                                        c_slug,
                                        daemon_instance_id,
                                        &event_node);
-      (void)yai_mind_graph_edge_create(candidate_node, event_node, "envelope_for_daemon", 1.0f, &rel_edge);
+      (void)yai_graph_edge_create(candidate_node, event_node, "envelope_for_daemon", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (distribution_target_ref && distribution_target_ref[0])
     {
       yai_graph_slug(distribution_target_ref, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, distribution_target_ref, &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "distribution_target", 1.0f, &rel_edge);
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, distribution_target_ref, &scope_node);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "distribution_target", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (observation_scope && observation_scope[0])
     {
       yai_graph_slug(observation_scope, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, observation_scope, &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "delegated_observation_scope", 1.0f, &rel_edge);
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, observation_scope, &scope_node);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "delegated_observation_scope", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (mediation_scope && mediation_scope[0])
     {
       yai_graph_slug(mediation_scope, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, mediation_scope, &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "delegated_mediation_scope", 1.0f, &rel_edge);
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, mediation_scope, &scope_node);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "delegated_mediation_scope", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (enforcement_scope && enforcement_scope[0])
     {
       yai_graph_slug(enforcement_scope, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, enforcement_scope, &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "delegated_enforcement_scope", 1.0f, &rel_edge);
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS, c_slug, enforcement_scope, &scope_node);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "delegated_enforcement_scope", 1.0f, &rel_edge);
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 1; }
     }
     if (slot) { slot->source_node_count += 4; slot->source_edge_count += 3; }
@@ -476,35 +476,35 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     yai_graph_slug(membership_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_WORKSPACE_PEER_MEMBERSHIP_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_WORKSPACE_PEER_MEMBERSHIP_CLASS,
                                      a_slug,
                                      membership_id ? membership_id : "workspace_peer_membership_unset",
                                      &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
                                      src_slug,
                                      source_node_id ? source_node_id : "source_node_unset",
                                      &src_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
                                      b_slug,
                                      source_binding_id ? source_binding_id : "source_binding_unset",
                                      &binding_node);
-    (void)yai_mind_graph_edge_create(candidate_node, ws_node, "member_of_workspace", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, src_node, "membership_source_node", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, binding_node, "membership_binding", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, ws_node, "member_of_workspace", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, src_node, "membership_source_node", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, binding_node, "membership_binding", 1.0f, &rel_edge);
     if (coverage_ref && coverage_ref[0])
     {
       yai_graph_slug(coverage_ref, c_slug, sizeof(c_slug));
-      (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS,
+      (void)yai_graph_node_create(YAI_GRAPH_SOURCE_SCOPE_CLASS,
                                        c_slug,
                                        coverage_ref,
                                        &scope_node);
-      (void)yai_mind_graph_edge_create(candidate_node, scope_node, "membership_covers_scope", 1.0f, &rel_edge);
-      (void)yai_mind_graph_edge_create(binding_node, scope_node, "binding_scope", 1.0f, &rel_edge);
+      (void)yai_graph_edge_create(candidate_node, scope_node, "membership_covers_scope", 1.0f, &rel_edge);
+      (void)yai_graph_edge_create(binding_node, scope_node, "binding_scope", 1.0f, &rel_edge);
       if (overlap_state && overlap_state[0] &&
           (strcmp(overlap_state, "overlap_possible") == 0 ||
            strcmp(overlap_state, "overlap_confirmed") == 0))
       {
-        (void)yai_mind_graph_edge_create(src_node, scope_node, "overlap_on_scope", 1.0f, &rel_edge);
+        (void)yai_graph_edge_create(src_node, scope_node, "overlap_on_scope", 1.0f, &rel_edge);
         if (slot) { slot->source_edge_count += 1; }
       }
       if (slot) { slot->source_node_count += 1; slot->source_edge_count += 2; }
@@ -519,20 +519,20 @@ int yai_graph_materialize_source_record(const char *workspace_id,
     yai_graph_slug(outcome_id, a_slug, sizeof(a_slug));
     yai_graph_slug(source_node_id, src_slug, sizeof(src_slug));
     yai_graph_slug(source_binding_id, b_slug, sizeof(b_slug));
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_INGEST_OUTCOME_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_INGEST_OUTCOME_CLASS,
                                      a_slug,
                                      outcome_id ? outcome_id : "source_ingest_outcome_unset",
                                      &candidate_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_NODE_CLASS,
                                      src_slug,
                                      source_node_id ? source_node_id : "source_node_unset",
                                      &src_node);
-    (void)yai_mind_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
+    (void)yai_graph_node_create(YAI_GRAPH_SOURCE_BINDING_CLASS,
                                      b_slug,
                                      source_binding_id ? source_binding_id : "source_binding_unset",
                                      &binding_node);
-    (void)yai_mind_graph_edge_create(candidate_node, src_node, "ingest_outcome_for_node", 1.0f, &rel_edge);
-    (void)yai_mind_graph_edge_create(candidate_node, binding_node, "ingest_outcome_for_binding", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, src_node, "ingest_outcome_for_node", 1.0f, &rel_edge);
+    (void)yai_graph_edge_create(candidate_node, binding_node, "ingest_outcome_for_binding", 1.0f, &rel_edge);
     if (slot) { slot->source_node_count += 3; slot->source_edge_count += 2; }
     if (out_node_ref && out_node_ref_cap > 0) snprintf(out_node_ref, out_node_ref_cap, "bgn-%s-%s", YAI_GRAPH_SOURCE_INGEST_OUTCOME_CLASS, a_slug);
     if (out_edge_ref && out_edge_ref_cap > 0) snprintf(out_edge_ref, out_edge_ref_cap, "bge-ingest-outcome-for-node-%s", a_slug);

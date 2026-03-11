@@ -9,49 +9,49 @@
 
 static int g_cognition_initialized = 0;
 
-int yai_mind_cognition_init(void)
+int yai_cognition_init(void)
 {
   if (g_cognition_initialized) return YAI_MIND_OK;
-  yai_mind_agents_reset();
-  yai_mind_rag_sessions_reset();
+  yai_agents_reset();
+  yai_rag_sessions_reset();
   g_cognition_initialized = 1;
   return YAI_MIND_OK;
 }
 
-int yai_mind_cognition_shutdown(void)
+int yai_cognition_shutdown(void)
 {
   if (!g_cognition_initialized) return YAI_MIND_OK;
-  yai_mind_rag_sessions_reset();
-  yai_mind_agents_reset();
+  yai_rag_sessions_reset();
+  yai_agents_reset();
   g_cognition_initialized = 0;
   return YAI_MIND_OK;
 }
 
 int yai_knowledge_cognition_start(void)
 {
-  return yai_mind_cognition_init();
+  return yai_cognition_init();
 }
 
 int yai_knowledge_cognition_stop(void)
 {
-  return yai_mind_cognition_shutdown();
+  return yai_cognition_shutdown();
 }
 
-int yai_mind_cognition_execute(const yai_mind_cognition_request_t *request,
-                               yai_mind_cognition_response_t *response_out)
+int yai_cognition_execute(const yai_cognition_request_t *request,
+                               yai_cognition_response_t *response_out)
 {
   if (!g_cognition_initialized) return YAI_MIND_ERR_STATE;
   if (!request || !response_out || !request->user_input[0]) return YAI_MIND_ERR_INVALID_ARG;
   memset(response_out, 0, sizeof(*response_out));
-  return yai_mind_rag_pipeline_run(request, response_out);
+  return yai_rag_pipeline_run(request, response_out);
 }
 
-int yai_mind_cognition_execute_text(const char *input,
+int yai_cognition_execute_text(const char *input,
                                     const char *session_id,
                                     const char *provider_name,
-                                    yai_mind_cognition_response_t *response_out)
+                                    yai_cognition_response_t *response_out)
 {
-  yai_mind_cognition_request_t request = {0};
+  yai_cognition_request_t request = {0};
 
   if (!input || !input[0] || !response_out) return YAI_MIND_ERR_INVALID_ARG;
 
@@ -66,10 +66,10 @@ int yai_mind_cognition_execute_text(const char *input,
   }
   request.preferred_role = YAI_MIND_AGENT_ROLE_UNSPECIFIED;
 
-  return yai_mind_cognition_execute(&request, response_out);
+  return yai_cognition_execute(&request, response_out);
 }
 
-const char *yai_mind_agent_role_name(yai_mind_agent_role_t role)
+const char *yai_agent_role_name(yai_agent_role_t role)
 {
   switch (role) {
     case YAI_MIND_AGENT_ROLE_SYSTEM: return "system";

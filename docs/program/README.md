@@ -7,7 +7,11 @@ Program/RFC/ADR/runbook content in this tree is useful for delivery traceability
 
 Primary runtime/canonical references are:
 
-- `docs/architecture/law-consumption-model.md`
-- `docs/architecture/embedded-law-surface.md`
-- `docs/architecture/law-runtime-convergence-audit.md`
-- canonical repo `../law` (for normative source of truth)
+- `docs/architecture/runtime-model.md`
+- `docs/architecture/canonical-data-plane-model.md`
+- `docs/architecture/repository/canonical-tree-target.md`
+- `docs/architecture/repository/law-to-governance-naming-cutover-a5.md`
+- canonical governance destination: `governance/`
+
+Transitional compatibility references may still mention `law`/`embedded/law`
+while convergence is in progress.

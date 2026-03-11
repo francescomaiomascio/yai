@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#include "../store/internal.h"
+#include "../internal/store_internal.h"
 
 typedef struct yai_data_operational_counts {
   size_t events;

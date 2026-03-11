@@ -2,7 +2,7 @@
 
 #define _POSIX_C_SOURCE 200809L
 
-#include "internal.h"
+#include "../internal/store_internal.h"
 
 #include <stdio.h>
 #include <string.h>

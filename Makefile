@@ -54,63 +54,63 @@ SUPPORT_SRCS := lib/support/ids.c lib/support/logger.c lib/support/errors.c lib/
 PLATFORM_SRCS := lib/platform/os.c lib/platform/fs.c lib/platform/clock.c lib/platform/uds.c
 PROTOCOL_SRCS := lib/protocol/rpc_runtime.c lib/protocol/rpc_codec.c lib/protocol/rpc_binary.c lib/protocol/message_types.c lib/protocol/source_plane_contract.c
 CORE_SRCS := \
-	lib/core/lifecycle/bootstrap.c \
-	lib/core/lifecycle/preboot.c \
-	lib/core/lifecycle/startup_plan.c \
-	lib/core/lifecycle/runtime_capabilities.c \
-	lib/core/dispatch/control_transport.c \
-	lib/core/dispatch/command_dispatch.c \
-	lib/core/dispatch/attach_flow.c \
-	lib/core/session/session.c \
-	lib/core/session/session_reply.c \
-	lib/core/session/session_utils.c \
-	lib/core/workspace/project_tree.c \
-	lib/core/workspace/workspace_registry.c \
-	lib/core/workspace/workspace_runtime.c \
-	lib/core/workspace/workspace_binding.c \
-	lib/core/workspace/workspace_recovery.c \
-	lib/core/enforcement/enforcement.c \
-	lib/core/authority/authority_registry.c \
-	lib/core/authority/identity.c
-LAW_SRCS := \
-	lib/law/policy_effects.c \
-	lib/law/loader/law_loader.c \
-	lib/law/loader/manifest_loader.c \
-	lib/law/loader/domain_loader.c \
-	lib/law/loader/compliance_loader.c \
-	lib/law/loader/overlay_loader.c \
-	lib/law/loader/compatibility_check.c \
-	lib/law/classification/event_classifier.c \
-	lib/law/classification/action_classifier.c \
-	lib/law/classification/provider_classifier.c \
-	lib/law/classification/resource_classifier.c \
-	lib/law/classification/protocol_classifier.c \
-	lib/law/classification/workspace_context.c \
-	lib/law/discovery/domain_discovery.c \
-	lib/law/discovery/signal_matcher.c \
-	lib/law/discovery/protocol_matcher.c \
-	lib/law/discovery/provider_matcher.c \
-	lib/law/discovery/resource_matcher.c \
-	lib/law/discovery/command_matcher.c \
-	lib/law/discovery/confidence_model.c \
-	lib/law/resolution/resolver.c \
-	lib/law/resolution/stack_builder.c \
-	lib/law/resolution/foundation_merge.c \
-	lib/law/resolution/domain_merge.c \
-	lib/law/resolution/compliance_merge.c \
-	lib/law/resolution/overlay_merge.c \
-	lib/law/resolution/precedence.c \
-	lib/law/resolution/fallback.c \
-	lib/law/resolution/conflict_resolution.c \
-	lib/law/resolution/effective_stack.c \
-	lib/law/mapping/event_to_domain.c \
-	lib/law/mapping/domain_to_policy.c \
-	lib/law/mapping/policy_to_effect.c \
-	lib/law/mapping/decision_to_evidence.c \
-	lib/law/mapping/decision_to_audit.c \
-	lib/law/debug/resolution_trace.c \
-	lib/law/debug/dump_effective_stack.c \
-	lib/law/debug/dump_discovery_result.c
+	lib/runtime/lifecycle/bootstrap.c \
+	lib/runtime/lifecycle/preboot.c \
+	lib/runtime/lifecycle/startup_plan.c \
+	lib/runtime/lifecycle/runtime_capabilities.c \
+	lib/runtime/dispatch/control_transport.c \
+	lib/runtime/dispatch/command_dispatch.c \
+	lib/runtime/dispatch/attach_flow.c \
+	lib/runtime/session/session.c \
+	lib/runtime/session/session_reply.c \
+	lib/runtime/session/session_utils.c \
+	lib/runtime/workspace/project_tree.c \
+	lib/runtime/workspace/workspace_registry.c \
+	lib/runtime/workspace/workspace_runtime.c \
+	lib/runtime/workspace/workspace_binding.c \
+	lib/runtime/workspace/workspace_recovery.c \
+	lib/runtime/enforcement/enforcement.c \
+	lib/runtime/authority/authority_registry.c \
+	lib/runtime/authority/identity.c
+GOVERNANCE_SRCS := \
+	lib/governance/policy_effects.c \
+	lib/governance/loader/law_loader.c \
+	lib/governance/loader/manifest_loader.c \
+	lib/governance/loader/domain_loader.c \
+	lib/governance/loader/compliance_loader.c \
+	lib/governance/loader/overlay_loader.c \
+	lib/governance/loader/compatibility_check.c \
+	lib/governance/classification/event_classifier.c \
+	lib/governance/classification/action_classifier.c \
+	lib/governance/classification/provider_classifier.c \
+	lib/governance/classification/resource_classifier.c \
+	lib/governance/classification/protocol_classifier.c \
+	lib/governance/classification/workspace_context.c \
+	lib/governance/discovery/domain_discovery.c \
+	lib/governance/discovery/signal_matcher.c \
+	lib/governance/discovery/protocol_matcher.c \
+	lib/governance/discovery/provider_matcher.c \
+	lib/governance/discovery/resource_matcher.c \
+	lib/governance/discovery/command_matcher.c \
+	lib/governance/discovery/confidence_model.c \
+	lib/governance/resolution/resolver.c \
+	lib/governance/resolution/stack_builder.c \
+	lib/governance/resolution/foundation_merge.c \
+	lib/governance/resolution/domain_merge.c \
+	lib/governance/resolution/compliance_merge.c \
+	lib/governance/resolution/overlay_merge.c \
+	lib/governance/resolution/precedence.c \
+	lib/governance/resolution/fallback.c \
+	lib/governance/resolution/conflict_resolution.c \
+	lib/governance/resolution/effective_stack.c \
+	lib/governance/mapping/event_to_domain.c \
+	lib/governance/mapping/domain_to_policy.c \
+	lib/governance/mapping/policy_to_effect.c \
+	lib/governance/mapping/decision_to_evidence.c \
+	lib/governance/mapping/decision_to_audit.c \
+	lib/governance/debug/resolution_trace.c \
+	lib/governance/debug/dump_effective_stack.c \
+	lib/governance/debug/dump_discovery_result.c
 EXEC_SRCS := \
 	lib/exec/runtime/exec_runtime.c \
 	lib/exec/runtime/config_loader.c \
@@ -124,47 +124,54 @@ EXEC_SRCS := \
 	lib/exec/gates/storage_gate.c \
 	lib/exec/gates/resource_gate.c \
 	lib/exec/bridge/engine_bridge.c \
-	lib/exec/bridge/client_bridge.c \
 	lib/exec/bridge/transport_client.c \
 	lib/exec/bridge/rpc_router.c \
-	lib/exec/agents/agent_enforcement.c \
-	lib/exec/agents/agents_dispatch.c \
-	lib/exec/agents/agent_code.c \
-	lib/exec/agents/agent_historian.c \
-	lib/exec/agents/agent_knowledge.c \
-	lib/exec/agents/agent_system.c \
-	lib/exec/agents/agent_validator.c \
-	lib/exec/orchestration/planner.c \
-	lib/exec/orchestration/rag_sessions.c \
-	lib/exec/orchestration/rag_context_builder.c \
-	lib/exec/orchestration/rag_prompts.c \
-	lib/exec/orchestration/rag_pipeline.c \
+	lib/agents/safety/agent_enforcement.c \
+	lib/agents/dispatch/agents_dispatch.c \
+	lib/agents/roles/agent_code.c \
+	lib/agents/roles/agent_historian.c \
+	lib/agents/roles/agent_knowledge.c \
+	lib/agents/roles/agent_system.c \
+	lib/agents/roles/agent_validator.c \
 	lib/exec/transport/brain_transport.c \
 	lib/exec/transport/brain_protocol.c \
 	lib/exec/transport/uds_server.c \
 	lib/third_party/cjson/cJSON.c
+ORCHESTRATION_SRCS := \
+	lib/orchestration/planner/planner.c \
+	lib/orchestration/workflow/rag_sessions.c \
+	lib/orchestration/actions/rag_context_builder.c \
+	lib/orchestration/actions/rag_prompts.c \
+	lib/orchestration/execution/rag_pipeline.c
+PROVIDERS_SRCS := \
+	lib/providers/registry/providers.c \
+	lib/providers/registry/provider_registry.c \
+	lib/providers/inference/client_inference.c \
+	lib/providers/embedding/client_embedding.c \
+	lib/providers/mocks/mock_provider.c \
+	lib/providers/embedding/embedder_mock.c
 KNOWLEDGE_SRCS := \
 	lib/knowledge/runtime_compat.c \
 	lib/knowledge/cognition/cognition.c \
+	lib/knowledge/cognition/activation.c \
 	lib/knowledge/cognition/reasoning/reasoning_roles.c \
 	lib/knowledge/cognition/reasoning/scoring.c \
 	lib/knowledge/memory/memory.c \
+	lib/knowledge/memory/authority.c \
 	lib/knowledge/memory/arena_store.c \
 	lib/knowledge/memory/storage_bridge.c \
-	lib/knowledge/memory/semantic_db.c \
-	lib/knowledge/memory/vector_index.c \
-	lib/knowledge/providers/providers.c \
-	lib/knowledge/providers/provider_registry.c \
-	lib/knowledge/providers/mock_provider.c \
-	lib/knowledge/providers/embedder_mock.c
+	lib/knowledge/episodic/episodic.c \
+	lib/knowledge/semantic/semantic_db.c \
+	lib/knowledge/vector/vector_index.c
 DATA_SRCS := \
 	lib/data/binding/store_binding.c \
 	lib/data/binding/workspace_binding.c \
 	lib/data/store/file_store.c \
 	lib/data/store/duckdb_store.c \
 	lib/data/records/event_records.c \
+	lib/data/evidence/evidence_records.c \
 	lib/data/query/inspect_query.c \
-	lib/data/lifecycle/retention.c \
+	lib/data/retention/retention.c \
 	lib/data/lifecycle/archive.c
 GRAPH_SRCS := \
 	lib/graph/state/graph_backend.c \
@@ -172,6 +179,7 @@ GRAPH_SRCS := \
 	lib/graph/state/graph_facade.c \
 	lib/graph/state/graph.c \
 	lib/graph/state/ids.c \
+	lib/graph/internal/counts.c \
 	lib/graph/domains/activation.c \
 	lib/graph/domains/authority.c \
 	lib/graph/domains/episodic.c \
@@ -196,8 +204,9 @@ DAEMON_SRCS := \
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
 PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROTOCOL_SRCS))
-CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS) $(LAW_SRCS))
-EXEC_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(EXEC_SRCS))
+CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS) $(GOVERNANCE_SRCS))
+EXEC_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(EXEC_SRCS) $(ORCHESTRATION_SRCS))
+PROVIDERS_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROVIDERS_SRCS))
 KNOWLEDGE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(KNOWLEDGE_SRCS))
 DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
 GRAPH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(GRAPH_SRCS))
@@ -208,6 +217,7 @@ PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
 PROTOCOL_LIB := $(LIB_DIR)/libyai_protocol.a
 CORE_LIB := $(LIB_DIR)/libyai_core.a
 EXEC_LIB := $(LIB_DIR)/libyai_exec.a
+PROVIDERS_LIB := $(LIB_DIR)/libyai_providers.a
 KNOWLEDGE_LIB := $(LIB_DIR)/libyai_knowledge.a
 DATA_LIB := $(LIB_DIR)/libyai_data.a
 GRAPH_LIB := $(LIB_DIR)/libyai_graph.a
@@ -219,13 +229,13 @@ DOXYFILE := Doxyfile
 DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
-.PHONY: all yai yai-daemon foundations support platform protocol core exec knowledge data graph daemon yd1-baseline \
-        test test-unit test-integration test-e2e test-core test-brain test-protocol test-law \
+.PHONY: all yai yai-daemon foundations support platform protocol core exec providers knowledge data graph daemon yd1-baseline \
+        test test-unit test-integration test-e2e test-core test-brain test-protocol test-governance test-law \
         test-demo-matrix verify-final-demo-matrix \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
         preflight-release docs docs-clean docs-verify proof-verify release-guards \
         release-guards-dev changelog-verify dirs help legacy-build \
-        law-embed-sync law-embed-check
+        governance-embed-sync governance-embed-check law-embed-sync law-embed-check
 
 all: yai yai-daemon foundations
 	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN)"
@@ -233,9 +243,10 @@ all: yai yai-daemon foundations
 yai: $(YAI_BIN)
 yai-daemon: $(YAI_DAEMON_BIN)
 
-foundations: support platform protocol
+foundations: support platform protocol providers
 core: $(CORE_LIB)
 exec: $(EXEC_LIB)
+providers: $(PROVIDERS_LIB)
 knowledge: $(KNOWLEDGE_LIB)
 data: $(DATA_LIB)
 graph: $(GRAPH_LIB)
@@ -248,7 +259,7 @@ protocol: $(PROTOCOL_LIB)
 test: test-unit test-integration test-e2e
 	@echo "[YAI] unified test baseline complete"
 
-test-unit: test-core test-protocol test-brain test-law
+test-unit: test-core test-protocol test-brain test-governance
 	@echo "[YAI] unit suites complete"
 
 test-integration:
@@ -292,13 +303,15 @@ test-protocol:
 	@tests/unit/exec/run_exec_unit_tests.sh
 	@tests/unit/protocol/run_protocol_unit_tests.sh
 
-test-law:
+test-governance:
 	@tests/unit/law/run_law_unit_tests.sh
 	@tests/integration/law_resolution/run_law_resolution_smoke.sh
-	@echo "[YAI] law-native resolution suites complete"
+	@echo "[YAI] governance-native resolution suites complete"
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+test-law: test-governance
+
+$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(EXEC_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
 
 $(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
@@ -316,6 +329,9 @@ $(CORE_LIB): $(CORE_OBJS) | dirs
 	ar rcs $@ $^
 
 $(EXEC_LIB): $(EXEC_OBJS) | dirs
+	ar rcs $@ $^
+
+$(PROVIDERS_LIB): $(PROVIDERS_OBJS) | dirs
 	ar rcs $@ $^
 
 $(KNOWLEDGE_LIB): $(KNOWLEDGE_OBJS) | dirs
@@ -373,11 +389,14 @@ verify:
 		echo "No verify script found at ./tools/bin/yai-verify"; \
 	fi
 
-law-embed-sync:
+governance-embed-sync:
 	@./tools/bin/yai-law-embed-sync
 
-law-embed-check:
+governance-embed-check:
 	@./tools/bin/yai-law-compat-check
+
+law-embed-sync: governance-embed-sync
+law-embed-check: governance-embed-check
 
 preflight-release:
 	@tools/bin/yai-check-pins
@@ -424,10 +443,12 @@ help:
 	@echo "  yai-daemon     (build/bin/yai-daemon standalone edge/source runtime)"
 	@echo "  yd1-baseline   (build anchors + YD-1 architecture refs)"
 	@echo "  daemon         (build daemon static library)"
-	@echo "  foundations    (support/platform/protocol archives)"
-	@echo "  test-unit      (core/protocol/knowledge+graph unit suites)"
+	@echo "  foundations    (support/platform/protocol/providers archives)"
+	@echo "  providers      (build provider infrastructure archive)"
+	@echo "  test-unit      (core/protocol/providers/knowledge+graph unit suites)"
 	@echo "  test-integration (runtime/core-exec/workspace + legacy core_brain scripts)"
-	@echo "  test-law         (law loader/discovery/resolution + smoke)"
+	@echo "  test-governance  (governance loader/discovery/resolution + smoke)"
+	@echo "  test-law         (legacy alias -> test-governance)"
 	@echo "  test-e2e       (entrypoint e2e smoke)"
 	@echo "  test           (full test baseline)"
 	@echo "  clean          (remove build artifacts)"

@@ -1,6 +1,6 @@
 # VERSIONING
 
-This document defines versioning policy for the `yai` runtime implementation repository.
+This document defines versioning policy for the unified `yai` repository convergence line.
 
 Public release baseline: `v0.1.0` (2026-02-17).
 
@@ -8,11 +8,12 @@ Public release baseline: `v0.1.0` (2026-02-17).
 
 This policy applies to:
 
-- runtime implementation (`boot/`, `root/`, `kernel/`, `engine/`, `runtime/`, `mind/`)
-- release tooling and verification gates used to build/ship runtime artifacts
-- repository governance files that affect delivery guarantees (e.g., release checks)
+- runtime implementation surfaces (`cmd/`, `include/`, `lib/`)
+- governance/model surfaces (`governance/`)
+- central docs and verification surfaces (`docs/`, `tests/`, `tools/`)
+- release tooling and verification gates used to build/ship system artifacts
 
-Normative contracts are defined in `law` and are not superseded by implementation.
+Normative behavior is governance-defined and never superseded by implementation.
 
 ## Version Scheme
 
@@ -24,16 +25,14 @@ Normative contracts are defined in `law` and are not superseded by implementatio
 
 Pre-1.0 note: while in `0.x`, incompatible changes may still occur, but they must be explicitly declared and treated as breaking for operators/consumers.
 
-## Contract Pinning Requirement
+## Governance Baseline Requirement
 
-Every release must explicitly declare the contract baseline used during verification:
-
-- pinned `law` commit (and tag if available)
+Every release must explicitly declare the governance baseline used during verification.
 
 Release notes must include:
 
 - `yai` version
-- pinned `law` commit/tag
+- governance baseline reference (commit/tag/materialized snapshot)
 - a concise compatibility impact summary
 - any required operator actions (if applicable)
 

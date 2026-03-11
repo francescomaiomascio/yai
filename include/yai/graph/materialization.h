@@ -4,21 +4,21 @@
 #include <yai/graph/graph.h>
 
 typedef struct yai_graph_materialization_result {
-  yai_mind_node_id_t workspace_node;
-  yai_mind_node_id_t governance_node;
-  yai_mind_node_id_t decision_node;
-  yai_mind_node_id_t evidence_node;
-  yai_mind_node_id_t authority_node;
-  yai_mind_node_id_t artifact_node;
-  yai_mind_node_id_t episode_node;
-  yai_mind_edge_id_t edge_decision_in_workspace;
-  yai_mind_edge_id_t edge_decision_under_governance;
-  yai_mind_edge_id_t edge_decision_under_authority;
-  yai_mind_edge_id_t edge_decision_on_artifact;
-  yai_mind_edge_id_t edge_evidence_for_decision;
-  yai_mind_edge_id_t edge_artifact_governed_by;
-  yai_mind_edge_id_t edge_workspace_uses_governance;
-  yai_mind_edge_id_t edge_episode_yielded_decision;
+  yai_node_id_t workspace_node;
+  yai_node_id_t governance_node;
+  yai_node_id_t decision_node;
+  yai_node_id_t evidence_node;
+  yai_node_id_t authority_node;
+  yai_node_id_t artifact_node;
+  yai_node_id_t episode_node;
+  yai_edge_id_t edge_decision_in_workspace;
+  yai_edge_id_t edge_decision_under_governance;
+  yai_edge_id_t edge_decision_under_authority;
+  yai_edge_id_t edge_decision_on_artifact;
+  yai_edge_id_t edge_evidence_for_decision;
+  yai_edge_id_t edge_artifact_governed_by;
+  yai_edge_id_t edge_workspace_uses_governance;
+  yai_edge_id_t edge_episode_yielded_decision;
   char last_graph_node_ref[192];
   char last_graph_edge_ref[192];
 } yai_graph_materialization_result_t;

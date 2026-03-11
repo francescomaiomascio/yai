@@ -7,11 +7,11 @@
 extern "C" {
 #endif
 
-int yai_mind_domain_activation_record(yai_mind_node_id_t node_id,
+int yai_domain_activation_record(yai_node_id_t node_id,
                                       float score,
                                       const char *source);
-int yai_mind_domain_activation_last(yai_mind_activation_record_t *record_out,
-                                    yai_mind_activation_trace_t *trace_out);
+int yai_domain_activation_last(yai_activation_record_t *record_out,
+                                    yai_activation_trace_t *trace_out);
 
 #ifdef __cplusplus
 }

@@ -1,62 +1,36 @@
 # yai
 
-`yai` is the runtime implementation repository and the primary runtime consumer of platform law.
+`yai` is being refounded as the unified system repository target.
 
-## What this repository is
+## Program intent
 
-- runtime host and internal runtime modules (`core`, `exec`, `data`, `graph`, `knowledge`)
-- controlled ingress/dispatch and runtime enforcement realization
-- consumer of canonical law from `law`
+The target model is a single repository that hosts:
 
-## What this repository is not
+- runtime implementation (`cmd/`, `include/`, `lib/`)
+- governance content (canonical destination: `governance/`)
+- documentation and references (`docs/`)
+- validation and tooling (`tests/`, `tools/`)
+- controlled migration area (`transitional/`)
 
-- not the normative source of law
-- not the ops bureau for official qualification/collateral material
-- not the dataplane/db/query implementation scope for this tranche
+Program overview:
 
-## Cross-repo role
+- `docs/program/repo-unico-overview-32-consegne.md`
 
-- `law`: canonical normative authority
-- `yai`: runtime realization
-- `ops`: official/catalog/qualification/evidence bureau
+## Root rules (A1)
 
-## Surface quick map
+- `governance/` is the canonical governance root for the final unified model.
+- `transitional/` is migration-only and must not become a permanent feature root.
+- `embedded/` is transitional legacy and must be decommissioned through planned cutover.
+- canonical naming is `governance`; `law` naming is legacy compatibility-only.
 
-### Primary runtime-facing surfaces
+## Current convergence model
 
-- `embedded/law/`
-- `include/yai/law/`
-- `lib/law/`
-- `tools/bin/yai-law-*`
-
-### Canonical external source
-
-- sibling `../law` repository
-
-### Bridge / transitional tolerated
-
-- `embedded/law/transitional/domain-family-seed/` (bridge payload only, non-primary, do-not-extend)
-
-### Historical / reference-only
-
-- historical debug/audit reports marked as superseded in `docs/architecture/*debug-report*`
-
-Primary local commands:
-- `tools/bin/yai-law-embed-sync`
-- `tools/bin/yai-law-compat-check`
-
-## Cross-repo terminology contract
-
-Canonical vocabulary for `yai` + `law` + `sdk` + `cli` lives in:
-- `docs/architecture/cross-repo-naming-and-terminology-contract.md`
-- `docs/program/reports/cross-repo-terminology-impact-matrix.md`
-
-## Scope note
-
-Transitional refactor and mapping documents are quarantined under:
-- `archive_tmp/`
+- Block A (A1-A19): refound `yai` root/tree/domains for final unified topology.
+- Block B (B1-B13): absorb `law` content into `governance/`, then sunset dual-repo layout.
 
 ## Start here
 
 - `docs/README.md`
-- `docs/architecture/repository-scope.md`
+- `docs/program/repo-unico-overview-32-consegne.md`
+- `governance/README.md`
+- `transitional/README.md`

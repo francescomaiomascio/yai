@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <yai/core/vault.h>
+#include <yai/runtime/vault.h>
 
 typedef yai_vault_t yai_exec_vault_t;
 

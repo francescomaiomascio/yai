@@ -1,19 +1,19 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/core/lifecycle.h>
+#include <yai/runtime/lifecycle.h>
 #include <yai/knowledge/runtime.h>
 
 #include <stdio.h>
 #include <string.h>
 
-static yai_mind_runtime_t g_runtime = {0};
+static yai_runtime_t g_runtime = {0};
 
 static void clear_runtime(void)
 {
   memset(&g_runtime, 0, sizeof(g_runtime));
 }
 
-int yai_mind_init(const yai_mind_config_t *config)
+int yai_init(const yai_config_t *config)
 {
   if (g_runtime.initialized) return YAI_MIND_OK;
   clear_runtime();
@@ -39,7 +39,7 @@ int yai_mind_init(const yai_mind_config_t *config)
   return YAI_MIND_OK;
 }
 
-int yai_mind_shutdown(void)
+int yai_shutdown(void)
 {
   if (!g_runtime.initialized) return YAI_MIND_OK;
   (void)yai_runtime_capabilities_stop(NULL, 0);
@@ -47,12 +47,12 @@ int yai_mind_shutdown(void)
   return YAI_MIND_OK;
 }
 
-int yai_mind_is_initialized(void)
+int yai_is_initialized(void)
 {
   return yai_runtime_capabilities_is_ready();
 }
 
-const yai_mind_runtime_t *yai_mind_runtime_state(void)
+const yai_runtime_t *yai_runtime_state(void)
 {
   const yai_runtime_capability_state_t *caps = yai_runtime_capabilities_state();
   g_runtime.initialized = caps->initialized;

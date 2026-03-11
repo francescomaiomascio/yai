@@ -13,7 +13,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include "../store/internal.h"
+#include "../internal/store_internal.h"
 
 static int mkdir_if_needed(const char *path)
 {

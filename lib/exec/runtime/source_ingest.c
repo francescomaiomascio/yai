@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/core/workspace.h>
+#include <yai/runtime/workspace.h>
 #include <yai/data/records.h>
 #include <yai/daemon/source_ids.h>
 #include <yai/daemon/source_plane_model.h>

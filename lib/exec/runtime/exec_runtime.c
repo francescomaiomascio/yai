@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <yai/core/lifecycle.h>
+#include <yai/runtime/lifecycle.h>
 #include <yai/data/binding.h>
 
 const char *yai_exec_runtime_state_name(yai_exec_runtime_state_t state) {
