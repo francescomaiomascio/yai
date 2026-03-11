@@ -103,3 +103,4 @@ The test validates persistence -> query -> graph chain:
 - `docs/architecture/source-plane-model.md`
 - `docs/architecture/source-owner-ingest-model.md`
 - `docs/architecture/daemon-local-runtime-model.md`
+- `docs/architecture/owner-peer-registry-and-coordination-model.md`

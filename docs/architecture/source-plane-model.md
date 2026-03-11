@@ -253,5 +253,6 @@ without re-inventing source entities.
 - `docs/architecture/distributed-acquisition-plane-model.md`
 - `docs/architecture/source-owner-ingest-model.md`
 - `docs/architecture/source-plane-read-model.md`
+- `docs/architecture/owner-peer-registry-and-coordination-model.md`
 - `docs/architecture/exec-source-plane-role.md`
 - `docs/program/22-adr/ADR-013-distributed-acquisition-centralized-control.md`

@@ -10,6 +10,7 @@
 #include <yai/daemon/source_ids.h>
 #include <yai/daemon/source_plane_model.h>
 #include <yai/exec/source_ingest.h>
+#include <yai/exec/peer_registry.h>
 #include <yai/exec/source_plane.h>
 #include <yai/graph/materialization.h>
 #include <yai/protocol/source_plane_contract.h>
@@ -417,6 +418,7 @@ static int handle_attach(const char *workspace_id,
   cJSON *membership = NULL;
   char err[160];
   const char *target_ws = owner_workspace_id && owner_workspace_id[0] ? owner_workspace_id : workspace_id;
+  yai_owner_peer_registry_entry_t reg;
 
   if (!workspace_id || !yai_ws_id_is_valid(workspace_id) || !payload || !source_node_id || !source_node_id[0])
   {
@@ -514,6 +516,25 @@ static int handle_attach(const char *workspace_id,
   }
   cJSON_Delete(binding);
   cJSON_Delete(membership);
+
+  memset(&reg, 0, sizeof(reg));
+  (void)snprintf(reg.workspace_id, sizeof(reg.workspace_id), "%s", target_ws);
+  (void)snprintf(reg.source_node_id, sizeof(reg.source_node_id), "%s", source_node_id);
+  (void)snprintf(reg.source_binding_id, sizeof(reg.source_binding_id), "%s", source_binding_id);
+  (void)snprintf(reg.daemon_instance_id, sizeof(reg.daemon_instance_id), "%s", daemon_instance_id);
+  (void)snprintf(reg.peer_role, sizeof(reg.peer_role), "%s", peer_role);
+  (void)snprintf(reg.peer_scope, sizeof(reg.peer_scope), "%s", peer_scope);
+  (void)snprintf(reg.peer_state, sizeof(reg.peer_state), "%s", peer_state);
+  reg.backlog_queued = 0;
+  reg.backlog_retry_due = 0;
+  reg.backlog_failed = 0;
+  (void)snprintf(reg.coverage_ref, sizeof(reg.coverage_ref), "%s", coverage_ref);
+  (void)snprintf(reg.overlap_state, sizeof(reg.overlap_state), "%s", overlap_state);
+  reg.last_seen_epoch = (int64_t)time(NULL);
+  reg.last_activity_epoch = 0;
+  reg.updated_at_epoch = (int64_t)time(NULL);
+  (void)yai_owner_peer_registry_upsert(&reg, err, sizeof(err));
+
   mediation_json(med, med_json, sizeof(med_json));
 
   if (snprintf(out_json,
@@ -672,6 +693,12 @@ static int handle_emit(const char *workspace_id,
   {
     idempotency_key = "unset";
   }
+  (void)yai_owner_peer_registry_note_emit(workspace_id,
+                                          source_node_id,
+                                          source_binding_id,
+                                          1,
+                                          err,
+                                          sizeof(err));
   mediation_json(med, med_json, sizeof(med_json));
 
   if (snprintf(out_json,
@@ -717,6 +744,7 @@ static int handle_status(const char *workspace_id,
   char med_json[384];
   cJSON *inst = NULL;
   cJSON *membership = NULL;
+  yai_owner_peer_registry_entry_t reg;
   char err[160];
 
   if (!workspace_id || !yai_ws_id_is_valid(workspace_id) || !payload ||
@@ -802,6 +830,25 @@ static int handle_status(const char *workspace_id,
   }
   cJSON_Delete(inst);
   cJSON_Delete(membership);
+
+  memset(&reg, 0, sizeof(reg));
+  (void)snprintf(reg.workspace_id, sizeof(reg.workspace_id), "%s", workspace_id);
+  (void)snprintf(reg.source_node_id, sizeof(reg.source_node_id), "%s", source_node_id);
+  (void)snprintf(reg.source_binding_id, sizeof(reg.source_binding_id), "%s", source_binding_id);
+  (void)snprintf(reg.daemon_instance_id, sizeof(reg.daemon_instance_id), "%s", daemon_instance_id);
+  (void)snprintf(reg.peer_role, sizeof(reg.peer_role), "%s", peer_role);
+  (void)snprintf(reg.peer_scope, sizeof(reg.peer_scope), "%s", peer_scope);
+  (void)snprintf(reg.peer_state, sizeof(reg.peer_state), "%s", health);
+  reg.backlog_queued = backlog_queued;
+  reg.backlog_retry_due = backlog_retry_due;
+  reg.backlog_failed = backlog_failed;
+  (void)snprintf(reg.coverage_ref, sizeof(reg.coverage_ref), "%s", coverage_ref);
+  (void)snprintf(reg.overlap_state, sizeof(reg.overlap_state), "%s", overlap_state);
+  reg.last_seen_epoch = (int64_t)time(NULL);
+  reg.last_activity_epoch = (int64_t)time(NULL);
+  reg.updated_at_epoch = (int64_t)time(NULL);
+  (void)yai_owner_peer_registry_upsert(&reg, err, sizeof(err));
+
   mediation_json(med, med_json, sizeof(med_json));
 
   if (snprintf(out_json,

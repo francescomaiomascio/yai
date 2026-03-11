@@ -116,6 +116,7 @@ EXEC_SRCS := \
 	lib/exec/runtime/config_loader.c \
 	lib/exec/runtime/runtime_model.c \
 	lib/exec/runtime/source_plane_contract.c \
+	lib/exec/runtime/peer_registry.c \
 	lib/exec/runtime/source_ingest.c \
 	lib/exec/gates/provider_gate.c \
 	lib/exec/gates/network_gate.c \

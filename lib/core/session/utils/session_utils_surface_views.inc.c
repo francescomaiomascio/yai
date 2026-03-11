@@ -891,6 +891,7 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
     char source_event_tail_json[2048];
     char source_candidate_tail_json[2048];
     char source_peer_membership_tail_json[2048];
+    char source_coordination_json[4096];
     size_t source_node_count = 0;
     size_t source_daemon_count = 0;
     size_t source_binding_count = 0;
@@ -1049,6 +1050,7 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
     source_event_tail_json[0] = '\0';
     source_candidate_tail_json[0] = '\0';
     source_peer_membership_tail_json[0] = '\0';
+    source_coordination_json[0] = '\0';
     source_query_err[0] = '\0';
     (void)yai_data_query_count(info.ws_id, "source_node", &source_node_count, source_query_err, sizeof(source_query_err));
     (void)yai_data_query_count(info.ws_id, "source_daemon_instance", &source_daemon_count, source_query_err, sizeof(source_query_err));
@@ -1065,6 +1067,17 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
     (void)yai_data_query_tail_json(info.ws_id, "source_acquisition_event", 5, source_event_tail_json, sizeof(source_event_tail_json), source_query_err, sizeof(source_query_err));
     (void)yai_data_query_tail_json(info.ws_id, "source_evidence_candidate", 5, source_candidate_tail_json, sizeof(source_candidate_tail_json), source_query_err, sizeof(source_query_err));
     (void)yai_data_query_tail_json(info.ws_id, "workspace_peer_membership", 5, source_peer_membership_tail_json, sizeof(source_peer_membership_tail_json), source_query_err, sizeof(source_query_err));
+    if (yai_owner_peer_registry_workspace_summary_json(info.ws_id,
+                                                       source_coordination_json,
+                                                       sizeof(source_coordination_json),
+                                                       source_query_err,
+                                                       sizeof(source_query_err)) != 0)
+    {
+        (void)snprintf(source_coordination_json,
+                       sizeof(source_coordination_json),
+                       "{\"workspace_id\":\"%s\",\"peer_count\":0,\"states\":{\"ready\":0,\"degraded\":0,\"disconnected\":0,\"stale\":0},\"backlog\":{\"queued\":0,\"retry_due\":0,\"failed\":0},\"scheduling_state\":\"unknown\",\"peers\":[]}",
+                       info.ws_id);
+    }
     (void)yai_graph_materialization_workspace_source_counts(info.ws_id,
                                                             &source_graph_node_count,
                                                             &source_graph_edge_count);
@@ -1476,6 +1489,7 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
                      "\"source_owner_link_count\":%zu,\"workspace_peer_membership_count\":%zu,\"source_graph_node_count\":%zu,\"source_graph_edge_count\":%zu},"
                      "\"records\":{\"source_nodes\":%s,\"source_daemon_instances\":%s,\"source_bindings\":%s,"
                      "\"source_assets\":%s,\"source_acquisition_events\":%s,\"source_evidence_candidates\":%s,\"workspace_peer_memberships\":%s},"
+                     "\"coordination\":%s,"
                      "\"read_path\":{\"mode\":\"db_first\",\"primary_source\":\"data_plane_persisted_records\",\"db_first_ready\":%s,\"fallback_active\":%s,\"fallback_reason\":\"%s\",\"filesystem_primary\":false},"
                      "\"graph\":{\"workspace_summary\":%s}"
                      "}",
@@ -1497,6 +1511,7 @@ int yai_session_build_workspace_data_query_json(const char *query_family,
                      source_event_tail_json[0] ? source_event_tail_json : "[]",
                      source_candidate_tail_json[0] ? source_candidate_tail_json : "[]",
                      source_peer_membership_tail_json[0] ? source_peer_membership_tail_json : "[]",
+                     source_coordination_json,
                      db_first_ready ? "true" : "false",
                      fallback_active ? "true" : "false",
                      read_fallback_reason,

@@ -188,6 +188,11 @@ if sq.get("source_graph_node_count", 0) < 1:
     raise RuntimeError(f"source summary missing source_graph_node_count: {source_query}")
 if sq.get("workspace_peer_membership_count", 0) < 1:
     raise RuntimeError(f"source summary missing workspace_peer_membership_count: {source_query}")
+coord = source_query.get("data", {}).get("coordination", {})
+if coord.get("peer_count", 0) < 1:
+    raise RuntimeError(f"source coordination missing peer_count: {source_query}")
+if not coord.get("scheduling_state"):
+    raise RuntimeError(f"source coordination missing scheduling_state: {source_query}")
 
 graph_ws = call(ws, {
   "type":"yai.control.call.v1",
