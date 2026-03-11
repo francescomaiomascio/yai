@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <yai/edge/edge_binding.h>
+#include <yai/edge/binding.h>
 
 const char *yai_edge_binding_kind_normalize(const char *raw)
 {

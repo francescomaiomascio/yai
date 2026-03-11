@@ -2,7 +2,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/edge/edge_state.h>
+#include <yai/edge/state.h>
 
 static int copy_string(char *dst, size_t dst_cap, const char *src)
 {

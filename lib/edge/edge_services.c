@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/edge/edge_services.h>
+#include <yai/edge/services.h>
 
 static void service_slot_init(yai_edge_service_slot_t *slot, const char *name)
 {

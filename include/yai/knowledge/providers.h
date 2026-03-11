@@ -4,4 +4,4 @@
 /* Transitional compatibility shim.
  * Canonical provider surface lives under include/yai/providers/.
  */
-#include <yai/providers/providers.h>
+#include <yai/providers/catalog.h>

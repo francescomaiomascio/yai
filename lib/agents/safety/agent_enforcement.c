@@ -1,6 +1,6 @@
 #include <string.h>
-#include <yai/orchestration/agent_contract.h>
-#include <yai/orchestration/engine_bridge.h>
+#include <yai/orchestration/agent_binding.h>
+#include <yai/orchestration/runtime_bridge.h>
 
 int validate_agent_action(const char* agent_id, uint32_t estimated_cost) {
     (void)agent_id;

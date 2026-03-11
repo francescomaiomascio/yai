@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <yai/edge/config.h>
-#include <yai/edge/local_runtime.h>
+#include <yai/edge/local.h>
 #include <yai/edge/paths.h>
 
 #define YAI_EDGE_EDGE_PHASE_BOOTSTRAP "bootstrap"

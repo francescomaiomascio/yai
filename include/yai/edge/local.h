@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <yai/edge/config.h>
-#include <yai/edge/action_point.h>
+#include <yai/edge/actions.h>
 #include <yai/edge/paths.h>
 
 #define YAI_EDGE_BINDING_STATUS_CONFIGURED "configured"

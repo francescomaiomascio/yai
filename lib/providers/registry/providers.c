@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/providers/providers.h>
+#include <yai/providers/catalog.h>
 
 static int g_providers_initialized = 0;
 static yai_provider_registry_t g_registry;

@@ -1,6 +1,6 @@
 #include <yai/orchestration/source_plane.h>
-#include <yai/orchestration/network_gate.h>
-#include <yai/orchestration/resource_gate.h>
+#include <yai/orchestration/network_policy.h>
+#include <yai/orchestration/resource_policy.h>
 #include <yai/orchestration/transport.h>
 
 #include <stdio.h>

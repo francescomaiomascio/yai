@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <yai/edge/source_plane_model.h>
+#include <yai/edge/source_plane.h>
 
 const char *yai_source_contract_operation_name(yai_source_contract_operation_t op)
 {

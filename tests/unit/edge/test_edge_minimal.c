@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include <yai/edge/action_point.h>
-#include <yai/edge/edge_binding.h>
-#include <yai/edge/edge_services.h>
+#include <yai/edge/actions.h>
+#include <yai/edge/binding.h>
+#include <yai/edge/services.h>
 
 static void test_action_point_id(void)
 {

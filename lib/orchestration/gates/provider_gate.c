@@ -1,7 +1,7 @@
 #define _DEFAULT_SOURCE
 #define _POSIX_C_SOURCE 200809L
 
-#include <yai/orchestration/provider_gate.h>
+#include <yai/orchestration/provider_policy.h>
 #include <yai/orchestration/runtime.h>
 #include "cJSON.h"
 #include <stdio.h>

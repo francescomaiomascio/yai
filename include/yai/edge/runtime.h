@@ -1,9 +1,9 @@
 #pragma once
 
 #include <yai/edge/config.h>
-#include <yai/edge/edge_services.h>
-#include <yai/edge/edge_state.h>
-#include <yai/edge/local_runtime.h>
+#include <yai/edge/services.h>
+#include <yai/edge/state.h>
+#include <yai/edge/local.h>
 #include <yai/edge/paths.h>
 
 typedef struct yai_edge_runtime {

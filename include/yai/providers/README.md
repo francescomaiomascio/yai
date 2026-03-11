@@ -2,7 +2,7 @@
 
 Canonical provider infrastructure headers:
 
-- `providers.h` (umbrella)
+- `catalog.h` (provider catalog + registration surface)
 - `registry.h`
 - `policy.h`
 - `selection.h`

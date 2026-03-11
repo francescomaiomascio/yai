@@ -8,7 +8,7 @@
 #include <yai/runtime/workspace.h>
 #include <yai/data/binding.h>
 #include <yai/orchestration/runtime.h>
-#include <yai/orchestration/source_ingest.h>
+#include <yai/orchestration/ingestion.h>
 #include <yai/governance/resolver.h>
 #include <yai/governance/policy_effects.h>
 

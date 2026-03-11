@@ -20,11 +20,11 @@
 #include <yai/protocol/contracts/transport.h>
 #include <yai/protocol/contracts/yai_protocol_ids.h>
 
-#include <yai/edge/local_runtime.h>
-#include <yai/edge/edge_binding.h>
-#include <yai/edge/action_point.h>
-#include <yai/edge/source_ids.h>
-#include <yai/edge/source_plane_model.h>
+#include <yai/edge/local.h>
+#include <yai/edge/binding.h>
+#include <yai/edge/actions.h>
+#include <yai/edge/ids.h>
+#include <yai/edge/source_plane.h>
 #include <yai/edge/runtime.h>
 
 #include "internal.h"

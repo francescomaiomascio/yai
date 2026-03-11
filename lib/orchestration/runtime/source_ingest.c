@@ -7,9 +7,9 @@
 
 #include <yai/runtime/workspace.h>
 #include <yai/data/records.h>
-#include <yai/edge/source_ids.h>
-#include <yai/edge/source_plane_model.h>
-#include <yai/orchestration/source_ingest.h>
+#include <yai/edge/ids.h>
+#include <yai/edge/source_plane.h>
+#include <yai/orchestration/ingestion.h>
 #include <yai/orchestration/peer_registry.h>
 #include <yai/orchestration/source_plane.h>
 #include <yai/graph/materialization.h>
