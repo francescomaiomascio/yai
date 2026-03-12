@@ -128,10 +128,7 @@ ORCHESTRATION_RUNTIME_SRCS := \
 	lib/orchestration/runtime/source_plane_contract.c \
 	lib/orchestration/runtime/peer_registry.c \
 	lib/orchestration/runtime/ingestion.c \
-	lib/orchestration/gates/provider_policy.c \
-	lib/orchestration/gates/network_policy.c \
 	lib/orchestration/gates/storage_policy.c \
-	lib/orchestration/gates/resource_policy.c \
 	lib/orchestration/bridge/runtime_bridge.c \
 	lib/orchestration/bridge/transport_client.c \
 	lib/orchestration/bridge/rpc_router.c \
@@ -152,26 +149,31 @@ ORCHESTRATION_SRCS := \
 	lib/orchestration/actions/rag_context_builder.c \
 	lib/orchestration/actions/rag_prompts.c \
 	lib/orchestration/execution/rag_pipeline.c
-MESH_SRCS := \
-	lib/network/identity/identity.c \
-	lib/network/discovery/peer_registry.c \
-	lib/network/discovery/membership.c \
+NETWORK_SRCS := \
+	lib/network/topology/peer_identity.c \
+	lib/network/topology/membership.c \
+	lib/network/topology/reachability.c \
+	lib/network/topology/trust.c \
+	lib/network/topology/authority_binding.c \
 	lib/network/discovery/discovery.c \
-	lib/network/topologies/sovereign_overlay/awareness.c \
-	lib/network/topologies/sovereign_overlay/coordination.c \
-	lib/network/transport/session.c \
-	lib/network/transport/replay.c \
-	lib/network/topologies/sovereign_overlay/conflict.c \
-	lib/network/overlay/containment.c \
-	lib/network/identity/enrollment.c
+	lib/network/discovery/enrollment.c \
+	lib/network/mesh/coordination.c \
+	lib/network/mesh/mesh_runtime.c \
+	lib/network/mesh/containment.c \
+	lib/network/overlay/transport_runtime.c \
+	lib/network/overlay/session_state.c \
+	lib/network/overlay/replay_state.c \
+	lib/network/overlay/conflict_ordering.c \
+	lib/network/policy/network_policy.c \
+	lib/network/policy/provider_policy.c \
+	lib/network/policy/resource_policy.c
 PROVIDERS_SRCS := \
 	lib/network/providers/catalog.c \
-	lib/network/providers/registry.c \
-	lib/network/providers/policy.c \
-	lib/network/providers/selection.c \
-	lib/network/providers/inference.c \
-	lib/network/providers/embedding.c \
-	lib/network/providers/mocks.c \
+	lib/network/providers/provider_registry.c \
+	lib/network/providers/provider_selection.c \
+	lib/network/providers/client_inference.c \
+	lib/network/providers/client_embedding.c \
+	lib/network/providers/mock_provider.c \
 	lib/network/providers/embedding_mock.c
 KNOWLEDGE_SRCS := \
 	lib/knowledge/runtime_compat.c \
@@ -228,7 +230,7 @@ PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROTOCOL_SRCS))
 CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS) $(GOVERNANCE_SRCS))
 ORCHESTRATION_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(ORCHESTRATION_RUNTIME_SRCS) $(ORCHESTRATION_SRCS))
-MESH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(MESH_SRCS))
+NETWORK_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(NETWORK_SRCS))
 PROVIDERS_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROVIDERS_SRCS))
 KNOWLEDGE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(KNOWLEDGE_SRCS))
 DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
@@ -240,7 +242,7 @@ PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
 PROTOCOL_LIB := $(LIB_DIR)/libyai_protocol.a
 CORE_LIB := $(LIB_DIR)/libyai_core.a
 ORCHESTRATION_LIB := $(LIB_DIR)/libyai_orchestration.a
-MESH_LIB := $(LIB_DIR)/libyai_mesh.a
+NETWORK_LIB := $(LIB_DIR)/libyai_network.a
 PROVIDERS_LIB := $(LIB_DIR)/libyai_providers.a
 KNOWLEDGE_LIB := $(LIB_DIR)/libyai_knowledge.a
 DATA_LIB := $(LIB_DIR)/libyai_data.a
@@ -253,7 +255,7 @@ DOXYFILE := Doxyfile
 DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
-.PHONY: all yai yai-daemon yai-edge foundations support platform protocol core orchestration exec mesh providers knowledge data graph edge daemon yd1-baseline \
+.PHONY: all yai yai-daemon yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon yd1-baseline \
         test test-unit test-integration test-e2e test-core test-runtime test-knowledge test-orchestration test-protocol test-governance test-providers test-edge test-mesh \
         test-demo-matrix verify-final-demo-matrix \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
@@ -269,13 +271,15 @@ yai-daemon: $(YAI_DAEMON_BIN)
 yai-edge: yai-daemon
 	@cp "$(YAI_DAEMON_BIN)" "$(YAI_EDGE_ALIAS_BIN)"
 
-foundations: support platform protocol mesh providers
+foundations: support platform protocol network providers
 core: $(CORE_LIB)
 orchestration: $(ORCHESTRATION_LIB)
 exec: orchestration
 	@echo "[YAI] exec target is legacy alias; use 'make orchestration'"
 providers: $(PROVIDERS_LIB)
-mesh: $(MESH_LIB)
+network: $(NETWORK_LIB)
+mesh: network
+	@echo "[YAI] mesh target is legacy alias; use 'make network'"
 knowledge: $(KNOWLEDGE_LIB)
 data: $(DATA_LIB)
 graph: $(GRAPH_LIB)
@@ -356,8 +360,8 @@ test-edge:
 test-mesh:
 	@tests/unit/mesh/run_mesh_unit_tests.sh
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
 
 $(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
@@ -377,7 +381,7 @@ $(CORE_LIB): $(CORE_OBJS) | dirs
 $(ORCHESTRATION_LIB): $(ORCHESTRATION_OBJS) | dirs
 	ar rcs $@ $^
 
-$(MESH_LIB): $(MESH_OBJS) | dirs
+$(NETWORK_LIB): $(NETWORK_OBJS) | dirs
 	ar rcs $@ $^
 
 $(PROVIDERS_LIB): $(PROVIDERS_OBJS) | dirs

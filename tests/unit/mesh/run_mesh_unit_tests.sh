@@ -8,17 +8,17 @@ mkdir -p "$OUT_DIR"
 cc -Wall -Wextra -std=c11 -O2 \
   -I"$ROOT/include" -I"$ROOT/include/yai" \
   "$ROOT/tests/unit/mesh/test_mesh_minimal.c" \
-  "$ROOT/lib/network/identity/identity.c" \
-  "$ROOT/lib/network/discovery/peer_registry.c" \
-  "$ROOT/lib/network/discovery/membership.c" \
+  "$ROOT/lib/network/topology/peer_identity.c" \
+  "$ROOT/lib/network/topology/reachability.c" \
+  "$ROOT/lib/network/topology/membership.c" \
   "$ROOT/lib/network/discovery/discovery.c" \
-  "$ROOT/lib/network/topologies/sovereign_overlay/awareness.c" \
-  "$ROOT/lib/network/topologies/sovereign_overlay/coordination.c" \
-  "$ROOT/lib/network/transport/session.c" \
-  "$ROOT/lib/network/transport/replay.c" \
-  "$ROOT/lib/network/topologies/sovereign_overlay/conflict.c" \
-  "$ROOT/lib/network/overlay/containment.c" \
-  "$ROOT/lib/network/identity/enrollment.c" \
+  "$ROOT/lib/network/mesh/mesh_runtime.c" \
+  "$ROOT/lib/network/mesh/coordination.c" \
+  "$ROOT/lib/network/overlay/session_state.c" \
+  "$ROOT/lib/network/overlay/replay_state.c" \
+  "$ROOT/lib/network/overlay/conflict_ordering.c" \
+  "$ROOT/lib/network/mesh/containment.c" \
+  "$ROOT/lib/network/discovery/enrollment.c" \
   -o "$OUT_DIR/mesh_unit_tests"
 
 "$OUT_DIR/mesh_unit_tests"

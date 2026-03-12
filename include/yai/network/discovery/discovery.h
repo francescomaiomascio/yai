@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include <yai/network/discovery/peer_registry.h>
+#include <yai/network/topology/reachability.h>
 
 #ifdef __cplusplus
 extern "C" {

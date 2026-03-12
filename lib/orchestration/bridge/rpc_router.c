@@ -6,7 +6,7 @@
 
 
 #include <yai/orchestration/storage_policy.h>
-#include <yai/orchestration/provider_policy.h>
+#include <yai/network/policy/provider_policy.h>
 #include "rpc_router.h"
 
 #include "cJSON.h"
