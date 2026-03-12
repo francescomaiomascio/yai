@@ -1,0 +1,7 @@
+menu "YAI Kernel"
+
+config YAI_KERNEL
+    bool "Build YAI kernel substrate"
+    default y
+
+endmenu

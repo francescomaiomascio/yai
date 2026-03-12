@@ -1,5 +1,9 @@
 #pragma once
 
+/* Legacy migration surface:
+ * canonical operational domain is container (`include/yai/container/`).
+ */
+
 #include <stdbool.h>
 #include <ctype.h>
 #include <stddef.h>

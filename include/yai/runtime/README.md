@@ -1,15 +1,9 @@
-# Runtime Public Headers
+# Runtime Public Headers (Legacy Migration Source)
 
-Public runtime nucleus headers for:
+`include/yai/runtime/*` is retained as migration source while moving canonical
+operational-domain semantics to `include/yai/container/*`.
 
-- authority, dispatch, enforcement, lifecycle, session, workspace
-- runtime-side policy, grants, containment
-- event taxonomy and vault runtime state
-- local runtime process surfaces under `runtime/local/`
-
-Boundary notes:
-
-- governance resolves policy content; runtime applies policy state
-- orchestration governs flow control; runtime owns executable core state
-- vault wire ABI and protocol contracts stay under `protocol/`; `runtime/vault.h`
-  is the runtime-side state/use surface
+Canonical model:
+- container is the operational domain
+- workspace is legacy vocabulary only
+- kernel owns privileged roots (containment/session admission/grants validity)

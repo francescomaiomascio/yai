@@ -48,6 +48,8 @@ YAI_OBJ := $(OBJ_DIR)/cmd/yai/main.o
 YAI_BIN := $(BIN_DIR)/yai
 YAI_DAEMON_OBJ := $(OBJ_DIR)/cmd/yai-daemon/main.o
 YAI_DAEMON_BIN := $(BIN_DIR)/yai-daemon
+YAI_CONTAINERD_OBJ := $(OBJ_DIR)/cmd/yai-containerd/main.o
+YAI_CONTAINERD_BIN := $(BIN_DIR)/yai-containerd
 YAI_EDGE_ALIAS_BIN := $(BIN_DIR)/yai-edge
 
 SUPPORT_SRCS := lib/support/ids.c lib/support/logger.c lib/support/errors.c lib/support/strings.c lib/support/paths.c
@@ -231,6 +233,26 @@ DAEMON_SRCS := \
 	lib/daemon/observation.c \
 	lib/daemon/internal.c \
 	lib/third_party/cjson/cJSON.c
+CONTAINER_SRCS := \
+	lib/container/bindings.c \
+	lib/container/config.c \
+	lib/container/container.c \
+	lib/container/grants_view.c \
+	lib/container/identity.c \
+	lib/container/internal/container_model.c \
+	lib/container/lifecycle.c \
+	lib/container/mounts.c \
+	lib/container/paths.c \
+	lib/container/policy_view.c \
+	lib/container/recovery.c \
+	lib/container/registry.c \
+	lib/container/root_projection.c \
+	lib/container/runtime_surface.c \
+	lib/container/runtime_view.c \
+	lib/container/services.c \
+	lib/container/session_binding.c \
+	lib/container/state.c \
+	lib/container/tree.c
 
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
 PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
@@ -243,6 +265,7 @@ KNOWLEDGE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(KNOWLEDGE_SRCS))
 DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
 GRAPH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(GRAPH_SRCS))
 DAEMON_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DAEMON_SRCS))
+CONTAINER_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CONTAINER_SRCS))
 
 SUPPORT_LIB := $(LIB_DIR)/libyai_support.a
 PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
@@ -255,6 +278,7 @@ KNOWLEDGE_LIB := $(LIB_DIR)/libyai_knowledge.a
 DATA_LIB := $(LIB_DIR)/libyai_data.a
 GRAPH_LIB := $(LIB_DIR)/libyai_graph.a
 DAEMON_LIB := $(LIB_DIR)/libyai_daemon.a
+CONTAINER_LIB := $(LIB_DIR)/libyai_container.a
 
 SPINE_DIRS := $(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) $(TEST_DIR)
 
@@ -262,19 +286,20 @@ DOXYFILE := Doxyfile
 DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
-.PHONY: all yai yai-daemon yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon yd1-baseline \
-        test test-unit test-integration test-e2e test-core test-runtime test-knowledge test-orchestration test-protocol test-governance test-providers test-daemon test-edge test-mesh \
+.PHONY: all yai yai-daemon yai-containerd yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon container yd1-baseline \
+        test test-unit test-integration test-e2e test-core test-runtime test-knowledge test-orchestration test-protocol test-governance test-providers test-daemon test-edge test-mesh test-sys-container \
         test-demo-matrix verify-final-demo-matrix \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
         preflight-release docs docs-clean docs-verify proof-verify release-guards \
         release-guards-dev changelog-verify b13-convergence-check dirs help legacy-build \
         governance-sync governance-check
 
-all: yai yai-daemon foundations
-	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN)"
+all: yai yai-daemon yai-containerd foundations
+	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN) + $(YAI_CONTAINERD_BIN)"
 
 yai: $(YAI_BIN)
 yai-daemon: $(YAI_DAEMON_BIN)
+yai-containerd: $(YAI_CONTAINERD_BIN)
 yai-edge: yai-daemon
 	@cp "$(YAI_DAEMON_BIN)" "$(YAI_EDGE_ALIAS_BIN)"
 
@@ -291,6 +316,7 @@ knowledge: $(KNOWLEDGE_LIB)
 data: $(DATA_LIB)
 graph: $(GRAPH_LIB)
 daemon: $(DAEMON_LIB)
+container: $(CONTAINER_LIB)
 edge: daemon
 	@echo "[YAI] edge target is legacy alias; use 'make daemon'"
 
@@ -370,11 +396,17 @@ test-edge: test-daemon
 test-mesh:
 	@tests/unit/network/mesh/run_mesh_unit_tests.sh
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+test-sys-container: yai-containerd
+	@tests/sys/container/containerd_smoke.sh
+
+$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
 
 $(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_CONTAINERD_BIN): $(YAI_CONTAINERD_OBJ) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_CONTAINERD_OBJ) -o $@ $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
 
 $(SUPPORT_LIB): $(SUPPORT_OBJS) | dirs
 	ar rcs $@ $^
@@ -409,6 +441,9 @@ $(GRAPH_LIB): $(GRAPH_OBJS) | dirs
 $(DAEMON_LIB): $(DAEMON_OBJS) | dirs
 	ar rcs $@ $^
 
+$(CONTAINER_LIB): $(CONTAINER_OBJS) | dirs
+	ar rcs $@ $^
+
 $(OBJ_DIR)/%.o: %.c | dirs
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -416,13 +451,14 @@ $(OBJ_DIR)/%.o: %.c | dirs
 dirs:
 	@mkdir -p $(SPINE_DIRS)
 
-build: yai yai-daemon
-	@echo "--- [YAI] primary entrypoints build complete (yai + yai-daemon) ---"
+build: yai yai-daemon yai-containerd
+	@echo "--- [YAI] primary entrypoints build complete (yai + yai-daemon + yai-containerd) ---"
 
-yd1-baseline: yai yai-daemon
+yd1-baseline: yai yai-daemon yai-containerd
 	@echo "[YD-1] edge architecture refoundation baseline built"
 	@echo "  owner runtime: build/bin/yai"
 	@echo "  daemon runtime: build/bin/yai-daemon"
+	@echo "  container manager: build/bin/yai-containerd"
 	@echo "  refs:"
 	@echo "    docs/architecture/daemon-architecture-refoundation-model.md"
 	@echo "    docs/program/adr/ADR-015-daemon-architecture-refoundation-slice.md"
@@ -437,6 +473,7 @@ dist: build
 	@mkdir -p $(BIN_DIST)
 	@cp "$(YAI_BIN)" "$(BIN_DIST)/yai"
 	@if [ -f "$(YAI_DAEMON_BIN)" ]; then cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-daemon"; cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-edge"; fi
+	@if [ -f "$(YAI_CONTAINERD_BIN)" ]; then cp "$(YAI_CONTAINERD_BIN)" "$(BIN_DIST)/yai-containerd"; fi
 	@echo "--- [YAI] dist staged in $(BIN_DIST) ---"
 
 dist-all: dist
@@ -504,9 +541,11 @@ help:
 	@echo "  all            (yai + yai-daemon + foundation libs)"
 	@echo "  yai            (build/bin/yai)"
 	@echo "  yai-daemon     (build/bin/yai-daemon standalone daemon runtime)"
+	@echo "  yai-containerd (build/bin/yai-containerd container manager runtime)"
 	@echo "  yai-edge       (legacy alias of build/bin/yai-daemon)"
 	@echo "  yd1-baseline   (build anchors + YD-1 architecture refs)"
 	@echo "  daemon         (build daemon runtime archive)"
+	@echo "  container      (build container runtime archive)"
 	@echo "  edge           (legacy alias; use daemon)"
 	@echo "  orchestration  (build orchestration control archive)"
 	@echo "  exec           (legacy alias; use orchestration)"
@@ -518,6 +557,7 @@ help:
 	@echo "  test-orchestration (orchestration unit suite)"
 	@echo "  test-protocol  (protocol unit suite)"
 	@echo "  test-governance  (governance loader/discovery/resolution + smoke)"
+	@echo "  test-sys-container (container manager system smoke)"
 	@echo "  test-e2e       (entrypoint e2e smoke)"
 	@echo "  test           (full test baseline)"
 	@echo "  b13-convergence-check (single-repo final convergence smoke)"
