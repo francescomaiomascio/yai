@@ -4,12 +4,18 @@
 
 ## Canonical roots
 
-- runtime and headers: `cmd/`, `lib/`, `include/`
-- governance spine: `governance/`
-- platform foundation domain: `foundation/`
-- platform formal domain: `formal/`
+- boot/kernel substrate: `boot/`, `kernel/`
+- system services: `sys/`
+- user layer: `user/`
+- transitional compatibility: `runtime/compatibility/`
+- protocol and data roots: `protocol/`, `data/`
+- semantic contracts: `specs/`
+- platform formal/foundation: `formal/`, `foundation/`
 - docs authority: `docs/`
 - verification/tooling: `tests/`, `tools/`
+
+Legacy build surfaces (`cmd/`, `include/`, `lib/`) are no longer root-level owners.
+Residual implementation and headers are drained under `runtime/compatibility/`.
 
 ## Repository status
 
@@ -19,19 +25,14 @@
 
 ## Governance model
 
-Governance is native and internal to this repository. Policy, contracts, schemas, manifests,
-registry, overlays, compliance, and ingestion authoring live under `governance/` and are consumed
-by runtime/tooling from canonical paths.
-
-## Program baseline
-
-- roadmap closure: `docs/program/repo-unico-overview-32-consegne.md`
+Governance contracts are authored under `specs/` and consumed by runtime/tooling from canonical
+spec and schema paths.
 
 ## Start here
 
 - `docs/README.md`
-- `governance/README.md`
+- `specs/README.md`
 - `FOUNDATION.md`
 - `GOVERNANCE.md`
 - `VERSIONING.md`
-- `COMPATIBILITY.md`
+- `docs/transitional/root-meta/COMPATIBILITY.md`

@@ -1,77 +1,37 @@
-# YAI Kernel (K-1)
+# YAI Kernel
 
-## Role
+## Boundary Statement (AL-1)
 
-`kernel/` is the privileged subsystem of YAI OS substrate.
+`kernel/` is the privileged minimal kernel layer of the YAI OS-substrate path.
 
-It owns only kernel-grade primitives:
-- boot/handoff core integration
-- authority root
-- containment root
-- process/thread core
-- scheduler core
-- memory core
-- VFS/filesystem core
-- IPC core
-- security/capability/audit core
-- container kernel primitives
-- kernel lifecycle
-- kernel state and registries
-- syscall/ABI surface
+Kernel ownership is strictly limited to kernel-grade primitives:
+- ABI base (`kernel/include/yai/abi/*`)
+- privileged kernel state and lifecycle
+- privileged session admission
+- privileged registry roots
+- grants root validity/checks and lifecycle hooks
+- containment root and escape/breach control points
+- low-level kernel container primitives (namespaces, rootfs, mounts, limits)
+- kernel policy hooks (admission/mount/escape/spawn gating)
+- kernel trace/audit/metrics hooks
 
-## Explicitly Out of Kernel
+## Explicitly Out Of Kernel
 
-The following are not kernel responsibilities and must stay in userspace/system services:
-- orchestration logic
-- workflow logic
-- graph engine
-- data engine
-- governance service logic
-- rich policy engine logic
-- provider logic
-- daemon business/runtime logic
-- knowledge subsystem logic
-- application-facing runtime surfaces
-- workspace semantics
+The following are system-level or user-level responsibilities and must not be implemented in `kernel/`:
+- orchestration and workflow engines
+- governance resolution/review engines
+- high-level policy composition/overlay/compliance logic
+- graph/data service engines (materialization, retention, archive, store)
+- high-level network control plane (discovery/topology/routing/mesh/service policy)
+- daemon management business logic
+- operator UX surfaces, SDKs, and CLI logic
 
-## Cutover Strategy
+## Transitional Notes
 
-This repository uses aggressive root-level rebuild for the kernel path:
-- do not refactor `runtime/` in place
-- build canonical root-level structure first (`boot/`, `kernel/`, `sys/`, `user/`)
-- treat existing `runtime/` code only as migration source
-- migrate only components that pass kernel-grade ownership checks
+- `runtime/compatibility/` remains migration source only and is not kernel authority.
+- Header namespaces under `kernel/include/yai/{proc,mm,fs,ipc,net,security,trace,drivers}` are currently skeletal in this wave; this is intentional. Their ownership is kernel-side, but implementations are phased.
+- Historical kernel migration notes were moved to `docs/transitional/kernel-meta/` and are non-normative for ownership.
 
-## Ownership Seed (first migration map)
+## Practical Rule
 
-Potential migration candidates into kernel primitives:
-- from current runtime/governance areas: authority, containment, dispatch hooks, enforcement hooks, grants hooks, lifecycle, session core, vault core
-- from `lib/platform`: fs/os/uds low-level parts
-- from protocol: only low-level ABI/control contract payload surfaces
-
-Explicit non-kernel migration targets:
-- workspace/local semantics
-- orchestration high-level control
-- graph materialization/query summary engines
-- rich data evidence/store engines
-- providers and knowledge services
-- daemon concrete service logic
-- high-level mesh/network service logic
-
-## Next Step
-
-K-2 completed: see `kernel/PRIMITIVE_OWNERSHIP_MATRIX.md`.
-
-K-3 completed.
-
-K-4 completed: see `kernel/KERNEL_STATE_REGISTRY_CORE.md` and `kernel/PRIMITIVE_OWNERSHIP_MATRIX.md`.
-
-K-5 completed: see `kernel/KERNEL_SESSION_ADMISSION_MODEL.md` and `kernel/include/yai/kernel/session.h`.
-
-K-6 completed: see `kernel/KERNEL_CONTAINMENT_GOVERNANCE.md` and `kernel/include/yai/kernel/containment.h`.
-
-K-7 completed: see `kernel/KERNEL_POLICY_GRANTS_CORE.md`, `kernel/include/yai/kernel/grants.h`, and `kernel/include/yai/kernel/policy.h`.
-
-K-8 completed: see `kernel/KERNEL_LIFECYCLE_CORE.md` and `kernel/lifecycle/`.
-
-Next: C-1 container canonical definition.
+If a feature requires domain semantics, workflow composition, operator-facing behavior, or service-level orchestration, it belongs outside `kernel/` (typically `sys/` or `user/`).

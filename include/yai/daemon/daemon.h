@@ -1,10 +1,10 @@
 #pragma once
 
 #include <yai/daemon/config.h>
-#include <yai/runtime/local/services.h>
-#include <yai/runtime/local/state.h>
+#include <yai/daemon/runtime_services.h>
+#include <yai/daemon/runtime_state.h>
 #include <yai/daemon/network_binding.h>
-#include <yai/runtime/local/paths.h>
+#include <yai/daemon/runtime_paths.h>
 
 typedef struct yai_edge_runtime {
   yai_edge_config_t config;

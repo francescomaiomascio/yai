@@ -3,13 +3,13 @@
 
 #include <yai/knowledge/memory.h>
 
-int yai_graph_query_workspace_summary(const char *workspace_id,
-                                      char *out_json,
-                                      size_t out_cap,
-                                      char *err,
-                                      size_t err_cap);
-int yai_graph_query_workspace_unified_summary(const char *workspace_id,
-                                              char *out_json,
-                                              size_t out_cap,
-                                              char *err,
-                                              size_t err_cap);
+int yai_graph_query_summary(const char *graph_scope_id,
+                            char *out_json,
+                            size_t out_cap,
+                            char *err,
+                            size_t err_cap);
+int yai_graph_query_unified_summary(const char *graph_scope_id,
+                                    char *out_json,
+                                    size_t out_cap,
+                                    char *err,
+                                    size_t err_cap);

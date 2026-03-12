@@ -16,9 +16,34 @@ export HOME="$TMP_HOME"
 CID="sys-smoke"
 
 "$BIN" create "$CID" managed
+
+OUT_CONFIG="$("$BIN" config-show "$CID")"
+echo "$OUT_CONFIG" | grep -q "creation-policy="
+echo "$OUT_CONFIG" | grep -q "config-revision="
+
 "$BIN" initialize "$CID"
 "$BIN" open "$CID"
 "$BIN" attach "$CID" 1001
+
+"$BIN" service-register "$CID" runtime-core 7001
+"$BIN" service-ready "$CID" runtime-core
+"$BIN" service-register "$CID" recovery-agent 7002
+"$BIN" service-degraded "$CID" recovery-agent
+OUT_SERVICES="$("$BIN" service-list "$CID")"
+echo "$OUT_SERVICES" | grep -q "runtime-core"
+echo "$OUT_SERVICES" | grep -q "recovery-agent"
+OUT_RUNTIME_VIEW="$("$BIN" runtime-view "$CID")"
+echo "$OUT_RUNTIME_VIEW" | grep -q "services-total=2"
+echo "$OUT_RUNTIME_VIEW" | grep -q "ready=1"
+echo "$OUT_RUNTIME_VIEW" | grep -q "degraded=1"
+OUT_REG_LIST="$("$BIN" registry-list)"
+echo "$OUT_REG_LIST" | grep -q "registry-count="
+OUT_REG_LOOKUP="$("$BIN" registry-lookup "$CID")"
+echo "$OUT_REG_LOOKUP" | grep -q "container_id=$CID"
+
+OUT_STATE="$("$BIN" state-read "$CID")"
+echo "$OUT_STATE" | grep -q "lifecycle=active"
+echo "$OUT_STATE" | grep -q "runtime="
 
 OUT_ACTIVE="$("$BIN" show "$CID")"
 echo "$OUT_ACTIVE" | grep -q "lifecycle=active"
@@ -76,11 +101,16 @@ echo "$OUT_PRIV" | grep -q "active_session=2001 mode=privileged"
 OUT_REBOUND="$("$BIN" show "$CID")"
 echo "$OUT_REBOUND" | grep -q "active_session=3001 mode=recovery"
 "$BIN" recovery-enter "$CID" 3001 >/dev/null
+OUT_REC_CHECK="$("$BIN" recovery-check "$CID")"
+echo "$OUT_REC_CHECK" | grep -q "recovery-status="
 "$BIN" leave "$CID" 3001
 OUT_LEFT="$("$BIN" show "$CID")"
 echo "$OUT_LEFT" | grep -q "session_bound=0"
 echo "$OUT_LEFT" | grep -q "lifecycle=recovery"
 echo "$OUT_LEFT" | grep -q "recovery-flags=1"
+
+OUT_SNAPSHOT="$("$BIN" state-snapshot "$CID" snap-001)"
+echo "$OUT_SNAPSHOT" | grep -q "snapshot-id=snap-001"
 
 "$BIN" seal "$CID"
 "$BIN" destroy "$CID"

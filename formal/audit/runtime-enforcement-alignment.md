@@ -1,22 +1,31 @@
-# Runtime/Enforcement Alignment Audit
+# Kernel/Enforcement Alignment Audit
 
 ## Scope
-This audit links formal semantics to runtime enforcement application.
 
-## Runtime Enforcement Inputs
-- Envelope validity (`yai_validate_envelope_v1`)
-- Authority command gate + policy gate
-- Governance final effect and review state
-- Runtime capability/workspace binding
+This audit links formal semantics to kernel-side enforcement attachment points.
+
+## Kernel Enforcement Inputs
+
+- session admission validity
+- grant validity and revocation
+- containment state and escape/breach control
+- lifecycle/readiness gating
+- policy hook allow/deny/defer/privileged-path outcomes
 
 ## Required Formal Counterparts
+
 - authority admissibility invariants
-- resolution precedence invariants
-- policy application invariants
-- grants validity invariants
-- containment mode invariants
-- review/escalation transition invariants
+- grants validity/revocation invariants
+- containment mode/state invariants
+- lifecycle transition and readiness invariants
+- policy application precedence invariants
 
 ## Alignment Outcome
-The formal layer now includes dedicated modules for all above surfaces and a
-linkage matrix in `formal/traceability/enforcement-linkage.json`.
+
+Formal coverage exists for the above classes and is linked through
+`formal/traceability/enforcement-linkage.json`.
+
+## Transitional Note
+
+Any runtime-local/workspace semantics remaining under `runtime/compatibility/`
+are migration artifacts and must not be interpreted as kernel ownership.

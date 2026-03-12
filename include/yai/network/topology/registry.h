@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <yai/network/authority/identity.h>
+#include <yai/network/topology/identity.h>
 
 #ifdef __cplusplus
 extern "C" {

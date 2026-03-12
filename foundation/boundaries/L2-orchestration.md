@@ -1,24 +1,25 @@
-# L2 — Orchestration Execution Boundary
+# L2 — System Services Plane (Orchestration Domain Focus)
 
 ## Boundary role
 
-L2 is the `orchestration` execution boundary.
-It defines constrained realization of transitions and effects after sovereign decisions.
+L2 is the `sys/` system-services plane above kernel primitives and below user interfaces.
+Inside L2, `sys/orchestration/` is the orchestration execution and workflow coordination domain.
 
-## Primary semantics
+## L2 ownership model
 
-- execution mechanics under constraints
-- external-effect handling surfaces
-- transport/storage/resource gates
-- execution evidence emission
+- `kernel/` owns privileged primitives (admission, containment, grants validity, privileged registries).
+- `sys/` owns service logic, lifecycle and inter-service contracts.
+- `user/` owns operator/developer-facing interfaces.
+- `sys/container/` is the governed execution-domain substrate consumed by orchestration.
 
-## Ontology alignment
+## Orchestration domain semantics
 
-Primary term: `orchestration`.
-Historical label `engine` is migration alias only.
+- planning, scheduling and execution coordination
+- workflow supervision across contained domains
+- constrained realization of transitions and effects
 
 ## Prohibited patterns
 
-- self-authorization of effects
-- unclassified external effects
-- bypass of sovereign decisions
+- orchestration acting as container manager
+- bypass of kernel admission/containment/grants primitives
+- orchestration self-authorizing privileged effects

@@ -19,3 +19,4 @@ typedef struct {
 int yai_container_project_root(const char *container_id,
                                const char *backing_store_path,
                                yai_container_root_t *out_root);
+int yai_container_root_projection_initialize(const char *container_id);

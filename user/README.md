@@ -1,3 +1,9 @@
-# User Space
+# user
 
-User-facing binaries, shells, libraries, and tools above kernel and system services.
+User-facing layer root.
+
+- cli/
+- shells/
+- libs/
+- tools/
+- examples/

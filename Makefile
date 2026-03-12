@@ -17,9 +17,12 @@ BIN_DIST ?= $(DIST_ROOT)/bin
 
 CC ?= cc
 PKG_CONFIG ?= pkg-config
-CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/include/yai \
-            -I$(ROOT_DIR)/lib/third_party/cjson \
+CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/kernel/include \
+            -I$(ROOT_DIR)/third_party/cjson \
             -I$(PROTOCOL_CONTRACT_ROOT)
+CPPFLAGS += -I$(ROOT_DIR)/user/cli/include \
+            -I$(ROOT_DIR)/user/libs/libyai/include \
+            -I$(ROOT_DIR)/user/libs/libyai/third_party/cjson
 CFLAGS ?= -Wall -Wextra -std=c11 -O2
 LDFLAGS ?=
 LDLIBS ?= -lm
@@ -44,216 +47,298 @@ CPPFLAGS += $(DUCKDB_CFLAGS) -DYAI_HAVE_DUCKDB=1
 LDLIBS += $(DUCKDB_LIBS)
 endif
 
-YAI_OBJ := $(OBJ_DIR)/cmd/yai/main.o
+YAI_CLI_MAIN_OBJ := $(OBJ_DIR)/user/cli/yai/main.o
+YAI_CTL_MAIN_OBJ := $(OBJ_DIR)/user/cli/yai-ctl/main.o
 YAI_BIN := $(BIN_DIR)/yai
-YAI_DAEMON_OBJ := $(OBJ_DIR)/cmd/yai-daemon/main.o
+YAI_CTL_BIN := $(BIN_DIR)/yai-ctl
+YAI_DAEMON_OBJ := $(OBJ_DIR)/sys/daemon/yai-daemon-manager/main.o
+YAI_DAEMON_MANAGER_BIN := $(BIN_DIR)/yai-daemon-manager
 YAI_DAEMON_BIN := $(BIN_DIR)/yai-daemon
-YAI_CONTAINERD_OBJ := $(OBJ_DIR)/cmd/yai-containerd/main.o
+YAI_CONTAINERD_OBJ := $(OBJ_DIR)/sys/container/yai-containerd/main.o
 YAI_CONTAINERD_BIN := $(BIN_DIR)/yai-containerd
+YAI_GRAPHD_OBJ := $(OBJ_DIR)/sys/graph/yai-graphd/main.o
+YAI_GRAPHD_BIN := $(BIN_DIR)/yai-graphd
+YAI_DATAD_OBJ := $(OBJ_DIR)/sys/data/yai-datad/main.o
+YAI_DATAD_BIN := $(BIN_DIR)/yai-datad
+YAI_NETD_OBJ := $(OBJ_DIR)/sys/network/yai-netd/main.o
+YAI_NETD_BIN := $(BIN_DIR)/yai-netd
+YAI_ORCHESTRATORD_OBJ := $(OBJ_DIR)/sys/orchestration/yai-orchestratord/main.o
+YAI_ORCHESTRATORD_BIN := $(BIN_DIR)/yai-orchestratord
+YAI_POLICYD_OBJ := $(OBJ_DIR)/sys/policy/yai-policyd/main.o
+YAI_POLICYD_BIN := $(BIN_DIR)/yai-policyd
+YAI_GOVERNANCED_OBJ := $(OBJ_DIR)/sys/governance/yai-governanced/main.o
+YAI_GOVERNANCED_BIN := $(BIN_DIR)/yai-governanced
+YAI_METRICSD_OBJ := $(OBJ_DIR)/sys/observability/yai-metricsd/main.o
+YAI_METRICSD_BIN := $(BIN_DIR)/yai-metricsd
+YAI_AUDITD_OBJ := $(OBJ_DIR)/sys/observability/yai-auditd/main.o
+YAI_AUDITD_BIN := $(BIN_DIR)/yai-auditd
+YAI_SUPERVISORD_OBJ := $(OBJ_DIR)/sys/supervisor/yai-supervisord/main.o
+YAI_SUPERVISORD_BIN := $(BIN_DIR)/yai-supervisord
 YAI_EDGE_ALIAS_BIN := $(BIN_DIR)/yai-edge
 
-SUPPORT_SRCS := lib/support/ids.c lib/support/logger.c lib/support/errors.c lib/support/strings.c lib/support/paths.c
-PLATFORM_SRCS := lib/platform/os.c lib/platform/fs.c lib/platform/clock.c lib/platform/uds.c
+SUPPORT_SRCS := kernel/support/core/ids.c kernel/support/core/logger.c kernel/support/core/errors.c kernel/support/core/strings.c kernel/support/core/paths.c
+PLATFORM_SRCS := kernel/platform/core/os.c kernel/platform/core/fs.c kernel/platform/core/clock.c kernel/platform/core/uds.c
 PROTOCOL_SRCS := \
-	lib/protocol/rpc/runtime.c \
-	lib/protocol/rpc/codec.c \
-	lib/protocol/binary/rpc_binary.c \
-	lib/protocol/control/source_plane.c \
-	lib/protocol/control/message_types.c
+	protocol/lib/core/rpc/runtime.c \
+	protocol/lib/core/rpc/codec.c \
+	protocol/lib/core/binary/rpc_binary.c \
+	protocol/lib/core/control/source_plane.c \
+	protocol/lib/core/control/message_types.c
 CORE_SRCS := \
-	lib/runtime/lifecycle/bootstrap.c \
-	lib/runtime/lifecycle/preboot.c \
-	lib/runtime/lifecycle/startup_plan.c \
-	lib/runtime/lifecycle/runtime_capabilities.c \
-	lib/runtime/dispatch/control_transport.c \
-	lib/runtime/dispatch/command_dispatch.c \
-	lib/runtime/dispatch/attach_flow.c \
-	lib/runtime/session/session.c \
-	lib/runtime/session/session_reply.c \
-	lib/runtime/session/session_utils.c \
-	lib/runtime/workspace/project_tree.c \
-	lib/runtime/workspace/workspace_registry.c \
-	lib/runtime/workspace/workspace_runtime.c \
-	lib/runtime/workspace/workspace_binding.c \
-	lib/runtime/workspace/workspace_recovery.c \
-	lib/runtime/policy/policy_state.c \
-	lib/runtime/grants/grants_state.c \
-	lib/runtime/containment/containment_state.c \
-	lib/runtime/enforcement/enforcement.c \
-	lib/runtime/authority/authority_registry.c \
-	lib/runtime/authority/identity.c
+	kernel/lifecycle/system_shm_bootstrap.c \
+	sys/supervisor/lifecycle/runtime_preboot.c \
+	sys/supervisor/lifecycle/startup_plan.c \
+	sys/supervisor/lifecycle/runtime_capabilities.c \
+	sys/services/dispatch/control_transport.c \
+	sys/services/dispatch/command_dispatch.c \
+	sys/services/dispatch/attach_flow.c \
+	sys/services/registry/registry.c \
+	sys/services/sockets/sockets.c \
+	sys/services/manifests/manifests.c \
+	sys/container/session/scope/project_tree.c \
+	sys/container/session/scope/scope_registry.c \
+	sys/container/session/scope/scope_runtime.c \
+	sys/container/session/scope/scope_binding.c \
+	sys/container/session/scope/scope_recovery.c \
+	sys/policy/state/policy_state.c \
+	sys/policy/state/grants_state.c \
+	sys/policy/state/containment_state.c \
+	sys/policy/engine/engine.c \
+	sys/policy/grants/grants.c \
+	sys/policy/overlays/overlays.c \
+	sys/policy/review/review.c \
+	sys/policy/enforcement/enforcement.c \
+	sys/supervisor/admission/admission.c \
+	sys/supervisor/recovery/recovery.c \
+	sys/supervisor/registry/registry.c \
+	sys/observability/metrics/metrics.c \
+	sys/observability/traces/traces.c \
+	sys/observability/reporting/reporting.c \
+	kernel/policy/authority_registry.c \
+	sys/policy/enforcement/authority_policy_gate.c
 GOVERNANCE_SRCS := \
-	lib/governance/policy_effects.c \
-	lib/governance/loader/governance_loader.c \
-	lib/governance/loader/manifest_loader.c \
-	lib/governance/loader/domain_model_matrix.c \
-	lib/governance/loader/domain_loader.c \
-	lib/governance/loader/compliance_loader.c \
-	lib/governance/loader/overlay_loader.c \
-	lib/governance/loader/compatibility_check.c \
-	lib/governance/classification/event_classifier.c \
-	lib/governance/classification/action_classifier.c \
-	lib/governance/classification/provider_classifier.c \
-	lib/governance/classification/resource_classifier.c \
-	lib/governance/classification/protocol_classifier.c \
-	lib/governance/classification/workspace_context.c \
-	lib/governance/discovery/domain_discovery.c \
-	lib/governance/discovery/signal_matcher.c \
-	lib/governance/discovery/protocol_matcher.c \
-	lib/governance/discovery/provider_matcher.c \
-	lib/governance/discovery/resource_matcher.c \
-	lib/governance/discovery/command_matcher.c \
-	lib/governance/discovery/confidence_model.c \
-	lib/governance/resolution/resolver.c \
-	lib/governance/resolution/stack_builder.c \
-	lib/governance/resolution/foundation_merge.c \
-	lib/governance/resolution/domain_merge.c \
-	lib/governance/resolution/compliance_merge.c \
-	lib/governance/resolution/overlay_merge.c \
-	lib/governance/resolution/precedence.c \
-	lib/governance/resolution/fallback.c \
-	lib/governance/resolution/conflict_resolution.c \
-	lib/governance/resolution/effective_stack.c \
-	lib/governance/mapping/event_to_domain.c \
-	lib/governance/mapping/domain_to_policy.c \
-	lib/governance/mapping/policy_to_effect.c \
-	lib/governance/mapping/decision_to_evidence.c \
-	lib/governance/mapping/decision_to_audit.c \
-	lib/governance/debug/resolution_trace.c \
-	lib/governance/debug/dump_effective_stack.c \
-	lib/governance/debug/dump_discovery_result.c
+	sys/governance/authority/authority.c \
+	sys/governance/escalation/escalation.c \
+	sys/governance/decisions/decisions.c \
+	sys/governance/publication/publication.c \
+	sys/governance/core/policy_effects.c \
+	sys/governance/core/loader/governance_loader.c \
+	sys/governance/core/loader/manifest_loader.c \
+	sys/governance/core/loader/domain_model_matrix.c \
+	sys/governance/core/loader/domain_loader.c \
+	sys/governance/core/loader/compliance_loader.c \
+	sys/governance/core/loader/overlay_loader.c \
+	sys/governance/core/loader/compatibility_check.c \
+	sys/governance/core/classification/event_classifier.c \
+	sys/governance/core/classification/action_classifier.c \
+	sys/governance/core/classification/provider_classifier.c \
+	sys/governance/core/classification/resource_classifier.c \
+	sys/governance/core/classification/protocol_classifier.c \
+	sys/governance/core/classification/workspace_context.c \
+	sys/governance/core/discovery/domain_discovery.c \
+	sys/governance/core/discovery/signal_matcher.c \
+	sys/governance/core/discovery/protocol_matcher.c \
+	sys/governance/core/discovery/provider_matcher.c \
+	sys/governance/core/discovery/resource_matcher.c \
+	sys/governance/core/discovery/command_matcher.c \
+	sys/governance/core/discovery/confidence_model.c \
+	sys/governance/core/resolution/resolver.c \
+	sys/governance/core/resolution/stack_builder.c \
+	sys/governance/core/resolution/foundation_merge.c \
+	sys/governance/core/resolution/domain_merge.c \
+	sys/governance/core/resolution/compliance_merge.c \
+	sys/governance/core/resolution/overlay_merge.c \
+	sys/governance/core/resolution/precedence.c \
+	sys/governance/core/resolution/fallback.c \
+	sys/governance/core/resolution/conflict_resolution.c \
+	sys/governance/core/resolution/effective_stack.c \
+	sys/governance/core/mapping/event_to_domain.c \
+	sys/governance/core/mapping/domain_to_policy.c \
+	sys/governance/core/mapping/policy_to_effect.c \
+	sys/governance/core/mapping/decision_to_evidence.c \
+	sys/governance/core/mapping/decision_to_audit.c \
+	sys/governance/core/debug/resolution_trace.c \
+	sys/governance/core/debug/dump_effective_stack.c \
+	sys/governance/core/debug/dump_discovery_result.c
 ORCHESTRATION_RUNTIME_SRCS := \
-	lib/orchestration/runtime/runtime_control.c \
-	lib/orchestration/runtime/config_loader.c \
-	lib/orchestration/internal/orchestration_model.c \
-	lib/orchestration/runtime/grounding_context.c \
-	lib/orchestration/bridge/network_bridge.c \
-	lib/orchestration/runtime/peer_registry_bridge.c \
-	lib/orchestration/runtime/ingestion.c \
-	lib/orchestration/bridge/storage_bridge.c \
-	lib/orchestration/bridge/runtime_bridge.c \
-	lib/orchestration/bridge/transport_client.c \
-	lib/orchestration/bridge/rpc_router.c \
-	lib/agents/safety/agent_enforcement.c \
-	lib/agents/dispatch/agents_dispatch.c \
-	lib/agents/roles/agent_code.c \
-	lib/agents/roles/agent_historian.c \
-	lib/agents/roles/agent_knowledge.c \
-	lib/agents/roles/agent_system.c \
-	lib/agents/roles/agent_validator.c \
-	lib/orchestration/transport/transport_runtime.c \
-	lib/orchestration/transport/transport_protocol.c \
-	lib/orchestration/transport/uds_server.c \
-	lib/third_party/cjson/cJSON.c
+	sys/orchestration/internal/runtime/runtime_control.c \
+	sys/orchestration/internal/runtime/config_loader.c \
+	sys/orchestration/internal/orchestration_model.c \
+	sys/orchestration/internal/runtime/grounding_context.c \
+	sys/orchestration/internal/bridge/network_bridge.c \
+	sys/orchestration/internal/runtime/peer_registry_bridge.c \
+	sys/orchestration/internal/runtime/ingestion.c \
+	sys/orchestration/internal/bridge/storage_bridge.c \
+	sys/orchestration/internal/bridge/runtime_bridge.c \
+	sys/orchestration/internal/bridge/transport_client.c \
+	sys/orchestration/internal/bridge/rpc_router.c \
+	sys/orchestration/internal/agents/core/safety/agent_enforcement.c \
+	sys/orchestration/internal/agents/core/dispatch/agents_dispatch.c \
+	sys/orchestration/internal/agents/core/roles/agent_code.c \
+	sys/orchestration/internal/agents/core/roles/agent_historian.c \
+	sys/orchestration/internal/agents/core/roles/agent_knowledge.c \
+	sys/orchestration/internal/agents/core/roles/agent_system.c \
+	sys/orchestration/internal/agents/core/roles/agent_validator.c \
+	sys/orchestration/internal/transport/transport_runtime.c \
+	sys/orchestration/internal/transport/transport_protocol.c \
+	sys/orchestration/internal/transport/uds_server.c \
+	third_party/cjson/cJSON.c
 ORCHESTRATION_SRCS := \
-	lib/orchestration/planner/planner.c \
-	lib/orchestration/workflow/rag_sessions.c \
-	lib/orchestration/actions/rag_context_builder.c \
-	lib/orchestration/actions/rag_prompts.c \
-	lib/orchestration/execution/rag_pipeline.c
+	sys/orchestration/planner/planner.c \
+	sys/orchestration/workflow/rag_sessions.c \
+	sys/orchestration/execution/rag_context_builder.c \
+	sys/orchestration/execution/rag_prompts.c \
+	sys/orchestration/execution/rag_pipeline.c
 NETWORK_SRCS := \
-	lib/network/authority/identity.c \
-	lib/network/topology/topology.c \
-	lib/network/topology/membership.c \
-	lib/network/topology/peer_registry.c \
-	lib/network/authority/trust.c \
-	lib/network/topology/authority_binding.c \
-	lib/network/discovery/discovery.c \
-	lib/network/discovery/enrollment.c \
-	lib/network/routing/coordination.c \
-	lib/network/topologies/mesh/mesh_topology.c \
-	lib/network/topologies/mesh/mesh_peering.c \
-	lib/network/authority/containment_state.c \
-	lib/network/transport/transport_runtime.c \
-	lib/network/transport/transport_client.c \
-	lib/network/transport/overlay_transport.c \
-	lib/network/routing/replay_state.c \
-	lib/network/routing/conflict_state.c \
-	lib/network/topologies/mesh/mesh_policy.c
+	sys/network/topology/identity.c \
+	sys/network/topology/topology.c \
+	sys/network/topology/membership.c \
+	sys/network/topology/peer_registry.c \
+	sys/network/topology/trust.c \
+	sys/network/topology/binding.c \
+	sys/network/discovery/discovery.c \
+	sys/network/discovery/enrollment.c \
+	sys/network/routing/coordination.c \
+	sys/network/mesh/mesh_topology.c \
+	sys/network/mesh/mesh_peering.c \
+	sys/network/mesh/containment.c \
+	sys/network/transport/transport_runtime.c \
+	sys/network/transport/transport_client.c \
+	sys/network/transport/overlay_transport.c \
+	sys/network/routing/replay_state.c \
+	sys/network/routing/conflict_state.c \
+	sys/network/mesh/mesh_policy.c
 PROVIDERS_SRCS := \
-	lib/network/providers/catalog.c \
-	lib/network/providers/provider_registry.c \
-	lib/network/providers/provider_selection.c \
-	lib/network/providers/provider_policy.c \
-	lib/network/providers/inference/client_inference.c \
-	lib/network/providers/embedding/client_embedding.c \
-	lib/network/providers/mocks/mock_provider.c \
-	lib/network/providers/embedding/embedder_mock.c
+	sys/network/providers/catalog.c \
+	sys/network/providers/provider_registry.c \
+	sys/network/providers/provider_selection.c \
+	sys/network/providers/provider_policy.c \
+	sys/network/providers/inference/client_inference.c \
+	sys/network/providers/embedding/client_embedding.c \
+	sys/network/providers/mocks/mock_provider.c \
+	sys/network/providers/embedding/embedder_mock.c
 KNOWLEDGE_SRCS := \
-	lib/knowledge/runtime_compat.c \
-	lib/knowledge/cognition/cognition.c \
-	lib/knowledge/cognition/activation.c \
-	lib/knowledge/cognition/reasoning/reasoning_roles.c \
-	lib/knowledge/cognition/reasoning/scoring.c \
-	lib/knowledge/memory/memory.c \
-	lib/knowledge/memory/authority.c \
-	lib/knowledge/memory/arena_store.c \
-	lib/knowledge/memory/storage_bridge.c \
-	lib/knowledge/episodic/episodic.c \
-	lib/knowledge/semantic/semantic_db.c \
-	lib/knowledge/vector/vector_index.c
+	sys/orchestration/internal/knowledge/core/runtime_compat.c \
+	sys/orchestration/internal/knowledge/core/cognition/cognition.c \
+	sys/orchestration/internal/knowledge/core/cognition/activation.c \
+	sys/orchestration/internal/knowledge/core/cognition/reasoning/reasoning_roles.c \
+	sys/orchestration/internal/knowledge/core/cognition/reasoning/scoring.c \
+	sys/orchestration/internal/knowledge/core/memory/memory.c \
+	sys/orchestration/internal/knowledge/core/memory/authority.c \
+	sys/orchestration/internal/knowledge/core/memory/arena_store.c \
+	sys/orchestration/internal/knowledge/core/memory/storage_bridge.c \
+	sys/orchestration/internal/knowledge/core/episodic/episodic.c \
+	sys/orchestration/internal/knowledge/core/semantic/semantic_db.c \
+	sys/orchestration/internal/knowledge/core/vector/vector_index.c
 DATA_SRCS := \
-	lib/data/binding/store_binding.c \
-	lib/data/binding/workspace_binding.c \
-	lib/data/store/file_store.c \
-	lib/data/store/duckdb_store.c \
-	lib/data/records/event_records.c \
-	lib/data/evidence/evidence_records.c \
-	lib/data/query/inspect_query.c \
-	lib/data/retention/retention.c \
-	lib/data/lifecycle/archive.c
+	sys/data/internal/store_binding.c \
+	sys/data/internal/scope_binding.c \
+	sys/data/store/file_store.c \
+	sys/data/store/duckdb_store.c \
+	sys/data/records/event_records.c \
+	sys/data/evidence/evidence_records.c \
+	sys/data/internal/query_surfaces.c \
+	sys/data/retention/retention.c \
+	sys/data/archive/archive.c
 GRAPH_SRCS := \
-	lib/graph/state/graph_backend.c \
-	lib/graph/state/graph_backend_rpc.c \
-	lib/graph/state/graph_facade.c \
-	lib/graph/state/graph.c \
-	lib/graph/state/ids.c \
-	lib/graph/internal/counts.c \
-	lib/graph/domains/activation.c \
-	lib/graph/domains/authority.c \
-	lib/graph/domains/episodic.c \
-	lib/graph/domains/semantic.c \
-	lib/graph/materialization/from_runtime_records.c \
-	lib/graph/query/workspace_summary.c
+	sys/graph/internal/backend_inmemory.c \
+	sys/graph/internal/backend_rpc.c \
+	sys/graph/internal/graph_facade.c \
+	sys/graph/internal/state_reset.c \
+	sys/graph/internal/ids.c \
+	sys/graph/internal/counts.c \
+	sys/graph/summary/activation_summary.c \
+	sys/graph/summary/authority_summary.c \
+	sys/graph/summary/episodic_summary.c \
+	sys/graph/summary/semantic_summary.c \
+	sys/graph/materialization/from_runtime_records.c \
+	sys/graph/query/graph_summary_query.c \
+	sys/graph/lineage/lineage_summary.c \
+	third_party/cjson/cJSON.c
 DAEMON_SRCS := \
-	lib/runtime/local/config.c \
-	lib/runtime/local/paths.c \
-	lib/runtime/local/services.c \
-	lib/runtime/local/state.c \
-	lib/runtime/local/source_ids.c \
-	lib/daemon/config.c \
-	lib/daemon/daemon.c \
-	lib/daemon/process.c \
-	lib/daemon/bootstrap.c \
-	lib/daemon/runtime_binding.c \
-	lib/daemon/network_binding.c \
-	lib/daemon/actions.c \
-	lib/daemon/lifecycle.c \
-	lib/daemon/mediation.c \
-	lib/daemon/observation.c \
-	lib/daemon/internal.c \
-	lib/third_party/cjson/cJSON.c
+	sys/daemon/yai-daemon-manager/runtime/runtime_config.c \
+	sys/daemon/yai-daemon-manager/runtime/runtime_paths.c \
+	sys/daemon/yai-daemon-manager/runtime/runtime_services.c \
+	sys/daemon/yai-daemon-manager/runtime/runtime_state.c \
+	sys/daemon/yai-daemon-manager/runtime/runtime_source_ids.c \
+	sys/daemon/yai-daemon-manager/config.c \
+	sys/daemon/yai-daemon-manager/daemon_runtime.c \
+	sys/daemon/replay/process.c \
+	sys/daemon/yai-daemon-manager/bootstrap.c \
+	sys/daemon/bindings/runtime_binding.c \
+	sys/daemon/bindings/network_binding.c \
+	sys/daemon/bindings/actions.c \
+	sys/daemon/yai-daemon-manager/lifecycle.c \
+	sys/daemon/mediation/mediation.c \
+	sys/daemon/health/observation.c \
+	sys/daemon/internal/internal.c \
+	third_party/cjson/cJSON.c
 CONTAINER_SRCS := \
-	lib/container/bindings.c \
-	lib/container/config.c \
-	lib/container/container.c \
-	lib/container/grants_view.c \
-	lib/container/identity.c \
-	lib/container/internal/container_model.c \
-	lib/container/lifecycle.c \
-	lib/container/mounts.c \
-	lib/container/paths.c \
-	lib/container/policy_view.c \
-	lib/container/recovery.c \
-	lib/container/registry.c \
-	lib/container/root_projection.c \
-	lib/container/runtime_surface.c \
-	lib/container/runtime_view.c \
-	lib/container/services.c \
-	lib/container/session_binding.c \
-	lib/container/state.c \
-	lib/container/tree.c
-
+	sys/container/session/bindings.c \
+	sys/container/session/control_session.c \
+	sys/container/session/control_reply.c \
+	sys/container/session/control_surface.c \
+	sys/container/runtime/config.c \
+	sys/container/runtime/container.c \
+	sys/container/runtime/grants_view.c \
+	sys/container/runtime/identity.c \
+	sys/container/runtime/internal/container_model.c \
+	sys/container/runtime/lifecycle.c \
+	sys/container/mounts/mounts.c \
+	sys/container/rootfs/paths.c \
+	sys/container/runtime/policy_view.c \
+	sys/container/recovery/recovery.c \
+	sys/container/runtime/registry/registry.c \
+	sys/container/rootfs/root_projection.c \
+	sys/container/runtime/runtime_surface.c \
+	sys/container/runtime/runtime_view.c \
+	sys/container/runtime/services.c \
+	sys/container/session/session_binding.c \
+	sys/container/runtime/state.c \
+	sys/container/rootfs/tree.c
+USER_CLI_SRCS := \
+	user/cli/core/app.c \
+	user/cli/core/control_call.c \
+	user/cli/core/errors.c \
+	user/cli/core/fmt.c \
+	user/cli/core/lifecycle.c \
+	user/cli/help/help.c \
+	user/cli/parse/parse.c \
+	user/cli/render/display_map.c \
+	user/cli/render/render.c \
+	user/cli/render/render_reply.c \
+	user/cli/render/style_map.c \
+	user/cli/term/color.c \
+	user/cli/term/keys.c \
+	user/cli/term/pager.c \
+	user/cli/term/screen.c \
+	user/cli/term/term.c \
+	user/cli/watch/watch.c \
+	user/cli/watch/watch_model.c \
+	user/cli/watch/watch_target.c \
+	user/cli/watch/watch_ui.c
+USER_LIBYAI_SRCS := \
+	user/libs/libyai/catalog/catalog.c \
+	user/libs/libyai/client/client.c \
+	user/libs/libyai/models/runtime_models.c \
+	user/libs/libyai/platform/context.c \
+	user/libs/libyai/platform/log.c \
+	user/libs/libyai/platform/paths.c \
+	user/libs/libyai/platform/transport.c \
+	user/libs/libyai/protocol/reply_map.c \
+	user/libs/libyai/registry/registry.c \
+	user/libs/libyai/registry/registry_cache.c \
+	user/libs/libyai/registry/registry_help.c \
+	user/libs/libyai/registry/registry_load.c \
+	user/libs/libyai/registry/registry_paths.c \
+	user/libs/libyai/registry/registry_query.c \
+	user/libs/libyai/registry/registry_validate.c \
+	user/libs/libyai/reply/reply_builder.c \
+	user/libs/libyai/reply/reply_json.c \
+	user/libs/libyai/rpc/rpc_client.c \
+	user/libs/libyai/source/source.c \
+	user/libs/libyai/sdk_public.c \
+	user/libs/libyai/third_party/cjson/cJSON.c
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
 PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROTOCOL_SRCS))
@@ -266,6 +351,8 @@ DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
 GRAPH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(GRAPH_SRCS))
 DAEMON_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DAEMON_SRCS))
 CONTAINER_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CONTAINER_SRCS))
+USER_CLI_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(USER_CLI_SRCS))
+USER_LIBYAI_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(USER_LIBYAI_SRCS))
 
 SUPPORT_LIB := $(LIB_DIR)/libyai_support.a
 PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
@@ -279,27 +366,40 @@ DATA_LIB := $(LIB_DIR)/libyai_data.a
 GRAPH_LIB := $(LIB_DIR)/libyai_graph.a
 DAEMON_LIB := $(LIB_DIR)/libyai_daemon.a
 CONTAINER_LIB := $(LIB_DIR)/libyai_container.a
+USER_LIBYAI := $(LIB_DIR)/libyai_user_sdk.a
 
 SPINE_DIRS := $(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) $(TEST_DIR)
 
-DOXYFILE := Doxyfile
+DOXYFILE := docs/transitional/root-meta/Doxyfile
 DOXYGEN ?= doxygen
 DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 
-.PHONY: all yai yai-daemon yai-containerd yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon container yd1-baseline \
+.PHONY: all yai yai-ctl yai-daemon-manager yai-daemon yai-containerd yai-graphd yai-datad yai-netd yai-orchestratord yai-policyd yai-governanced yai-metricsd yai-auditd yai-supervisord yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon container yd1-baseline kernel-check kernel-smoke \
         test test-unit test-integration test-e2e test-core test-runtime test-knowledge test-orchestration test-protocol test-governance test-providers test-daemon test-edge test-mesh test-sys-container \
         test-demo-matrix verify-final-demo-matrix \
         clean clean-dist clean-all build build-all dist dist-all bundle verify \
         preflight-release docs docs-clean docs-verify proof-verify release-guards \
-        release-guards-dev changelog-verify b13-convergence-check dirs help legacy-build \
+        release-guards-dev changelog-verify b13-convergence-check dirs help \
         governance-sync governance-check
 
-all: yai yai-daemon yai-containerd foundations
-	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN) + $(YAI_CONTAINERD_BIN)"
+all: yai yai-ctl yai-daemon-manager yai-daemon yai-containerd yai-graphd yai-datad yai-netd yai-orchestratord yai-policyd yai-governanced yai-metricsd yai-auditd yai-supervisord foundations
+	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_CTL_BIN) + $(YAI_DAEMON_MANAGER_BIN) + $(YAI_DAEMON_BIN) + $(YAI_CONTAINERD_BIN) + $(YAI_GRAPHD_BIN) + $(YAI_DATAD_BIN) + $(YAI_NETD_BIN) + $(YAI_ORCHESTRATORD_BIN) + $(YAI_POLICYD_BIN) + $(YAI_GOVERNANCED_BIN) + $(YAI_METRICSD_BIN) + $(YAI_AUDITD_BIN) + $(YAI_SUPERVISORD_BIN)"
 
 yai: $(YAI_BIN)
-yai-daemon: $(YAI_DAEMON_BIN)
+yai-ctl: $(YAI_CTL_BIN)
+yai-daemon-manager: $(YAI_DAEMON_MANAGER_BIN)
+yai-daemon: yai-daemon-manager
+	@cp "$(YAI_DAEMON_MANAGER_BIN)" "$(YAI_DAEMON_BIN)"
 yai-containerd: $(YAI_CONTAINERD_BIN)
+yai-graphd: $(YAI_GRAPHD_BIN)
+yai-datad: $(YAI_DATAD_BIN)
+yai-netd: $(YAI_NETD_BIN)
+yai-orchestratord: $(YAI_ORCHESTRATORD_BIN)
+yai-policyd: $(YAI_POLICYD_BIN)
+yai-governanced: $(YAI_GOVERNANCED_BIN)
+yai-metricsd: $(YAI_METRICSD_BIN)
+yai-auditd: $(YAI_AUDITD_BIN)
+yai-supervisord: $(YAI_SUPERVISORD_BIN)
 yai-edge: yai-daemon
 	@cp "$(YAI_DAEMON_BIN)" "$(YAI_EDGE_ALIAS_BIN)"
 
@@ -323,6 +423,11 @@ edge: daemon
 support: $(SUPPORT_LIB)
 platform: $(PLATFORM_LIB)
 protocol: $(PROTOCOL_LIB)
+kernel-check:
+	@$(MAKE) -C kernel check
+
+kernel-smoke:
+	@$(MAKE) -C kernel smoke
 
 test: test-unit test-integration test-e2e
 	@echo "[YAI] unified test baseline complete"
@@ -331,82 +436,100 @@ test-unit: test-core test-runtime test-orchestration test-protocol test-knowledg
 	@echo "[YAI] unit suites complete"
 
 test-integration:
-	@tests/integration/runtime/run_runtime_exec_smoke.sh
-	@tests/integration/orchestration/run_orchestration_smoke.sh
-	@tests/integration/orchestration/run_orchestration_c_tests.sh
-	@tests/integration/runtime/run_runtime_state_smoke.sh
-	@tests/integration/daemon/run_daemon_smoke.sh
-	@tests/integration/network/mesh/run_mesh_smoke.sh
-	@tests/integration/workspace/workspace_runtime_contract.sh
-	@tests/integration/workspace/workspace_session_binding_contract.sh
-	@tests/integration/workspace/workspace_inspect_surfaces.sh
-	@tests/integration/workspace/workspace_real_flow.sh
-	@tests/integration/workspace/workspace_scientific_flow.sh
-	@tests/integration/workspace/workspace_digital_flow.sh
-	@tests/integration/workspace/workspace_event_surface_semantics.sh
-	@tests/integration/workspace/workspace_flow_state_readability.sh
-	@tests/integration/workspace/workspace_governed_vertical_slice.sh
-	@tests/integration/workspace/workspace_negative_paths.sh
-	@tests/integration/source-plane/source_owner_ingest_bridge.sh
-	@tests/integration/source-plane/daemon_local_runtime_scan_spool_retry.sh
-	@tests/integration/source-plane/source_plane_read_model.sh
-	@tests/integration/runtime/run_runtime_handshake_smoke.sh
+	@tests/sys/orchestration/run_orchestration_smoke.sh
+	@tests/sys/orchestration/run_orchestration_c_tests.sh
+	@tests/sys/daemon/run_daemon_smoke.sh
+	@tests/sys/network/mesh/run_mesh_smoke.sh
+	@tests/legacy/source-plane/source_owner_ingest_bridge.sh
+	@tests/legacy/source-plane/daemon_local_runtime_scan_spool_retry.sh
+	@tests/legacy/source-plane/source_plane_read_model.sh
+	@tests/integration/container/run_container_domain_smoke.sh
 	@echo "[YAI] integration suites complete"
 
 test-demo-matrix:
-	@tests/integration/workspace/workspace_demo_matrix.sh
+	@tests/legacy/workspace/workspace_demo_matrix.sh
 	@echo "[YAI] final demo matrix suites complete"
 
 verify-final-demo-matrix:
 	@tools/dev/verify_final_demo_matrix.sh
 
 test-e2e:
-	@tests/e2e/run_entrypoint_e2e.sh
+	@tests/legacy/e2e/run_entrypoint_e2e.sh
 	@echo "[YAI] e2e suite complete"
 
 test-core: yai
 	@./build/bin/yai --help >/dev/null
 
 test-runtime:
-	@tests/unit/runtime/run_runtime_unit_tests.sh
+	@tests/legacy/runtime/unit/run_runtime_unit_tests.sh
 
 test-knowledge:
-	@tests/unit/knowledge/run_knowledge_unit_tests.sh
+	@tests/legacy/unit/knowledge/run_knowledge_unit_tests.sh
 
 test-orchestration:
-	@tests/unit/orchestration/run_orchestration_unit_tests.sh
+	@tests/legacy/unit/orchestration/run_orchestration_unit_tests.sh
 
 test-protocol:
-	@tests/unit/protocol/run_protocol_unit_tests.sh
+	@tests/legacy/unit/protocol/run_protocol_unit_tests.sh
 
 test-governance:
-	@tests/unit/governance/run_governance_unit_tests.sh
-	@tests/integration/governance/run_governance_resolution_smoke.sh
+	@tests/legacy/unit/governance/run_governance_unit_tests.sh
+	@tests/sys/governance/run_governance_resolution_smoke.sh
 	@echo "[YAI] governance-native resolution suites complete"
 
 test-providers:
-	@tests/unit/network/providers/run_providers_unit_tests.sh
+	@tests/legacy/unit/network/providers/run_providers_unit_tests.sh
 
 test-daemon:
-	@tests/unit/daemon/run_daemon_unit_tests.sh
+	@tests/legacy/unit/daemon/run_daemon_unit_tests.sh
 
 test-edge: test-daemon
 	@echo "[YAI] edge test target is legacy alias; use test-daemon"
 
 test-mesh:
-	@tests/unit/network/mesh/run_mesh_unit_tests.sh
+	@tests/legacy/unit/network/mesh/run_mesh_unit_tests.sh
 
 test-sys-container: yai-containerd
 	@tests/sys/container/containerd_smoke.sh
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+$(YAI_BIN): $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) $(USER_LIBYAI) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) -o $@ $(USER_LIBYAI) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
 
-$(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+$(YAI_CTL_BIN): $(YAI_CTL_MAIN_OBJ) | dirs
+	$(CC) $(LDFLAGS) $(YAI_CTL_MAIN_OBJ) -o $@ $(LDLIBS)
+
+$(YAI_DAEMON_MANAGER_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
 
 $(YAI_CONTAINERD_BIN): $(YAI_CONTAINERD_OBJ) $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
 	$(CC) $(LDFLAGS) $(YAI_CONTAINERD_OBJ) -o $@ $(CONTAINER_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_GRAPHD_BIN): $(YAI_GRAPHD_OBJ) $(GRAPH_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_GRAPHD_OBJ) -o $@ $(GRAPH_LIB) $(KNOWLEDGE_LIB) $(DATA_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_DATAD_BIN): $(YAI_DATAD_OBJ) $(DATA_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_DATAD_OBJ) -o $@ $(DATA_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_NETD_BIN): $(YAI_NETD_OBJ) $(NETWORK_LIB) $(PROVIDERS_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_NETD_OBJ) -o $@ $(NETWORK_LIB) $(PROVIDERS_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_ORCHESTRATORD_BIN): $(YAI_ORCHESTRATORD_OBJ) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_ORCHESTRATORD_OBJ) -o $@ $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_POLICYD_BIN): $(YAI_POLICYD_OBJ) $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_POLICYD_OBJ) -o $@ $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_GOVERNANCED_BIN): $(YAI_GOVERNANCED_OBJ) $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_GOVERNANCED_OBJ) -o $@ $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_METRICSD_BIN): $(YAI_METRICSD_OBJ) $(CORE_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_METRICSD_OBJ) -o $@ $(CORE_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_AUDITD_BIN): $(YAI_AUDITD_OBJ) $(CORE_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_AUDITD_OBJ) -o $@ $(CORE_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+
+$(YAI_SUPERVISORD_BIN): $(YAI_SUPERVISORD_OBJ) $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_SUPERVISORD_OBJ) -o $@ $(CORE_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
 
 $(SUPPORT_LIB): $(SUPPORT_OBJS) | dirs
 	ar rcs $@ $^
@@ -444,6 +567,9 @@ $(DAEMON_LIB): $(DAEMON_OBJS) | dirs
 $(CONTAINER_LIB): $(CONTAINER_OBJS) | dirs
 	ar rcs $@ $^
 
+$(USER_LIBYAI): $(USER_LIBYAI_OBJS) | dirs
+	ar rcs $@ $^
+
 $(OBJ_DIR)/%.o: %.c | dirs
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -451,8 +577,8 @@ $(OBJ_DIR)/%.o: %.c | dirs
 dirs:
 	@mkdir -p $(SPINE_DIRS)
 
-build: yai yai-daemon yai-containerd
-	@echo "--- [YAI] primary entrypoints build complete (yai + yai-daemon + yai-containerd) ---"
+build: yai yai-ctl yai-daemon yai-containerd yai-graphd yai-datad yai-netd yai-orchestratord yai-policyd yai-governanced yai-metricsd yai-auditd yai-supervisord
+	@echo "--- [YAI] primary service entrypoints build complete ---"
 
 yd1-baseline: yai yai-daemon yai-containerd
 	@echo "[YD-1] edge architecture refoundation baseline built"
@@ -463,17 +589,25 @@ yd1-baseline: yai yai-daemon yai-containerd
 	@echo "    docs/architecture/daemon-architecture-refoundation-model.md"
 	@echo "    docs/program/adr/ADR-015-daemon-architecture-refoundation-slice.md"
 
-legacy-build:
-	@echo "--- [YAI] legacy-build removed: legacy top-level planes were decommissioned ---"
-
 build-all: build
 	@echo "--- [YAI] build-all complete (owner + daemon baseline topology) ---"
 
 dist: build
 	@mkdir -p $(BIN_DIST)
 	@cp "$(YAI_BIN)" "$(BIN_DIST)/yai"
+	@if [ -f "$(YAI_CTL_BIN)" ]; then cp "$(YAI_CTL_BIN)" "$(BIN_DIST)/yai-ctl"; fi
+	@if [ -f "$(YAI_DAEMON_MANAGER_BIN)" ]; then cp "$(YAI_DAEMON_MANAGER_BIN)" "$(BIN_DIST)/yai-daemon-manager"; fi
 	@if [ -f "$(YAI_DAEMON_BIN)" ]; then cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-daemon"; cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-edge"; fi
 	@if [ -f "$(YAI_CONTAINERD_BIN)" ]; then cp "$(YAI_CONTAINERD_BIN)" "$(BIN_DIST)/yai-containerd"; fi
+	@if [ -f "$(YAI_GRAPHD_BIN)" ]; then cp "$(YAI_GRAPHD_BIN)" "$(BIN_DIST)/yai-graphd"; fi
+	@if [ -f "$(YAI_DATAD_BIN)" ]; then cp "$(YAI_DATAD_BIN)" "$(BIN_DIST)/yai-datad"; fi
+	@if [ -f "$(YAI_NETD_BIN)" ]; then cp "$(YAI_NETD_BIN)" "$(BIN_DIST)/yai-netd"; fi
+	@if [ -f "$(YAI_ORCHESTRATORD_BIN)" ]; then cp "$(YAI_ORCHESTRATORD_BIN)" "$(BIN_DIST)/yai-orchestratord"; fi
+	@if [ -f "$(YAI_POLICYD_BIN)" ]; then cp "$(YAI_POLICYD_BIN)" "$(BIN_DIST)/yai-policyd"; fi
+	@if [ -f "$(YAI_GOVERNANCED_BIN)" ]; then cp "$(YAI_GOVERNANCED_BIN)" "$(BIN_DIST)/yai-governanced"; fi
+	@if [ -f "$(YAI_METRICSD_BIN)" ]; then cp "$(YAI_METRICSD_BIN)" "$(BIN_DIST)/yai-metricsd"; fi
+	@if [ -f "$(YAI_AUDITD_BIN)" ]; then cp "$(YAI_AUDITD_BIN)" "$(BIN_DIST)/yai-auditd"; fi
+	@if [ -f "$(YAI_SUPERVISORD_BIN)" ]; then cp "$(YAI_SUPERVISORD_BIN)" "$(BIN_DIST)/yai-supervisord"; fi
 	@echo "--- [YAI] dist staged in $(BIN_DIST) ---"
 
 dist-all: dist
@@ -538,21 +672,26 @@ clean-all: clean clean-dist
 
 help:
 	@echo "Primary build targets:"
-	@echo "  all            (yai + yai-daemon + foundation libs)"
+	@echo "  all            (yai + yai-daemon-manager + yai-daemon alias + foundation libs)"
 	@echo "  yai            (build/bin/yai)"
-	@echo "  yai-daemon     (build/bin/yai-daemon standalone daemon runtime)"
+	@echo "  yai-ctl        (build/bin/yai-ctl userland cli control alias)"
+	@echo "  yai-daemon-manager (build/bin/yai-daemon-manager canonical daemon manager)"
+	@echo "  yai-daemon     (compat alias of build/bin/yai-daemon-manager)"
 	@echo "  yai-containerd (build/bin/yai-containerd container manager runtime)"
 	@echo "  yai-edge       (legacy alias of build/bin/yai-daemon)"
 	@echo "  yd1-baseline   (build anchors + YD-1 architecture refs)"
 	@echo "  daemon         (build daemon runtime archive)"
 	@echo "  container      (build container runtime archive)"
+	@echo "  legacy         (build legacy runtime compatibility archive)"
 	@echo "  edge           (legacy alias; use daemon)"
 	@echo "  orchestration  (build orchestration control archive)"
 	@echo "  exec           (legacy alias; use orchestration)"
 	@echo "  foundations    (support/platform/protocol/providers archives)"
+	@echo "  kernel-check   (syntax check of kernel privileged core sources)"
+	@echo "  kernel-smoke   (run kernel vertical smoke: lifecycle/admission/containment/grants)"
 	@echo "  providers      (build provider infrastructure archive)"
 	@echo "  test-unit      (core/orchestration/protocol/knowledge/governance unit suites)"
-	@echo "  test-integration (runtime/orchestration/workspace/source-plane integration suites)"
+	@echo "  test-integration (orchestration/daemon/network/source-plane + sys/container integration suites)"
 	@echo "  test-knowledge (knowledge unit suite)"
 	@echo "  test-orchestration (orchestration unit suite)"
 	@echo "  test-protocol  (protocol unit suite)"
@@ -567,5 +706,5 @@ help:
 
 
 test-vertical-slice:
-	@tests/integration/workspace/workspace_governed_vertical_slice.sh
+	@tests/legacy/workspace/workspace_governed_vertical_slice.sh
 	@echo "[YAI] governed vertical slice complete"

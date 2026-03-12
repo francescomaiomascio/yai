@@ -1,19 +1,13 @@
 # tests
 
-Canonical verification topology for the unified YAI system:
+Pre-O1 canonical test roots:
 
-- `unit/`
+- `boot/`
+- `kernel/`
+- `sys/`
+- `user/`
 - `integration/`
-- `e2e/`
-- `fixtures/`
-- `shared/`
+- `qualification/`
+- `legacy/`
 
-Unit suites follow canonical runtime domains:
-
-- `runtime/`, `edge/`, `mesh/`, `orchestration/`, `agents/`
-- `providers/`, `knowledge/`, `governance/`, `graph/`, `protocol/`, `data/`
-
-Integration suites are grouped by real operational flows:
-
-- `runtime/`, `edge/`, `mesh/`, `orchestration/`
-- `workspace/`, `governance/`, `source-plane/`, `qualification/`
+`tests/legacy/` is the only allowed bucket for non-canonical historical suites.

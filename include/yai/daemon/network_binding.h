@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <yai/runtime/local/config.h>
+#include <yai/daemon/runtime_config.h>
 #include <yai/daemon/actions.h>
-#include <yai/runtime/local/paths.h>
+#include <yai/daemon/runtime_paths.h>
 
 #define YAI_DAEMON_BINDING_STATUS_CONFIGURED "configured"
 #define YAI_DAEMON_BINDING_STATUS_ACTIVE "active"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <yai/runtime/local/config.h>
+#include <yai/daemon/runtime_config.h>
 
 typedef yai_edge_config_t yai_daemon_config_t;
 
