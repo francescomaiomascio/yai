@@ -6,12 +6,14 @@
 #include "root.h"
 #include "session.h"
 #include "state.h"
+#include "tree.h"
 
 typedef struct {
   yai_container_identity_t identity;
   yai_container_config_t config;
   yai_container_lifecycle_t lifecycle;
   yai_container_root_t root;
+  yai_container_tree_t tree;
   yai_container_session_domain_t session_domain;
   yai_container_state_t state;
 } yai_container_record_t;

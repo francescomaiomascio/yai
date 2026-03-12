@@ -24,6 +24,40 @@ OUT_ACTIVE="$("$BIN" show "$CID")"
 echo "$OUT_ACTIVE" | grep -q "lifecycle=active"
 echo "$OUT_ACTIVE" | grep -q "session_bound=1"
 echo "$OUT_ACTIVE" | grep -q "policy_view=1 grants_view=1"
+PROJECTED_ROOT="$(echo "$OUT_ACTIVE" | sed -n 's/^projected-root=\([^ ]*\) backing-store=.*/\1/p')"
+BACKING_STORE="$(echo "$OUT_ACTIVE" | sed -n 's/^projected-root=[^ ]* backing-store=\(.*\)$/\1/p')"
+[[ -n "$PROJECTED_ROOT" ]]
+[[ -n "$BACKING_STORE" ]]
+[[ -d "$PROJECTED_ROOT" ]]
+[[ -d "$BACKING_STORE" ]]
+[[ -d "$PROJECTED_ROOT/system" ]]
+[[ -d "$PROJECTED_ROOT/state" ]]
+[[ -d "$PROJECTED_ROOT/data" ]]
+[[ -d "$PROJECTED_ROOT/mounts" ]]
+[[ -d "$PROJECTED_ROOT/runtime" ]]
+[[ -d "$PROJECTED_ROOT/sessions" ]]
+[[ -d "$PROJECTED_ROOT/logs" ]]
+[[ -d "$PROJECTED_ROOT/tmp" ]]
+
+RESOLVED_DATA="$("$BIN" resolve "$CID" /data/events.log)"
+[[ "$RESOLVED_DATA" == "$PROJECTED_ROOT/data/events.log" ]]
+if "$BIN" resolve "$CID" ../../etc/passwd >/dev/null 2>&1; then
+  echo "expected traversal escape to fail" >&2
+  exit 1
+fi
+
+"$BIN" mount "$CID" /host/secure-dump /mounts/diag rw hidden
+if "$BIN" visible "$CID" /mounts/diag/trace.json >/dev/null 2>&1; then
+  echo "expected hidden mount to be invisible" >&2
+  exit 1
+fi
+
+"$BIN" mount "$CID" /host/ops /mounts/ops ro privileged-only
+if "$BIN" visible "$CID" /mounts/ops/report.txt >/dev/null 2>&1; then
+  echo "expected privileged-only mount to be hidden for non-privileged caller" >&2
+  exit 1
+fi
+"$BIN" visible "$CID" /mounts/ops/report.txt 1 >/dev/null
 
 "$BIN" recover "$CID"
 OUT_RECOVERY="$("$BIN" show "$CID")"

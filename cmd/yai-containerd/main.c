@@ -17,6 +17,9 @@ static void print_help(void) {
   puts("  yai-containerd initialize <container-id>");
   puts("  yai-containerd open <container-id>");
   puts("  yai-containerd attach <container-id> <session-id>");
+  puts("  yai-containerd mount <container-id> <source> <target> <ro|rw|privileged> [internal|attached|read-only|read-write|hidden|privileged-only]");
+  puts("  yai-containerd resolve <container-id> <container-path>");
+  puts("  yai-containerd visible <container-id> <container-path> [0|1]");
   puts("  yai-containerd recover <container-id>");
   puts("  yai-containerd seal <container-id>");
   puts("  yai-containerd destroy <container-id>");
@@ -115,6 +118,9 @@ static int cmd_show(const char *container_id) {
          (unsigned long long)root.container_root_handle,
          root.projection_ready ? "ready" : "not-ready",
          root.root_path);
+  printf("projected-root=%s backing-store=%s\n",
+         root.projected_root_host_path,
+         root.backing_store_path);
   printf("session_bound=%u count=%llu last=%llu\n",
          (unsigned)session.bound,
          (unsigned long long)session.bound_session_count,
@@ -123,6 +129,28 @@ static int cmd_show(const char *container_id) {
          (unsigned long long)policy.policy_view_handle,
          (unsigned long long)grants.grants_view_handle);
   return 0;
+}
+
+static yai_container_mount_policy_t parse_mount_policy(const char *value) {
+  if (!value || strcmp(value, "ro") == 0) {
+    return YAI_CONTAINER_MOUNT_RO;
+  }
+  if (strcmp(value, "rw") == 0) {
+    return YAI_CONTAINER_MOUNT_RW;
+  }
+  return YAI_CONTAINER_MOUNT_PRIVILEGED;
+}
+
+static yai_container_visibility_class_t parse_visibility(const char *value) {
+  if (!value || strcmp(value, "attached") == 0) {
+    return YAI_CONTAINER_VISIBILITY_ATTACHED;
+  }
+  if (strcmp(value, "internal") == 0) return YAI_CONTAINER_VISIBILITY_INTERNAL;
+  if (strcmp(value, "read-only") == 0) return YAI_CONTAINER_VISIBILITY_READ_ONLY;
+  if (strcmp(value, "read-write") == 0) return YAI_CONTAINER_VISIBILITY_READ_WRITE;
+  if (strcmp(value, "hidden") == 0) return YAI_CONTAINER_VISIBILITY_HIDDEN;
+  if (strcmp(value, "privileged-only") == 0) return YAI_CONTAINER_VISIBILITY_PRIVILEGED_ONLY;
+  return YAI_CONTAINER_VISIBILITY_ATTACHED;
 }
 
 int main(int argc, char **argv) {
@@ -146,6 +174,41 @@ int main(int argc, char **argv) {
   if (strcmp(argv[1], "attach") == 0 && argc > 3) {
     uint64_t session_id = (uint64_t)strtoull(argv[3], NULL, 10);
     return yai_container_attach(argv[2], session_id) == 0 ? 0 : 1;
+  }
+
+  if (strcmp(argv[1], "mount") == 0 && argc > 5) {
+    yai_container_mount_t mount;
+    memset(&mount, 0, sizeof(mount));
+    (void)snprintf(mount.source, sizeof(mount.source), "%s", argv[3]);
+    (void)snprintf(mount.target, sizeof(mount.target), "%s", argv[4]);
+    mount.policy = parse_mount_policy(argv[5]);
+    mount.mount_class = YAI_CONTAINER_MOUNT_ATTACHED_EXTERNAL;
+    mount.visibility_class = parse_visibility(argc > 6 ? argv[6] : NULL);
+    mount.attachability_class = YAI_CONTAINER_ATTACHABILITY_CONTROLLED;
+    return yai_container_attach_mount(argv[2], &mount) == 0 ? 0 : 1;
+  }
+
+  if (strcmp(argv[1], "resolve") == 0 && argc > 3) {
+    yai_container_path_context_t context;
+    char resolved[2048];
+    if (yai_container_path_context_load(argv[2], &context) != 0) {
+      return 1;
+    }
+    if (yai_container_resolve_path(&context, argv[3], resolved, sizeof(resolved)) != 0) {
+      return 1;
+    }
+    puts(resolved);
+    return 0;
+  }
+
+  if (strcmp(argv[1], "visible") == 0 && argc > 3) {
+    int privileged = (argc > 4 && strcmp(argv[4], "1") == 0) ? 1 : 0;
+    int visible = yai_container_is_path_visible(argv[2], argv[3], privileged);
+    if (visible < 0) {
+      return 1;
+    }
+    puts(visible ? "visible" : "hidden");
+    return visible ? 0 : 1;
   }
 
   if (strcmp(argv[1], "recover") == 0 && argc > 2) {
