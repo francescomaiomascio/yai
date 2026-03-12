@@ -1,26 +1,76 @@
-# Docs
+---
+role: support
+status: active
+audience: all
+owner_domain: docs
+depends_on: [docs/architecture/overview/system-overview.md,docs/architecture/README.md]
+---
+# YAI Documentation
+
+# Purpose
+Provide the official entrypoint for current platform documentation.
 
 ## Scope
-Canonical entrypoint for the selected live documentation surface.
+Covers navigation for architecture, reference, guides, runbooks, program, policies, generated, and archive.
 
 ## What Belongs Here
-- Section spines for architecture, guides, runbooks, reference, and program.
-- Canonical navigation contracts and live-set policy.
+- Canonical entrypoints for live documentation families.
+- Surface governance boundaries for live/generated/archive separation.
 
 ## What Does Not Belong Here
-- Historical migration material (`docs/archive/**`).
-- Redundant report/milestone detail already declassed from live docs.
+- Migration or closeout narrative details.
+- Section-local procedures and low-level reference content.
 
 ## Navigation Order
-1. `architecture/`
-2. `guides/`
-3. `runbooks/`
-4. `reference/`
-5. `program/`
-6. `README_LIVE_SET.md`
-7. `archive/`
+1. `architecture/overview/system-overview.md`
+2. `architecture/overview/subsystem-map.md`
+3. `architecture/overview/repository-map.md`
+4. `architecture/`
+5. `reference/`
+6. `guides/`
+7. `runbooks/`
+8. `program/`
+9. `policies/`
+10. `generated/`
+11. `archive/`
 
 ## Extension Rules
-- Keep live docs compact and authoritative.
-- Prefer updating canonical spine docs over creating new standalone pages.
-- Non-canonical program history should remain in `docs/archive/**`.
+- New root entrypoints require canonical-surface policy compliance.
+- Live docs must map to real repository surfaces (`foundation/`, `formal/`, `include/yai/`, `lib/`, `cmd/`, `tests/`).
+- Historical material is archive-only.
+
+## Canonical Documentation Surface
+### Live canonical families
+- `docs/architecture/`
+- `docs/reference/`
+- `docs/guides/`
+- `docs/runbooks/`
+- `docs/program/`
+- `docs/policies/`
+
+### Non-live families
+- `docs/generated/` for machine-generated output.
+- `docs/archive/` for historical and non-authoritative material.
+
+### Admission minimum
+1. Live docs must declare role, status, and owner domain.
+2. New live docs must not duplicate canonical owner docs.
+3. Historical delivery/refactor material is archive-only.
+
+# Relationships
+- `foundation/`
+- `formal/`
+- `include/yai/`
+- `lib/`
+- `cmd/`
+- `tests/`
+
+# Canonical Role
+Root documentation entry contract.
+
+# Main Body
+Use this page to enter the canonical live documentation surface.
+
+# Related Docs
+- `docs/architecture/README.md`
+- `docs/policies/live-docs-admission-policy.md`

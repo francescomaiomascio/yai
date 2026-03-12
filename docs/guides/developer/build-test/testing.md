@@ -1,9 +1,15 @@
 # Testing
 
-Testing baseline for docs/governance changes:
-
+## Verification Commands
 - `tools/bin/yai-docs-trace-check --all`
-- `../infra/tools/bin/yai-docs-schema-check`
-- `../infra/tools/bin/yai-docs-doctor --mode all`
+- `./tools/bin/yai-governance-compat-check`
+- `./tools/release/unified_repo_convergence_smoke.sh`
 
-If a command is unavailable in the current branch, record it explicitly in MP evidence.
+## Repository Test Surfaces
+- Integration tests: `tests/integration/`
+- Unit tests: `tests/unit/`
+- Runtime qualification artifacts: `docs/runbooks/qualification/`
+
+## Rules
+- Prefer deterministic tests with local fixtures.
+- Record unavailable commands explicitly in report evidence.

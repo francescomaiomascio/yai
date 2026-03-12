@@ -1,16 +1,12 @@
 # Remediation Runbooks
 
 ## Scope
-Remediation and recovery procedures for operational failures.
+Recovery procedures for runtime and governance failures.
 
-## What Belongs Here
-- Remediation runbooks with escalation paths.
+## Repository Surfaces
+- Runtime diagnostics: `lib/runtime/`, `lib/governance/`
+- Operator commands: `cmd/`
+- Validation/gates: `tools/bin/`, `tools/release/`
 
-## What Does Not Belong Here
-- Non-procedural architecture or guide content.
-
-## Navigation Order
-1. `core-remediation-runbook.md`
-
-## Extension Rules
-- Keep remediation docs action-first and bounded.
+## Canonical Entry
+- `remediation.md`

@@ -4,8 +4,14 @@ status: active
 audience: governance
 owner_domain: program-adr
 id: ADR-README
+decision_id: ADR-INDEX
+depends_on: [docs/program/README.md]
+supersedes: []
+superseded_by: []
+implements: []
+evidenced_by: []
+related: [docs/program/README.md]
 ---
-
 # ADR Index
 
 # Purpose
@@ -28,42 +34,42 @@ An ADR should answer:
 - what was decided,
 - why alternatives were rejected,
 - what consequences are accepted,
-- which governance/spec anchors govern the decision.
+- which foundation/spec anchors govern the decision.
 
 ## Canonical ADR set
 
-- `adr-runtime-001-single-runtime.md`
-- `adr-runtime-002-root-entrypoint.md`
-- `adr-runtime-003-kernel-authority.md`
-- `adr-orchestration-004-engine-execution.md`
-- `adr-runtime-005-mind-proposer.md`
-- `adr-protocol-006-unified-rpc.md`
-- `adr-workspace-007-workspace-isolation.md`
-- `adr-workspace-008-connection-lifecycle.md`
-- `adr-orchestration-009-engine-attachment.md`
-- `adr-runtime-010-boot-entrypoint.md`
-- `adr-contracts-011-contract-runbook-lock.md`
-- `adr-program-012-audit-convergence-gates.md`
-- `adr-distributed-013-acquisition-centralized-control.md`
-- `adr-distributed-014-secure-peering-plane.md`
-- `adr-distributed-015-daemon-architecture-slice.md`
-- `adr-governance-016-global-to-edge-policy-hierarchy-lock.md`
-- `adr-distributed-017-delegated-edge-enforcement-architecture.md`
-- `adr-runtime-018-runtime-observation-architecture.md`
-- `adr-distributed-019-edge-binding-action-point-architecture.md`
-- `adr-workspace-020-workspace-authority-and-truth-plane.md`
-- `adr-governance-021-workspace-to-edge-policy-distribution.md`
-- `adr-distributed-022-edge-policy-validity-expiry-refresh.md`
-- `adr-distributed-023-governed-sovereign-mesh-foundation.md`
-- `adr-distributed-024-mesh-discovery-foundation.md`
-- `adr-distributed-025-mesh-coordination-foundation.md`
-- `adr-distributed-026-sovereign-mesh-authority-foundation.md`
-- `adr-protocol-027-secure-overlay-transport-plane.md`
-- `adr-distributed-028-owner-remote-peer-ingress.md`
-- `adr-governance-029-overlay-integration.md`
-- `adr-governance-030-source-and-edge-query-surfaces.md`
-- `adr-data-031-unified-graph-workspace-edge-runtime.md`
-- `adr-intelligence-032-ai-grounding-governed-case-state.md`
+- `adr-001-single-runtime.md`
+- `adr-002-root-entrypoint.md`
+- `adr-003-kernel-authority.md`
+- `adr-004-engine-execution.md`
+- `adr-005-mind-proposer.md`
+- `adr-006-unified-rpc.md`
+- `adr-007-workspace-isolation.md`
+- `adr-008-connection-lifecycle.md`
+- `adr-009-engine-attachment.md`
+- `adr-010-boot-entrypoint.md`
+- `adr-011-contract-runbook-lock.md`
+- `adr-012-audit-convergence-gates.md`
+- `adr-013-acquisition-control.md`
+- `adr-014-secure-peering.md`
+- `adr-015-daemon-architecture.md`
+- `adr-016-global-edge-policy-hierarchy.md`
+- `adr-017-edge-enforcement.md`
+- `adr-018-runtime-observation.md`
+- `adr-019-edge-binding-actions.md`
+- `adr-020-workspace-authority-truth.md`
+- `adr-021-workspace-policy-distribution.md`
+- `adr-022-edge-policy-validity.md`
+- `adr-023-governed-sovereign-mesh.md`
+- `adr-024-mesh-discovery.md`
+- `adr-025-mesh-coordination.md`
+- `adr-026-sovereign-mesh-authority.md`
+- `adr-027-secure-overlay-transport.md`
+- `adr-028-owner-remote-peer-ingress.md`
+- `adr-029-overlay-integration.md`
+- `adr-030-source-edge-query-surfaces.md`
+- `adr-031-unified-graph-runtime.md`
+- `adr-032-ai-grounding-case-state.md`
 
 ## Template policy
 
@@ -76,7 +82,7 @@ No template copy should be kept inside this ADR directory.
 
 When adding a new ADR:
 - update this index,
-- ensure governance/spec references are explicit,
+- ensure foundation/spec references are explicit,
 - add downstream runbook linkage when available.
 
 Program-level convergence governance is defined in:
@@ -85,3 +91,10 @@ Program-level convergence governance is defined in:
 # Related Docs
 - `docs/program/adr/README.md`
 - Linked RFC/report artifacts
+
+
+## Lifecycle Rules
+- Every program core document must declare `decision_id` and `status`.
+- Use statuses from D18.3 lifecycle grammar only (`draft`, `accepted`, `active`, `superseded`, `historical`).
+- Superseded or historical docs must declare `superseded_by`.
+- New ADR/RFC/MP/report entries must be added to `docs/program/archive/legacy/decision-ledger.md`.

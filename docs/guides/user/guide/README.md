@@ -1,14 +1,13 @@
-# User Guide Pointers
+# User Guide
 
-This folder contains navigation pointers.
-Normative source is canonical `governance`, consumed in runtime through `governance/runtime-package`.
+## Scope
+User-facing guidance anchored to real platform surfaces.
 
-## Canonical pointers
+## Navigation Order
+1. `activation.md`
+2. `datasets.md`
+3. `contracts.md`
 
-- Canonical governance manifests and layers: `governance/manifests/*`
-- Runtime-facing contract in repo: `governance/runtime-package/*`
-- Runtime compatibility checks: `tools/bin/yai-governance-compat-check`
-
-## Boundary rule
-
-If behavior changes contract/spec semantics, update canonical `governance` first and regenerate embedded artifacts.
+## Rules
+- Point to real repository surfaces.
+- Keep narrative minimal and operationally useful.

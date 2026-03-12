@@ -1,19 +1,13 @@
 # Runtime Architecture
 
-## Audience
-Runtime, enforcement, and core execution maintainers.
-
 ## Scope
-Runtime architecture semantics and decomposition.
+Owner runtime model, resolution model, enforcement flow, and runtime sink boundaries.
 
-## Subsections
-- `core/`: runtime nucleus and ownership semantics.
-- `resolution/`: domain resolution behavior and runtime decisioning.
-- `enforcement/`: enforcement flow semantics.
-- `data-sinks/`: sink and persistence boundary notes.
-
-## Canonical Entry
-- `runtime-architecture.md`
+## Navigation
+1. `architecture.md`
+2. `resolution.md`
+3. `enforcement.md`
+4. `data-sinks.md`
 
 ## Extension Rules
-- Add new runtime docs under the matching subsection, not at runtime root.
+Keep runtime docs execution-centric; move distributed or protocol ownership to `mesh/`, `edge/`, and `protocol/`.

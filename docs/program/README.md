@@ -3,51 +3,56 @@ role: support
 status: active
 audience: governance
 owner_domain: program
+decision_id: PROGRAM-INDEX
+depends_on: [docs/README.md,docs/architecture/overview/system-overview.md,docs/runbooks/README.md]
 ---
-
 # Program
 
 # Purpose
-Defines governance-of-work artifacts: decisions, policy, templates, and canonical program reporting.
+Provide governance-of-work artifacts without competing with platform architecture/reference authority.
 
-# Scope
-Covers RFC, ADR, policies, templates, and compressed program evidence surfaces.
+## Scope
+ADR, RFC, program policies, templates, canonical reports, and program archive.
+
+## What Belongs Here
+- `adr/`
+- `rfc/`
+- `policies/`
+- `reports/`
+- `templates/`
+- `archive/`
+
+## What Does Not Belong Here
+- Architecture authority docs.
+- Live milestone stream trees.
+- Delivery-phase progress notes in live root.
+
+## Navigation Order
+1. `adr/`
+2. `rfc/`
+3. `policies/`
+4. `reports/`
+5. `templates/`
+6. `archive/`
+
+## Extension Rules
+- Program policy docs stay program-specific.
+- Docs-global policies stay under `docs/policies/`.
+- Historical delivery artifacts go under `docs/program/archive/**`.
 
 # Relationships
 - `docs/architecture/README.md`
 - `docs/runbooks/README.md`
+- `tools/bin/yai-governance-compat-check`
+- `tools/release/unified_repo_convergence_smoke.sh`
 
 # Canonical Role
-Program governance index with compressed live visibility.
+Secondary governance surface for decision lifecycle and evidence.
 
 # Main Body
-Program is compressed to decision authority plus minimal active evidence.
-
-## Scope
-Governance-of-work documentation: decisions, policy, templates, and canonical reports.
-
-## What Belongs Here
-- `rfc/`, `adr/`, `policies/`, `templates/`
-- `milestone-packs/README.md` (index-only live)
-- `reports/README.md` + canonical report core
-
-## What Does Not Belong Here
-- Historical milestone/report detail as live docs.
-- Architecture source authority.
-
-## Navigation Order
-1. `rfc/`
-2. `adr/`
-3. `policies/`
-4. `templates/`
-5. `milestone-packs/README.md`
-6. `reports/README.md`
-
-## Extension Rules
-- New milestone/report detail is archive-first unless explicitly canonical.
-- Keep program live set small and decision-oriented.
+Use ADR/RFC for decisions and reports for compact evidence.
 
 # Related Docs
-- `rfc/README.md`
-- `adr/README.md`
+- `policies/README.md`
 - `reports/README.md`
+- `archive/README.md`

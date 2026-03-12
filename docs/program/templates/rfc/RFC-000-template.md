@@ -44,8 +44,8 @@ tags: []
 
 - Spec anchors (if any): `../governance/...`
 - Target ADR(s): `docs/program/adr/adr-<domain>-<nnn>-<slug>.md` (optional)
-- Downstream runbook(s): `docs/program/milestone-packs/runtime-baselines/...` (optional)
-- Downstream MP(s): `docs/program/milestone-packs/...` (optional)
+- Downstream runbook(s): `docs/program/archive/milestone-packs/runtime-baselines/...` (optional)
+- Downstream MP(s): `docs/program/archive/milestone-packs/...` (optional)
 
 ## References
 - `docs/program/rfc/README.md`

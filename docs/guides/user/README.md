@@ -1,17 +1,19 @@
 # User Guides
 
 ## Scope
-User-facing guidance for product and platform usage.
+User-facing guidance for platform usage and adoption.
 
 ## What Belongs Here
-- Getting started and user-level usage guides.
+- `getting-started.md`
+- `guide/` for topic-specific user guides.
 
 ## What Does Not Belong Here
-- Developer or operator internal process docs.
+- Developer process docs.
+- Runbook execution procedures.
 
 ## Navigation Order
-1. `getting-started/`
+1. `getting-started.md`
 2. `guide/`
 
 ## Extension Rules
-- Keep user docs task-oriented and non-internal.
+- Keep docs task-oriented and tied to real command/runtime surfaces.

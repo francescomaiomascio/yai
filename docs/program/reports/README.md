@@ -2,9 +2,15 @@
 role: support
 status: active
 audience: governance
-owner_domain: program
+owner_domain: program-report
+decision_id: RPT-INDEX
+depends_on: [docs/program/README.md]
+supersedes: []
+superseded_by: []
+implements: []
+evidenced_by: []
+related: [docs/program/reports/runtime-convergence-report.md,docs/program/reports/audit-convergence-report.md]
 ---
-
 # Program Reports
 
 # Purpose
@@ -33,3 +39,10 @@ Reports are compressed to canonical core.
 
 # Related Docs
 - `docs/program/README.md`
+
+
+## Lifecycle Rules
+- Every program core document must declare `decision_id` and `status`.
+- Use statuses from D18.3 lifecycle grammar only (`draft`, `accepted`, `active`, `superseded`, `historical`).
+- Superseded or historical docs must declare `superseded_by`.
+- New ADR/RFC/MP/report entries must be added to `docs/program/archive/legacy/decision-ledger.md`.

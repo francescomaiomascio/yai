@@ -3,47 +3,45 @@ role: support
 status: active
 audience: developer
 owner_domain: guides
+depends_on: [docs/README.md,docs/architecture/overview/system-overview.md,docs/runbooks/README.md]
 ---
-
 # Guides
 
 # Purpose
-Provides audience-oriented guidance for developers, operators, and users.
-
-# Scope
-Covers practical usage/workflow guidance that supports canonical architecture and runbooks.
-
-# Relationships
-- `docs/architecture/README.md`
-- `docs/runbooks/README.md`
-
-# Canonical Role
-Support layer for adoption and execution.
-
-# Main Body
-Guides are compressed to high-signal operational learning surfaces.
+Provide audience-specific guidance for developer and user adoption.
 
 ## Scope
-Audience-oriented guidance for developers, operators, and users.
+Task-oriented guidance aligned to real repo commands and modules.
 
 ## What Belongs Here
-- Workflow, onboarding, debugging, tooling, and user/operator usage guides.
+- Developer workflow/build-test/tooling/debugging guidance.
+- User onboarding and usage guidance.
 
 ## What Does Not Belong Here
-- Canonical architecture source docs.
-- Runbook procedure authority.
-- Historical tranche documentation.
+- Architecture authority docs.
+- Reference contract lookup docs.
+- Procedural runbooks.
 
 ## Navigation Order
 1. `developer/`
-2. `operator/`
-3. `user/`
+2. `user/`
 
 ## Extension Rules
-- Add only docs with clear audience need and non-overlapping scope.
-- Move episodic or historical guidance to `docs/archive/**`.
+- Keep guides practical and short.
+- Move executable procedures to runbooks.
+
+# Relationships
+- `cmd/`
+- `tests/`
+- `tools/`
+- `docs/architecture/overview/system-overview.md`
+
+# Canonical Role
+Support layer for adoption and usage.
+
+# Main Body
+Start here, then enter developer or user lanes.
 
 # Related Docs
 - `developer/README.md`
-- `operator/README.md`
 - `user/README.md`

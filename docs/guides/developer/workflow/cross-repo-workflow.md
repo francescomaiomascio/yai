@@ -2,11 +2,10 @@
 
 Cross-repo governance automation standards are defined in `infra`.
 
-See:
+## Local Integration Boundaries
+- This repo is integration/runtime authority.
+- Compatibility and governance checks run through local gates in `tools/bin/` and `tools/release/`.
 
-- `https://github.com/yai-labs/infra/blob/main/docs/standards/project-automation-policy.md`
-- `https://github.com/yai-labs/infra/blob/main/docs/tooling/governance-suite.md`
-
-For YAI product execution specifics, use local runbooks under:
-
-- `docs/program/milestone-packs/runtime-baselines/`
+## Required Checks
+- `./tools/bin/yai-governance-compat-check`
+- `./tools/release/unified_repo_convergence_smoke.sh`

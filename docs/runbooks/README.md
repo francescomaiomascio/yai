@@ -3,35 +3,23 @@ role: procedural
 status: active
 audience: operator
 owner_domain: runbooks
+depends_on: [docs/README.md,docs/architecture/overview/system-overview.md]
 ---
-
 # Runbooks
 
 # Purpose
-Defines executable procedures for operations, qualification, demos, and remediation.
-
-# Scope
-Covers ordered steps, prerequisites, expected outputs, and escalation behavior.
-
-# Relationships
-- `docs/architecture/README.md`
-- `docs/program/README.md`
-
-# Canonical Role
-Primary procedural authority for platform operation.
-
-# Main Body
-Runbooks stay compact and execution-focused.
+Define executable procedures for operating and validating the platform.
 
 ## Scope
-Executable procedures for operations, qualification, demos, and remediation.
+Operations, qualification, demos, and remediation procedures.
 
 ## What Belongs Here
-- Core runbooks with repeatable execution contracts.
+- Ordered procedures with prerequisites, commands, expected outputs, and escalation paths.
 
 ## What Does Not Belong Here
-- Architecture authority docs.
-- Program reporting and historical material.
+- Architecture model authority.
+- Program reporting history.
+- Migration notes.
 
 ## Navigation Order
 1. `operations/`
@@ -40,10 +28,24 @@ Executable procedures for operations, qualification, demos, and remediation.
 4. `remediation/`
 
 ## Extension Rules
-- Add runbooks only when they define a distinct executable procedure.
-- Keep variants as appendices/satellites, not new parallel runbooks.
+- Add runbooks only for distinct executable procedures.
+- Keep scenario variants as appendices/satellites.
+
+# Relationships
+- `cmd/`
+- `tools/bin/`
+- `tools/release/`
+- `tests/`
+- `docs/architecture/README.md`
+
+# Canonical Role
+Procedural authority for operational execution.
+
+# Main Body
+Runbooks are execution-first and evidence-oriented.
 
 # Related Docs
 - `operations/README.md`
 - `qualification/README.md`
+- `demos/README.md`
 - `remediation/README.md`

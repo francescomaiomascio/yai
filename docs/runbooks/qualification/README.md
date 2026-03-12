@@ -3,14 +3,10 @@
 ## Scope
 Qualification procedures and pass/fail verification paths.
 
-## What Belongs Here
-- Qualification runbooks and expected evidence guidance.
+## Repository Surfaces
+- Qualification tests: `tests/integration/`
+- Validation scripts: `tools/validate/`
+- Smoke gates: `tools/release/unified_repo_convergence_smoke.sh`
 
-## What Does Not Belong Here
-- Program governance documentation.
-
-## Navigation Order
-1. `core-qualification-runbook.md`
-
-## Extension Rules
-- Qualification docs must define explicit outcome criteria.
+## Canonical Entry
+- `qualification.md`

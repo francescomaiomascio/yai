@@ -3,55 +3,50 @@ role: support
 status: active
 audience: developer
 owner_domain: guides
+depends_on: [docs/guides/README.md,docs/architecture/README.md]
 ---
-
 # Developer Guides
 
 # Purpose
-Provides developer-focused guidance for onboarding, workflows, tooling, debugging, governance process, and operational walkthroughs.
-
-# Scope
-Covers day-to-day development execution and developer-facing operational practices.
-
-# Relationships
-- `docs/architecture/README.md`
-- `docs/runbooks/README.md`
-- `docs/program/README.md`
-
-# Canonical Role
-Primary developer guidance index with functional sub-sections.
-
-# Main Body
-Developer guidance is verticalized into canonical functional families.
+Provide execution guidance for developer workflows and verification.
 
 ## Scope
-Developer-facing guidance for onboarding, workflows, tooling, debugging, governance process, and operational walkthroughs.
+Covers workflow, build-test, tooling, debugging, governance process, and operational guides.
 
 ## What Belongs Here
-- `onboarding/`, `workflow/`, `build-test/`, `tooling/`, `debugging/`, `governance/`, `operational-guides/`, `checklists/`.
-- How-to and usage guidance for developers.
+- Developer-facing procedures tied to `cmd/`, `include/yai/`, `lib/`, `tests/`, and `tools/`.
 
 ## What Does Not Belong Here
-- Canonical architecture source docs.
-- Program governance artifacts (ADR/RFC/MP).
-- Historical notes and migration traces.
+- Architecture canonical authority.
+- Program policy authority.
 
 ## Navigation Order
-1. `onboarding/`
-2. `workflow/`
-3. `build-test/`
-4. `tooling/`
-5. `debugging/`
-6. `operational-guides/`
-7. `governance/`
-8. `checklists/`
+1. `workflow/`
+2. `build-test/`
+3. `tooling/`
+4. `debugging/`
+5. `operational-guides/`
+6. `governance/`
+7. `checklists/`
 
 ## Extension Rules
-- Prefer existing subsections over root-level files.
-- Keep one canonical guide per theme.
-- Use concise, classification-oriented filenames.
+- Prefer consolidation over micro-fragmentation.
+- Every new guide must map to concrete repository surfaces.
+
+# Relationships
+- `cmd/`
+- `include/yai/`
+- `lib/`
+- `tests/`
+- `tools/`
+
+# Canonical Role
+Primary developer guidance index.
+
+# Main Body
+Use these guides for day-to-day contributor execution.
 
 # Related Docs
 - `workflow/README.md`
-- `debugging/README.md`
+- `build-test/README.md`
 - `tooling/README.md`

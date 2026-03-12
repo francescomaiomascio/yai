@@ -1,6 +1,8 @@
 # Architecture Overview
 
-Cross-domain architecture entrypoints and scope definitions.
+Canonical architecture entry surface for YAI.
 
-- `canonical-tree-target.md`
-- `repository-scope.md`
+## Reading Order
+1. `system-overview.md`
+2. `subsystem-map.md`
+3. `repository-map.md`

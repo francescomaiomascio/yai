@@ -4,8 +4,14 @@ status: active
 audience: governance
 owner_domain: program-rfc
 id: RFC-INDEX
+decision_id: RFC-INDEX
+depends_on: [docs/program/README.md]
+supersedes: []
+superseded_by: []
+implements: []
+evidenced_by: []
+related: [docs/program/README.md]
 ---
-
 # RFC Series (Canonical)
 
 # Purpose
@@ -28,11 +34,11 @@ This directory is the canonical home for governance RFCs migrated from legacy PR
 
 | Legacy PRP | Canonical RFC | Linked ADR | Status |
 |---|---|---|---|
-| PRP-001 | `rfc-runtime-001-runtime-topology-and-authority.md` | `docs/program/adr/adr-runtime-001-single-runtime.md` | draft |
-| PRP-002 | `rfc-protocol-002-unified-rpc-and-cli-contract.md` | `docs/program/adr/adr-protocol-006-unified-rpc.md` | draft |
-| PRP-003 | `rfc-workspace-003-workspace-lifecycle-and-isolation.md` | `docs/program/adr/adr-workspace-007-workspace-isolation.md` | draft |
-| PRP-004 | `rfc-contracts-004-contract-runbook-lock-and-pin-policy.md` | `docs/program/adr/adr-contracts-011-contract-runbook-lock.md` | draft |
-| PRP-005 | `rfc-formal-005-formal-coverage-roadmap.md` | `docs/program/adr/adr-program-012-audit-convergence-gates.md` | draft |
+| PRP-001 | `rfc-001-runtime-topology-authority.md` | `docs/program/adr/adr-001-single-runtime.md` | draft |
+| PRP-002 | `rfc-002-unified-rpc-cli-contract.md` | `docs/program/adr/adr-006-unified-rpc.md` | draft |
+| PRP-003 | `rfc-003-workspace-lifecycle-isolation.md` | `docs/program/adr/adr-007-workspace-isolation.md` | draft |
+| PRP-004 | `rfc-004-lock-pin-policy.md` | `docs/program/adr/adr-011-contract-runbook-lock.md` | draft |
+| PRP-005 | `rfc-005-formal-coverage-roadmap.md` | `docs/program/adr/adr-012-audit-convergence-gates.md` | draft |
 
 ## Rules
 
@@ -43,3 +49,10 @@ This directory is the canonical home for governance RFCs migrated from legacy PR
 # Related Docs
 - `docs/program/rfc/README.md`
 - Linked ADR and report artifacts
+
+
+## Lifecycle Rules
+- Every program core document must declare `decision_id` and `status`.
+- Use statuses from D18.3 lifecycle grammar only (`draft`, `accepted`, `active`, `superseded`, `historical`).
+- Superseded or historical docs must declare `superseded_by`.
+- New ADR/RFC/MP/report entries must be added to `docs/program/archive/legacy/decision-ledger.md`.

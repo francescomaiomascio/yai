@@ -3,26 +3,30 @@ role: reference
 status: active
 audience: developer
 owner_domain: reference
+primary_for: schemas-reference
+depends_on: [docs/architecture/data/architecture.md]
 ---
 
 # Schemas Reference
 
 # Purpose
-Provides lookup-oriented contract, schema, or interface reference.
+Provide schema/spec lookup surfaces used by governance and runtime integration.
 
 # Scope
-Covers stable reference semantics and canonical paths for this surface.
+Covers governance manifests, formal schema inputs, and public header contracts.
 
 # Relationships
-- Architecture docs for behavioral context
-- Runbooks for procedural execution
+- `governance/`
+- `formal/`
+- `include/yai/`
+- `lib/governance/`
 
 # Canonical Role
-Canonical reference entry for this surface category.
+Canonical schema/spec reference entrypoint.
 
 # Main Body
-Schema lookup references for protocol, governance, and formal surfaces.
+- Use `specs.md` for canonical schema surface mapping.
 
 # Related Docs
 - `docs/reference/README.md`
-- Neighbor reference families and schema docs
+- `docs/architecture/data/architecture.md`

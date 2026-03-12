@@ -34,8 +34,8 @@ For workspace-centric debugging, correlate trace output with workspace inspect s
 
 Use the governance-native suites:
 
-```bash
+``bash
 make test-governance
-```
+``
 
 This executes unit coverage for loader/discovery/resolution and integration smoke for digital/economic/scientific paths, including overlay-driven cases.

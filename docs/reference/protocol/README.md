@@ -3,52 +3,48 @@ role: reference
 status: active
 audience: developer
 owner_domain: reference
+primary_for: protocol-reference
+depends_on: [docs/architecture/protocol/transport.md]
 ---
-
 # Protocol Reference
 
 # Purpose
-Defines protocol-family contract reference for control and data interaction surfaces.
-
-# Scope
-Covers protocol families `cli`, `control`, `protocol`, `providers`, `vault`, and `compliance`.
-
-# Relationships
-- `docs/reference/README.md`
-- `docs/architecture/protocol/README.md`
-
-# Canonical Role
-Authoritative protocol-reference index for contract consumers.
-
-# Main Body
-Protocol reference is organized by contract family with family-level entrypoints.
+Provide protocol lookup reference aligned to protocol headers and runtime implementation.
 
 ## Scope
-Canonical protocol-surface reference grouped by contract family.
+Protocol surface, message types, transport, RPC, and binary references.
 
 ## What Belongs Here
-- Contract and interface reference for `cli`, `control`, `protocol`, `providers`, `vault`, and `compliance`.
-- Family-specific lookup docs for protocol consumers.
+- Contract lookup docs tied to `include/yai/protocol/**` and `lib/protocol/**`.
 
 ## What Does Not Belong Here
-- Generic architecture narratives.
-- Migration overlays and superseded contract notes.
-- Procedure/runbook content.
+- Governance or delivery reports.
+- Historical transition notes.
 
 ## Navigation Order
-1. `cli/`
-2. `control/`
-3. `protocol/`
-4. `providers/`
-5. `vault/`
-6. `compliance/`
+1. `surface.md`
+2. `message-types.md`
+3. `transport.md`
+4. `rpc.md`
+5. `binary.md`
 
 ## Extension Rules
-- Add new protocol material under the matching family folder.
-- Keep family README files as entrypoints.
-- Keep `contracts/` transitional-only.
+- Add files only for new protocol contract families.
+- Do not duplicate these canonical core entries.
+
+# Relationships
+- `include/yai/protocol/`
+- `lib/protocol/`
+- `include/yai/protocol/rpc/`
+- `include/yai/protocol/binary/`
+- `include/yai/protocol/transport/`
+
+# Canonical Role
+Primary protocol reference entrypoint.
+
+# Main Body
+Use child docs for direct contract lookup.
 
 # Related Docs
-- `cli/README.md`
-- `control/README.md`
-- `protocol/README.md`
+- `docs/architecture/protocol/README.md`
+- `docs/reference/commands/README.md`

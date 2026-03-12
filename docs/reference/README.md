@@ -3,48 +3,46 @@ role: reference
 status: active
 audience: developer
 owner_domain: reference
+depends_on: [docs/README.md,docs/architecture/overview/system-overview.md]
 ---
-
 # Reference
 
 # Purpose
-Provides lookup-oriented technical reference for stable platform surfaces.
-
-# Scope
-Covers protocol, schemas, registries, commands, CLI, and SDK reference families.
-
-# Relationships
-- `docs/architecture/README.md`
-- `docs/runbooks/README.md`
-
-# Canonical Role
-Primary reference index for consumer lookup.
-
-# Main Body
-Reference is intentionally dry and compressed to essential lookup material.
+Provide lookup-oriented technical contracts for stable platform interfaces.
 
 ## Scope
-Lookup-oriented technical reference for protocol, schemas, registries, commands, CLI, and SDK surfaces.
+Command, protocol, and schema reference surfaces.
 
 ## What Belongs Here
-- Stable reference/contract lookup docs.
+- Stable interface and contract lookup docs.
 
 ## What Does Not Belong Here
-- Migration history, report prose, or walkthrough narratives.
+- Tutorials and long-form narratives.
+- Reports and migration notes.
 
 ## Navigation Order
-1. `protocol/`
-2. `schemas/`
-3. `registries/`
-4. `commands/`
-5. `cli/`
-6. `sdk/`
+1. `commands/`
+2. `protocol/`
+3. `schemas/`
 
 ## Extension Rules
-- Keep one entry README per family.
-- Prefer tightening existing family docs over adding parallel references.
+- Keep reference docs short and contract-centric.
+- New files must map to concrete code or schema surfaces.
+
+# Relationships
+- `cmd/`
+- `include/yai/`
+- `lib/protocol/`
+- `governance/`
+- `formal/`
+
+# Canonical Role
+Canonical lookup index for technical consumers.
+
+# Main Body
+Use section family READMEs to enter concrete reference contracts.
 
 # Related Docs
+- `commands/README.md`
 - `protocol/README.md`
 - `schemas/README.md`
-- `commands/README.md`

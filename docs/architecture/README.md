@@ -3,54 +3,59 @@ role: canonical
 status: active
 audience: architect
 owner_domain: architecture
+primary_for: architecture-index
 ---
-
-# Architecture
+# Architecture Documentation
 
 # Purpose
-Defines authoritative architecture semantics for the platform.
-
-# Scope
-Covers system topology, boundaries, interactions, and runtime model authority.
-
-# Relationships
-- `docs/README.md`
-- `docs/runbooks/README.md`
-- `docs/reference/README.md`
-
-# Canonical Role
-Primary source-of-truth for architecture.
-
-# Main Body
-Architecture remains rich but compressed to canonical spines and necessary satellites.
+Provide the canonical architecture surface for the YAI platform.
 
 ## Scope
-Authoritative architecture surface for system topology, boundaries, interactions, and constraints.
+Canonical architecture source-of-truth for subsystem boundaries and platform model.
 
 ## What Belongs Here
-- Canonical architecture source documents.
-- Required section-level entry docs and minimal supporting satellites.
+- Architecture authority docs for overview, foundation, formal, runtime, orchestration, edge, protocol, data, graph, knowledge, mesh, workspace.
 
 ## What Does Not Belong Here
-- Program reporting history.
-- Migration/closeout/refoundation notes.
+- Runbook procedures.
+- Report history.
+- Reference lookup tables.
 
 ## Navigation Order
-1. `overview/`
-2. `runtime/`
-3. `workspace/`
-4. `distributed-runtime/`
-5. `governance/`
-6. `protocol/`
-7. `data-runtime/`
-8. `intelligence-runtime/`
-9. `system-theory/`
+1. `overview/system-overview.md`
+2. `overview/subsystem-map.md`
+3. `overview/repository-map.md`
+4. `foundation/`
+5. `formal/`
+6. `runtime/`
+7. `orchestration/`
+8. `edge/`
+9. `protocol/`
+10. `data/`
+11. `graph/`
+12. `knowledge/`
+13. `mesh/`
+14. `workspace/`
 
 ## Extension Rules
-- One canonical owner doc per architecture domain.
-- New architecture docs require non-overlapping scope with existing canonical docs.
+- New architecture docs must map directly to real code surfaces.
+- Avoid parallel satellites that duplicate canonical owner docs.
+
+# Relationships
+- `foundation/`
+- `formal/`
+- `include/yai/`
+- `lib/`
+- `cmd/`
+- `tests/`
+
+# Canonical Role
+Primary architecture source-of-truth index.
+
+# Main Body
+Use this section as entrypoint for platform architecture authority.
 
 # Related Docs
-- `overview/repository-scope.md`
-- `runtime/runtime-architecture.md`
-- `workspace/workspace-architecture.md`
+- `docs/README.md`
+- `docs/reference/README.md`
+- `docs/runbooks/README.md`

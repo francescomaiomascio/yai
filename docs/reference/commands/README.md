@@ -3,28 +3,31 @@ role: reference
 status: active
 audience: developer
 owner_domain: reference
+primary_for: commands-reference
+depends_on: [docs/architecture/runtime/architecture.md]
 ---
 
 # Commands Reference
 
 # Purpose
-Provides lookup-oriented contract, schema, or interface reference.
+Define command lookup surfaces and CLI behavior contracts.
 
 # Scope
-Covers stable reference semantics and canonical paths for this surface.
+Covers command surface, taxonomy, and behavior for CLI entrypoints.
 
 # Relationships
-- Architecture docs for behavioral context
-- Runbooks for procedural execution
+- `cmd/yai/main.c`
+- `cmd/yai-edge/main.c`
+- `docs/reference/protocol/rpc.md`
+- `docs/architecture/runtime/architecture.md`
 
 # Canonical Role
-Canonical reference entry for this surface category.
+Primary command reference entrypoint.
 
 # Main Body
-Canonical command-family lookup documentation.
-
-This section indexes command namespaces and their canonical meaning.
+1. `surface.md`
+2. `taxonomy.md`
+3. `behavior.md`
 
 # Related Docs
-- `docs/reference/README.md`
-- Neighbor reference families and schema docs
+- `docs/reference/protocol/README.md`
