@@ -5,7 +5,7 @@
 #include <yai/graph/materialization.h>
 #include <yai/graph/query.h>
 #include <yai/graph/summary.h>
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 
 #include <stdio.h>
 #include <string.h>

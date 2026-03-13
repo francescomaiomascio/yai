@@ -9,7 +9,7 @@
 #include "../platform/log_internal.h"
 
 #include <cJSON.h>
-#include <yai/protocol/control/ids.h>
+#include <yai/ipc/ids.h>
 
 #include <stdlib.h>
 #include <string.h>

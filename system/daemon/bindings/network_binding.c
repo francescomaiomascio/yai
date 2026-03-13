@@ -16,15 +16,15 @@
 
 #include <cJSON.h>
 
-#include <yai/protocol/rpc/contract.h>
-#include <yai/protocol/transport/transport.h>
-#include <yai/protocol/control/ids.h>
+#include <yai/ipc/rpc.h>
+#include <yai/ipc/transport.h>
+#include <yai/ipc/ids.h>
 
 #include <yai/daemon/network_binding.h>
 #include <yai/daemon/runtime_binding.h>
 #include <yai/daemon/actions.h>
 #include <yai/daemon/runtime_source_ids.h>
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 #include <yai/daemon/daemon.h>
 
 #include "../internal/internal.h"

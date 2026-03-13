@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <yai/protocol/rpc/runtime.h>
-#include <yai/protocol/transport/transport.h>
+#include <yai/ipc/runtime.h>
+#include <yai/ipc/transport.h>
 
 #define MAX_SESSIONS 32
 #define MAX_WS_ID_LEN 64

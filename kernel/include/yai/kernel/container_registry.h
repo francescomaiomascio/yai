@@ -3,13 +3,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "config.h"
-#include "grants_view.h"
+#include "container_config.h"
+#include "container_grants.h"
 #include "identity.h"
 #include "lifecycle.h"
-#include "policy_view.h"
+#include "container_policy.h"
 #include "root.h"
-#include "services.h"
+#include "container_services.h"
 #include "session.h"
 #include "state.h"
 #include "tree.h"

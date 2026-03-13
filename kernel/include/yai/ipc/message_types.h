@@ -2,6 +2,6 @@
 #pragma once
 
 /* Temporary kernel-facing message taxonomy bridge. */
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 
 unsigned int yai_protocol_ids_version(void);

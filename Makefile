@@ -3,7 +3,7 @@
 # =========================================
 
 ROOT_DIR := $(abspath .)
-PROTOCOL_CONTRACT_ROOT ?= $(ROOT_DIR)/include/yai/protocol
+PROTOCOL_CONTRACT_ROOT ?= $(ROOT_DIR)/legacy_include/yai/protocol
 GOVERNANCE_COMPAT_ROOT ?= $(ROOT_DIR)/governance
 
 BUILD_DIR ?= $(ROOT_DIR)/build
@@ -17,7 +17,7 @@ BIN_DIST ?= $(DIST_ROOT)/bin
 
 CC ?= cc
 PKG_CONFIG ?= pkg-config
-CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/kernel/include \
+CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/legacy_include -I$(ROOT_DIR)/kernel/include \
             -I$(ROOT_DIR)/third_party/cjson \
             -I$(PROTOCOL_CONTRACT_ROOT)
 CPPFLAGS += -I$(ROOT_DIR)/user/include \
@@ -31,7 +31,7 @@ LMDB_CFLAGS := $(shell $(PKG_CONFIG) --cflags liblmdb 2>/dev/null)
 LMDB_LIBS := $(shell $(PKG_CONFIG) --libs liblmdb 2>/dev/null)
 HIREDIS_CFLAGS := $(shell $(PKG_CONFIG) --cflags hiredis 2>/dev/null)
 HIREDIS_LIBS := $(shell $(PKG_CONFIG) --libs hiredis 2>/dev/null)
-DUCKDB_CFLAGS := $(if $(wildcard /opt/homebrew/opt/duckdb/include/duckdb.h),-I/opt/homebrew/opt/duckdb/include,)
+DUCKDB_CFLAGS := $(if $(wildcard /opt/homebrew/opt/duckdb/legacy_include/duckdb.h),-I/opt/homebrew/opt/duckdb/legacy_include,)
 DUCKDB_LIBS := $(if $(wildcard /opt/homebrew/opt/duckdb/lib/libduckdb.dylib),-L/opt/homebrew/opt/duckdb/lib -lduckdb,)
 
 ifneq ($(strip $(LMDB_LIBS)),)

@@ -1,4 +1,4 @@
 #pragma once
 
 /* Transitional shim. Canonical header lives under protocol/rpc/. */
-#include <yai/protocol/rpc/runtime.h>
+#include <yai/ipc/runtime.h>

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <yai/data/query.h>
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 
 #include <stdio.h>
 

@@ -3,13 +3,13 @@
 
 #include <yai/services/dispatch.h>
 #include <yai/kernel/authority.h>
-#include <yai/container/session_control.h>
-#include <yai/container/scope_runtime.h>
+#include <yai/kernel/session_control.h>
+#include <yai/kernel/scope_runtime.h>
 
-#include <yai/protocol/control/errors.h>
-#include <yai/protocol/rpc/contract.h>
-#include <yai/protocol/control/roles.h>
-#include <yai/protocol/control/ids.h>
+#include <yai/ipc/errors.h>
+#include <yai/ipc/rpc.h>
+#include <yai/ipc/roles.h>
+#include <yai/ipc/ids.h>
 
 #include <errno.h>
 #include <stdio.h>

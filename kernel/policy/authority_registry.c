@@ -1,6 +1,6 @@
 #include <yai/kernel/authority.h>
-#include <yai/protocol/control/errors.h>
-#include <yai/protocol/control/roles.h>
+#include <yai/ipc/errors.h>
+#include <yai/ipc/roles.h>
 
 #include <stdio.h>
 #include <string.h>

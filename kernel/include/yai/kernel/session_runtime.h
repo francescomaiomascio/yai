@@ -4,7 +4,7 @@
 
 #include "paths.h"
 #include "root.h"
-#include "runtime_view.h"
+#include "container_runtime_view.h"
 
 typedef enum {
   YAI_CONTAINER_SESSION_MODE_GLOBAL = 0,

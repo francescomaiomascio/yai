@@ -5,15 +5,15 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/container/scope_runtime.h>
+#include <yai/kernel/scope_runtime.h>
 #include <yai/data/records.h>
 #include <yai/daemon/runtime_source_ids.h>
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 #include <yai/orchestration/ingestion.h>
 #include <yai/orchestration/internal/peer_registry_bridge.h>
 #include <yai/orchestration/network_bridge.h>
 #include <yai/graph/materialization.h>
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 
 #include "cJSON.h"
 

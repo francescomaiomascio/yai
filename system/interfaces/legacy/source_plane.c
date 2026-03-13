@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <yai/protocol/control/source_plane.h>
+#include <yai/ipc/source_plane.h>
 
 static const yai_source_contract_shape_t SHAPES[] = {
     {YAI_SOURCE_CONTRACT_ENROLL, YAI_SOURCE_CONTRACT_TYPE_ENROLL_CALL, YAI_SOURCE_CONTRACT_TYPE_ENROLL_REPLY},

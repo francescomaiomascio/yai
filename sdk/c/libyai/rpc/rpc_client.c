@@ -6,10 +6,10 @@
 #include <yai/sdk/rpc.h>
 #include <yai/sdk/paths.h>
 
-#include <yai/protocol/rpc/contract.h>         /* yai_handshake_req_t / yai_handshake_ack_t */
-#include <yai/protocol/transport/transport.h>        /* yai_rpc_envelope_t + frame constants */
-#include <yai/protocol/control/ids.h> /* YAI_PROTOCOL_IDS_VERSION + command ids */
-#include <yai/protocol/control/roles.h>            /* YAI_ROLE_* */
+#include <yai/ipc/rpc.h>         /* yai_handshake_req_t / yai_handshake_ack_t */
+#include <yai/ipc/transport.h>        /* yai_rpc_envelope_t + frame constants */
+#include <yai/ipc/ids.h> /* YAI_PROTOCOL_IDS_VERSION + command ids */
+#include <yai/ipc/roles.h>            /* YAI_ROLE_* */
 
 #include <sys/socket.h>
 #include <sys/un.h>

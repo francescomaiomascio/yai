@@ -7,6 +7,7 @@
 
 #include <yai/abi/protocol/vault.h>
 #include <yai/ipc/message_types.h>
+#include <yai/ipc/ids.h>
 
 #ifdef __cplusplus
 extern "C" {
