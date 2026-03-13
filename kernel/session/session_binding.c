@@ -8,7 +8,7 @@
 #include <yai/container/recovery.h>
 #include <yai/container/registry.h>
 #include <yai/container/runtime_view.h>
-#include <yai/kernel/session_runtime.h>
+#include <yai/container/session.h>
 
 static int mode_privileged(yai_container_session_mode_t mode) {
   return (mode == YAI_CONTAINER_SESSION_MODE_PRIVILEGED ||

@@ -13,7 +13,7 @@
 #include <yai/container/root.h>
 #include <yai/container/runtime_view.h>
 #include <yai/container/services.h>
-#include <yai/kernel/session_runtime.h>
+#include <yai/container/session.h>
 #include <yai/container/state.h>
 #include <yai/container/tree.h>
 
