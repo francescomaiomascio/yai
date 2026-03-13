@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <yai/daemon/runtime_binding.h>
+#include <yai/daemon/bindings/runtime_binding.h>
 
 const char *yai_edge_binding_kind_normalize(const char *raw)
 {

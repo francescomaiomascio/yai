@@ -2,7 +2,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/daemon/runtime_state.h>
+#include <yai/daemon/runtime/runtime_state.h>
 
 static int copy_string(char *dst, size_t dst_cap, const char *src)
 {

@@ -21,6 +21,7 @@ BIN_DIST ?= $(DIST_ROOT)/bin
 PROTOCOL_CONTRACT_ROOT ?= $(ROOT_DIR)/legacy_include/yai/protocol
 
 CPPFLAGS ?= -I$(ROOT_DIR) \
+            -I$(ROOT_DIR)/system/include \
             -I$(ROOT_DIR)/legacy_include \
             -I$(ROOT_DIR)/kernel/include \
             -I$(ROOT_DIR)/user/include \
@@ -56,7 +57,7 @@ LDLIBS += $(DUCKDB_LIBS)
 endif
 
 define find_c
-$(sort $(shell find $(1) -type f -name '*\.c' ! -name '*\.inc\.c' 2>/dev/null))
+$(sort $(shell find $(1) -type f -name '*.c' ! -name '*.inc.c' 2>/dev/null))
 endef
 
 # -----------------------------------------
@@ -119,6 +120,7 @@ YAI_EDGE_ALIAS_BIN := $(BIN_DIR)/yai-edge
 LIBCORE_SRCS := $(call find_c,kernel/lib/core)
 HAL_SRCS := $(call find_c,kernel/hal/core)
 PROTOCOL_SRCS := $(call find_c,kernel/ipc)
+CJSON_SRC := vendor/cjson/cJSON.c
 
 KERNEL_SRCS := \
 	$(call find_c,kernel/core) \
@@ -134,7 +136,10 @@ KERNEL_SRCS := \
 	$(call find_c,kernel/proc) \
 	$(call find_c,kernel/trace) \
 	$(call find_c,kernel/mm) \
-	$(call find_c,kernel/fs)
+	$(call find_c,kernel/fs) \
+	$(call find_c,kernel/drivers) \
+	$(call find_c,kernel/arch) \
+	$(call find_c,kernel/scheduler)
 
 SYSTEM_CORE_SRCS := \
 	$(call find_c,system/services) \
@@ -142,40 +147,36 @@ SYSTEM_CORE_SRCS := \
 	$(call find_c,system/interfaces)
 
 CONTAINER_SRCS := \
+	$(call find_c,kernel/container) \
 	kernel/session/bindings.c \
-	kernel/container/workspace/reply.c \
-	kernel/container/workspace/session.c \
-	kernel/container/workspace/surface.c \
-	kernel/session/session_binding.c \
-	kernel/container/workspace/tree.c \
-	kernel/container/workspace/scope_registry.c \
-	kernel/container/workspace/scope_runtime.c \
-	kernel/container/workspace/scope_binding.c \
-	kernel/container/workspace/scope_recovery.c \
-	kernel/container/config.c \
-	kernel/container/manager.c \
-	kernel/container/grants.c \
-	kernel/container/identity.c \
-	kernel/container/internal/model.c \
-	kernel/container/lifecycle.c \
-	kernel/container/mounts_registry.c \
-	kernel/container/mounts.c \
-	kernel/container/namespaces.c \
-	kernel/container/policy.c \
-	kernel/container/recovery.c \
-	kernel/container/registry.c \
-	kernel/container/rootfs.c \
-	kernel/container/rootfs/paths.c \
-	kernel/container/rootfs/root_projection.c \
-	kernel/container/rootfs/tree.c \
-	kernel/container/surface.c \
-	kernel/container/view.c \
-	kernel/container/services.c \
-	kernel/container/state.c \
-	system/container/yai-containerd/main.c
+	kernel/session/session_binding.c
+DAEMON_SRCS := $(call find_c,system/daemon)
+DATA_SRCS := $(call find_c,system/data)
+GRAPH_SRCS := $(call find_c,system/graph)
+NETWORK_SRCS := $(call find_c,system/network)
+ORCHESTRATION_SRCS := $(call find_c,system/orchestration)
+POLICY_SRCS := $(call find_c,system/policy)
+GOVERNANCE_SRCS := $(call find_c,system/governance)
+OBSERVABILITY_SRCS := $(call find_c,system/observability)
 
 USER_CLI_SRCS := $(call find_c,user/shell)
 USER_LIBYAI_SRCS := $(call find_c,sdk/c/libyai)
+
+BUILD_EXCLUDE_SRCS := \
+	$(YAI_CLI_MAIN) \
+	$(YAI_CTL_MAIN) \
+	$(YAI_SH_MAIN) \
+	$(YAI_DAEMOND_MAIN) \
+	$(YAI_CONTAINERD_MAIN) \
+	$(YAI_DATAD_MAIN) \
+	$(YAI_GRAPHD_MAIN) \
+	$(YAI_NETD_MAIN) \
+	$(YAI_ORCHESTRATORD_MAIN) \
+	$(YAI_POLICYD_MAIN) \
+	$(YAI_GOVERNANCED_MAIN) \
+	$(YAI_METRICSD_MAIN) \
+	$(YAI_AUDITD_MAIN) \
+	$(YAI_SUPERVISORD_MAIN)
 
 # -----------------------------------------
 # Objects
@@ -184,6 +185,7 @@ USER_LIBYAI_SRCS := $(call find_c,sdk/c/libyai)
 SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(LIBCORE_SRCS)))
 HAL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(HAL_SRCS)))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(PROTOCOL_SRCS)))
+CJSON_OBJ := $(OBJ_DIR)/$(CJSON_SRC:.c=.o)
 KERNEL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(KERNEL_SRCS)))
 SYSTEM_CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(SYSTEM_CORE_SRCS)))
 CONTAINER_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(CONTAINER_SRCS)))
@@ -205,6 +207,7 @@ USER_LIBYAI_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_S
 SUPPORT_LIB := $(LIB_DIR)/libyai_support.a
 HAL_LIB := $(LIB_DIR)/libyai_hal.a
 PROTOCOL_LIB := $(LIB_DIR)/libyai_protocol.a
+CJSON_LIB := $(LIB_DIR)/libcjson.a
 KERNEL_LIB := $(LIB_DIR)/libyai_kernel.a
 SYSTEM_CORE_LIB := $(LIB_DIR)/libyai_system_core.a
 CONTAINER_LIB := $(LIB_DIR)/libyai_container.a
@@ -230,7 +233,7 @@ DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
 .PHONY: all \
 	yai yai-ctl yai-sh yai-daemond yai-daemon yai-containerd yai-datad yai-graphd yai-netd \
 	yai-orchestratord yai-policyd yai-governanced yai-metricsd yai-auditd yai-supervisord yai-edge \
-	foundations support platform protocol kernel-core system-core \
+	foundations support platform hal protocol kernel-core system-core \
 	container daemon data graph network orchestration policy governance observability \
 	build build-all dist dist-all clean clean-dist clean-all dirs help \
 	kernel-check kernel-smoke docs docs-clean
@@ -257,10 +260,12 @@ yai-supervisord: $(YAI_SUPERVISORD_BIN)
 yai-edge: yai-daemon
 	@cp "$(YAI_DAEMON_BIN)" "$(YAI_EDGE_ALIAS_BIN)"
 
-foundations: support platform protocol kernel-core
+foundations: support hal protocol cjson kernel-core
 support: $(SUPPORT_LIB)
+platform: hal
 hal: $(HAL_LIB)
 protocol: $(PROTOCOL_LIB)
+cjson: $(CJSON_LIB)
 kernel-core: $(KERNEL_LIB)
 system-core: $(SYSTEM_CORE_LIB)
 
@@ -284,47 +289,47 @@ kernel-smoke:
 # Link rules
 # -----------------------------------------
 
-$(YAI_BIN): $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) -o $@ $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_BIN): $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_CLI_MAIN_OBJ) $(USER_CLI_OBJS) -o $@ $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
 $(YAI_CTL_BIN): $(YAI_CTL_MAIN_OBJ) | dirs
 	$(CC) $(LDFLAGS) $(YAI_CTL_MAIN_OBJ) -o $@ $(LDLIBS)
 
-$(YAI_SH_BIN): $(YAI_SH_MAIN_OBJ) $(USER_CLI_OBJS) $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_SH_MAIN_OBJ) $(USER_CLI_OBJS) -o $@ $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_SH_BIN): $(YAI_SH_MAIN_OBJ) $(USER_CLI_OBJS) $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_SH_MAIN_OBJ) $(USER_CLI_OBJS) -o $@ $(USER_LIBYAI) $(SYSTEM_CORE_LIB) $(CONTAINER_LIB) $(DAEMON_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(ORCHESTRATION_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(OBSERVABILITY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_DAEMOND_BIN): $(YAI_DAEMOND_MAIN_OBJ) $(DAEMON_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_DAEMOND_MAIN_OBJ) -o $@ $(DAEMON_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_DAEMOND_BIN): $(YAI_DAEMOND_MAIN_OBJ) $(DAEMON_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_DAEMOND_MAIN_OBJ) -o $@ $(DAEMON_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_CONTAINERD_BIN): $(YAI_CONTAINERD_MAIN_OBJ) $(CONTAINER_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_CONTAINERD_MAIN_OBJ) -o $@ $(CONTAINER_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_CONTAINERD_BIN): $(YAI_CONTAINERD_MAIN_OBJ) $(CONTAINER_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_CONTAINERD_MAIN_OBJ) -o $@ $(CONTAINER_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_DATAD_BIN): $(YAI_DATAD_MAIN_OBJ) $(DATA_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_DATAD_MAIN_OBJ) -o $@ $(DATA_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_DATAD_BIN): $(YAI_DATAD_MAIN_OBJ) $(DATA_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_DATAD_MAIN_OBJ) -o $@ $(DATA_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_GRAPHD_BIN): $(YAI_GRAPHD_MAIN_OBJ) $(GRAPH_LIB) $(DATA_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_GRAPHD_MAIN_OBJ) -o $@ $(GRAPH_LIB) $(DATA_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_GRAPHD_BIN): $(YAI_GRAPHD_MAIN_OBJ) $(GRAPH_LIB) $(DATA_LIB) $(ORCHESTRATION_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_GRAPHD_MAIN_OBJ) -o $@ $(GRAPH_LIB) $(DATA_LIB) $(ORCHESTRATION_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_NETD_BIN): $(YAI_NETD_MAIN_OBJ) $(NETWORK_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_NETD_MAIN_OBJ) -o $@ $(NETWORK_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_NETD_BIN): $(YAI_NETD_MAIN_OBJ) $(NETWORK_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_NETD_MAIN_OBJ) -o $@ $(NETWORK_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_ORCHESTRATORD_BIN): $(YAI_ORCHESTRATORD_MAIN_OBJ) $(ORCHESTRATION_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_ORCHESTRATORD_MAIN_OBJ) -o $@ $(ORCHESTRATION_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_ORCHESTRATORD_BIN): $(YAI_ORCHESTRATORD_MAIN_OBJ) $(ORCHESTRATION_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_ORCHESTRATORD_MAIN_OBJ) -o $@ $(ORCHESTRATION_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_POLICYD_BIN): $(YAI_POLICYD_MAIN_OBJ) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_POLICYD_MAIN_OBJ) -o $@ $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_POLICYD_BIN): $(YAI_POLICYD_MAIN_OBJ) $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_POLICYD_MAIN_OBJ) -o $@ $(POLICY_LIB) $(GOVERNANCE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_GOVERNANCED_BIN): $(YAI_GOVERNANCED_MAIN_OBJ) $(GOVERNANCE_LIB) $(POLICY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_GOVERNANCED_MAIN_OBJ) -o $@ $(GOVERNANCE_LIB) $(POLICY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_GOVERNANCED_BIN): $(YAI_GOVERNANCED_MAIN_OBJ) $(GOVERNANCE_LIB) $(POLICY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_GOVERNANCED_MAIN_OBJ) -o $@ $(GOVERNANCE_LIB) $(POLICY_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_METRICSD_BIN): $(YAI_METRICSD_MAIN_OBJ) $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_METRICSD_MAIN_OBJ) -o $@ $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_METRICSD_BIN): $(YAI_METRICSD_MAIN_OBJ) $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_METRICSD_MAIN_OBJ) -o $@ $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_AUDITD_BIN): $(YAI_AUDITD_MAIN_OBJ) $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_AUDITD_MAIN_OBJ) -o $@ $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_AUDITD_BIN): $(YAI_AUDITD_MAIN_OBJ) $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_AUDITD_MAIN_OBJ) -o $@ $(OBSERVABILITY_LIB) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
-$(YAI_SUPERVISORD_BIN): $(YAI_SUPERVISORD_MAIN_OBJ) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_SUPERVISORD_MAIN_OBJ) -o $@ $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(LDLIBS)
+$(YAI_SUPERVISORD_BIN): $(YAI_SUPERVISORD_MAIN_OBJ) $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) | dirs
+	$(CC) $(LDFLAGS) $(YAI_SUPERVISORD_MAIN_OBJ) -o $@ $(SYSTEM_CORE_LIB) $(KERNEL_LIB) $(PROTOCOL_LIB) $(SUPPORT_LIB) $(HAL_LIB) $(CJSON_LIB) $(LDLIBS)
 
 # -----------------------------------------
 # Archive rules
@@ -337,6 +342,9 @@ $(HAL_LIB): $(HAL_OBJS) | dirs
 	$(AR) rcs $@ $^
 
 $(PROTOCOL_LIB): $(PROTOCOL_OBJS) | dirs
+	$(AR) rcs $@ $^
+
+$(CJSON_LIB): $(CJSON_OBJ) | dirs
 	$(AR) rcs $@ $^
 
 $(KERNEL_LIB): $(KERNEL_OBJS) | dirs
@@ -436,25 +444,25 @@ clean-all: clean clean-dist
 
 help:
 	@echo "Primary targets:"
-	@echo "  all              build all current binaries"
-	@echo "  yai              canonical user entrypoint"
-	@echo "  yai-ctl          control entrypoint"
-	@echo "  yai-sh           interactive shell entrypoint"
-	@echo "  yai-daemond      daemon runtime manager"
-	@echo "  yai-daemon       compat alias of yai-daemond"
-	@echo "  yai-containerd   container manager"
-	@echo "  yai-datad        data service"
-	@echo "  yai-graphd       graph service"
-	@echo "  yai-netd         network service"
+	@echo "  all               build all current binaries"
+	@echo "  yai               canonical user entrypoint"
+	@echo "  yai-ctl           control entrypoint"
+	@echo "  yai-sh            interactive shell entrypoint"
+	@echo "  yai-daemond       daemon runtime manager"
+	@echo "  yai-daemon        compat alias of yai-daemond"
+	@echo "  yai-containerd    container manager"
+	@echo "  yai-datad         data service"
+	@echo "  yai-graphd        graph service"
+	@echo "  yai-netd          network service"
 	@echo "  yai-orchestratord orchestration service"
-	@echo "  yai-policyd      policy service"
-	@echo "  yai-governanced  governance service"
-	@echo "  yai-metricsd     metrics service"
-	@echo "  yai-auditd       audit service"
-	@echo "  yai-supervisord  supervisor service"
-	@echo "  foundations      support/platform/protocol/kernel"
-	@echo "  kernel-check     sub-build syntax check"
-	@echo "  kernel-smoke     sub-build smoke"
-	@echo "  build            full build"
-	@echo "  dist             stage binaries into dist/bin"
-	@echo "  clean            remove build/"
+	@echo "  yai-policyd       policy service"
+	@echo "  yai-governanced   governance service"
+	@echo "  yai-metricsd      metrics service"
+	@echo "  yai-auditd        audit service"
+	@echo "  yai-supervisord   supervisor service"
+	@echo "  foundations       support/hal/protocol/kernel"
+	@echo "  kernel-check      sub-build syntax check"
+	@echo "  kernel-smoke      sub-build smoke"
+	@echo "  build             full build"
+	@echo "  dist              stage binaries into dist/bin"
+	@echo "  clean             remove build/"

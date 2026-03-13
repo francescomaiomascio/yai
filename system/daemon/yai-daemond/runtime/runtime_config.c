@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <yai/daemon/runtime_config.h>
+#include <yai/daemon/runtime/runtime_config.h>
 
 static char *trim(char *s)
 {

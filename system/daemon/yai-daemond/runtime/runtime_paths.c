@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include <yai/daemon/runtime_paths.h>
+#include <yai/daemon/runtime/runtime_paths.h>
 #include <yai/support/paths.h>
 
 static int ensure_dir_component(const char *path)

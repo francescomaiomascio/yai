@@ -20,10 +20,10 @@
 #include <yai/ipc/transport.h>
 #include <yai/ipc/ids.h>
 
-#include <yai/daemon/network_binding.h>
-#include <yai/daemon/runtime_binding.h>
-#include <yai/daemon/actions.h>
-#include <yai/daemon/runtime_source_ids.h>
+#include <yai/daemon/bindings/network_binding.h>
+#include <yai/daemon/bindings/runtime_binding.h>
+#include <yai/daemon/bindings/actions.h>
+#include <yai/daemon/runtime/runtime_source_ids.h>
 #include <yai/ipc/source_plane.h>
 #include <yai/daemon/daemon.h>
 
@@ -169,7 +169,7 @@ static int rpc_handshake(int fd, const char *ws_id)
   env.role = 2;
   env.arming = 1;
   env.payload_len = (uint32_t)sizeof(req);
-  snprintf(env.ws_id, sizeof(env.ws_id), "%s", ws_id && ws_id[0] ? ws_id : "system");
+  snprintf(env.ws_id, sizeof(env.ws_id), "%s", ws_id && ws_id[0] ? ws_id : "user");
   snprintf(env.trace_id, sizeof(env.trace_id), "%s", "yd5-hs");
 
   req.client_version = YAI_PROTOCOL_IDS_VERSION;
@@ -218,7 +218,7 @@ static int rpc_control_call(const char *socket_path,
     return -4;
   }
   env.payload_len = plen;
-  snprintf(env.ws_id, sizeof(env.ws_id), "%s", ws_id && ws_id[0] ? ws_id : "system");
+  snprintf(env.ws_id, sizeof(env.ws_id), "%s", ws_id && ws_id[0] ? ws_id : "user");
   snprintf(env.trace_id, sizeof(env.trace_id), "%s", "yd5-cc");
 
   if (write_all(fd, &env, sizeof(env)) != 0 || write_all(fd, payload, plen) != 0) {

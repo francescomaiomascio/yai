@@ -1,7 +1,7 @@
 #pragma once
 
-#include <yai/daemon/daemon.h>
+/* Transitional compatibility shim.
+ * Canonical daemon header lives under system/include/yai/daemon.
+ */
 
-int yai_edge_lifecycle_install_signals(void);
-int yai_edge_lifecycle_should_stop(void);
-int yai_edge_lifecycle_run_foreground(yai_edge_runtime_t *rt);
+#include <yai/daemon/lifecycle.h>

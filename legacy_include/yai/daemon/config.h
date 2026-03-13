@@ -1,8 +1,7 @@
 #pragma once
 
-#include <yai/daemon/runtime_config.h>
+/* Transitional compatibility shim.
+ * Canonical daemon header lives under system/include/yai/daemon.
+ */
 
-typedef yai_edge_config_t yai_daemon_config_t;
-
-int yai_daemon_config_validate(const yai_daemon_config_t *cfg);
-
+#include <yai/daemon/config.h>

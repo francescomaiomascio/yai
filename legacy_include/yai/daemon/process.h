@@ -1,6 +1,7 @@
 #pragma once
 
-#include <yai/daemon/daemon.h>
+/* Transitional compatibility shim.
+ * Canonical daemon header lives under system/include/yai/daemon.
+ */
 
-int yai_daemon_process_run(yai_edge_runtime_t *rt);
-
+#include <yai/daemon/replay/process.h>

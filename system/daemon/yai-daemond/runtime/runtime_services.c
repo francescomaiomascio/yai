@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/daemon/runtime_services.h>
+#include <yai/daemon/runtime/runtime_services.h>
 
 static void service_slot_init(yai_edge_service_slot_t *slot, const char *name)
 {

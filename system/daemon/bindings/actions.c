@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <yai/daemon/actions.h>
+#include <yai/daemon/bindings/actions.h>
 
 static unsigned long fnv1a(const char *s)
 {

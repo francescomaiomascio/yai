@@ -6,6 +6,7 @@
 
 #include <yai/orchestration/runtime.h>
 #include <yai/network/providers/policy.h>
+#include <yai/network/providers/catalog.h>
 
 /* Usiamo il nome nudo perché il Makefile ha -I./src/external */
 #include "cJSON.h" 
