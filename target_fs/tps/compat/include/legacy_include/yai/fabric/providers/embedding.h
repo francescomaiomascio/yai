@@ -1,3 +1,3 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 #pragma once
-#include <yai/fabric/selection/provider_selection.h>
+#include <yai/net/providers/selection.h>
