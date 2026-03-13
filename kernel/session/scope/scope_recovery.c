@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/kernel/scope_runtime.h>
+#include <yai/container/workspace.h>
 
 int yai_workspace_recover_runtime_capabilities(const char *workspace_id,
                                                char *err,

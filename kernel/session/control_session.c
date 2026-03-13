@@ -5,7 +5,7 @@
 #include <yai/api/runtime.h>
 #include <yai/policy/enforcement.h>
 #include <yai/supervisor/lifecycle.h>
-#include <yai/kernel/scope_runtime.h>
+#include <yai/container/workspace.h>
 #include <yai/data/binding.h>
 #include <yai/orchestration/runtime.h>
 #include <yai/orchestration/ingestion.h>

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <yai/kernel/scope_runtime.h>
+#include <yai/container/workspace.h>
 #include <yai/data/records.h>
 #include <yai/daemon/runtime_source_ids.h>
 #include <yai/ipc/source_plane.h>

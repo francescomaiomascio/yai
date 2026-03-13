@@ -3,7 +3,7 @@
 #include <yai/kernel/session_control.h>
 #include "internal/control_session_internal.h"
 #include <yai/supervisor/lifecycle.h>
-#include <yai/kernel/scope_runtime.h>
+#include <yai/container/workspace.h>
 #include <yai/data/records.h>
 #include <yai/data/binding.h>
 #include <yai/data/query.h>
