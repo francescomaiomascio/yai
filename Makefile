@@ -116,7 +116,7 @@ YAI_EDGE_ALIAS_BIN := $(BIN_DIR)/yai-edge
 # Source discovery
 # -----------------------------------------
 
-SUPPORT_SRCS := $(call find_c,kernel/support/core)
+LIBCORE_SRCS := $(call find_c,kernel/lib/core)
 HAL_SRCS := $(call find_c,kernel/hal/core)
 PROTOCOL_SRCS := $(call find_c,kernel/ipc)
 
@@ -181,7 +181,7 @@ USER_LIBYAI_SRCS := $(call find_c,sdk/c/libyai)
 # Objects
 # -----------------------------------------
 
-SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(SUPPORT_SRCS)))
+SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(LIBCORE_SRCS)))
 HAL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(HAL_SRCS)))
 PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(PROTOCOL_SRCS)))
 KERNEL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter-out $(BUILD_EXCLUDE_SRCS),$(KERNEL_SRCS)))
