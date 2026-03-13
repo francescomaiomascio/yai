@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/registry.h>
+#include <yai/net/providers/registry.h>

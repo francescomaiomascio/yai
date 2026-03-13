@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/selection.h>
+#include <yai/net/providers/selection.h>

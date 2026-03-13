@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/mocks.h>
+#include <yai/net/providers/mocks.h>

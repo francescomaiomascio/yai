@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/catalog.h>
+#include <yai/net/providers/catalog.h>

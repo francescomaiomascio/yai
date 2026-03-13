@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/embedding.h>
+#include <yai/net/providers/embedding.h>

@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <yai/fabric/providers/registry.h>
+#include <yai/net/providers/registry.h>
 
 typedef struct yai_provider_config {
   char id[32];

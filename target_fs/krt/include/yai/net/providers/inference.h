@@ -1,2 +1,2 @@
 #pragma once
-#include <yai/network/providers/inference.h>
+#include <yai/net/providers/inference.h>
