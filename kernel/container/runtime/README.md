@@ -1,6 +1,14 @@
-# container registry surface
+# kernel/container/runtime
 
-Operational synthetic registry surface exposed by `yai-containerd`.
+Container runtime operational surface.
 
-- register/update/lookup/list/unregister container domain entries
-- publish service surface and runtime visibility handles
+This area owns runtime-facing container views and operational access surfaces.
+
+Canonical responsibilities:
+- runtime view materialization
+- runtime-facing container surface access
+- workspace runtime support under `kernel/container/workspace/`
+
+Non-responsibilities:
+- kernel core policy/grants/registry primitives
+- generic session core lifecycle
