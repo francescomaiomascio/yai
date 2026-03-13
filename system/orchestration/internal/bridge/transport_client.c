@@ -173,7 +173,7 @@ int yai_rpc_connect_at_ingress(yai_rpc_client_t *client, const char *ws_id, cons
 
     if (!ws_id || !ws_id[0] || strchr(ws_id, '/'))
     {
-        ws_id = "system";
+        ws_id = "user";
     }
 
     strncpy(client->ws_id, ws_id, sizeof(client->ws_id) - 1);

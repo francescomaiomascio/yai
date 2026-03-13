@@ -55,7 +55,7 @@ int yai_runtime_capabilities_start(const char *workspace_id,
   rc = yai_data_store_binding_init(err, err_cap);
   if (rc != 0) return rc;
 
-  rc = yai_runtime_capabilities_bind_workspace((workspace_id && workspace_id[0]) ? workspace_id : "system",
+  rc = yai_runtime_capabilities_bind_workspace((workspace_id && workspace_id[0]) ? workspace_id : "user",
                                                err,
                                                err_cap);
   if (rc != 0) return rc;

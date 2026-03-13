@@ -29,7 +29,7 @@ int yai_exec_runtime_probe(void) {
   if (yai_data_store_binding_is_ready() == 0) {
     return (int)YAI_EXEC_ERROR;
   }
-  if (!caps || !caps->workspace_id[0] || strcmp(caps->workspace_id, "system") == 0) {
+  if (!caps || !caps->workspace_id[0] || strcmp(caps->workspace_id, "user") == 0) {
     return (int)YAI_EXEC_BUSY;
   }
   return (int)YAI_EXEC_READY;

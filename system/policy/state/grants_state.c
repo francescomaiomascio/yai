@@ -132,7 +132,7 @@ int yai_runtime_grants_start(const char *workspace_id, char *err, size_t err_cap
 {
   if (err && err_cap > 0) err[0] = '\0';
   if (g_grants_started) return 0;
-  if (yai_runtime_grants_state_init(&g_grants_state, workspace_id ? workspace_id : "system") != 0) {
+  if (yai_runtime_grants_state_init(&g_grants_state, workspace_id ? workspace_id : "user") != 0) {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "runtime_grants_init_failed");
     return -1;
   }

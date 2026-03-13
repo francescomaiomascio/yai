@@ -107,7 +107,7 @@ int yai_runtime_containment_start(const char *workspace_id, char *err, size_t er
   if (err && err_cap > 0) err[0] = '\0';
   if (g_containment_started) return 0;
   if (yai_runtime_containment_state_init(&g_containment_state,
-                                         workspace_id ? workspace_id : "system") != 0) {
+                                         workspace_id ? workspace_id : "user") != 0) {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "runtime_containment_init_failed");
     return -1;
   }

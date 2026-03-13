@@ -96,7 +96,7 @@ int yai_runtime_policy_start(const char *workspace_id, char *err, size_t err_cap
 {
   if (err && err_cap > 0) err[0] = '\0';
   if (g_policy_started) return 0;
-  if (yai_runtime_policy_state_init(&g_policy_state, workspace_id ? workspace_id : "system") != 0) {
+  if (yai_runtime_policy_state_init(&g_policy_state, workspace_id ? workspace_id : "user") != 0) {
     if (err && err_cap > 0) snprintf(err, err_cap, "%s", "runtime_policy_init_failed");
     return -1;
   }

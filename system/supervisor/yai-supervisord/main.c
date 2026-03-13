@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv)
 {
-  const char *scope = (argc > 1) ? argv[1] : "system";
+  const char *scope = (argc > 1) ? argv[1] : "user";
   char admission[128], recovery[128], registry[128];
 
   if (yai_supervisor_admission_check(scope, admission, sizeof(admission)) != 0) return 1;

@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   char grants[192];
   char overlays[128];
   char review[128];
-  const char *scope = (argc > 1) ? argv[1] : "system";
+  const char *scope = (argc > 1) ? argv[1] : "user";
 
   if (yai_policy_engine_evaluate(scope, decision, sizeof(decision)) != 0) return 1;
   if (yai_policy_grants_view_json(scope, grants, sizeof(grants)) != 0) return 1;

@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv)
 {
-  const char *scope = (argc > 1) ? argv[1] : "system";
+  const char *scope = (argc > 1) ? argv[1] : "user";
   char authority[128], escalation[128], decisions[192], publication[128];
 
   if (yai_governance_authority_state(scope, authority, sizeof(authority)) != 0) return 1;
