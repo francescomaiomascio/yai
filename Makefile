@@ -143,9 +143,9 @@ SYSTEM_CORE_SRCS := \
 
 CONTAINER_SRCS := \
 	kernel/session/bindings.c \
-	kernel/session/control_reply.c \
-	kernel/session/control_session.c \
-	kernel/session/control_surface.c \
+	kernel/container/workspace/control_reply.c \
+	kernel/container/workspace/control_session.c \
+	kernel/container/workspace/control_surface.c \
 	kernel/session/session_binding.c \
 	kernel/container/workspace/project_tree.c \
 	kernel/container/workspace/scope_registry.c \
