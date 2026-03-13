@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 #include <yai/dmn/runtime/runtime_paths.h>
-#include <yai/support/paths.h>
+#include <yai/lib/paths.h>
 
 static int ensure_dir_component(const char *path)
 {

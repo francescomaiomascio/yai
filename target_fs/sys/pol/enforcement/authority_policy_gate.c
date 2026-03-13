@@ -1,4 +1,4 @@
-#include <yai/kernel/authority.h>
+#include <yai/krt/authority.h>
 #include <stdio.h>
 #include <string.h>
 

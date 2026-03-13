@@ -2,7 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <yai/svc/dispatch.h>
-#include <yai/kernel/authority.h>
+#include <yai/krt/authority.h>
 #include <yai/con/workspace_runtime.h>
 #include <yai/con/workspace.h>
 
