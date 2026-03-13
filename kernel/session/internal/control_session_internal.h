@@ -1,7 +1,7 @@
 #ifndef YAI_SESSION_INTERNAL_H
 #define YAI_SESSION_INTERNAL_H
 
-#include <yai/container/workspace_control.h>
+#include <yai/container/workspace_runtime.h>
 #include <yai/policy/enforcement.h>
 #include <yai/policy/governance/resolver.h>
 
