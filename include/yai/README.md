@@ -1,24 +1,13 @@
-# include/yai
+# include/yai/
 
-Canonical public header namespace for the unified YAI system.
+Primary YAI namespace.
 
-Target domains:
+This tree is not an application-style package layout.
+It is the YAI projected namespace over an operating-system style header topology.
 
-- `api/`
-- `runtime/`
-- `edge/`
-- `mesh/`
-- `orchestration/`
-- `agents/`
-- `providers/`
-- `knowledge/`
-- `graph/`
-- `governance/`
-- `data/`
-- `protocol/`
-- `platform/`
-- `support/`
+Principles:
 
-Notes:
-
-- `governance/` is canonical for policy-engine public headers.
+- keep `yai` as the namespace
+- grow toward OS-grade responsibility boundaries
+- allow stub directories and stub headers early
+- move legacy/refactor-era groupings out over time

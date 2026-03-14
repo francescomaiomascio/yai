@@ -1,115 +1,51 @@
-# =============================================================================
-# YAI — Canonical .gitignore
-# =============================================================================
+# Root-generated and build artifacts
+/build/
+/dist/
+/.tmp/
 
-# -----------------------------------------------------------------------------
-# OS / editor
-# -----------------------------------------------------------------------------
-.DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Optional: local editor settings (keep templates tracked elsewhere if needed)
-# !.vscode/*.example
-
-# -----------------------------------------------------------------------------
-# Secrets / local env
-# -----------------------------------------------------------------------------
-.env
-.env.*
-.envrc
-*.key
-*.pem
-*.cert
-*.crt
-*.token
-*.secret
-secrets.*
-.secrets/
-
-# -----------------------------------------------------------------------------
-# Rust / Cargo (workspace)
-# -----------------------------------------------------------------------------
-target/
-**/target/
-**/*.rs.bk
-
-# NOTE: root Cargo.lock is tracked for deterministic builds
-# Cargo.lock
-
-# -----------------------------------------------------------------------------
-# Canonical build + staging outputs
-# -----------------------------------------------------------------------------
-build/
-dist/
-out/
-artifacts/
-states/
-cache/
-tmp/
-*.tmp
-*.out
-*.log
-.pr/
-
-mind/build/
-mind/dist/
-
-# Keep doxygen output out of VCS
-dist/docs/doxygen/
-
-# -----------------------------------------------------------------------------
-# Tooling / generated artifacts
-# -----------------------------------------------------------------------------
-compile_commands.json
-**/compile_commands.json
-engine/compile_commands.json
-
-# -----------------------------------------------------------------------------
-# Next.js / Node (some repos may vendor these; ignore by default)
-# -----------------------------------------------------------------------------
-.next/
-node_modules/
-
-# -----------------------------------------------------------------------------
-# C/C++ build artifacts (from core planes)
-# -----------------------------------------------------------------------------
-*.o
+# Generic build outputs
 *.a
+*.o
+*.o.*
 *.so
-*.d
-*.dSYM
+*.so.dbg
+*.dylib
+*.ko
+*.mod
+*.mod.c
+*.su
+*.i
+*.s
+*.ll
+*.lst
+*.gcno
+*.gcda
+*.pyc
+*.tar
+*.gz
+*.xz
+*.zst
 
-# -----------------------------------------------------------------------------
-# YAI local runtime artifacts
-# -----------------------------------------------------------------------------
-/.yai/
+# Generated metadata
+compile_commands.json
+rust-project.json
+Module.symvers
+modules.order
 
-# -----------------------------------------------------------------------------
-# Formal tooling scratch (legacy paths; keep ignored)
-# -----------------------------------------------------------------------------
-governance/formal/states/
-governance/formal/*.fp
-governance/formal/*.st
-governance/formal/*.toolbox/
+# Editor / index leftovers
+*~
+\#*#
+tags
+TAGS
+cscope.*
+ncscope.*
+GPATH
+GRTAGS
+GSYMS
+GTAGS
 
-# -----------------------------------------------------------------------------
-# Local-only drafts
-# -----------------------------------------------------------------------------
-docs/60-validation/proof/.private/
-docs/60-validation/audits/.private/
-tools/python/**/__pycache__/
-tools/python/**/.pytest_cache/
-tools/python/**/.mypy_cache/
-tools/python/**/.ruff_cache/
-tools/python/**/tests/
-
-# Local data that must not be committed (decide later if canonical)
-data/global/
-tools/lib/
-
-# If prompts.csv is canonical, REMOVE this line and commit the file instead.
-data/datasets/global-stress/v1/prompts.csv
+# Keep canonical repo surface files
+!.editorconfig
+!.gitattributes
+!.gitignore
+!.clang-format

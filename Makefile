@@ -1,531 +1,282 @@
-# =========================================
-# YAI — Unified Root Build Spine
-# =========================================
+# SPDX-License-Identifier: Apache-2.0
+#
+# YAI-OS root build spine
+# Root owns orchestration, output tree, verbosity and target families.
+# Subtrees own local build logic.
 
-ROOT_DIR := $(abspath .)
-PROTOCOL_CONTRACT_ROOT ?= $(ROOT_DIR)/include/yai/protocol
-GOVERNANCE_COMPAT_ROOT ?= $(ROOT_DIR)/governance
-
-BUILD_DIR ?= $(ROOT_DIR)/build
-BIN_DIR ?= $(BUILD_DIR)/bin
-OBJ_DIR ?= $(BUILD_DIR)/obj
-LIB_DIR ?= $(BUILD_DIR)/lib
-TEST_DIR ?= $(BUILD_DIR)/test
-
-DIST_ROOT ?= $(ROOT_DIR)/dist
-BIN_DIST ?= $(DIST_ROOT)/bin
-
-CC ?= cc
-PKG_CONFIG ?= pkg-config
-CPPFLAGS ?= -I$(ROOT_DIR) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/include/yai \
-            -I$(ROOT_DIR)/lib/third_party/cjson \
-            -I$(PROTOCOL_CONTRACT_ROOT)
-CFLAGS ?= -Wall -Wextra -std=c11 -O2
-LDFLAGS ?=
-LDLIBS ?= -lm
-
-LMDB_CFLAGS := $(shell $(PKG_CONFIG) --cflags liblmdb 2>/dev/null)
-LMDB_LIBS := $(shell $(PKG_CONFIG) --libs liblmdb 2>/dev/null)
-HIREDIS_CFLAGS := $(shell $(PKG_CONFIG) --cflags hiredis 2>/dev/null)
-HIREDIS_LIBS := $(shell $(PKG_CONFIG) --libs hiredis 2>/dev/null)
-DUCKDB_CFLAGS := $(if $(wildcard /opt/homebrew/opt/duckdb/include/duckdb.h),-I/opt/homebrew/opt/duckdb/include,)
-DUCKDB_LIBS := $(if $(wildcard /opt/homebrew/opt/duckdb/lib/libduckdb.dylib),-L/opt/homebrew/opt/duckdb/lib -lduckdb,)
-
-ifneq ($(strip $(LMDB_LIBS)),)
-CPPFLAGS += $(LMDB_CFLAGS) -DYAI_HAVE_LMDB=1
-LDLIBS += $(LMDB_LIBS)
-endif
-ifneq ($(strip $(HIREDIS_LIBS)),)
-CPPFLAGS += $(HIREDIS_CFLAGS) -DYAI_HAVE_HIREDIS=1
-LDLIBS += $(HIREDIS_LIBS)
-endif
-ifneq ($(strip $(DUCKDB_LIBS)),)
-CPPFLAGS += $(DUCKDB_CFLAGS) -DYAI_HAVE_DUCKDB=1
-LDLIBS += $(DUCKDB_LIBS)
+ifeq ($(filter output-sync,$(.FEATURES)),)
+$(error GNU Make >= 4.0 is required. Your Make version is $(MAKE_VERSION))
 endif
 
-YAI_OBJ := $(OBJ_DIR)/cmd/yai/main.o
-YAI_BIN := $(BIN_DIR)/yai
-YAI_DAEMON_OBJ := $(OBJ_DIR)/cmd/yai-daemon/main.o
-YAI_DAEMON_BIN := $(BIN_DIR)/yai-daemon
-YAI_EDGE_ALIAS_BIN := $(BIN_DIR)/yai-edge
+$(if $(filter __%,$(MAKECMDGOALS)), \
+	$(error targets prefixed with '__' are reserved for internal use))
 
-SUPPORT_SRCS := lib/support/ids.c lib/support/logger.c lib/support/errors.c lib/support/strings.c lib/support/paths.c
-PLATFORM_SRCS := lib/platform/os.c lib/platform/fs.c lib/platform/clock.c lib/platform/uds.c
-PROTOCOL_SRCS := \
-	lib/protocol/rpc/runtime.c \
-	lib/protocol/rpc/codec.c \
-	lib/protocol/binary/rpc_binary.c \
-	lib/protocol/control/source_plane.c \
-	lib/protocol/control/message_types.c
-CORE_SRCS := \
-	lib/runtime/lifecycle/bootstrap.c \
-	lib/runtime/lifecycle/preboot.c \
-	lib/runtime/lifecycle/startup_plan.c \
-	lib/runtime/lifecycle/runtime_capabilities.c \
-	lib/runtime/dispatch/control_transport.c \
-	lib/runtime/dispatch/command_dispatch.c \
-	lib/runtime/dispatch/attach_flow.c \
-	lib/runtime/session/session.c \
-	lib/runtime/session/session_reply.c \
-	lib/runtime/session/session_utils.c \
-	lib/runtime/workspace/project_tree.c \
-	lib/runtime/workspace/workspace_registry.c \
-	lib/runtime/workspace/workspace_runtime.c \
-	lib/runtime/workspace/workspace_binding.c \
-	lib/runtime/workspace/workspace_recovery.c \
-	lib/runtime/policy/policy_state.c \
-	lib/runtime/grants/grants_state.c \
-	lib/runtime/containment/containment_state.c \
-	lib/runtime/enforcement/enforcement.c \
-	lib/runtime/authority/authority_registry.c \
-	lib/runtime/authority/identity.c
-GOVERNANCE_SRCS := \
-	lib/governance/policy_effects.c \
-	lib/governance/loader/governance_loader.c \
-	lib/governance/loader/manifest_loader.c \
-	lib/governance/loader/domain_model_matrix.c \
-	lib/governance/loader/domain_loader.c \
-	lib/governance/loader/compliance_loader.c \
-	lib/governance/loader/overlay_loader.c \
-	lib/governance/loader/compatibility_check.c \
-	lib/governance/classification/event_classifier.c \
-	lib/governance/classification/action_classifier.c \
-	lib/governance/classification/provider_classifier.c \
-	lib/governance/classification/resource_classifier.c \
-	lib/governance/classification/protocol_classifier.c \
-	lib/governance/classification/workspace_context.c \
-	lib/governance/discovery/domain_discovery.c \
-	lib/governance/discovery/signal_matcher.c \
-	lib/governance/discovery/protocol_matcher.c \
-	lib/governance/discovery/provider_matcher.c \
-	lib/governance/discovery/resource_matcher.c \
-	lib/governance/discovery/command_matcher.c \
-	lib/governance/discovery/confidence_model.c \
-	lib/governance/resolution/resolver.c \
-	lib/governance/resolution/stack_builder.c \
-	lib/governance/resolution/foundation_merge.c \
-	lib/governance/resolution/domain_merge.c \
-	lib/governance/resolution/compliance_merge.c \
-	lib/governance/resolution/overlay_merge.c \
-	lib/governance/resolution/precedence.c \
-	lib/governance/resolution/fallback.c \
-	lib/governance/resolution/conflict_resolution.c \
-	lib/governance/resolution/effective_stack.c \
-	lib/governance/mapping/event_to_domain.c \
-	lib/governance/mapping/domain_to_policy.c \
-	lib/governance/mapping/policy_to_effect.c \
-	lib/governance/mapping/decision_to_evidence.c \
-	lib/governance/mapping/decision_to_audit.c \
-	lib/governance/debug/resolution_trace.c \
-	lib/governance/debug/dump_effective_stack.c \
-	lib/governance/debug/dump_discovery_result.c
-ORCHESTRATION_RUNTIME_SRCS := \
-	lib/orchestration/runtime/runtime_control.c \
-	lib/orchestration/runtime/config_loader.c \
-	lib/orchestration/internal/orchestration_model.c \
-	lib/orchestration/runtime/grounding_context.c \
-	lib/orchestration/bridge/network_bridge.c \
-	lib/orchestration/runtime/peer_registry_bridge.c \
-	lib/orchestration/runtime/ingestion.c \
-	lib/orchestration/bridge/storage_bridge.c \
-	lib/orchestration/bridge/runtime_bridge.c \
-	lib/orchestration/bridge/transport_client.c \
-	lib/orchestration/bridge/rpc_router.c \
-	lib/agents/safety/agent_enforcement.c \
-	lib/agents/dispatch/agents_dispatch.c \
-	lib/agents/roles/agent_code.c \
-	lib/agents/roles/agent_historian.c \
-	lib/agents/roles/agent_knowledge.c \
-	lib/agents/roles/agent_system.c \
-	lib/agents/roles/agent_validator.c \
-	lib/orchestration/transport/transport_runtime.c \
-	lib/orchestration/transport/transport_protocol.c \
-	lib/orchestration/transport/uds_server.c \
-	lib/third_party/cjson/cJSON.c
-ORCHESTRATION_SRCS := \
-	lib/orchestration/planner/planner.c \
-	lib/orchestration/workflow/rag_sessions.c \
-	lib/orchestration/actions/rag_context_builder.c \
-	lib/orchestration/actions/rag_prompts.c \
-	lib/orchestration/execution/rag_pipeline.c
-NETWORK_SRCS := \
-	lib/network/authority/identity.c \
-	lib/network/topology/topology.c \
-	lib/network/topology/membership.c \
-	lib/network/topology/peer_registry.c \
-	lib/network/authority/trust.c \
-	lib/network/topology/authority_binding.c \
-	lib/network/discovery/discovery.c \
-	lib/network/discovery/enrollment.c \
-	lib/network/routing/coordination.c \
-	lib/network/topologies/mesh/mesh_topology.c \
-	lib/network/topologies/mesh/mesh_peering.c \
-	lib/network/authority/containment_state.c \
-	lib/network/transport/transport_runtime.c \
-	lib/network/transport/transport_client.c \
-	lib/network/transport/overlay_transport.c \
-	lib/network/routing/replay_state.c \
-	lib/network/routing/conflict_state.c \
-	lib/network/topologies/mesh/mesh_policy.c
-PROVIDERS_SRCS := \
-	lib/network/providers/catalog.c \
-	lib/network/providers/provider_registry.c \
-	lib/network/providers/provider_selection.c \
-	lib/network/providers/provider_policy.c \
-	lib/network/providers/inference/client_inference.c \
-	lib/network/providers/embedding/client_embedding.c \
-	lib/network/providers/mocks/mock_provider.c \
-	lib/network/providers/embedding/embedder_mock.c
-KNOWLEDGE_SRCS := \
-	lib/knowledge/runtime_compat.c \
-	lib/knowledge/cognition/cognition.c \
-	lib/knowledge/cognition/activation.c \
-	lib/knowledge/cognition/reasoning/reasoning_roles.c \
-	lib/knowledge/cognition/reasoning/scoring.c \
-	lib/knowledge/memory/memory.c \
-	lib/knowledge/memory/authority.c \
-	lib/knowledge/memory/arena_store.c \
-	lib/knowledge/memory/storage_bridge.c \
-	lib/knowledge/episodic/episodic.c \
-	lib/knowledge/semantic/semantic_db.c \
-	lib/knowledge/vector/vector_index.c
-DATA_SRCS := \
-	lib/data/binding/store_binding.c \
-	lib/data/binding/workspace_binding.c \
-	lib/data/store/file_store.c \
-	lib/data/store/duckdb_store.c \
-	lib/data/records/event_records.c \
-	lib/data/evidence/evidence_records.c \
-	lib/data/query/inspect_query.c \
-	lib/data/retention/retention.c \
-	lib/data/lifecycle/archive.c
-GRAPH_SRCS := \
-	lib/graph/state/graph_backend.c \
-	lib/graph/state/graph_backend_rpc.c \
-	lib/graph/state/graph_facade.c \
-	lib/graph/state/graph.c \
-	lib/graph/state/ids.c \
-	lib/graph/internal/counts.c \
-	lib/graph/domains/activation.c \
-	lib/graph/domains/authority.c \
-	lib/graph/domains/episodic.c \
-	lib/graph/domains/semantic.c \
-	lib/graph/materialization/from_runtime_records.c \
-	lib/graph/query/workspace_summary.c
-DAEMON_SRCS := \
-	lib/runtime/local/config.c \
-	lib/runtime/local/paths.c \
-	lib/runtime/local/services.c \
-	lib/runtime/local/state.c \
-	lib/runtime/local/source_ids.c \
-	lib/daemon/config.c \
-	lib/daemon/daemon.c \
-	lib/daemon/process.c \
-	lib/daemon/bootstrap.c \
-	lib/daemon/runtime_binding.c \
-	lib/daemon/network_binding.c \
-	lib/daemon/actions.c \
-	lib/daemon/lifecycle.c \
-	lib/daemon/mediation.c \
-	lib/daemon/observation.c \
-	lib/daemon/internal.c \
-	lib/third_party/cjson/cJSON.c
+this-makefile := $(lastword $(MAKEFILE_LIST))
+abs_srctree := $(realpath $(dir $(this-makefile)))
+abs_output := $(CURDIR)
 
-SUPPORT_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SUPPORT_SRCS))
-PLATFORM_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PLATFORM_SRCS))
-PROTOCOL_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROTOCOL_SRCS))
-CORE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CORE_SRCS) $(GOVERNANCE_SRCS))
-ORCHESTRATION_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(ORCHESTRATION_RUNTIME_SRCS) $(ORCHESTRATION_SRCS))
-NETWORK_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(NETWORK_SRCS))
-PROVIDERS_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(PROVIDERS_SRCS))
-KNOWLEDGE_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(KNOWLEDGE_SRCS))
-DATA_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DATA_SRCS))
-GRAPH_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(GRAPH_SRCS))
-DAEMON_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(DAEMON_SRCS))
+PHONY := __all
+__all:
 
-SUPPORT_LIB := $(LIB_DIR)/libyai_support.a
-PLATFORM_LIB := $(LIB_DIR)/libyai_platform.a
-PROTOCOL_LIB := $(LIB_DIR)/libyai_protocol.a
-CORE_LIB := $(LIB_DIR)/libyai_core.a
-ORCHESTRATION_LIB := $(LIB_DIR)/libyai_orchestration.a
-NETWORK_LIB := $(LIB_DIR)/libyai_network.a
-PROVIDERS_LIB := $(LIB_DIR)/libyai_providers.a
-KNOWLEDGE_LIB := $(LIB_DIR)/libyai_knowledge.a
-DATA_LIB := $(LIB_DIR)/libyai_data.a
-GRAPH_LIB := $(LIB_DIR)/libyai_graph.a
-DAEMON_LIB := $(LIB_DIR)/libyai_daemon.a
+ifneq ($(sub_make_done),1)
 
-SPINE_DIRS := $(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) $(TEST_DIR)
+MAKEFLAGS += -rR
 
-DOXYFILE := Doxyfile
-DOXYGEN ?= doxygen
-DOXY_OUT ?= $(DIST_ROOT)/docs/doxygen
+unexport LC_ALL
+LC_COLLATE := C
+LC_NUMERIC := C
+export LC_COLLATE LC_NUMERIC
 
-.PHONY: all yai yai-daemon yai-edge foundations support platform protocol core orchestration exec network mesh providers knowledge data graph edge daemon yd1-baseline \
-        test test-unit test-integration test-e2e test-core test-runtime test-knowledge test-orchestration test-protocol test-governance test-providers test-daemon test-edge test-mesh \
-        test-demo-matrix verify-final-demo-matrix \
-        clean clean-dist clean-all build build-all dist dist-all bundle verify \
-        preflight-release docs docs-clean docs-verify proof-verify release-guards \
-        release-guards-dev changelog-verify b13-convergence-check dirs help legacy-build \
-        governance-sync governance-check
+ifeq ("$(origin V)","command line")
+KBUILD_VERBOSE := $(V)
+endif
 
-all: yai yai-daemon foundations
-	@echo "[YAI] unified binary spine ready: $(YAI_BIN) + $(YAI_DAEMON_BIN)"
+quiet := quiet_
+Q := @
 
-yai: $(YAI_BIN)
-yai-daemon: $(YAI_DAEMON_BIN)
-yai-edge: yai-daemon
-	@cp "$(YAI_DAEMON_BIN)" "$(YAI_EDGE_ALIAS_BIN)"
+ifneq ($(findstring 1,$(KBUILD_VERBOSE)),)
+quiet :=
+Q :=
+endif
 
-foundations: support platform protocol network providers
-core: $(CORE_LIB)
-orchestration: $(ORCHESTRATION_LIB)
-exec: orchestration
-	@echo "[YAI] exec target is legacy alias; use 'make orchestration'"
-providers: $(PROVIDERS_LIB)
-network: $(NETWORK_LIB)
-mesh: network
-	@echo "[YAI] mesh target is legacy alias; use 'make network'"
-knowledge: $(KNOWLEDGE_LIB)
-data: $(DATA_LIB)
-graph: $(GRAPH_LIB)
-daemon: $(DAEMON_LIB)
-edge: daemon
-	@echo "[YAI] edge target is legacy alias; use 'make daemon'"
+ifneq ($(findstring s,$(firstword -$(MAKEFLAGS))),)
+quiet := silent_
+override KBUILD_VERBOSE :=
+endif
 
-support: $(SUPPORT_LIB)
-platform: $(PLATFORM_LIB)
-protocol: $(PROTOCOL_LIB)
+export quiet Q KBUILD_VERBOSE
 
-test: test-unit test-integration test-e2e
-	@echo "[YAI] unified test baseline complete"
+ROOT_DIR := $(abs_srctree)
+ARCH ?= x86_64
+HOST_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+O ?=
+export ROOT_DIR ARCH HOST_OS
 
-test-unit: test-core test-runtime test-orchestration test-protocol test-knowledge test-governance test-providers test-daemon test-mesh
-	@echo "[YAI] unit suites complete"
+ifeq ("$(origin O)","command line")
+KBUILD_OUTPUT := $(O)
+endif
 
-test-integration:
-	@tests/integration/runtime/run_runtime_exec_smoke.sh
-	@tests/integration/orchestration/run_orchestration_smoke.sh
-	@tests/integration/orchestration/run_orchestration_c_tests.sh
-	@tests/integration/runtime/run_runtime_state_smoke.sh
-	@tests/integration/daemon/run_daemon_smoke.sh
-	@tests/integration/network/mesh/run_mesh_smoke.sh
-	@tests/integration/workspace/workspace_runtime_contract.sh
-	@tests/integration/workspace/workspace_session_binding_contract.sh
-	@tests/integration/workspace/workspace_inspect_surfaces.sh
-	@tests/integration/workspace/workspace_real_flow.sh
-	@tests/integration/workspace/workspace_scientific_flow.sh
-	@tests/integration/workspace/workspace_digital_flow.sh
-	@tests/integration/workspace/workspace_event_surface_semantics.sh
-	@tests/integration/workspace/workspace_flow_state_readability.sh
-	@tests/integration/workspace/workspace_governed_vertical_slice.sh
-	@tests/integration/workspace/workspace_negative_paths.sh
-	@tests/integration/source-plane/source_owner_ingest_bridge.sh
-	@tests/integration/source-plane/daemon_local_runtime_scan_spool_retry.sh
-	@tests/integration/source-plane/source_plane_read_model.sh
-	@tests/integration/runtime/run_runtime_handshake_smoke.sh
-	@echo "[YAI] integration suites complete"
+ifdef KBUILD_OUTPUT
+$(shell mkdir -p "$(KBUILD_OUTPUT)")
+abs_output := $(realpath $(KBUILD_OUTPUT))
+$(if $(abs_output),,$(error failed to create output directory "$(KBUILD_OUTPUT)"))
+endif
 
-test-demo-matrix:
-	@tests/integration/workspace/workspace_demo_matrix.sh
-	@echo "[YAI] final demo matrix suites complete"
+ifneq ($(words $(subst :, ,$(abs_srctree))),1)
+$(error source directory cannot contain spaces or colons)
+endif
 
-verify-final-demo-matrix:
-	@tools/dev/verify_final_demo_matrix.sh
+export sub_make_done := 1
 
-test-e2e:
-	@tests/e2e/run_entrypoint_e2e.sh
-	@echo "[YAI] e2e suite complete"
+endif
 
-test-core: yai
-	@./build/bin/yai --help >/dev/null
+ifeq ($(abs_output),$(CURDIR))
+no-print-directory := --no-print-directory
+else
+need-sub-make := 1
+endif
 
-test-runtime:
-	@tests/unit/runtime/run_runtime_unit_tests.sh
+ifeq ($(filter --no-print-directory,$(MAKEFLAGS)),)
+need-sub-make := 1
+endif
 
-test-knowledge:
-	@tests/unit/knowledge/run_knowledge_unit_tests.sh
+ifeq ($(need-sub-make),1)
 
-test-orchestration:
-	@tests/unit/orchestration/run_orchestration_unit_tests.sh
+PHONY += $(MAKECMDGOALS) __sub-make
 
-test-protocol:
-	@tests/unit/protocol/run_protocol_unit_tests.sh
+$(filter-out $(this-makefile),$(MAKECMDGOALS)) __all: __sub-make
+	@:
 
-test-governance:
-	@tests/unit/governance/run_governance_unit_tests.sh
-	@tests/integration/governance/run_governance_resolution_smoke.sh
-	@echo "[YAI] governance-native resolution suites complete"
+__sub-make:
+	$(Q)$(MAKE) $(no-print-directory) -C $(abs_output) -f $(abs_srctree)/Makefile $(MAKECMDGOALS)
 
-test-providers:
-	@tests/unit/network/providers/run_providers_unit_tests.sh
+else
 
-test-daemon:
-	@tests/unit/daemon/run_daemon_unit_tests.sh
+srctree := $(abs_srctree)
+objtree := $(abs_output)
 
-test-edge: test-daemon
-	@echo "[YAI] edge test target is legacy alias; use test-daemon"
+export srctree objtree
 
-test-mesh:
-	@tests/unit/network/mesh/run_mesh_unit_tests.sh
+ROOT_BUILD_DIR := $(objtree)
+CONFIG_DIR := $(objtree)/config
+GEN_INCLUDE_DIR := $(objtree)/include/generated
+BIN_DIR := $(objtree)/bin
+LIB_DIR := $(objtree)/lib
+OBJ_DIR := $(objtree)/obj
+TMP_DIR := $(objtree)/tmp
 
-$(YAI_BIN): $(YAI_OBJ) $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_OBJ) -o $@ $(CORE_LIB) $(ORCHESTRATION_LIB) $(KNOWLEDGE_LIB) $(PROVIDERS_LIB) $(DATA_LIB) $(GRAPH_LIB) $(NETWORK_LIB) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(PROTOCOL_LIB) $(LDLIBS)
+export ROOT_BUILD_DIR CONFIG_DIR GEN_INCLUDE_DIR BIN_DIR LIB_DIR OBJ_DIR TMP_DIR
 
-$(YAI_DAEMON_BIN): $(YAI_DAEMON_OBJ) $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) | dirs
-	$(CC) $(LDFLAGS) $(YAI_DAEMON_OBJ) -o $@ $(DAEMON_LIB) $(SUPPORT_LIB) $(PLATFORM_LIB) $(LDLIBS)
+-include $(CONFIG_DIR)/auto.conf
 
-$(SUPPORT_LIB): $(SUPPORT_OBJS) | dirs
-	ar rcs $@ $^
+SUPPORTED_ARCHES := x86_64 aarch64 riscv64
+CORE_SUBDIRS := arch include ipc kernel lib mm net security drivers fs
+EXT_SUBDIRS := block crypto io_uring virt
+YAI_SUBDIRS := container graph policy governance usr tools scripts Documentation
+ALL_SUBDIRS := $(CORE_SUBDIRS) $(EXT_SUBDIRS) $(YAI_SUBDIRS)
 
-$(PLATFORM_LIB): $(PLATFORM_OBJS) | dirs
-	ar rcs $@ $^
+PHONY += all help prepare archcheck headers core yai clean mrproper distclean \
+	  docs dist check outputmakefile \
+	  $(ALL_SUBDIRS)
 
-$(PROTOCOL_LIB): $(PROTOCOL_OBJS) | dirs
-	ar rcs $@ $^
+__all: all
 
-$(CORE_LIB): $(CORE_OBJS) | dirs
-	ar rcs $@ $^
+all: prepare core yai
 
-$(ORCHESTRATION_LIB): $(ORCHESTRATION_OBJS) | dirs
-	ar rcs $@ $^
+define descend-dir
+	@echo "[YAI-OS] $(1)"
+	$(Q)$(MAKE) -C $(srctree)/$(1) O=$(objtree) ARCH=$(ARCH) HOST_OS=$(HOST_OS)
+endef
 
-$(NETWORK_LIB): $(NETWORK_OBJS) | dirs
-	ar rcs $@ $^
+archcheck:
+	@case "$(ARCH)" in \
+		x86_64|aarch64|riscv64) ;; \
+		*) echo "Unsupported ARCH=$(ARCH)"; exit 1 ;; \
+	esac
 
-$(PROVIDERS_LIB): $(PROVIDERS_OBJS) | dirs
-	ar rcs $@ $^
+prepare: archcheck outputmakefile
+	$(Q)mkdir -p \
+		$(CONFIG_DIR) \
+		$(GEN_INCLUDE_DIR) \
+		$(BIN_DIR) \
+		$(LIB_DIR) \
+		$(OBJ_DIR) \
+		$(TMP_DIR)
+	@echo "[YAI-OS] prepare ARCH=$(ARCH) HOST_OS=$(HOST_OS) O=$(objtree)"
 
-$(KNOWLEDGE_LIB): $(KNOWLEDGE_OBJS) | dirs
-	ar rcs $@ $^
+outputmakefile:
+ifneq ($(objtree),$(srctree))
+	$(Q){ \
+		echo "# Automatically generated by $(srctree)/Makefile: do not edit"; \
+		echo "export O := $(objtree)"; \
+		echo "include $(srctree)/Makefile"; \
+	} > $(objtree)/Makefile
+	$(Q)test -e $(objtree)/.gitignore || { echo "# build directory"; echo "*"; } > $(objtree)/.gitignore
+endif
 
-$(DATA_LIB): $(DATA_OBJS) | dirs
-	ar rcs $@ $^
+headers: prepare include arch
+	@echo "[YAI-OS] headers ready"
 
-$(GRAPH_LIB): $(GRAPH_OBJS) | dirs
-	ar rcs $@ $^
+core: prepare $(CORE_SUBDIRS)
 
-$(DAEMON_LIB): $(DAEMON_OBJS) | dirs
-	ar rcs $@ $^
+yai: prepare $(YAI_SUBDIRS)
 
-$(OBJ_DIR)/%.o: %.c | dirs
-	@mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+arch:
+	$(call descend-dir,arch)
 
-dirs:
-	@mkdir -p $(SPINE_DIRS)
+include:
+	$(call descend-dir,include)
 
-build: yai yai-daemon
-	@echo "--- [YAI] primary entrypoints build complete (yai + yai-daemon) ---"
+ipc:
+	$(call descend-dir,ipc)
 
-yd1-baseline: yai yai-daemon
-	@echo "[YD-1] edge architecture refoundation baseline built"
-	@echo "  owner runtime: build/bin/yai"
-	@echo "  daemon runtime: build/bin/yai-daemon"
-	@echo "  refs:"
-	@echo "    docs/architecture/daemon-architecture-refoundation-model.md"
-	@echo "    docs/program/adr/ADR-015-daemon-architecture-refoundation-slice.md"
+kernel:
+	$(call descend-dir,kernel)
 
-legacy-build:
-	@echo "--- [YAI] legacy-build removed: legacy top-level planes were decommissioned ---"
+lib:
+	$(call descend-dir,lib)
 
-build-all: build
-	@echo "--- [YAI] build-all complete (owner + daemon baseline topology) ---"
+mm:
+	$(call descend-dir,mm)
 
-dist: build
-	@mkdir -p $(BIN_DIST)
-	@cp "$(YAI_BIN)" "$(BIN_DIST)/yai"
-	@if [ -f "$(YAI_DAEMON_BIN)" ]; then cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-daemon"; cp "$(YAI_DAEMON_BIN)" "$(BIN_DIST)/yai-edge"; fi
-	@echo "--- [YAI] dist staged in $(BIN_DIST) ---"
+net:
+	$(call descend-dir,net)
 
-dist-all: dist
-	@echo "--- [YAI] dist-all staged ---"
+security:
+	$(call descend-dir,security)
 
-bundle: dist
-	@tools/bin/yai-bundle
+drivers:
+	$(call descend-dir,drivers)
 
-verify:
-	@if [ -x ./tools/bin/yai-verify ]; then \
-		./tools/bin/yai-verify; \
-	else \
-		echo "No verify script found at ./tools/bin/yai-verify"; \
-	fi
+fs:
+	$(call descend-dir,fs)
 
-governance-sync:
-	@echo "governance sync: canonical governance/ tree is in-repo (no embedded export target)"
+block:
+	$(call descend-dir,block)
 
-governance-check:
-	@./tools/bin/yai-governance-compat-check
+crypto:
+	$(call descend-dir,crypto)
 
-preflight-release:
-	@tools/bin/yai-check-pins
+io_uring:
+	$(call descend-dir,io_uring)
 
-docs:
-	@mkdir -p $(DOXY_OUT)
-	@$(DOXYGEN) $(DOXYFILE)
-	@echo "✔ Doxygen: $(DOXY_OUT)/html/index.html"
+virt:
+	$(call descend-dir,virt)
 
-docs-clean:
-	@rm -rf $(DOXY_OUT)
+container:
+	$(call descend-dir,container)
 
-docs-verify:
-	@tools/bin/yai-docs-trace-check --all
+graph:
+	$(call descend-dir,graph)
 
-proof-verify:
-	@tools/bin/yai-proof-check
+policy:
+	$(call descend-dir,policy)
 
-release-guards:
-	@tools/bin/yai-check-pins
-	@tools/bin/yai-proof-check
+governance:
+	$(call descend-dir,governance)
 
-release-guards-dev:
-	@STRICT_SPECS_HEAD=0 tools/bin/yai-check-pins
-	@tools/bin/yai-proof-check
+usr:
+	$(call descend-dir,usr)
 
-changelog-verify:
-	@BASE_SHA="$$(git rev-parse origin/main)"; \
-	HEAD_SHA="$$(git rev-parse HEAD)"; \
-	tools/bin/yai-changelog-check --pr --base "$$BASE_SHA" --head "$$HEAD_SHA"
+tools:
+	$(call descend-dir,tools)
 
-b13-convergence-check:
-	@tools/release/unified_repo_convergence_smoke.sh
+scripts:
+	$(call descend-dir,scripts)
+
+Documentation:
+	$(call descend-dir,Documentation)
+
+docs: Documentation
+
+dist:
+	@echo "[YAI-OS] dist staging not wired yet"
+
+check:
+	@echo "[YAI-OS] check pipeline not wired yet"
 
 clean:
-	rm -rf $(BUILD_DIR)
+	@echo "[YAI-OS] clean $(objtree)"
+	$(Q)rm -rf \
+		$(BIN_DIR) \
+		$(LIB_DIR) \
+		$(OBJ_DIR) \
+		$(TMP_DIR)
 
-clean-dist:
-	rm -rf $(DIST_ROOT)
+mrproper: clean
+	@echo "[YAI-OS] mrproper $(objtree)"
+	$(Q)rm -rf \
+		$(CONFIG_DIR) \
+		$(objtree)/include/generated \
+		$(objtree)/Makefile \
+		$(objtree)/.gitignore
+	$(Q)find $(srctree) \( -name '*~' -o -name '*.bak' -o -name '*.orig' -o -name '*.rej' \) -type f -print | xargs rm -f 2>/dev/null || true
 
-clean-all: clean clean-dist
+distclean: mrproper
+	@echo "[YAI-OS] distclean complete"
 
 help:
-	@echo "Primary build targets:"
-	@echo "  all            (yai + yai-daemon + foundation libs)"
-	@echo "  yai            (build/bin/yai)"
-	@echo "  yai-daemon     (build/bin/yai-daemon standalone daemon runtime)"
-	@echo "  yai-edge       (legacy alias of build/bin/yai-daemon)"
-	@echo "  yd1-baseline   (build anchors + YD-1 architecture refs)"
-	@echo "  daemon         (build daemon runtime archive)"
-	@echo "  edge           (legacy alias; use daemon)"
-	@echo "  orchestration  (build orchestration control archive)"
-	@echo "  exec           (legacy alias; use orchestration)"
-	@echo "  foundations    (support/platform/protocol/providers archives)"
-	@echo "  providers      (build provider infrastructure archive)"
-	@echo "  test-unit      (core/orchestration/protocol/knowledge/governance unit suites)"
-	@echo "  test-integration (runtime/orchestration/workspace/source-plane integration suites)"
-	@echo "  test-knowledge (knowledge unit suite)"
-	@echo "  test-orchestration (orchestration unit suite)"
-	@echo "  test-protocol  (protocol unit suite)"
-	@echo "  test-governance  (governance loader/discovery/resolution + smoke)"
-	@echo "  test-e2e       (entrypoint e2e smoke)"
-	@echo "  test           (full test baseline)"
-	@echo "  b13-convergence-check (single-repo final convergence smoke)"
-	@echo "  clean          (remove build artifacts)"
-	@echo "  dist, dist-all, bundle"
-	@echo "  verify, docs, docs-verify, proof-verify, release-guards, changelog-verify"
+	@echo "YAI-OS root targets:"
+	@echo "  make [ARCH=x86_64|aarch64|riscv64] [O=out] all"
+	@echo "  make prepare"
+	@echo "  make headers"
+	@echo "  make core"
+	@echo "  make yai"
+	@echo "  make docs"
+	@echo "  make clean"
+	@echo "  make mrproper"
+	@echo "  make distclean"
+	@echo ""
+	@echo "Directory targets:"
+	@echo "  $(ALL_SUBDIRS)"
+	@echo ""
+	@echo "Build flags:"
+	@echo "  V=1     verbose build"
+	@echo "  O=dir   output directory"
 
+endif
 
-test-vertical-slice:
-	@tests/integration/workspace/workspace_governed_vertical_slice.sh
-	@echo "[YAI] governed vertical slice complete"
+PHONY += FORCE
+FORCE:
+
+.PHONY: $(PHONY)

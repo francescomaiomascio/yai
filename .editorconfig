@@ -1,15 +1,29 @@
 root = true
 
-[*]
+[{*.{c,h,mk,rs,S},Kconfig,Makefile,Makefile.*}]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 8
+
+[*.{json,py}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[*.yaml]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
 indent_style = space
 indent_size = 2
 
-[*.{c,h,md,yml,yaml,json,sh,py}]
+[*.md]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
 indent_size = 2
-
-[Makefile]
-indent_style = tab

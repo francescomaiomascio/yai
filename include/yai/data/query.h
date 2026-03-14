@@ -1,27 +1,9 @@
-/* SPDX-License-Identifier: Apache-2.0 */
 #pragma once
 
-#include <yai/data/records.h>
+#ifndef YAI_DATA_QUERY_H
+#define YAI_DATA_QUERY_H
 
-int yai_data_query_count(const char *workspace_id,
-                         const char *record_class,
-                         size_t *out_count,
-                         char *err,
-                         size_t err_cap);
-int yai_data_query_summary_json(const char *workspace_id,
-                                char *out_json,
-                                size_t out_cap,
-                                char *err,
-                                size_t err_cap);
-int yai_data_query_operational_summary_json(const char *workspace_id,
-                                            char *out_json,
-                                            size_t out_cap,
-                                            char *err,
-                                            size_t err_cap);
-int yai_data_query_tail_json(const char *workspace_id,
-                             const char *record_class,
-                             size_t limit,
-                             char *out_json,
-                             size_t out_cap,
-                             char *err,
-                             size_t err_cap);
+struct yai_data_query;
+struct yai_data_query_result;
+
+#endif /* YAI_DATA_QUERY_H */

@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+python3 - "$ROOT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+
+required = [
+    "governance/model/manifests/governance.manifest.json",
+    "governance/model/manifests/runtime.entrypoints.json",
+    "governance/model/manifests/publish.index.json",
+    "governance/model/manifests/publish.layers.json",
+    "governance/model/manifests/compatibility.matrix.json",
+    "governance/model/manifests/domain-resolution-order.json",
+    "governance/model/manifests/compliance-resolution-order.json",
+    "governance/model/manifests/governance-attachability.constraints.v1.json",
+    "governance/model/manifests/customer-policy-packs.index.json",
+    "governance/model/manifests/enterprise-custom-governance.index.json",
+    "lib/control/contracts/model/schema/control/control_plane.v1.json",
+    "lib/control/contracts/model/schema/control/control_call.v1.json",
+    "lib/control/contracts/model/schema/control/exec_reply.v1.json",
+    "lib/control/contracts/model/schema/providers/providers.v1.json",
+    "lib/control/contracts/model/schema/vault/vault_abi.json",
+    "governance/model/schema/policy.v1.schema.json",
+    "governance/model/schema/decision_record.v1.schema.json",
+    "governance/model/schema/governance_review_state.v1.schema.json",
+    "governance/model/schema/evidence_index.v1.schema.json",
+    "governance/model/schema/workspace_governance_attachment.v1.schema.json",
+    "governance/model/schema/retention_policy.v1.schema.json",
+    "governance/model/schema/containment_metrics.v1.schema.json",
+    "governance/model/schema/verification_report.v1.schema.json",
+    "governance/control/ingestion/templates/governance_source.template.v1.json",
+    "governance/control/ingestion/sources/src.sample.digital-outbound.source.v1.json",
+    "governance/control/ingestion/parsed/src.sample.digital-outbound.parsed.v1.json",
+    "governance/control/ingestion/normalized/src.sample.digital-outbound.normalized.v1.json",
+    "governance/control/ingestion/candidates/enterprise.sample.src-sample-digital-outbound.candidate.v1.json",
+    "governance/control/ingestion/review/enterprise.sample.src-sample-digital-outbound.candidate.v1.review.v1.json",
+    "foundation/axioms/A-002-authority.md",
+    "foundation/invariants/I-003-governance.md",
+    "foundation/boundaries/L1-runtime-core.md",
+    "control/assurance/models/yai_system.tla",
+    "control/assurance/modules/yai_ids.tla",
+    "control/assurance/modules/yai_authority.tla",
+    "control/assurance/modules/yai_resolution.tla",
+    "control/assurance/modules/yai_runtime_state.tla",
+    "control/assurance/modules/yai_workspace_state.tla",
+    "control/assurance/modules/yai_enforcement.tla",
+    "control/assurance/modules/yai_protocol_control.tla",
+    "control/assurance/modules/yai_traceability.tla",
+    "control/assurance/configs/yai_system.quick.cfg",
+    "control/assurance/configs/yai_system.deep.cfg",
+    "control/assurance/configs/yai_enforcement.focus.cfg",
+    "control/assurance/model/schema/formal_module.v1.schema.json",
+    "control/assurance/model/schema/formal_artifact_index.v1.schema.json",
+    "control/assurance/model/schema/formal_traceability_map.v1.schema.json",
+    "control/assurance/traceability/model.map.json",
+    "control/assurance/traceability/invariant-linkage.json",
+    "control/assurance/traceability/enforcement-linkage.json",
+]
+
+errors = []
+for rel in required:
+    p = root / rel
+    if not p.exists():
+        errors.append(f"missing: {rel}")
+
+for rel in [r for r in required if r.endswith(".json") and (root / r).exists()]:
+    try:
+        json.loads((root / rel).read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append(f"invalid json: {rel} ({exc})")
+
+manifest = root / "governance/model/manifests/governance.manifest.json"
+if manifest.exists():
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    if payload.get("resolution_entrypoints_ref") != "model/manifests/runtime.entrypoints.json":
+        errors.append("invalid resolution_entrypoints_ref in governance/model/manifests/governance.manifest.json")
+
+if errors:
+    print("governance manifest compatibility: FAIL")
+    for e in errors:
+        print(" -", e)
+    raise SystemExit(1)
+
+print("governance manifest compatibility: OK")
+PY
+
+python3 "$ROOT/tools/validate/validate_root_framing.py"
+python3 "$ROOT/tools/validate/validate_tooling_legacy_refs.py"
+python3 "$ROOT/tools/validate/validate_aux_naming.py"
+python3 "$ROOT/tools/validate/validate_final_naming_consistency.py"
+python3 "$ROOT/tools/validate/validate_docs_hierarchy.py"
+python3 "$ROOT/tools/validate/validate_docs_naming.py"
+python3 "$ROOT/tools/validate/validate_docs_canonical_spine.py"
+python3 "$ROOT/tools/validate/validate_docs_section_verticalization.py"
+python3 "$ROOT/tools/validate/validate_docs_archive_reduction.py"
+python3 "$ROOT/tools/validate/validate_docs_editorial_consistency.py"
+python3 "$ROOT/tools/validate/validate_docs_surface_hardening.py"
+python3 "$ROOT/tools/validate/validate_docs_live_set_compression.py"
+python3 "$ROOT/tools/validate/validate_docs_authority_contract.py"
+python3 "$ROOT/tools/validate/validate_program_decision_lifecycle.py"
+python3 "$ROOT/tools/validate/validate_docs_surface_policy.py"
+python3 "$ROOT/tools/validate/validate_docs_freeze_contract.py"
+python3 "$ROOT/tools/validate/validate_root_topology.py"
+python3 "$ROOT/tools/validate/validate_runtime_core_collapse.py"
+python3 "$ROOT/tools/validate/validate_edge_daemon_collapse.py"
+python3 "$ROOT/tools/validate/validate_orchestration_exec_collapse.py"
+python3 "$ROOT/tools/validate/validate_control_family_descriptors.py"
+python3 "$ROOT/tools/validate/validate_specialization_descriptors.py"
+python3 "$ROOT/tools/validate/validate_governance_foundation_formal_naming.py"
