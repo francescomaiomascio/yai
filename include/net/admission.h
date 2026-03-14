@@ -1,0 +1,13 @@
+#pragma once
+
+#ifndef INCLUDE_NET_ADMISSION_H
+#define INCLUDE_NET_ADMISSION_H
+
+enum yai_net_admission_result {
+    YAI_NET_ADMISSION_UNKNOWN = 0,
+    YAI_NET_ADMISSION_ALLOW,
+    YAI_NET_ADMISSION_DENY,
+    YAI_NET_ADMISSION_QUARANTINE
+};
+
+#endif

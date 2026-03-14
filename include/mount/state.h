@@ -1,0 +1,14 @@
+#pragma once
+
+#ifndef INCLUDE_MOUNT_STATE_H
+#define INCLUDE_MOUNT_STATE_H
+
+enum yai_mount_state {
+    YAI_MOUNT_STATE_UNKNOWN = 0,
+    YAI_MOUNT_STATE_ATTACHED,
+    YAI_MOUNT_STATE_REMOUNTING,
+    YAI_MOUNT_STATE_DETACHED,
+    YAI_MOUNT_STATE_FAILED
+};
+
+#endif
