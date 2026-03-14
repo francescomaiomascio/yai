@@ -9,7 +9,7 @@
 
 ## Boundary
 - `kernel/`: execution substrate and low-level primitives
-- `sys/`: system service planes consumed by desktop surfaces
+- `services/`: system service planes consumed by desktop surfaces
 - `user/`: command shell and operator command surfaces
 - `sdk/`: typed client contracts consumed by desktop runtime and shell panels
 

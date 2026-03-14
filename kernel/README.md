@@ -34,4 +34,4 @@ The following are system-level or user-level responsibilities and must not be im
 
 ## Practical Rule
 
-If a feature requires domain semantics, workflow composition, operator-facing behavior, or service-level orchestration, it belongs outside `kernel/` (typically `sys/` or `user/`).
+If a feature requires domain semantics, workflow composition, operator-facing behavior, or service-level orchestration, it belongs outside `kernel/` (typically `services/` or `user/`).
