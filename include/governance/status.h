@@ -1,0 +1,14 @@
+#pragma once
+
+#ifndef INCLUDE_GOVERNANCE_STATUS_H
+#define INCLUDE_GOVERNANCE_STATUS_H
+
+enum yai_governance_status {
+    YAI_GOV_STATUS_UNKNOWN = 0,
+    YAI_GOV_STATUS_DRAFT,
+    YAI_GOV_STATUS_ACTIVE,
+    YAI_GOV_STATUS_REVOKED,
+    YAI_GOV_STATUS_EXPIRED
+};
+
+#endif
