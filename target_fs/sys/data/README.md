@@ -14,4 +14,4 @@ This domain keeps only the canonical data service entry shell.
 ## What does not stay here
 
 Archive, evidence, records, retention, store and query/runtime
-implementation belong to `target_fs/krt/data/`.
+implementation belong to `target_fs/kernel/data/`.

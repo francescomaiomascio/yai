@@ -14,7 +14,7 @@ This domain keeps only service entrypoints for observability-facing processes.
 
 ## What does not stay here
 
-Metrics, reporting and traces runtime logic belong to `target_fs/krt/obs/`.
+Metrics, reporting and traces runtime logic belong to `target_fs/kernel/obs/`.
 
 ## Boundary
 

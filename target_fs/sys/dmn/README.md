@@ -14,7 +14,7 @@ This domain keeps only the daemon process entry shell.
 ## What does not stay here
 
 Daemon control ticks, health ticks, runtime state, runtime config, source-plane
-integration, replay logic and technical internals belong to `target_fs/krt/dmn/`.
+integration, replay logic and technical internals belong to `target_fs/kernel/dmn/`.
 
 ## Boundary
 

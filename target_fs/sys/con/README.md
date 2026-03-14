@@ -19,4 +19,4 @@ service-side implementation exists under `sys/con/image/`.
 ## What does not stay here
 
 Container runtime logic, workspace binding, recovery/state, mounts and
-runtime views belong to `target_fs/krt/con/`.
+runtime views belong to `target_fs/kernel/con/`.

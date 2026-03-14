@@ -19,4 +19,4 @@ capabilities, but their runtime implementation does not live here.
 ## What does not stay here
 
 Execution pipelines, workflow state, agent runtime, cognition glue,
-transport glue and orchestration internals belong to `target_fs/krt/orch/`.
+transport glue and orchestration internals belong to `target_fs/kernel/orch/`.

@@ -14,4 +14,4 @@ This domain keeps only the canonical network service entry shell.
 ## What does not stay here
 
 Discovery, routing, topology, mesh, transport and provider runtime
-implementation belong to `target_fs/krt/net/`.
+implementation belong to `target_fs/kernel/net/`.
