@@ -2,7 +2,7 @@
 // src/parse/parse.c
 
 #include "yai/shell/parse.h"
-#include "yai/sdk/catalog.h"
+#include "yai/client/catalog.h"
 
 #include <string.h>
 #include <stddef.h>

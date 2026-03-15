@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include <yai/sdk/reply/reply.h>
+#include <yai/client/reply/reply.h>
 
 #ifdef __cplusplus
 extern "C" {

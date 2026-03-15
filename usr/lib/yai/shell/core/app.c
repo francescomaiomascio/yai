@@ -12,7 +12,7 @@
 #include "yai/shell/color.h"
 #include "yai/shell/watch.h"
 #include "yai/shell/term.h"
-#include "yai/sdk/sdk.h"
+#include "yai/client/sdk.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -484,7 +484,7 @@ static int handle_operator_capability(const yai_porcelain_request_t *req, yai_sd
 
   if (strcmp(req->command_id, "yai.operator.doctor.pins") == 0) {
     int law_ok = file_exists("deps/law/model/registry/commands.v1.json");
-    int sdk_ok = file_exists("sdk/c/libyai/include/yai/sdk/sdk.h");
+    int sdk_ok = file_exists("usr/include/yai/client/sdk.h");
     if (!law_ok || !sdk_ok) {
       operator_reply_set(reply, req->command_id, "error", "BAD_ARGS", "pins_mismatch",
                          "Dependency pins are not aligned.",
@@ -522,7 +522,7 @@ static int handle_operator_capability(const yai_porcelain_request_t *req, yai_sd
   if (strcmp(req->command_id, "yai.operator.doctor.all") == 0) {
     int env_ok = (getenv("HOME") && getenv("PATH"));
     int pins_ok = file_exists("deps/law/model/registry/commands.v1.json") &&
-                  file_exists("sdk/c/libyai/include/yai/sdk/sdk.h");
+                  file_exists("usr/include/yai/client/sdk.h");
     int runtime_ok = (operator_runtime_ping(reply, req->command_id) == 0);
     int ws_ok = (yai_sdk_context_validate_current_container(&ws_info) == 0);
     if (runtime_ok && env_ok && pins_ok) {
@@ -705,7 +705,7 @@ static int handle_operator_capability(const yai_porcelain_request_t *req, yai_sd
 
   if (strcmp(req->command_id, "yai.operator.verify.alignment") == 0) {
     int law_ok = file_exists("deps/law/model/registry/commands.v1.json");
-    int sdk_ok = file_exists("sdk/c/libyai/include/yai/sdk/sdk.h");
+    int sdk_ok = file_exists("usr/include/yai/client/sdk.h");
     int runtime_ok = (operator_runtime_ping(reply, req->command_id) == 0);
     int catalog_ok = (yai_sdk_command_catalog_load(&cat) == 0);
     if (catalog_ok) yai_sdk_command_catalog_free(&cat);

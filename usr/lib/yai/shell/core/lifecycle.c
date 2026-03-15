@@ -3,9 +3,9 @@
 
 #include "yai/shell/lifecycle.h"
 
-#include <yai/sdk/client.h>
-#include <yai/sdk/errors.h>
-#include <yai/sdk/paths.h>
+#include <yai/client/client.h>
+#include <yai/client/errors.h>
+#include <yai/client/paths.h>
 
 #include <errno.h>
 #include <fcntl.h>

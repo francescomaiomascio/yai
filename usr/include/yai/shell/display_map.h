@@ -2,7 +2,7 @@
 #pragma once
 
 #include <stddef.h>
-#include <yai/sdk/client.h>
+#include <yai/client/client.h>
 
 #ifdef __cplusplus
 extern "C" {

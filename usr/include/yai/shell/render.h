@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
-#include <yai/sdk/client.h>
+#include <yai/client/client.h>
 
 #ifdef __cplusplus
 extern "C" {

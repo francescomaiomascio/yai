@@ -8,7 +8,7 @@
 #include "yai/shell/color.h"
 #include "yai/shell/style_map.h"
 
-#include <yai/sdk/reply/reply_json.h>
+#include <yai/client/reply/reply_json.h>
 
 static const char *outcome_label(yai_outcome_t outcome)
 {

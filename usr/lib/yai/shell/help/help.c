@@ -4,7 +4,7 @@
 
 #include "yai/shell/errors.h"
 #include "yai/shell/pager.h"
-#include "yai/sdk/catalog.h"
+#include "yai/client/catalog.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -1,15 +1,14 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 #pragma once
 
-#include <yai/client/client.h>
+#include <yai/client/reply/reply.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int yai_shell_lifecycle_run(const char *command_id, yai_sdk_reply_t *out);
+char *yai_reply_to_json(const yai_reply_t *r);
 
 #ifdef __cplusplus
 }
 #endif
-
