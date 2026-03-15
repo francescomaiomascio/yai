@@ -1,6 +1,5 @@
-# Default runtime settings for YAI userspace tools.
-YAI_HOME="${HOME}/.yai"
-YAI_RUNTIME_DIR="/run/yai"
-YAI_STATE_DIR="/var/lib/yai"
-YAI_LOG_DIR="/var/log/yai"
-YAI_TMP_DIR="/tmp/yai"
+YAI_HOME=/var/lib/yai
+YAI_RUNTIME_DIR=/run/yai
+YAI_LOG_DIR=/var/log/yai
+YAI_TMP_DIR=/tmp/yai
+YAI_STATE_DIR=/var/lib/yai

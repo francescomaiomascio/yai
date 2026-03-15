@@ -1,3 +1,3 @@
-# Ephemeral YAI runtime state
+# YAI ephemeral runtime state
 
-This subtree contains sockets, lockfiles, pidfiles, and short-lived runtime artifacts.
+Sockets, pids, locks, and transient runtime artifacts live here.

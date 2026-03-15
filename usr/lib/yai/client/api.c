@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <yai/client/sdk.h>
+#include <yai/client/api.h>
 
 #ifndef YAI_SDK_VERSION_STR
 #define YAI_SDK_VERSION_STR "dev"

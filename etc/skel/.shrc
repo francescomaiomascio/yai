@@ -1,0 +1,1 @@
+export YAI_HOME="${YAI_HOME:-$HOME/.yai}"

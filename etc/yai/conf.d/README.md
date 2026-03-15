@@ -1,3 +1,3 @@
 # YAI drop-in configuration
 
-This directory hosts optional drop-in overrides for runtime and policy surface configuration.
+Optional drop-in overrides for runtime, client, and policy surface.

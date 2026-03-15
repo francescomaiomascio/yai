@@ -1,3 +1,3 @@
-# Persistent YAI runtime state
+# YAI persistent state
 
-Persistent state for graph, registry, manifests, and system-owned runtime storage.
+Persistent state for graph, registry, manifests, and runtime-owned storage.
