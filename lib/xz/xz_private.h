@@ -10,14 +10,14 @@
 #define XZ_PRIVATE_H
 
 #ifdef __KERNEL__
-#	include <linux/xz.h>
-#	include <linux/kernel.h>
-#	include <linux/unaligned.h>
+#	include <yai/xz.h>
+#	include <yai/kernel.h>
+#	include <yai/unaligned.h>
 	/* XZ_PREBOOT may be defined only via decompress_unxz.c. */
 #	ifndef XZ_PREBOOT
-#		include <linux/slab.h>
-#		include <linux/vmalloc.h>
-#		include <linux/string.h>
+#		include <yai/slab.h>
+#		include <yai/vmalloc.h>
+#		include <yai/string.h>
 #		ifdef CONFIG_XZ_DEC_X86
 #			define XZ_DEC_X86
 #		endif

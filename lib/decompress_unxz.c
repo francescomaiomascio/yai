@@ -94,7 +94,7 @@
 
 /*
  * STATIC is defined to "static" if we are being built for kernel
- * decompression (pre-boot code). <linux/decompress/mm.h> will define
+ * decompression (pre-boot code). <yai/decompress/mm.h> will define
  * STATIC to empty if it wasn't already defined. Since we will need to
  * know later if we are being used for kernel decompression, we define
  * XZ_PREBOOT here.
@@ -102,15 +102,15 @@
 #ifdef STATIC
 #	define XZ_PREBOOT
 #else
-#	include <linux/decompress/unxz.h>
+#	include <yai/decompress/unxz.h>
 #endif
 #ifdef __KERNEL__
-#	include <linux/decompress/mm.h>
+#	include <yai/decompress/mm.h>
 #endif
 
 #ifndef XZ_PREBOOT
-#	include <linux/slab.h>
-#	include <linux/xz.h>
+#	include <yai/slab.h>
+#	include <yai/xz.h>
 #else
 /*
  * Use the internal CRC32 code instead of kernel's CRC32 module, which
@@ -153,7 +153,7 @@
 
 /*
  * Replace the normal allocation functions with the versions from
- * <linux/decompress/mm.h>. vfree() needs to support vfree(NULL)
+ * <yai/decompress/mm.h>. vfree() needs to support vfree(NULL)
  * when XZ_DYNALLOC is used, but the pre-boot free() doesn't support it.
  * Workaround it here because the other decompressors don't need it.
  */

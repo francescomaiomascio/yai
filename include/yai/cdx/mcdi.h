@@ -11,7 +11,7 @@
 #include <yai/kref.h>
 #include <yai/rpmsg.h>
 
-#include "linux/cdx/bitfield.h"
+#include <yai/cdx/bitfield.h>
 
 /**
  * enum cdx_mcdi_mode - MCDI transaction mode

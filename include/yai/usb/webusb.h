@@ -8,7 +8,7 @@
 #ifndef	__LINUX_USB_WEBUSB_H
 #define	__LINUX_USB_WEBUSB_H
 
-#include "uapi/linux/usb/ch9.h"
+#include <yai/usb/ch9.h>
 
 /*
  * Little Endian PlatformCapablityUUID for WebUSB
