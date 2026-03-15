@@ -1,0 +1,29 @@
+[Unit]
+Description=YAI Runtime Service
+Documentation=/usr/share/doc/yai/layout.md
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/etc/yai/runtime/runtime.conf
+
+[Service]
+Type=simple
+User=yai
+Group=yai
+RuntimeDirectory=yai
+RuntimeDirectoryMode=0755
+StateDirectory=yai
+CacheDirectory=yai
+LogsDirectory=yai
+ExecStart=/usr/bin/yai runtime up
+ExecStop=/usr/bin/yai runtime down
+Restart=on-failure
+RestartSec=2s
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/yai /var/lib/yai /var/log/yai /var/cache/yai /var/spool/yai
+WorkingDirectory=/
+
+[Install]
+WantedBy=multi-user.target

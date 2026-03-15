@@ -1,0 +1,22 @@
+[Unit]
+Description=YAI Control Surface
+Documentation=/usr/share/doc/yai/layout.md
+After=yai-runtime.service
+Requires=yai-runtime.service
+ConditionPathExists=/etc/yai/client/client.conf
+
+[Service]
+Type=simple
+User=yai
+Group=yai
+ExecStart=/usr/bin/yai-ctl
+Restart=on-failure
+RestartSec=2s
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/yai /var/lib/yai /var/log/yai
+
+[Install]
+WantedBy=multi-user.target

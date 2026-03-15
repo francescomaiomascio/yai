@@ -1,0 +1,10 @@
+[Unit]
+Description=YAI Interactive Shell Session
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/yai-sh
+Restart=no
+
+[Install]
+WantedBy=default.target

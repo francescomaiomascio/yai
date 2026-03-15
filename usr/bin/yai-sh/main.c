@@ -1,3 +1,4 @@
+/* interactive shell entrypoint; canonical surface is /usr/bin/yai */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <yai/shell/app.h>

@@ -1,14 +1,13 @@
 # YAI client library
 
-Userspace client-side API and transport/runtime helpers.
+Canonical C userspace client surface for YAI runtime interaction.
 
-Subtrees:
-- `catalog` command catalog loading/query
-- `client` transport/session client core
-- `models` runtime-facing typed models
-- `platform` path/log/context helpers
-- `protocol` reply mapping helpers
-- `registry` local registry load/query/validate
-- `reply` reply builders and json helpers
-- `rpc` client RPC transport
-- `source` source-plane userspace helpers
+This subtree contains:
+- client transport/runtime access
+- reply decoding
+- registry lookup helpers
+- catalog/query helpers
+- source/runtime/container client calls
+
+Public headers live under:
+- /usr/include/yai/client

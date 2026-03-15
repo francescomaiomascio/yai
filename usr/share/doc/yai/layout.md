@@ -1,8 +1,24 @@
-# Installed userspace layout
+# YAI installed layout
 
-- manpage: `usr/share/man/man1/yai.1`
-- bash completion: `usr/share/bash-completion/completions/yai`
-- zsh completion: `usr/share/zsh/site-functions/_yai`
-- fish completion: `usr/share/fish/vendor_completions.d/yai.fish`
-- prompts/themes: `usr/share/yai`
-- examples: `usr/share/doc/yai/examples/client`
+## Canonical system surface
+
+- /etc/yai
+  Host-specific configuration
+- /run/yai
+  Ephemeral runtime sockets, pids, locks, transient state
+- /var/lib/yai
+  Persistent runtime state
+- /var/log/yai
+  Userspace operational logs
+- /var/cache/yai
+  Rebuildable cache material
+- /usr/bin
+  User-facing entrypoints
+- /usr/include/yai/client
+  Public C client headers
+- /usr/lib/yai/client
+  Client implementation
+- /usr/lib/yai/shell
+  Shell implementation
+- /usr/share/doc/yai
+  Installed documentation
