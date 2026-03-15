@@ -1,0 +1,2 @@
+#compdef yai
+_arguments '*: :->args'
