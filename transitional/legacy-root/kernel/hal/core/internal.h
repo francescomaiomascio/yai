@@ -1,3 +1,0 @@
-#pragma once
-
-#define YAI_PLATFORM_DEFAULT_UDS_BACKLOG 16
